@@ -1,0 +1,96 @@
+<section id="common_sec">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="logo">
+                    <a [routerLink]="['/']">
+                        <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" />
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mng_col">
+                    <div class="login_form">
+                        <h2 class="text-white text-center pb-4">Signup</h2>
+                        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+
+                            <div class="form-group">
+                                <label for="name">Full Name :</label>
+                                <input type="text" class="form-control form-control1" id="name"
+                                    formControlName="fullName"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
+                                <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.fullName.errors.required">Full name is required!</div>
+                                    <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email :</label>
+                                <input type="email" class="form-control form-control1" id="email"
+                                    formControlName="email"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
+                                <div *ngIf="(submitted || form.email.touched) && form.email.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.email.errors.required">Email is required!</div>
+                                    <div *ngIf="form.email.errors.pattern">Enter a valid email address!</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password :</label>
+                                <input type="password" class="form-control form-control1" id="password"
+                                    formControlName="password"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
+                                <div *ngIf="(submitted || form.password.touched) && form.password.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.password.errors.required">Password is required!</div>
+                                    <div *ngIf="form.password.errors.pattern">Password should contain atleast 1 number, 1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mobileNumber">Mobile Number :</label>
+                                <input type="tel" class="form-control form-control1" id="mobileNumber"
+                                    formControlName="mobileNumber"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.mobileNumber.touched) && form.mobileNumber.errors }">
+                                <div *ngIf="(submitted || form.mobileNumber.touched) && form.mobileNumber.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.mobileNumber.errors.required">Mobile number is required!</div>
+                                    <div *ngIf="form.mobileNumber.errors.pattern">Please enter a valid mobile number!</div>
+                                    <div *ngIf="!form.mobileNumber.errors.pattern && (form.mobileNumber.errors.minlength || form.mobileNumber.errors.maxlength)">Moblie number must of 10 digit!</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companyNumber">Company Number :</label>
+                                <input type="tel" class="form-control form-control1" id="companyNumber"
+                                    formControlName="companyNumber"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.companyNumber.touched) && form.companyNumber.errors }">
+                                <div *ngIf="(submitted || form.companyNumber.touched) && form.companyNumber.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.companyNumber.errors.required">Company number is required!</div>
+                                    <div *ngIf="form.companyNumber.errors.pattern">Please enter a valid mobile number!</div>
+                                    <div *ngIf="!form.companyNumber.errors.pattern && (form.companyNumber.errors.minlength || form.companyNumber.errors.maxlength)">Moblie number must of 10 digit!</div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-light btn_default mb-3 mt-5">NEXT</button>
+                        </form>
+
+                        <div class="text-white text-center">
+                            <p>
+                                Already have an account please <a [routerLink]="['/login']" class="text-white"><strong>Login</strong></a>
+                            </p>
+                        </div>
+                        <div class="bot_link">
+                            <p><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="">Contact Us</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

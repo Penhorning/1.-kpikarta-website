@@ -1,0 +1,41 @@
+<section id="common_sec">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="logo">
+                    <a [routerLink]="['/']">
+                        <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" />
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mng_col">
+                    <div class="login_form">
+                        <h2 class="text-white text-center pb-2">Verify Your Account</h2>
+                        <p class="text-white text-center mb-5">We have sent a verification code.</p>
+                        <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
+                            <div class="form-group">
+                                <label for="code">Verification Code</label>
+                                <input type="text" class="form-control form-control1" id="code"
+                                    formControlName="code"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
+                                <div *ngIf="(submitted || form.code.touched) && form.code.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.code.errors.required">Full name is required!</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-light btn_default mb-3 mt-2">SUBMIT</button>
+                        </form>
+                        <div class="text-white text-center">
+                            <p>Back To <a [routerLink]="['/login']" class="text-white"><strong>Login</strong></a></p>
+                        </div>
+                        <div class="bot_link">
+                            <p><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="">Contact Us</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
