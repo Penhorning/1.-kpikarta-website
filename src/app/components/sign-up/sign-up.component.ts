@@ -21,7 +21,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     fullName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]],
     password: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]],
-    mobileNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(10), Validators.maxLength(10)]],
+    mobile: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(10), Validators.maxLength(10)]],
     companyNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(10), Validators.maxLength(10)]]
   });
   get form() { return this.signupForm.controls; }
@@ -42,13 +42,13 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
       this._commonService.signup(this.signupForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
-          let { userId, email } = response.data;
+          let { token, email } = response;
           let sessionData = {
-            userId,
+            userId: token.id,
             email
           }
           this._commonService.setSession(sessionData);
-          this.router.navigate(['/verify'], { queryParams: { urlType: this.router.url } });
+          this.router.navigate(['/verification']);
         },
         (error: any) => {
           this.submitFlag = false;

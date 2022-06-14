@@ -17,6 +17,12 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
   submitFlag: boolean = false;
 
+  message = {
+    msg: "",
+    type: "",
+    show: false
+  }
+
   forgotForm = this.fb.group({
     email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]]
   });
@@ -25,6 +31,17 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder, private _commonService: CommonService, private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  showErrorMessage(message: string, type: string) {
+    this.message.msg = message;
+    this.message.type = type;
+    this.message.show = true;
+    setTimeout(() => {
+      this.message.msg = '';
+      this.message.type = '';
+      this.message.show = false;
+    }, 5000);
   }
 
   // On submit
@@ -36,20 +53,14 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
       this.submitFlag = true;
 
-      this._commonService.signup(this.forgotForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._commonService.forgotPassword(this.forgotForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
-          let { userId, email } = response.data;
-          let sessionData = {
-            userId,
-            email
-          }
-          this._commonService.setSession(sessionData);
-          this.router.navigate(['/verify'], { queryParams: { urlType: this.router.url } });
+          this.submitted = false;
+          this.forgotForm.controls["email"].reset();
+          this.showErrorMessage("An email with password reset instructions has been sent on registered email address", "Success");
         },
-        (error: any) => {
-          this.submitFlag = false;
-        }
-      );
+        (error: any) => { }
+      ).add(() => this.submitFlag = false);
     }
   }
 

@@ -51,15 +51,15 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="mobileNumber">Mobile Number :</label>
-                                <input type="tel" class="form-control form-control1" id="mobileNumber"
-                                    formControlName="mobileNumber"
-                                    [ngClass]="{ 'is-invalid': (submitted || form.mobileNumber.touched) && form.mobileNumber.errors }">
-                                <div *ngIf="(submitted || form.mobileNumber.touched) && form.mobileNumber.errors"
+                                <label for="mobile">Mobile Number :</label>
+                                <input type="tel" class="form-control form-control1" id="mobile"
+                                    formControlName="mobile"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
+                                <div *ngIf="(submitted || form.mobile.touched) && form.mobile.errors"
                                     class="invalid-feedback">
-                                    <div *ngIf="form.mobileNumber.errors.required">Mobile number is required!</div>
-                                    <div *ngIf="form.mobileNumber.errors.pattern">Please enter a valid mobile number!</div>
-                                    <div *ngIf="!form.mobileNumber.errors.pattern && (form.mobileNumber.errors.minlength || form.mobileNumber.errors.maxlength)">Moblie number must of 10 digit!</div>
+                                    <div *ngIf="form.mobile.errors.required">Mobile number is required!</div>
+                                    <div *ngIf="form.mobile.errors.pattern">Please enter a valid mobile number!</div>
+                                    <div *ngIf="!form.mobile.errors.pattern && (form.mobile.errors.minlength || form.mobile.errors.maxlength)">Moblie number must of 10 digit!</div>
                                 </div>
                             </div>
 
@@ -76,7 +76,14 @@
                                 </div>
                             </div>
 
-                            <button class="btn btn-light btn_default mb-3 mt-5">NEXT</button>
+                            <button class="btn btn-light btn_default mb-3 mt-5">
+                                <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                                  <span class="sr-only">Loading...</span>
+                                </div>
+                                <ng-container *ngIf="!submitFlag">
+                                    NEXT
+                                </ng-container>
+                            </button>
                         </form>
 
                         <div class="text-white text-center">

@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MyPlanComponent } from './my-plan.component';
+import { ResetPasswordComponent } from './reset-password.component';
 
 const routes: Routes = [
-  { path: '', component: MyPlanComponent, data: { title: "My Plan - KPI Karta" } }
+  { path: '', component: ResetPasswordComponent, data: { title: "Reset Password - KPI Karta" } }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class MyPlanRoutingModule { }
+export class ResetPasswordRoutingModule { }

@@ -36,15 +36,9 @@ export class VerificationComponent implements OnInit, OnDestroy {
 
       this.submitFlag = true;
 
-      this._commonService.signup(this.verificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._commonService.verification(this.verificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
-          let { userId, email } = response.data;
-          let sessionData = {
-            userId,
-            email
-          }
-          this._commonService.setSession(sessionData);
-          this.router.navigate(['/verify'], { queryParams: { urlType: this.router.url } });
+          this.router.navigate(['/subscription-plan']);
         },
         (error: any) => {
           this.submitFlag = false;

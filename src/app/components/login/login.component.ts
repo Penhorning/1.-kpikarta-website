@@ -38,17 +38,25 @@ export class LoginComponent implements OnInit, OnDestroy {
       this._commonService.login(this.loginForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
           if (!response.error) {
-            let { id, fullName, email, profilePic } = response.user;
-            const sessionData = {
-              token: response.id,
-              userId: id,
-              name: fullName,
-              email,
-              profilePic
+            let { id, fullName, email, profilePic, emailVerified } = response.user;
+            if (emailVerified) {
+              let sessionData = {
+                token: response.id,
+                userId: id,
+                name: fullName,
+                email,
+                profilePic
+              }
+              this._commonService.setSession(sessionData);
+              this.router.navigate(['/my-plan']);
+            } else {
+              let sessionData = {
+                userId: response.id,
+                email
+              }
+              this._commonService.setSession(sessionData);
+              this.router.navigate(['/verification']);
             }
-            this._commonService.setSession(sessionData);
-            this.router.navigate(['/my-plan']);
-            this._commonService.loginFlag = true;
           }
         },
         (error: any) => {

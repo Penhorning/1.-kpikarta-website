@@ -1,5 +1,91 @@
 @charset "utf-8";
 /* CSS Document */
+body {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #333;
+  font-size: 14px;
+  background: #F8F8F8;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+  font-weight: 600;
+}
+p {
+  color: #555;
+  font-size: 15px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  font-family: 'Source Sans Pro', sans-serif;
+  line-height: 1.6;
+}
+p:last-child {
+  margin-bottom: 0;
+}
+a {
+  color: #333;
+}
+a:hover {
+  text-decoration: none;
+  color: #319F60
+}
+img {
+  vertical-align: middle;
+  max-width: 100%;
+  height: auto;
+}
+button:focus {
+  outline: none;
+}
+.mp{margin: 0px; padding: 0px;}
+.default_color {
+  color: #296BB5;
+}
+.btn_sty_1 {
+  background: #033260;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 15px 40px;
+  border: none;
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+}
+.btn_sty_1:hover {
+  background: #033260;
+  color: #fff;
+  text-decoration: none;
+}
+.btn_sty_1:focus {
+  outline: none;
+}
+.btn_sty_1.sm_btn1 {
+  padding: 5px 20px;
+}
+.btn_sty_2 {
+  background: #fff;
+  color: #296BB5;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px 35px;
+  border: none;
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  border: 1px solid #296BB5;
+}
+.btn_sty_2:hover {
+  background: #fff;
+  color: #296BB5;
+  text-decoration: none;
+}
+.btn_sty_2:focus {
+  outline: none;
+}
 li {
   list-style-type: none;
 }
@@ -18,12 +104,8 @@ body {}
   background-color: #296BB5 !important;
 }
 .logo img {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%); /* IE 9 */
-  -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
+  position: fixed;
+  top: 45%;
 }
 .form-control1 {
   background-color: transparent;
@@ -59,28 +141,20 @@ img.ori {
   right: 0;
 }
 .mng_col {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   display: block;
   margin: 0 auto;
   background-color: #243864;
   overflow: hidden;
   position: relative;
+  min-height: 767px;
 }
 .login_form {
   max-width: 400px;
   min-width: 400px;
-  /*
-    display: block;
-    margin: 0 auto;
-    padding-top: 40px;
-*/
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%); /* IE 9 */
-  -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
+  margin: 0 auto;
+  margin-top: 100px;
 }
 .login_form h2 {}
 .login_form form label {
@@ -126,4 +200,411 @@ a.for_pass {
 .bot_link a {
   color: #fff;
   font-size: 14px;
+}
+#header {
+  background-color: #fff;
+  box-shadow: #e7e7e7 0px 2px 6px;
+  padding: 15px;
+}
+.item_middle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn_style1 {
+  background-color: #033D75;
+  padding: 15px 45px;
+  border-radius: 5px;
+  color: #fff;
+}
+.basic_plan {
+  background-color: #F8FBFF;
+  padding: 35px;
+  border: 1px solid #DEEDFC;
+  margin-top: 25px;
+}
+.basic_plan h5 {
+  text-transform: uppercase;
+}
+.basic_plan h1 {
+  text-align: center;
+  padding: 15px;
+  color: #243864;
+  font-size: 30px;
+  font-weight: bold;
+}
+.basic_plan h1 sub {
+  font-size: 18px;
+  font-weight: normal;
+}
+.basic_plan img {
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+}
+.business_plan {
+  background-color: #fff;
+  padding: 35px;
+  border: 1px solid #DEEDFC;
+  padding-bottom: 85px;
+}
+.business_plan h5 {
+  text-transform: uppercase;
+}
+.business_plan h1 {
+  text-align: center;
+  padding: 15px;
+  color: #243864;
+  font-size: 30px;
+  font-weight: bold;
+}
+.business_plan h1 sub {
+  font-size: 18px;
+  font-weight: normal;
+}
+.business_plan img {
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+}
+
+
+
+/*Toggle BUtton CSS*/
+
+.btn-toggle {
+  margin: 0 4rem;
+  padding: 0;
+  position: relative;
+  border: none;
+  height: 1.5rem;
+  width: 3rem;
+  border-radius: 1.5rem;
+  color: #6b7381;
+  background: #033260;
+}
+.btn-toggle:focus,
+.btn-toggle.focus,
+.btn-toggle:focus.active,
+.btn-toggle.focus.active {
+  outline: none;
+}
+.btn-toggle:before,
+.btn-toggle:after {
+  line-height: 1.5rem;
+  width: 4rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: absolute;
+  bottom: 0;
+  transition: opacity 0.25s;
+}
+.btn-toggle:before {
+  content: 'Monthly';
+  left: -4rem;
+}
+.btn-toggle:after {
+  content: 'Yearly';
+  right: -4rem;
+  opacity: 0.5;
+}
+.btn-toggle > .handle {
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 1.125rem;
+  background: #fff;
+  transition: left 0.25s;
+}
+.btn-toggle.active {
+  transition: background-color 0.25s;
+}
+.btn-toggle.active > .handle {
+  left: 1.6875rem;
+  transition: left 0.25s;
+}
+.btn-toggle.active:before {
+  opacity: 0.5;
+}
+.btn-toggle.active:after {
+  opacity: 1;
+}
+
+.btn-toggle:before,
+.btn-toggle:after {
+  color: #033260;
+}
+.btn-toggle.active {
+  background-color: #033D75;
+}
+.btn-toggle.btn-lg {
+  margin: 0 5rem;
+  padding: 0;
+  position: relative;
+  border: none;
+  height: 2.5rem;
+  width: 5rem;
+  border-radius: 2.5rem;
+}
+.btn-toggle.btn-lg:focus,
+.btn-toggle.btn-lg.focus,
+.btn-toggle.btn-lg:focus.active,
+.btn-toggle.btn-lg.focus.active {
+  outline: none;
+}
+.btn-toggle.btn-lg:before,
+.btn-toggle.btn-lg:after {
+  line-height: 2.5rem;
+  width: 5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: capitalize;
+  letter-spacing: 0px;
+  position: absolute;
+  bottom: 0;
+  transition: opacity 0.25s;
+}
+.btn-toggle.btn-lg:before {
+  content: 'Monthly';
+  left: -6rem;
+}
+.btn-toggle.btn-lg:after {
+  content: 'Yearly';
+  right: -6rem;
+  opacity: 0.5;
+}
+.btn-toggle.btn-lg > .handle {
+  position: absolute;
+  top: 0.3125rem;
+  left: 0.3125rem;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 1.875rem;
+  background: #fff;
+  transition: left 0.25s;
+}
+.btn-toggle.btn-lg.active {
+  transition: background-color 0.25s;
+}
+.btn-toggle.btn-lg.active > .handle {
+  left: 2.8125rem;
+  transition: left 0.25s;
+}
+.btn-toggle.btn-lg.active:before {
+  opacity: 0.5;
+}
+.btn-toggle.btn-lg.active:after {
+  opacity: 1;
+}
+.btn-toggle.btn-lg.btn-sm:before,
+.btn-toggle.btn-lg.btn-sm:after {
+  line-height: 0.5rem;
+  color: #fff;
+  letter-spacing: 0.75px;
+  left: 0.6875rem;
+  width: 3.875rem;
+}
+.btn-toggle.btn-lg.btn-sm:before {
+  text-align: right;
+}
+.btn-toggle.btn-lg.btn-sm:after {
+  text-align: left;
+  opacity: 0;
+}
+.btn-toggle.btn-lg.btn-sm.active:before {
+  opacity: 0;
+}
+.btn-toggle.btn-lg.btn-sm.active:after {
+  opacity: 1;
+}
+.btn-toggle.btn-lg.btn-xs:before,
+.btn-toggle.btn-lg.btn-xs:after {
+  display: none;
+}
+.btn-toggle.btn-sm {
+  margin: 0 0.5rem;
+  padding: 0;
+  position: relative;
+  border: none;
+  height: 1.5rem;
+  width: 3rem;
+  border-radius: 1.5rem;
+}
+.btn-toggle.btn-sm:focus,
+.btn-toggle.btn-sm.focus,
+.btn-toggle.btn-sm:focus.active,
+.btn-toggle.btn-sm.focus.active {
+  outline: none;
+}
+.btn-toggle.btn-sm:before,
+.btn-toggle.btn-sm:after {
+  line-height: 1.5rem;
+  width: 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: absolute;
+  bottom: 0;
+  transition: opacity 0.25s;
+}
+.btn-toggle.btn-sm:before {
+  content: 'Off';
+  left: -0.5rem;
+}
+.btn-toggle.btn-sm:after {
+  content: 'On';
+  right: -0.5rem;
+  opacity: 0.5;
+}
+.btn-toggle.btn-sm > .handle {
+  position: absolute;
+  top: 0.1875rem;
+  left: 0.1875rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 1.125rem;
+  background: #fff;
+  transition: left 0.25s;
+}
+.btn-toggle.btn-sm.active {
+  transition: background-color 0.25s;
+}
+.btn-toggle.btn-sm.active > .handle {
+  left: 1.6875rem;
+  transition: left 0.25s;
+}
+.btn-toggle.btn-sm.active:before {
+  opacity: 0.5;
+}
+.btn-toggle.btn-sm.active:after {
+  opacity: 1;
+}
+.btn-toggle.btn-sm.btn-sm:before,
+.btn-toggle.btn-sm.btn-sm:after {
+  line-height: -0.5rem;
+  color: #fff;
+  letter-spacing: 0.75px;
+  left: 0.4125rem;
+  width: 2.325rem;
+}
+.btn-toggle.btn-sm.btn-sm:before {
+  text-align: right;
+}
+.btn-toggle.btn-sm.btn-sm:after {
+  text-align: left;
+  opacity: 0;
+}
+.btn-toggle.btn-sm.btn-sm.active:before {
+  opacity: 0;
+}
+.btn-toggle.btn-sm.btn-sm.active:after {
+  opacity: 1;
+}
+.btn-toggle.btn-sm.btn-xs:before,
+.btn-toggle.btn-sm.btn-xs:after {
+  display: none;
+}
+.btn-toggle.btn-xs {
+  margin: 0 0;
+  padding: 0;
+  position: relative;
+  border: none;
+  height: 1rem;
+  width: 2rem;
+  border-radius: 1rem;
+}
+.btn-toggle.btn-xs:focus,
+.btn-toggle.btn-xs.focus,
+.btn-toggle.btn-xs:focus.active,
+.btn-toggle.btn-xs.focus.active {
+  outline: none;
+}
+.btn-toggle.btn-xs:before,
+.btn-toggle.btn-xs:after {
+  line-height: 1rem;
+  width: 0;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: absolute;
+  bottom: 0;
+  transition: opacity 0.25s;
+}
+.btn-toggle.btn-xs:before {
+  content: 'Off';
+  left: 0;
+}
+.btn-toggle.btn-xs:after {
+  content: 'On';
+  right: 0;
+  opacity: 0.5;
+}
+.btn-toggle.btn-xs > .handle {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  transition: left 0.25s;
+}
+.btn-toggle.btn-xs.active {
+  transition: background-color 0.25s;
+}
+.btn-toggle.btn-xs.active > .handle {
+  left: 1.125rem;
+  transition: left 0.25s;
+}
+.btn-toggle.btn-xs.active:before {
+  opacity: 0.5;
+}
+.btn-toggle.btn-xs.active:after {
+  opacity: 1;
+}
+.btn-toggle.btn-xs.btn-sm:before,
+.btn-toggle.btn-xs.btn-sm:after {
+  line-height: -1rem;
+  color: #fff;
+  letter-spacing: 0.75px;
+  left: 0.275rem;
+  width: 1.55rem;
+}
+.btn-toggle.btn-xs.btn-sm:before {
+  text-align: right;
+}
+.btn-toggle.btn-xs.btn-sm:after {
+  text-align: left;
+  opacity: 0;
+}
+.btn-toggle.btn-xs.btn-sm.active:before {
+  opacity: 0;
+}
+.btn-toggle.btn-xs.btn-sm.active:after {
+  opacity: 1;
+}
+.btn-toggle.btn-xs.btn-xs:before,
+.btn-toggle.btn-xs.btn-xs:after {
+  display: none;
+}
+.btn-toggle.btn-secondary {
+  color: #6b7381;
+  background: #033260;
+}
+.btn-toggle.btn-secondary:before,
+.btn-toggle.btn-secondary:after {
+  color: #6b7381;
+}
+.btn-toggle.btn-secondary.active {
+  background-color: #ff8300;
 }

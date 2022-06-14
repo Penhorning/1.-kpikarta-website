@@ -83,16 +83,19 @@ export class CommonService {
     return this.http.POST('/users/login?include=user', data);
   }
   forgotPassword(data: any) {
-    return this.http.POST('/admin/forgotPassword', data);
+    return this.http.POST('/users/reset', data);
   }
   checkResetPasswordToken(data: any) {
     return this.http.POST('/admin/checkResetPasswordToken', data);
   }
   resetPassword(data: any) {
-    return this.http.POST('/admin/resetPassword', data);
+    return this.http.POST(`/users/reset-password?access_token=${data.access_token}`, data);
   }
   signup(data: any) {
     return this.http.POST('/users', data);
+  }
+  verification(data: any) {
+    return this.http.GET(`/users?otp=${data.code}&access_token=${this.getUserId()}`);
   }
   // Common apis
 /*============================== API FUNCTIONS ENDS ==============================*/

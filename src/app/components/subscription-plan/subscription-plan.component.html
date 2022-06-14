@@ -1,0 +1,107 @@
+<section id="contain_sec">
+    <div class="container">
+        <div class="d-flex justify-content-between mt-5">
+            <div class="item_middle">
+                <h4>Buy Subscription package </h4>
+            </div>
+            <!-- <div class="mt-3"> <a href="" class="btn_sty_1">Start 1 month free trial*</a></div> -->
+        </div>
+    </div>
+</section>
+<section id="plan" class="my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-4 mb-4">
+                <div class="toggle button">
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-lg btn-toggle active" data-toggle="button"
+                            aria-pressed="true">
+                            <div class="handle"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mp">
+                <div class="basic_plan">
+                    <h6>SPECTATOR</h6>
+                    <img src="assets/img/basic.png" alt="" />
+                    <h1>FREE</h1>
+                    <div class="row">
+                        <div class="col-sm-10 mt-3">Create and edit Karta</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Create Catalogs in which user can save Kartas, Branches, measures,
+                            and metrics for reuse</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Share Elements (Catalogs, Kartas, Measures, Metrics) with
+                            Department, Company and Public</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Enter and edit KPI Targets and actuals</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Kartas Created</div>
+                        <div class="col-sm-2 mt-3">
+                            <p class="default_color">0</p>
+                        </div>
+                        <div class="col-sm-12 mt-4 text-center">
+                            <button class="btn_sty_2" (click)="selectPlan('spectator')">
+                                <div class="spinner-border align-top" role="status" *ngIf="submitFlag">
+                                  <span class="sr-only">Loading...</span>
+                                </div>
+                                <ng-container *ngIf="!submitFlag">
+                                    Select Plan
+                                </ng-container>
+                              </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mp">
+                <div class="business_plan">
+                    <h6>Champion</h6>
+                    <img src="assets/img/business.png" alt="" />
+                    <h1>$12<sub>/Mo</sub></h1>
+                    <div class="row">
+                        <div class="col-sm-10 mt-3">Create and edit Karta</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Create Catalogs in which user can save Kartas, Branches, measures,
+                            and metrics for reuse</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Share Elements (Catalogs, Kartas, Measures, Metrics) with
+                            Department, Company and Public</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Enter and edit KPI Targets and actuals</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Kartas Created</div>
+                        <div class="col-sm-2 mt-3">
+                            <p class="default_color">5</p>
+                        </div>
+                        <div class="col-sm-12 mt-4 text-center"><a href="" class="btn_sty_2">Select Plan</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mp">
+                <div class="basic_plan">
+                    <h6>CREATOR</h6>
+                    <img src="assets/img/enterprise.png" alt="" />
+                    <h1>$24<sub>/Mo</sub></h1>
+                    <div class="row">
+                        <div class="col-sm-10 mt-3">Create and edit Karta</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Create Catalogs in which user can save Kartas, Branches, measures,
+                            and metrics for reuse</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Share Elements (Catalogs, Kartas, Measures, Metrics) with
+                            Department, Company and Public</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Enter and edit KPI Targets and actuals</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-9 mt-3">Kartas Created</div>
+                        <div class="col-sm-3 mt-3">
+                            <p class="default_color">Unlimited</p>
+                        </div>
+                        <div class="col-sm-12 mt-4 text-center"><a href="" class="btn_sty_2">Select Plan</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
