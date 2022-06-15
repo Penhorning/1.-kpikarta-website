@@ -28,13 +28,13 @@ export class RequestInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         console.log("Request error: ", error);
-        if (error.error.isTrusted === true) {
-          // this will occur when not connected to internet
-          this._commonService.errorToaster('Your are not connected to internet');
-        } else if (error.status === 401) {
-          // this._commonService.deleteSession();
-          // this.router.navigate(['']);
-          this._commonService.errorToaster('Your session has been expired');
+        
+        if (error.status === 401 && error.error.message === "Authorization Required") {
+          this._commonService.deleteSession();
+          this.router.navigate(['']);
+          this._commonService.errorToaster('Your session expired');
+        } else if (error.status === 401 && error.error.error.message === "login failed") {
+          this._commonService.errorToaster('Please enter correct email address or password.');
         } else if (error.status === 400 || error.status === 404 || error.status === 422) {
           this._commonService.errorToaster(error.error.error.message ? error.error.error.message : error.statusText);
         } else this._commonService.errorToaster('Error, Something went wrong');

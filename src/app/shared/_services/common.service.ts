@@ -94,6 +94,9 @@ export class CommonService {
   signup(data: any) {
     return this.http.POST('/users', data);
   }
+  updateUser(data: any) {
+    return this.http.PATCH(`/users/${data.userId}?access_token=${data.token}`, data);
+  }
   verification(data: any) {
     return this.http.GET(`/users?otp=${data.code}&access_token=${this.getUserId()}`);
   }

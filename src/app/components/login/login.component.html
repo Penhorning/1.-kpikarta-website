@@ -1,70 +1,87 @@
 <section id="common_sec">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="logo">
-            <a [routerLink]="['/']">
-              <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt=""/>
-            </a>
-          </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6 d-flex align-items-center justify-content-center">
+        <div class="logo">
+          <a [routerLink]="['/']">
+            <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" />
+          </a>
         </div>
-        <div class="col-md-6">
-          <div class="mng_col">
-            <div class="login_form">
-              <h2 class="text-white text-center pb-4">Login</h2>
-              <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      </div>
+      <div class="col-md-6">
+        <div class="mng_col">
+          <div class="login_form">
+            <h2 class="text-white text-center pb-4">Login</h2>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-                <div class="form-group">
-                  <label for="email">Email / Username :</label>
-                  <input type="email" class="form-control form-control1" id="email" formControlName="email" [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
-                  <div *ngIf="(submitted || form.email.touched) && form.email.errors" class="invalid-feedback">
-                    <div *ngIf="form.email.errors.required">Email is required!</div>
-                    <div *ngIf="form.email.errors.pattern">Enter a valid email address!</div>
-                  </div>
+              <div class="form-group">
+                <label for="email">Email / Username</label>
+                <input type="email" class="form-control form-control1" id="email" formControlName="email"
+                  [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
+                <div *ngIf="(submitted || form.email.touched) && form.email.errors" class="invalid-feedback">
+                  <div *ngIf="form.email.errors.required">Email is required!</div>
+                  <div *ngIf="form.email.errors.pattern">Enter a valid email address!</div>
                 </div>
+              </div>
 
-                <div class="form-group">
-                  <label for="password">Password:</label>
-                  <input type="password" class="form-control form-control1" id="password" formControlName="password" maxlength="24" [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
-                  <div *ngIf="(submitted || form.password.touched) && form.password.errors" class="invalid-feedback">
-                    <div *ngIf="form.password.errors.required">Password is required!</div>
-                  </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control form-control1" id="password" formControlName="password"
+                  maxlength="24"
+                  [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
+                <div *ngIf="(submitted || form.password.touched) && form.password.errors" class="invalid-feedback">
+                  <div *ngIf="form.password.errors.required">Password is required!</div>
                 </div>
+              </div>
 
-                <button class="btn btn-light btn_default">
-                  <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
-                    <span class="sr-only">Loading...</span>
-                  </div>
-                  <ng-container *ngIf="!submitFlag">
-                    Submit
-                  </ng-container>
-                </button>
-                
-              </form>
-              <div class="cre_fog">
-                <a class="cre_ac" [routerLink]="['/sign-up']">Create Account</a>
-                <a class="for_pass" [routerLink]="['/forgot-password']">Forgot Password</a> </div>
-              <div class="or">
-                <img src="assets/img/or.png" width="70" height="70" class="ori" alt=""/>
+              <div class="form-group mb-1">
+                <input type="checkbox" name="remember" id="remember" class="custom-control-inline mr-2">
+                <label for="remember">Remember me</label>
               </div>
-              <div class="social_login">
-                <h5 class="text-white text-center">Sign in Using</h5>
-                <ul>
-                  <li>
-                    <a href="http://localhost:3000/auth/facebook/callback">
-                      <img src="assets/img/facebook.png" width="50" height="50" alt=""/>
-                    </a>
-                  </li>
-                  <li><a href="#!"><img src="assets/img/google.png" width="50" height="50" alt=""/></a></li>
-                  <li><a href="#!"><img src="assets/img/linkedin.png" width="50" height="50" alt=""/></a></li>
-                </ul>
-              </div>
-              <div class="bot_link">
-                <p><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="">Contact Us</a></p>
-              </div>
+
+              <button class="btn btn-light btn_default">
+                <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <ng-container *ngIf="!submitFlag">
+                  Submit
+                </ng-container>
+              </button>
+
+            </form>
+
+            <div class="cre_fog">
+              <a class="cre_ac" [routerLink]="['/sign-up']">Create Account</a>
+              <a class="for_pass" [routerLink]="['/forgot-password']">Forgot Password</a>
+            </div>
+
+            <div class="or">
+              <img src="assets/img/or.png" width="55" height="55" class="ori" alt="" />
+            </div>
+
+            <div class="social_login">
+              <h5 class="text-white text-center">Sign in Using</h5>
+              <ul>
+                <li>
+                  <a href="https://b42b-122-160-68-189.ngrok.io/auth/facebook">
+                    <img src="assets/img/facebook.png" width="50" height="50" alt="" />
+                  </a>
+                </li>
+                <li>
+                  <a href="https://b42b-122-160-68-189.ngrok.io/auth/google">
+                    <img src="assets/img/google.png" width="50" height="50" alt="" />
+                  </a>
+                </li>
+                <li><a href="#!"><img src="assets/img/linkedin.png" width="50" height="50" alt="" /></a></li>
+              </ul>
+            </div>
+            <div class="bot_link">
+              <p class="text-white"><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="">Contact
+                  Us</a></p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>

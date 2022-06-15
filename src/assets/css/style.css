@@ -100,12 +100,8 @@ body {}
   width: 100%;
   font-weight: 500;
 }
-.btn_default:hover, .btn_default:active {
+.btn_default:hover, .btn_default:active, .btn_default:focus {
   background-color: #296BB5 !important;
-}
-.logo img {
-  position: fixed;
-  top: 45%;
 }
 .form-control1 {
   background-color: transparent;
@@ -125,7 +121,7 @@ body {}
 }
 img.ori {
   position: relative;
-  top: 35px;
+  top: 30px;
 }
 #common_sec {}
 .logo {
@@ -223,7 +219,7 @@ a.for_pass {
   border: 1px solid #DEEDFC;
   margin-top: 25px;
 }
-.basic_plan h5 {
+.basic_plan h6 {
   text-transform: uppercase;
 }
 .basic_plan h1 {
@@ -248,7 +244,7 @@ a.for_pass {
   border: 1px solid #DEEDFC;
   padding-bottom: 85px;
 }
-.business_plan h5 {
+.business_plan h6 {
   text-transform: uppercase;
 }
 .business_plan h1 {

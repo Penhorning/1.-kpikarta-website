@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -23,9 +23,20 @@ export class LoginComponent implements OnInit, OnDestroy {
   });
   get form() { return this.loginForm.controls };
 
-  constructor(private fb: FormBuilder, private _commonService: CommonService, private router: Router) { }
+  constructor(private fb: FormBuilder, private _commonService: CommonService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    if (this.route.snapshot.queryParamMap.get("access_token") && this.route.snapshot.queryParamMap.get("userId")) {
+      let sessionData = {
+        token: this.route.snapshot.queryParamMap.get("access_token") || "",
+        userId: this.route.snapshot.queryParamMap.get("userId") || "",
+        name: this.route.snapshot.queryParamMap.get("name") || "",
+        email: this.route.snapshot.queryParamMap.get("email") || "",
+        profilePic: ""
+      }
+      this._commonService.setSession(sessionData);
+      this.router.navigate(['/my-plan']);
+    }
   }
 
   // On submit

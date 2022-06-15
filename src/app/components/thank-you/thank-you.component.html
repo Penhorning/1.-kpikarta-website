@@ -1,23 +1,32 @@
 <section id="common_sec">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="logo">
-            <a [routerLink]="['/']">
-              <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt=""/>
-            </a>
-          </div>
+        <div class="row">
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div class="logo">
+                    <a [routerLink]="['/']">
+                        <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" />
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mng_col">
+                    <div class="login_form">
+                        <div class="max_center_400">
+                            <div class="text-center">
+                                <img src="assets/img/check_circle.png" width="60" height="60" class="text-center" alt="" />
+                            </div>
+                            <h2 class="text-white text-center pb-2">THANK YOU!</h2>
+                            <!-- <p class="text-white text-center mb-5">Your Payment is Successful.</p> -->
+                            <p class="text-white text-center mb-5">You have assigned a spectator plan.</p>
+                        </div>
+                        <a [routerLink]="['/login']" class="btn btn-light btn_default mb-3 mt-2">LOGIN</a>
+                        <div class="bot_link">
+                            <p class="text-white"><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a
+                                    href="">Contact Us</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-          <div class="mng_col">
-            <p>
-                You payment successful
-            </p>
-            <a [routerLink]="['/login']" class="btn btn-light btn_default">
-                Login
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
-  </section>
+</section>
