@@ -47,6 +47,17 @@ export class VerificationComponent implements OnInit, OnDestroy {
     }
   }
 
+  resendCode() {
+    this._commonService.resendVerification().pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+        this._commonService.successToaster("Code sent successfully")
+      },
+      (error: any) => {
+        this.submitFlag = false;
+      }
+    );
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

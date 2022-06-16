@@ -85,9 +85,6 @@ export class CommonService {
   forgotPassword(data: any) {
     return this.http.POST('/users/reset', data);
   }
-  checkResetPasswordToken(data: any) {
-    return this.http.POST('/admin/checkResetPasswordToken', data);
-  }
   resetPassword(data: any) {
     return this.http.POST(`/users/reset-password?access_token=${data.access_token}`, data);
   }
@@ -99,6 +96,9 @@ export class CommonService {
   }
   verification(data: any) {
     return this.http.GET(`/users/verify_email?otp=${data.code}&access_token=${this.getUserId()}`);
+  }
+  resendVerification() {
+    return this.http.POST(`/users/resend_code?access_token=${this.getUserId()}`, "");
   }
   // Common apis
 /*============================== API FUNCTIONS ENDS ==============================*/
