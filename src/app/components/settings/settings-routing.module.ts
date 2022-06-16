@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ThankYouComponent } from './thank-you.component';
+import { SettingsComponent } from './settings.component';
 
 const routes: Routes = [
-  { path: '', component: ThankYouComponent, data: { title: "Thank you - KPI Karta" } }
+  { path: '', component: SettingsComponent, data: { title: "Settings - KPI Karta" } }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ThankYouRoutingModule { }
+export class SettingsRoutingModule { }

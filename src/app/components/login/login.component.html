@@ -39,7 +39,7 @@
                 <label for="remember">Remember me</label>
               </div>
 
-              <button class="btn btn-light btn_default">
+              <button class="btn btn-light btn_default" [disabled]="submitFlag">
                 <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
                   <span class="sr-only">Loading...</span>
                 </div>
@@ -50,30 +50,32 @@
 
             </form>
 
-            <div class="cre_fog">
-              <a class="cre_ac" [routerLink]="['/sign-up']">Create Account</a>
-              <a class="for_pass" [routerLink]="['/forgot-password']">Forgot Password</a>
-            </div>
-
-            <div class="or">
-              <img src="assets/img/or.png" width="55" height="55" class="ori" alt="" />
-            </div>
-
-            <div class="social_login">
-              <h5 class="text-white text-center">Sign in Using</h5>
-              <ul>
-                <li>
-                  <a href="https://b42b-122-160-68-189.ngrok.io/auth/facebook">
-                    <img src="assets/img/facebook.png" width="50" height="50" alt="" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://b42b-122-160-68-189.ngrok.io/auth/google">
-                    <img src="assets/img/google.png" width="50" height="50" alt="" />
-                  </a>
-                </li>
-                <li><a href="#!"><img src="assets/img/linkedin.png" width="50" height="50" alt="" /></a></li>
-              </ul>
+            <div class="max_center_400">
+              <div class="cre_fog">
+                <a class="cre_ac" [routerLink]="['/sign-up']">Create Account</a>
+                <a class="for_pass" [routerLink]="['/forgot-password']">Forgot Password</a>
+              </div>
+              <!-- Or -->
+              <div class="or">
+                <img src="assets/img/or.png" width="55" height="55" class="ori" alt="" />
+              </div>
+              <!-- Social logins -->
+              <div class="social_login">
+                <h5 class="text-white text-center">Sign in Using</h5>
+                <ul>
+                  <li>
+                    <a href="https://b42b-122-160-68-189.ngrok.io/auth/facebook">
+                      <img src="assets/img/facebook.png" width="50" height="50" alt="" />
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://b42b-122-160-68-189.ngrok.io/auth/google">
+                      <img src="assets/img/google.png" width="50" height="50" alt="" />
+                    </a>
+                  </li>
+                  <li><a href="#!"><img src="assets/img/linkedin.png" width="50" height="50" alt="" /></a></li>
+                </ul>
+              </div>
             </div>
             <div class="bot_link">
               <p class="text-white"><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="">Contact

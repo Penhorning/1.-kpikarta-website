@@ -1,7 +1,7 @@
 @charset "utf-8";
 /* CSS Document */
 body {
-  font-family: 'Poppins', sans-serif;
+  /*  font-family: 'Poppins', sans-serif;*/
   font-weight: 400;
   line-height: 1.5;
   color: #333;
@@ -11,6 +11,10 @@ body {
 h1, h2, h3, h4, h5, h6 {
   color: #333;
   font-weight: 600;
+}
+ul, li {
+  margin: 0px;
+  padding: 0px;
 }
 p {
   color: #555;
@@ -38,7 +42,10 @@ img {
 button:focus {
   outline: none;
 }
-.mp{margin: 0px; padding: 0px;}
+.mp {
+  margin: 0px;
+  padding: 0px;
+}
 .default_color {
   color: #296BB5;
 }
@@ -89,7 +96,6 @@ button:focus {
 li {
   list-style-type: none;
 }
-body {}
 .btn_default {
   background-color: #296BB5;
   border: 1px solid #243864;
@@ -100,8 +106,12 @@ body {}
   width: 100%;
   font-weight: 500;
 }
-.btn_default:hover, .btn_default:active, .btn_default:focus {
+.btn_default:hover, .btn_default:active, .btn_default:focus, .btn_default:disabled {
   background-color: #296BB5 !important;
+}
+.logo img {
+  position: fixed;
+  top: 45%;
 }
 .form-control1 {
   background-color: transparent;
@@ -137,24 +147,31 @@ img.ori {
   right: 0;
 }
 .mng_col {
-  height: 100%;
   width: 100%;
-  display: block;
+  display: table;
   margin: 0 auto;
   background-color: #243864;
-  overflow: hidden;
-  position: relative;
-  min-height: 767px;
+  height: 100vh;
 }
 .login_form {
-  max-width: 400px;
-  min-width: 400px;
   margin: 0 auto;
   margin-top: 100px;
+  display: table-cell;
+  vertical-align: middle;
+}
+.login_form form {
+  max-width: 400px;
+  margin: 0 auto;
 }
 .login_form h2 {}
 .login_form form label {
   color: #fff;
+}
+.login_form .max_center_400 {
+  max-width: 400px;
+  margin: 0 auto;
+  display: block;
+  margin-top: 15px;
 }
 .cre_fog {
   width: 100%;
@@ -185,13 +202,20 @@ a.for_pass {
   padding: 10px;
   text-align: center;
 }
+.mng_footer {
+  position: relative;
+  width: 100%;
+}
 .bot_link {
   color: #fff;
   display: block;
   width: 100%;
   text-align: center;
   padding-top: 20px;
-  margin-top: 50px;
+  position: relative;
+  bottom: 0px;
+  right: 0%;
+  padding-bottom: 30px;
 }
 .bot_link a {
   color: #fff;
@@ -263,11 +287,7 @@ a.for_pass {
   margin: 0 auto;
   display: block;
 }
-
-
-
 /*Toggle BUtton CSS*/
-
 .btn-toggle {
   margin: 0 4rem;
   padding: 0;
@@ -279,14 +299,10 @@ a.for_pass {
   color: #6b7381;
   background: #033260;
 }
-.btn-toggle:focus,
-.btn-toggle.focus,
-.btn-toggle:focus.active,
-.btn-toggle.focus.active {
+.btn-toggle:focus, .btn-toggle.focus, .btn-toggle:focus.active, .btn-toggle.focus.active {
   outline: none;
 }
-.btn-toggle:before,
-.btn-toggle:after {
+.btn-toggle:before, .btn-toggle:after {
   line-height: 1.5rem;
   width: 4rem;
   text-align: center;
@@ -330,9 +346,7 @@ a.for_pass {
 .btn-toggle.active:after {
   opacity: 1;
 }
-
-.btn-toggle:before,
-.btn-toggle:after {
+.btn-toggle:before, .btn-toggle:after {
   color: #033260;
 }
 .btn-toggle.active {
@@ -347,14 +361,10 @@ a.for_pass {
   width: 5rem;
   border-radius: 2.5rem;
 }
-.btn-toggle.btn-lg:focus,
-.btn-toggle.btn-lg.focus,
-.btn-toggle.btn-lg:focus.active,
-.btn-toggle.btn-lg.focus.active {
+.btn-toggle.btn-lg:focus, .btn-toggle.btn-lg.focus, .btn-toggle.btn-lg:focus.active, .btn-toggle.btn-lg.focus.active {
   outline: none;
 }
-.btn-toggle.btn-lg:before,
-.btn-toggle.btn-lg:after {
+.btn-toggle.btn-lg:before, .btn-toggle.btn-lg:after {
   line-height: 2.5rem;
   width: 5rem;
   text-align: center;
@@ -398,8 +408,7 @@ a.for_pass {
 .btn-toggle.btn-lg.active:after {
   opacity: 1;
 }
-.btn-toggle.btn-lg.btn-sm:before,
-.btn-toggle.btn-lg.btn-sm:after {
+.btn-toggle.btn-lg.btn-sm:before, .btn-toggle.btn-lg.btn-sm:after {
   line-height: 0.5rem;
   color: #fff;
   letter-spacing: 0.75px;
@@ -419,8 +428,7 @@ a.for_pass {
 .btn-toggle.btn-lg.btn-sm.active:after {
   opacity: 1;
 }
-.btn-toggle.btn-lg.btn-xs:before,
-.btn-toggle.btn-lg.btn-xs:after {
+.btn-toggle.btn-lg.btn-xs:before, .btn-toggle.btn-lg.btn-xs:after {
   display: none;
 }
 .btn-toggle.btn-sm {
@@ -432,14 +440,10 @@ a.for_pass {
   width: 3rem;
   border-radius: 1.5rem;
 }
-.btn-toggle.btn-sm:focus,
-.btn-toggle.btn-sm.focus,
-.btn-toggle.btn-sm:focus.active,
-.btn-toggle.btn-sm.focus.active {
+.btn-toggle.btn-sm:focus, .btn-toggle.btn-sm.focus, .btn-toggle.btn-sm:focus.active, .btn-toggle.btn-sm.focus.active {
   outline: none;
 }
-.btn-toggle.btn-sm:before,
-.btn-toggle.btn-sm:after {
+.btn-toggle.btn-sm:before, .btn-toggle.btn-sm:after {
   line-height: 1.5rem;
   width: 0.5rem;
   text-align: center;
@@ -483,8 +487,7 @@ a.for_pass {
 .btn-toggle.btn-sm.active:after {
   opacity: 1;
 }
-.btn-toggle.btn-sm.btn-sm:before,
-.btn-toggle.btn-sm.btn-sm:after {
+.btn-toggle.btn-sm.btn-sm:before, .btn-toggle.btn-sm.btn-sm:after {
   line-height: -0.5rem;
   color: #fff;
   letter-spacing: 0.75px;
@@ -504,8 +507,7 @@ a.for_pass {
 .btn-toggle.btn-sm.btn-sm.active:after {
   opacity: 1;
 }
-.btn-toggle.btn-sm.btn-xs:before,
-.btn-toggle.btn-sm.btn-xs:after {
+.btn-toggle.btn-sm.btn-xs:before, .btn-toggle.btn-sm.btn-xs:after {
   display: none;
 }
 .btn-toggle.btn-xs {
@@ -517,14 +519,10 @@ a.for_pass {
   width: 2rem;
   border-radius: 1rem;
 }
-.btn-toggle.btn-xs:focus,
-.btn-toggle.btn-xs.focus,
-.btn-toggle.btn-xs:focus.active,
-.btn-toggle.btn-xs.focus.active {
+.btn-toggle.btn-xs:focus, .btn-toggle.btn-xs.focus, .btn-toggle.btn-xs:focus.active, .btn-toggle.btn-xs.focus.active {
   outline: none;
 }
-.btn-toggle.btn-xs:before,
-.btn-toggle.btn-xs:after {
+.btn-toggle.btn-xs:before, .btn-toggle.btn-xs:after {
   line-height: 1rem;
   width: 0;
   text-align: center;
@@ -568,8 +566,7 @@ a.for_pass {
 .btn-toggle.btn-xs.active:after {
   opacity: 1;
 }
-.btn-toggle.btn-xs.btn-sm:before,
-.btn-toggle.btn-xs.btn-sm:after {
+.btn-toggle.btn-xs.btn-sm:before, .btn-toggle.btn-xs.btn-sm:after {
   line-height: -1rem;
   color: #fff;
   letter-spacing: 0.75px;
@@ -589,18 +586,120 @@ a.for_pass {
 .btn-toggle.btn-xs.btn-sm.active:after {
   opacity: 1;
 }
-.btn-toggle.btn-xs.btn-xs:before,
-.btn-toggle.btn-xs.btn-xs:after {
+.btn-toggle.btn-xs.btn-xs:before, .btn-toggle.btn-xs.btn-xs:after {
   display: none;
 }
 .btn-toggle.btn-secondary {
   color: #6b7381;
   background: #033260;
 }
-.btn-toggle.btn-secondary:before,
-.btn-toggle.btn-secondary:after {
+.btn-toggle.btn-secondary:before, .btn-toggle.btn-secondary:after {
   color: #6b7381;
 }
 .btn-toggle.btn-secondary.active {
   background-color: #ff8300;
+}
+/*Menu Sidebar*/
+.sidebar {
+  position: fixed;
+  top: 110px;
+  left: 0;
+  bottom: 0;
+  width: 150px;
+  z-index: 996;
+  transition: all 0.3s;
+  padding: 0px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #aab7cf transparent;
+  box-shadow: 0px 0px 20px rgb(1 41 112 / 10%);
+  background-color: #243864;
+}
+
+.sidebar ul{}
+.sidebar ul li{}
+.sidebar ul a {
+    color: #fff;
+    display: block;
+    text-align: center;
+    padding: 20px;
+}
+.sidebar ul a span {
+    display: block;
+    text-align: center;
+}
+.sidebar ul a span{}
+
+
+/* End Menu Sidebar*/
+
+
+/*Main Container*/
+#main {
+  margin-top: 60px;
+  padding: 20px 30px;
+  transition: all 0.3s;
+}
+/* End Main Container*/
+/*Settings Tab CSS*/
+.tabbable-panel {
+  border: 1px solid #eee;
+  padding: 10px;
+}
+.tabbable-line > .nav-tabs {
+  border: none;
+  margin: 0px;
+}
+.tabbable-line > .nav-tabs > li {
+  margin-right: 2px;
+}
+.tabbable-line > .nav-tabs > li > a {
+  border: 0;
+  margin-right: 0;
+  color: #737373;
+}
+.tabbable-line > .nav-tabs > li > a > i {
+  color: #a6a6a6;
+}
+.tabbable-line > .nav-tabs > li.open, .tabbable-line > .nav-tabs > li:hover {
+  border-bottom: 4px solid rgb(80, 144, 247);
+}
+.tabbable-line > .nav-tabs > li.open > a, .tabbable-line > .nav-tabs > li:hover > a {
+  border: 0;
+  background: none !important;
+  color: #333333;
+}
+.tabbable-line > .nav-tabs > li.open > a > i, .tabbable-line > .nav-tabs > li:hover > a > i {
+  color: #a6a6a6;
+}
+.tabbable-line > .nav-tabs > li.open .dropdown-menu, .tabbable-line > .nav-tabs > li:hover .dropdown-menu {
+  margin-top: 0px;
+}
+.tabbable-line > .nav-tabs > li.active {
+  border-bottom: 4px solid #32465B;
+  position: relative;
+}
+.tabbable-line > .nav-tabs > li.active > a {
+  border: 0;
+  color: #333333;
+}
+.tabbable-line > .nav-tabs > li.active > a > i {
+  color: #404040;
+}
+.tabbable-line > .tab-content {
+  margin-top: -3px;
+  background-color: #fff;
+  border: 0;
+  border-top: 1px solid #eee;
+  padding: 15px 0;
+}
+.portlet .tabbable-line > .tab-content {
+  padding-bottom: 0;
+}
+/* End Settings Tab CSS*/
+/*Responsive CSS*/
+@media (min-width: 1200px) {
+  #main, #footer {
+    margin-left: 200px;
+  }
 }

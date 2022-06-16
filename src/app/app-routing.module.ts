@@ -16,6 +16,7 @@ const routes: Routes = [
   { path: 'my-plan', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-plan/my-plan.module').then(m => m.MyPlanModule) },
   { path: 'subscription-plan', loadChildren: () => import('./components/subscription-plan/subscription-plan.module').then(m => m.SubscriptionPlanModule) },
   { path: 'thank-you', loadChildren: () => import('./components/thank-you/thank-you.module').then(m => m.ThankYouModule) },
+  { path: 'settings', canActivateChild: [AuthGuard], loadChildren: () => import('./components/settings/settings.module').then(m => m.SettingsModule) },
   { path: '**', loadChildren: () => import('./components/page-not-found/page-not-found.module').then(m => m.PageNotFoundModule) }
 ];
 

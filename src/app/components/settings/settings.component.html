@@ -1,0 +1,63 @@
+<main id="main" class="main">
+    <section id="settings" class="settings">
+      <div class="row">
+        <div class="col-lg-12"> 
+          
+          <!-- Settings Tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">Personal details</a> </li>
+            <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Multi factor Authentication</a> </li>
+            <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">Change Password</a> </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+            </div>
+            <div class="tab-pane" id="tabs-2" role="tabpanel">
+              <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+            </div>
+            <div class="tab-pane" id="tabs-3" role="tabpanel">
+              <div class="max_center_400">
+                <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+                  <div class="form-group">
+                    <label for="oldPassword">Old Password:</label>
+                    <input type="password" class="form-control" id="oldPassword" formControlName="oldPassword"
+                        [ngClass]="{ 'is-invalid': (submitted || form.oldPassword.touched) && form.oldPassword.errors }">
+                    <div *ngIf="(submitted || form.oldPassword.touched) && form.oldPassword.errors" class="invalid-feedback">
+                        <div *ngIf="form.oldPassword.errors.required">Old password is required!</div>
+                        <div *ngIf="form.oldPassword.errors.pattern">Password should contain atleast 1 number,
+                            1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="newPassword">New Password:</label>
+                    <input type="password" class="form-control" id="newPassword" formControlName="newPassword"
+                        [ngClass]="{ 'is-invalid': (submitted || form.newPassword.touched) && form.newPassword.errors }">
+                    <div *ngIf="(submitted || form.newPassword.touched) && form.newPassword.errors" class="invalid-feedback">
+                        <div *ngIf="form.newPassword.errors.required">New password is required!</div>
+                        <div *ngIf="form.newPassword.errors.pattern">Password should contain atleast 1 number,
+                            1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
+                        [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
+                    <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors" class="invalid-feedback">
+                        <div *ngIf="form.confirmPassword.errors.required">Confirm password is required!</div>
+                        <div *ngIf="form.confirmPassword.errors.pattern">Password should contain atleast 1 number,
+                            1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+                    </div>
+                  </div>
+                  <button class="btn btn-light btn_default">Change Password</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          
+          <!-- End Settings Tabs --> 
+        </div>
+      </div>
+    </section>
+  </main>

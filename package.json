@@ -5,9 +5,9 @@
     "ng": "ng",
     "start": "ng serve --port 4412 --configuration development",
     "build": "ng build",
-    "buildDev": "ng build --prod --aot --configuration dev",
-    "buildStage": "ng build --prod --aot --configuration stage",
-    "buildProd": "ng build --prod --aot --configuration production",
+    "buildDev": "ng build --aot --configuration dev",
+    "buildStage": "ng build --aot --configuration stage",
+    "buildProd": "ng build --aot --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

@@ -6,9 +6,39 @@
                     <img src="assets/img/kpi-karta-logo.png" width="250" height="58" alt="" />
                 </a>
             </div>
-            <div class="login_link item_middle">
+
+            <div class="login_link item_middle" *ngIf="!_commonService.getSession().token">
                 <a [routerLink]="['/login']">Login</a>
             </div>
+
+            <!--User-Profile-->
+            <div class="User_profile" *ngIf="_commonService.getSession().token">
+                <nav class="navbar navbar-light navbar-expand-sm">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-list-4"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span
+                            class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbar-list-4">
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="navbarDropdownMenuLink" role="button" 
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <label>Alexander Brooks</label>
+                                    <img src="assets/img/user1.png" width="49" height="49" class="rounded-circle">
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" [routerLink]="['/my-profile']">My Profile</a>
+                                    <a class="dropdown-item" [routerLink]="['/my-suggestion']">My Suggestion</a>
+                                    <a class="dropdown-item" [routerLink]="['/my-plan']">My Plan</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" (click)="logout()">Log Out</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <!-- End User-Profile -->
+
         </div>
     </div>
 </section>

@@ -98,7 +98,7 @@ export class CommonService {
     return this.http.PATCH(`/users/${data.userId}?access_token=${data.token}`, data);
   }
   verification(data: any) {
-    return this.http.GET(`/users?otp=${data.code}&access_token=${this.getUserId()}`);
+    return this.http.GET(`/users/verify_email?otp=${data.code}&access_token=${this.getUserId()}`);
   }
   // Common apis
 /*============================== API FUNCTIONS ENDS ==============================*/

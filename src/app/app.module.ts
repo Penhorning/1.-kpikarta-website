@@ -16,12 +16,14 @@ import { ToastrModule } from 'ngx-toastr';
 
 // Shared module
 import { SharedModule } from './shared/_modules/shared.module';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent
+    HeaderComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,

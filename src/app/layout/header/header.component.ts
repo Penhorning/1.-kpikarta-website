@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonService } from '@app/shared/_services/common.service';
 
 @Component({
   selector: 'app-header',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(public _commonService: CommonService) { }
 
   ngOnInit(): void {
+  }
+
+  logout() {
+    this._commonService.deleteSession();
   }
 
 }
