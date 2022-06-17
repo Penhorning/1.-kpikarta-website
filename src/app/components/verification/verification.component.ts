@@ -22,7 +22,9 @@ export class VerificationComponent implements OnInit, OnDestroy {
   });
   get form() { return this.verificationForm.controls; }
 
-  constructor(private fb: FormBuilder, private _commonService: CommonService, private router: Router) { }
+  constructor(private fb: FormBuilder, private _commonService: CommonService, private router: Router) {
+    if (!this._commonService.getUserId()) this.router.navigate(['/login']);
+  }
 
   ngOnInit(): void {
   }

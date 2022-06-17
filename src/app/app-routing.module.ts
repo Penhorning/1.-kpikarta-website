@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard, LoginGuard } from './shared/_authguard/auth.guard';
+import { HeaderComponent } from './layout/header/header.component';
 
 const routes: Routes = [
   {

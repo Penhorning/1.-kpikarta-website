@@ -29,6 +29,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.accessToken = this.route.snapshot.queryParamMap.get("access_token") || "";
+    if (!this.accessToken) this.router.navigate(['/login']);
   }
 
   // On submit

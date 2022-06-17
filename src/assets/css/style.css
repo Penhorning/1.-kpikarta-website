@@ -96,6 +96,7 @@ button:focus {
 li {
   list-style-type: none;
 }
+
 .btn_default {
   background-color: #296BB5;
   border: 1px solid #243864;
@@ -109,9 +110,11 @@ li {
 .btn_default:hover, .btn_default:active, .btn_default:focus, .btn_default:disabled {
   background-color: #296BB5 !important;
 }
-.logo img {
-  position: fixed;
-  top: 45%;
+.header.fixed{
+    width: 100% !important;
+    position: fixed !important;
+    top: 0 !important;
+height: 97px !important;
 }
 .form-control1 {
   background-color: transparent;
@@ -222,9 +225,12 @@ a.for_pass {
   font-size: 14px;
 }
 #header {
-  background-color: #fff;
-  box-shadow: #e7e7e7 0px 2px 6px;
-  padding: 15px;
+    background-color: #fff;
+    box-shadow: #e7e7e7 0px 2px 6px;
+    padding: 15px 15px 0px 15px;
+    position: relative;
+    z-index: 1;
+    width: 100%;
 }
 .item_middle {
   display: flex;
@@ -287,7 +293,7 @@ a.for_pass {
   margin: 0 auto;
   display: block;
 }
-/*Toggle BUtton CSS*/
+/*Toggle Button CSS*/
 .btn-toggle {
   margin: 0 4rem;
   padding: 0;
@@ -602,14 +608,13 @@ a.for_pass {
 /*Menu Sidebar*/
 .sidebar {
   position: fixed;
-  top: 110px;
+  top: 97px;
   left: 0;
   bottom: 0;
-  width: 150px;
+  width: 100px;
   z-index: 996;
   transition: all 0.3s;
   padding: 0px;
-  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #aab7cf transparent;
   box-shadow: 0px 0px 20px rgb(1 41 112 / 10%);
@@ -617,16 +622,23 @@ a.for_pass {
 }
 
 .sidebar ul{}
-.sidebar ul li{}
+.sidebar ul li {
+    border-bottom: 1px solid #7c88a2;
+}
+.sidebar ul li:last-child {
+    border-bottom: none;
+}
 .sidebar ul a {
     color: #fff;
     display: block;
     text-align: center;
-    padding: 20px;
+    padding: 25px 15px;
 }
+.sidebar ul a.active {border-left: 3px solid #fff;}
 .sidebar ul a span {
     display: block;
     text-align: center;
+	padding-bottom: 7px;
 }
 .sidebar ul a span{}
 
@@ -641,7 +653,15 @@ a.for_pass {
   transition: all 0.3s;
 }
 /* End Main Container*/
+
 /*Settings Tab CSS*/
+
+.settings-tab {
+    max-width: 70%;
+    margin: 0 auto;
+    margin-top: 70px;
+}
+
 .tabbable-panel {
   border: 1px solid #eee;
   padding: 10px;
@@ -696,7 +716,51 @@ a.for_pass {
 .portlet .tabbable-line > .tab-content {
   padding-bottom: 0;
 }
+
+.tab-content-cus>.active {
+    display: block;
+    background: #fff;
+    padding: 50px 100px;
+    box-shadow: #ccc 0px 3px 6px;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: transparent;
+    border-color: #f8f8f8;
+    border-bottom: 4px solid #296BB5;
+    text-align: center;   
+}
+
+.nav-link:hover {
+    border-color: #f8f8f8;
+}
+li.nav-item-cus {
+    width: 33.33%;
+    text-align: center;
+}
+
+a.nav-link-cus {
+    font-size: 20px;
+    font-weight: 500;
+}
+a.nav-link-cus:hover {
+    color: #000;
+	border: none;
+}
+
+.max-270 {
+    max-width: 270px;
+    margin: 0 auto;
+    display: block;
+}
+
 /* End Settings Tab CSS*/
+
+
+
+
+
 /*Responsive CSS*/
 @media (min-width: 1200px) {
   #main, #footer {

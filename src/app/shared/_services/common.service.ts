@@ -92,7 +92,7 @@ export class CommonService {
     return this.http.POST('/users', data);
   }
   updateUser(data: any) {
-    return this.http.PATCH(`/users/${data.userId}?access_token=${data.token}`, data);
+    return this.http.PATCH(`/users/${data.userId}?access_token=${data.accessToken}`, data);
   }
   verification(data: any) {
     return this.http.GET(`/users/verify_email?otp=${data.code}&access_token=${this.getUserId()}`);

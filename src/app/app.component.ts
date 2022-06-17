@@ -20,17 +20,17 @@ export class AppComponent implements OnInit {
     private title: Title
   ) {
     // listenging to routing navigation event
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        if (
-          event.url == "/" || event.url.substring(0,6) == "/login" || event.url == "/forgot-password" ||
-          event.url == "/verification" || event.url.substring(0,15) == "/reset-password" || event.url.substring(0,8) == "/sign-up" || 
-          event.url.substring(0,10) == "/thank-you"
-          ) {
-            this.showHeader = false;
-          } else this.showHeader = true;
-      }
-    });
+    // this.router.events.subscribe(event => {
+    //   if (event instanceof NavigationEnd) {
+    //     if (
+    //       event.url == "/" || event.url.substring(0,6) == "/login" || event.url == "/forgot-password" ||
+    //       event.url == "/verification" || event.url.substring(0,15) == "/reset-password" || event.url.substring(0,8) == "/sign-up" || 
+    //       event.url.substring(0,10) == "/thank-you"
+    //       ) {
+    //         this.showHeader = false;
+    //       } else this.showHeader = true;
+    //   }
+    // });
   }
 
   ngOnInit () {

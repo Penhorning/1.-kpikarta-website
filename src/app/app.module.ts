@@ -4,8 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { HeaderComponent } from './layout/header/header.component';
-
 // HTTP interceptor
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RequestInterceptor } from './shared/_interceptor/request.interceptor';
@@ -16,14 +14,11 @@ import { ToastrModule } from 'ngx-toastr';
 
 // Shared module
 import { SharedModule } from './shared/_modules/shared.module';
-import { SidebarComponent } from './layout/sidebar/sidebar.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HeaderComponent,
-    SidebarComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,

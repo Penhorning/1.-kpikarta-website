@@ -74,7 +74,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
         );
       } else {
         this.signupForm.value.userId = this.user.userId;
-        this.signupForm.value.token = this.user.accessToken;
+        this.signupForm.value.accessToken = this.user.accessToken;
         this._commonService.updateUser(this.signupForm.value).pipe(takeUntil(this.destroy$)).subscribe(
           (response: any) => {
             let sessionData = {

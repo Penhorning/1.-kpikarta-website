@@ -3,9 +3,7 @@
         <div class="row">
             <div class="col-md-6 d-flex align-items-center justify-content-center">
                 <div class="logo">
-                    <a [routerLink]="['/']">
-                        <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" />
-                    </a>
+                    <a [routerLink]="['/']"><img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" /></a>
                 </div>
             </div>
             <div class="col-md-6">
@@ -16,24 +14,24 @@
                         <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">
                                 <label for="code">Verification Code</label>
-                                <input type="text" class="form-control form-control1" id="code"
-                                    formControlName="code"
+                                <input type="text" class="form-control form-control1" id="code" formControlName="code"
                                     [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
-                                <div *ngIf="(submitted || form.code.touched) && form.code.errors"
-                                    class="invalid-feedback">
-                                    <div *ngIf="form.code.errors.required">Full name is required!</div>
+                                <div *ngIf="(submitted || form.code.touched) && form.code.errors" class="invalid-feedback">
+                                    <div *ngIf="form.code.errors.required">Verification code is required!</div>
                                 </div>
                             </div>
                             <a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm float-right text-white" (click)="resendCode()">Resend</a>
-                            <button class="btn btn-light btn_default mb-3 mt-2">SUBMIT</button>
+                            <button class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">
+                                <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <ng-container *ngIf="!submitFlag">SUBMIT</ng-container>
+                            </button>
                         </form>
                         <div class="text-white text-center">
                             <p class="text-white">Back To <a [routerLink]="['/login']" class="text-white"><strong>Login</strong></a></p>
                         </div>
-                        <div class="bot_link">
-                            <p><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="">Contact Us</a>
-                            </p>
-                        </div>
+                        <app-footer></app-footer>
                     </div>
                 </div>
             </div>

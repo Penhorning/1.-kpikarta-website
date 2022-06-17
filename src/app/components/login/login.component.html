@@ -3,17 +3,15 @@
     <div class="row">
       <div class="col-md-6 d-flex align-items-center justify-content-center">
         <div class="logo">
-          <a [routerLink]="['/']">
-            <img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" />
-          </a>
+          <a [routerLink]="['/']"><img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" /></a>
         </div>
       </div>
       <div class="col-md-6">
         <div class="mng_col">
           <div class="login_form">
             <h2 class="text-white text-center pb-4">Login</h2>
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
               <div class="form-group">
                 <label for="email">Email / Username</label>
                 <input type="email" class="form-control form-control1" id="email" formControlName="email"
@@ -43,11 +41,8 @@
                 <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
                   <span class="sr-only">Loading...</span>
                 </div>
-                <ng-container *ngIf="!submitFlag">
-                  Submit
-                </ng-container>
+                <ng-container *ngIf="!submitFlag">Submit</ng-container>
               </button>
-
             </form>
 
             <div class="max_center_400">
@@ -73,14 +68,15 @@
                       <img src="assets/img/google.png" width="50" height="50" alt="" />
                     </a>
                   </li>
-                  <li><a href="#!"><img src="assets/img/linkedin.png" width="50" height="50" alt="" /></a></li>
+                  <li>
+                    <a href="https://b42b-122-160-68-189.ngrok.io/auth/linkedin">
+                      <img src="assets/img/linkedin.png" width="50" height="50" alt="" />
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
-            <div class="bot_link">
-              <p class="text-white"><a href="#!">Terms & Conditions </a> &nbsp;&nbsp;|&nbsp;&nbsp; <a href="">Contact
-                  Us</a></p>
-            </div>
+            <app-footer></app-footer>
           </div>
         </div>
       </div>
