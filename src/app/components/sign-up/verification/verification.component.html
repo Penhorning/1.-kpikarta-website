@@ -9,8 +9,8 @@
             <div class="col-md-6">
                 <div class="mng_col">
                     <div class="login_form">
-                        <h2 class="text-white text-center pb-2">Verify Your Account</h2>
-                        <p class="text-white text-center mb-5">We have sent a verification code.</p>
+                        <h2 class="text-white text-center pb-2">Verify Your Email</h2>
+                        <p class="text-white text-center mb-5">We have sent a verification code to your email.</p>
                         <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">
                                 <label for="code">Verification Code</label>
@@ -20,7 +20,12 @@
                                     <div *ngIf="form.code.errors.required">Verification code is required!</div>
                                 </div>
                             </div>
-                            <a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm float-right text-white" (click)="resendCode()">Resend</a>
+                            <button class="btn btn-outline-secondary btn-sm float-right text-white" (click)="resendCode()" [disabled]="verificationFlag">
+                                <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <ng-container *ngIf="!verificationFlag">Resend</ng-container>
+                            </button>
                             <button class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">
                                 <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
                                     <span class="sr-only">Loading...</span>

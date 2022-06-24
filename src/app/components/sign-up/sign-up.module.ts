@@ -6,11 +6,13 @@ import { SignUpComponent } from './sign-up.component';
 
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
+import { VerificationComponent } from './verification/verification.component';
 
 
 @NgModule({
   declarations: [
-    SignUpComponent
+    SignUpComponent,
+    VerificationComponent
   ],
   imports: [
     CommonModule,

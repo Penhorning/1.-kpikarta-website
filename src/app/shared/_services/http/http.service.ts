@@ -18,7 +18,7 @@ export class HttpService {
     return this.httpClient.get(this.BASE_URL + "/api" + url);
   }
   // Post data
-  POST(url: string, data: any): Observable<any> {
+  POST(url: string, data?: any): Observable<any> {
     return this.httpClient.post(this.BASE_URL + "/api" + url, data);
   }
   // Get by Id

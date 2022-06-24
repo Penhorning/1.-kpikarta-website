@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SignupService } from '@app/shared/_services/signup/signup.service';
 import { SubscriptionPlanService } from '@app/shared/_services/subscription-plan/subscription-plan.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,7 +16,14 @@ export class SubscriptionPlanComponent implements OnInit, OnDestroy {
 
   submitFlag: boolean = false;
 
-  constructor(private _subscriptionPlanService: SubscriptionPlanService, private router: Router) { }
+  constructor(
+    private _signupService: SignupService,
+    private _subscriptionPlanService: SubscriptionPlanService,
+    private router: Router
+  ) {
+    if (!this._signupService.getSignUpSession().token) this.router.navigate(['/login']);
+    else if (this._signupService.getSignUpSession().stage == 3) this.router.navigate(['/thank-you']);
+  }
 
   ngOnInit(): void {
   }
@@ -26,7 +34,8 @@ export class SubscriptionPlanComponent implements OnInit, OnDestroy {
 
     this._subscriptionPlanService.assignPlan({ plan: type }).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        this.router.navigate(['/thank-you'], { queryParams: { urlType: this.router.url } });
+        this.router.navigate(['/thank-you']);
+        this._signupService.updateSignUpSession(3);
       },
       (error: any) => {}
     ).add(() => this.submitFlag = false);

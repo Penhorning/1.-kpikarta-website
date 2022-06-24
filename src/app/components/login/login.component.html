@@ -13,7 +13,7 @@
 
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
               <div class="form-group">
-                <label for="email">Email / Username</label>
+                <label for="email">Email</label>
                 <input type="email" class="form-control form-control1" id="email" formControlName="email"
                   [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
                 <div *ngIf="(submitted || form.email.touched) && form.email.errors" class="invalid-feedback">
@@ -56,20 +56,20 @@
               </div>
               <!-- Social logins -->
               <div class="social_login">
-                <h5 class="text-white text-center">Sign in Using</h5>
+                <h5 class="text-white text-center">Sign In Using</h5>
                 <ul>
                   <li>
-                    <a href="https://b42b-122-160-68-189.ngrok.io/auth/facebook">
+                    <a href="{{facebookUrl}}">
                       <img src="assets/img/facebook.png" width="50" height="50" alt="" />
                     </a>
                   </li>
                   <li>
-                    <a href="https://b42b-122-160-68-189.ngrok.io/auth/google">
+                    <a href="{{googleUrl}}">
                       <img src="assets/img/google.png" width="50" height="50" alt="" />
                     </a>
                   </li>
                   <li>
-                    <a href="https://b42b-122-160-68-189.ngrok.io/auth/linkedin">
+                    <a href="{{linkedInUrl}}">
                       <img src="assets/img/linkedin.png" width="50" height="50" alt="" />
                     </a>
                   </li>

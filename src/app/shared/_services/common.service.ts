@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from './http.service';
+import { HttpService } from './http/http.service';
 import { Router } from '@angular/router';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '@environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
 
@@ -46,7 +46,7 @@ export class CommonService {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
 
-  constructor(private http: HttpService, private toastr: ToastrService, private router: Router) { }
+  constructor(private _httpService: HttpService, private toastr: ToastrService, private router: Router) { }
 
 
 
@@ -80,25 +80,16 @@ export class CommonService {
 /*============================== API FUNCTIONS STARTS ==============================*/
   // Login apis
   login(data: any) {
-    return this.http.POST('/users/login?include=user', data);
+    return this._httpService.POST('/users/login?include=user', data);
+  }
+  logout() {
+    return this._httpService.POST(`/users/logout?access_token=${this.getSession().token}`);
   }
   forgotPassword(data: any) {
-    return this.http.POST('/users/reset', data);
+    return this._httpService.POST('/users/reset', data);
   }
-  resetPassword(data: any) {
-    return this.http.POST(`/users/reset-password?access_token=${data.access_token}`, data);
-  }
-  signup(data: any) {
-    return this.http.POST('/users', data);
-  }
-  updateUser(data: any) {
-    return this.http.PATCH(`/users/${data.userId}?access_token=${data.accessToken}`, data);
-  }
-  verification(data: any) {
-    return this.http.GET(`/users/verify_email?otp=${data.code}&access_token=${this.getUserId()}`);
-  }
-  resendVerification() {
-    return this.http.POST(`/users/resend_code?access_token=${this.getUserId()}`, "");
+  resetPassword(data: any, accessToken: string) {
+    return this._httpService.POST(`/users/reset-password?access_token=${accessToken}`, data);
   }
   // Common apis
 /*============================== API FUNCTIONS ENDS ==============================*/

@@ -1,0 +1,89 @@
+<app-header></app-header>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-1">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="col-lg-11 mb-2" [ngClass]="{ 'disableDiv': submitFlag || deleteFlag }">
+      <div class="my_suggestions">
+        <h3 class="mt-2 mb-4">MY SUGGESTIONS</h3>
+        <!-- Settings Tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item nav-item-cus" *ngFor="let phase of phases; let i=index" [attr.data-index]="i">
+            <a class="nav-link nav-link-cus" [ngClass]="{ 'active': i == 0 }" (click)="onPhaseChange(phase.id)"
+              data-toggle="tab" [attr.id]="phase.id" href="#tab-1" role="tab">{{phase.name}}</a>
+          </li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content tab-content-cus">
+          <div class="tab-pane active" id="tab-1" role="tabpanel">
+            <form [formGroup]="suggestionForm" (ngSubmit)="onSubmit()">
+              <h5 class="mt-4 mb-3">Definition</h5>
+              <textarea class="my-sug-area" rows="4" cols="30" formControlName="definition"
+                [ngClass]="{ 'border-danger': (submitted || suggestionForm.get('definition')?.touched) && suggestionForm.get('definition')?.errors }"></textarea>
+              <div
+                *ngIf="(submitted || suggestionForm.get('definition')?.touched) && suggestionForm.get('definition')?.errors"
+                class="invalid-feedback d-block">
+                <div *ngIf="suggestionForm.get('definition')?.hasError('required')">Definition is required!</div>
+                <div *ngIf="suggestionForm.get('definition')?.hasError('pattern')">Blank space is not allowed!</div>
+              </div>
+
+              <div class="d-flex justify-content-between">
+
+                <div>
+                  <h5 class="mt-5 mb-3 ">Suggestions</h5>
+                </div>
+                <div class="add-sug-btn mr-4">
+                  <a href="javascript:void(0);" (click)="addDescriptions()">
+                    <img src="assets/img/add_btn.png" alt="" width="60" height="60">
+                  </a>
+                </div>
+              </div>
+
+              <ng-container formArrayName="descriptions">
+                <ng-container *ngFor="let descriptionForm of descriptions.controls; let i=index">
+                  <div class="d-flex w-100 mb-4">
+                    <div [formGroupName]="i" class="w-100">
+                      <textarea class="my-sug-area" rows="4" cols="30" formControlName="description" [attr.id]="'textarea'+i"
+                        [ngClass]="{ 'border-danger': (submitted || descriptionForm.get('description')?.touched) && descriptionForm.get('description')?.errors }"></textarea>
+                      <div
+                        *ngIf="(submitted || descriptionForm.get('description')?.touched) && descriptionForm.get('description')?.errors"
+                        class="invalid-feedback d-block">
+                        <div *ngIf="descriptionForm.get('description')?.hasError('required')">Description is required!
+                        </div>
+                        <div *ngIf="descriptionForm.get('description')?.hasError('pattern')">Blank space is not allowed!
+                        </div>
+                      </div>
+                    </div>
+                    <div class="add-sug-btn ml-2">
+                      <!-- <a href="#!">
+                        <img src="assets/img/edit.png" alt="" width="32" height="32">
+                      </a> -->
+                      <a href="javascript:void(0);" (click)="removeDescription(i)">
+                        <img src="assets/img/delete.png" alt="" width="32" height="32">
+                      </a>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+
+              <button class="btn btn-default float-left btn_sty_1 mt-2" [disabled]="submitFlag">
+                <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <ng-container *ngIf="!submitFlag">Save</ng-container>
+              </button>
+              <button type="button" class="btn btn-default float-right reset-btn" (click)="deleteSuggestion()"
+                [disabled]="deleteFlag">
+                <div class="spinner-border text-light align-top" role="status" *ngIf="deleteFlag">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <ng-container *ngIf="!deleteFlag">Reset</ng-container>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

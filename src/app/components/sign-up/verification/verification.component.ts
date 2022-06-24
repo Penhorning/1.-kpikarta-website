@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
+import { SignupService } from '@app/shared/_services/signup/signup.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -16,14 +17,22 @@ export class VerificationComponent implements OnInit, OnDestroy {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
+  verificationFlag: boolean = false;
 
   verificationForm = this.fb.group({
     code: ['', Validators.required]
   });
   get form() { return this.verificationForm.controls; }
 
-  constructor(private fb: FormBuilder, private _commonService: CommonService, private router: Router) {
-    if (!this._commonService.getUserId()) this.router.navigate(['/login']);
+  constructor(
+    private fb: FormBuilder,
+    private _commonService: CommonService,
+    private _signupService: SignupService,
+    private router: Router
+  ) {
+    if (!this._signupService.getSignUpSession().token) this.router.navigate(['/login']);
+    else if (this._signupService.getSignUpSession().stage == 2) this.router.navigate(['/subscription-plan']);
+    
   }
 
   ngOnInit(): void {
@@ -38,9 +47,10 @@ export class VerificationComponent implements OnInit, OnDestroy {
 
       this.submitFlag = true;
 
-      this._commonService.verification(this.verificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._signupService.verification(this.verificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
           this.router.navigate(['/subscription-plan']);
+          this._signupService.updateSignUpSession(2);
         },
         (error: any) => {
           this.submitFlag = false;
@@ -50,12 +60,14 @@ export class VerificationComponent implements OnInit, OnDestroy {
   }
 
   resendCode() {
-    this._commonService.resendVerification().pipe(takeUntil(this.destroy$)).subscribe(
+    this.verificationFlag = true;
+    this._signupService.resendVerification().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
+        this.verificationFlag = false;
         this._commonService.successToaster("Code sent successfully")
       },
       (error: any) => {
-        this.submitFlag = false;
+        this.verificationFlag = false;
       }
     );
   }

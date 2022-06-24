@@ -9,7 +9,7 @@
             <div class="col-md-6">
                 <div class="mng_col">
                     <div class="login_form">
-                        <h2 class="text-white text-center pb-4">Signup</h2>
+                        <h2 class="text-white text-center py-4">Signup</h2>
 
                         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">
@@ -58,18 +58,25 @@
                                 </div>
                             </div>
 
+                            <!-- <button type="button" class="btn btn-info" (click)="verifyMobile()">Verify</button> -->
+                            <ng-container *ngIf="wantToVerify">
+
+                                <div class="form-group">
+                                    <label for="otp">Verification code <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control form-control1" id="otp" formControlName="otp">
+                                </div>
+                                <button type="button" class="btn btn-secondary" (click)="resendOtp()">Resend</button>
+                                <button type="button" class="btn btn-success ml-2" (click)="verifyOtp()">Verify otp</button>
+                            </ng-container>
+
                             <div class="form-group">
-                                <label for="companyNumber">Company Number <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control form-control1" id="companyNumber" formControlName="companyNumber"
-                                    [ngClass]="{ 'is-invalid': (submitted || form.companyNumber.touched) && form.companyNumber.errors }">
-                                <div *ngIf="(submitted || form.companyNumber.touched) && form.companyNumber.errors"
+                                <label for="companyName">Organization Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1" id="companyName" formControlName="companyName"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.companyName.touched) && form.companyName.errors }">
+                                <div *ngIf="(submitted || form.companyName.touched) && form.companyName.errors"
                                     class="invalid-feedback">
-                                    <div *ngIf="form.companyNumber.errors.required">Company number is required!</div>
-                                    <div *ngIf="form.companyNumber.errors.pattern">Please enter a valid mobile number!</div>
-                                    <div
-                                        *ngIf="!form.companyNumber.errors.pattern && (form.companyNumber.errors.minlength || form.companyNumber.errors.maxlength)">
-                                        Moblie number must of 10 digit!
-                                    </div>
+                                    <div *ngIf="form.companyName.errors.required">Organization name is required!</div>
+                                    <div *ngIf="form.companyName.errors.pattern">Blank space is not allowed!</div>
                                 </div>
                             </div>
 

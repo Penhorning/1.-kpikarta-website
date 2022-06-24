@@ -44,9 +44,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       } else {
 
         this.submitFlag = true;
-        
-        this.resetPasswordForm.value.access_token = this.accessToken;
-        this._commonService.resetPassword(this.resetPasswordForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+        this._commonService.resetPassword(this.resetPasswordForm.value, this.accessToken).pipe(takeUntil(this.destroy$)).subscribe(
           (response: any) => {
             this._commonService.successToaster("Your password has been changed successfully. Please login with your new password");
             this.router.navigate(['']);

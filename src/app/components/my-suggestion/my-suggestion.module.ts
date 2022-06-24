@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { VerificationRoutingModule } from './verification-routing.module';
-import { VerificationComponent } from './verification.component';
+import { MySuggestionRoutingModule } from './my-suggestion-routing.module';
+import { MySuggestionComponent } from './my-suggestion.component';
 
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
@@ -10,12 +10,12 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 
 @NgModule({
   declarations: [
-    VerificationComponent
+    MySuggestionComponent
   ],
   imports: [
     CommonModule,
-    VerificationRoutingModule,
+    MySuggestionRoutingModule,
     SharedModule
   ]
 })
-export class VerificationModule { }
+export class MySuggestionModule { }

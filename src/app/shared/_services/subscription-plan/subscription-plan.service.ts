@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { CommonService } from '../common.service';
-import { HttpService } from '../http.service';
+import { HttpService } from '../http/http.service';
+import { SignupService } from '../signup/signup.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SubscriptionPlanService {
 
-  constructor(private http: HttpService, private _commonService: CommonService) { }
+  constructor(private _httpService: HttpService, private _signupService: SignupService) { }
 
   assignPlan(data: any) {
-    return this.http.POST(`/users/assign_plan?access_token=${this._commonService.getUserId()}`, data);
+    return this._httpService.POST(`/users/assign_plan?access_token=${this._signupService.getSignUpSession().token}`, data);
   }
 }

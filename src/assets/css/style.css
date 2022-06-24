@@ -42,6 +42,9 @@ img {
 button:focus {
   outline: none;
 }
+input:focus { 
+    outline: none !important;
+ }
 .mp {
   margin: 0px;
   padding: 0px;
@@ -55,11 +58,12 @@ button:focus {
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
-  padding: 15px 40px;
+  width: 160px;
   border: none;
   display: inline-block;
   font-weight: 400;
   text-align: center;
+	height: 45px;
 }
 .btn_sty_1:hover {
   background: #033260;
@@ -96,7 +100,6 @@ button:focus {
 li {
   list-style-type: none;
 }
-
 .btn_default {
   background-color: #296BB5;
   border: 1px solid #243864;
@@ -110,11 +113,10 @@ li {
 .btn_default:hover, .btn_default:active, .btn_default:focus, .btn_default:disabled {
   background-color: #296BB5 !important;
 }
-.header.fixed{
-    width: 100% !important;
-    position: fixed !important;
-    top: 0 !important;
-height: 97px !important;
+.header.fixed {
+  width: 100% !important;
+  position: fixed !important;
+  top: 0 !important;
 }
 .form-control1 {
   background-color: transparent;
@@ -122,7 +124,10 @@ height: 97px !important;
   border-radius: 0.25rem;
   color: #fff;
 }
-.form-control:focus {
+.form-control1:disabled {
+  color: #000;
+}
+.login_form .form-control:focus {
   color: #fff;
   background-color: transparent;
 }
@@ -215,7 +220,7 @@ a.for_pass {
   width: 100%;
   text-align: center;
   padding-top: 20px;
-  position: relative;
+  position: absolute;
   bottom: 0px;
   right: 0%;
   padding-bottom: 30px;
@@ -224,13 +229,19 @@ a.for_pass {
   color: #fff;
   font-size: 14px;
 }
+
+.bot_link p{
+  line-height: 0px;
+}
+
 #header {
-    background-color: #fff;
-    box-shadow: #e7e7e7 0px 2px 6px;
-    padding: 15px 15px 0px 15px;
-    position: relative;
-    z-index: 1;
-    width: 100%;
+  background-color: #fff;
+  box-shadow: #e7e7e7 0px 2px 6px;
+  padding: 15px 15px 15px 15px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  transition: all 0.3s;
 }
 .item_middle {
   display: flex;
@@ -608,7 +619,7 @@ a.for_pass {
 /*Menu Sidebar*/
 .sidebar {
   position: fixed;
-  top: 97px;
+  top: 95px;
   left: 0;
   bottom: 0;
   width: 100px;
@@ -620,32 +631,30 @@ a.for_pass {
   box-shadow: 0px 0px 20px rgb(1 41 112 / 10%);
   background-color: #243864;
 }
-
-.sidebar ul{}
+.sidebar ul {}
 .sidebar ul li {
-    border-bottom: 1px solid #7c88a2;
+  border-bottom: 1px solid #7c88a2;
 }
 .sidebar ul li:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 .sidebar ul a {
-    color: #fff;
-    display: block;
-    text-align: center;
-    padding: 25px 15px;
+  color: #fff;
+  display: block;
+  text-align: center;
+  padding: 20px 15px;
+  font-size: 14px;
 }
-.sidebar ul a.active {border-left: 3px solid #fff;}
+.sidebar ul a.active {
+  border-left: 3px solid #fff;
+}
 .sidebar ul a span {
-    display: block;
-    text-align: center;
-	padding-bottom: 7px;
+  display: block;
+  text-align: center;
+  padding-bottom: 7px;
 }
-.sidebar ul a span{}
-
-
+.sidebar ul a span {}
 /* End Menu Sidebar*/
-
-
 /*Main Container*/
 #main {
   margin-top: 60px;
@@ -653,15 +662,12 @@ a.for_pass {
   transition: all 0.3s;
 }
 /* End Main Container*/
-
 /*Settings Tab CSS*/
-
 .settings-tab {
-    max-width: 70%;
-    margin: 0 auto;
-    margin-top: 70px;
+  max-width: 70%;
+  margin: 0 auto;
+  margin-top: 70px;
 }
-
 .tabbable-panel {
   border: 1px solid #eee;
   padding: 10px;
@@ -716,48 +722,92 @@ a.for_pass {
 .portlet .tabbable-line > .tab-content {
   padding-bottom: 0;
 }
-
-.tab-content-cus>.active {
-    display: block;
-    background: #fff;
-    padding: 50px 100px;
-    box-shadow: #ccc 0px 3px 6px;
+.tab-content-cus > .active {
+  display: block;
+  background: #fff;
+  padding: 50px 100px;
+  box-shadow: #ccc 0px 3px 6px;
 }
-
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
-    color: #495057;
-    background-color: transparent;
-    border-color: #f8f8f8;
-    border-bottom: 4px solid #296BB5;
-    text-align: center;   
+  color: #495057;
+  background-color: transparent;
+  border-color: #f8f8f8;
+  border-bottom: 4px solid #296BB5;
+  text-align: center;
 }
-
 .nav-link:hover {
-    border-color: #f8f8f8;
+  border-color: #f8f8f8;
 }
 li.nav-item-cus {
-    width: 33.33%;
-    text-align: center;
+  width: 33.33%;
+  text-align: center;
 }
-
 a.nav-link-cus {
-    font-size: 20px;
-    font-weight: 500;
+  font-size: 20px;
+  font-weight: 500;
 }
 a.nav-link-cus:hover {
-    color: #000;
-	border: none;
+  color: #000;
+  border: none;
 }
-
 .max-270 {
-    max-width: 270px;
-    margin: 0 auto;
-    display: block;
+  max-width: 270px;
+  margin: 0 auto;
+  display: block;
 }
-
 /* End Settings Tab CSS*/
+/* My Suggestions CSS*/
+.my_suggestions {
+    max-width: 100%;
+    margin: 0 auto;
+  margin-top: 50px;
+}
+.my_suggestions ul li.nav-item-cus {
+  width: 12%;
+  text-align: center;
+}
+.my_suggestions .tab-content-cus > .active {
+  display: block;
+  background-color: transparent;
+  padding: 0px;
+  ;
+  box-shadow: none;
+}
+.my_suggestions .my-sug-area {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    font-size: 16px;
+    max-height: 100px;
+    overflow-y: auto;
+}
+.my_suggestions .add-sug-btn{
+    margin-top: 25px;
+}
+.reset-btn {
+    border: 1px solid #296BB5;
+    border-radius: 30px;
+    width: 150px;
+	height: 40px;
+    margin-top: 10px;
+	color: #296BB5;
+	background-color: #fff;
+}
+.my_suggestions .my-sug-area:focus{border: 1px solid #ccc !important;}
 
-
+.mysuggestion-popup .my-sug-area {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    font-size: 16px;
+    max-height: 100px;
+    overflow-y: auto;
+}
+/* End My Suggestions CSS*/
 
 
 

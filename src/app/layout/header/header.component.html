@@ -8,33 +8,43 @@
                     </a>
                 </div>
             </div>
+
             <!--User-Profile-->
             <div class="col-lg-6">
-                <div class="User_profile float-right">
-                    <nav class="navbar navbar-light navbar-expand-sm">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-list-4"
-                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbar-list-4">
-                            <ul class="navbar-nav">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="false">
-                                        <label>Alexander Brooks</label>
-                                        <img src="assets/img/user1.png" width="49" height="49" class="rounded-circle">
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" [routerLink]="['/my-profile']">My Profile</a>
-                                        <a class="dropdown-item" [routerLink]="['/my-suggestion']">My Suggestion</a>
-                                        <a class="dropdown-item" [routerLink]="['/my-plan']">My Plan</a>
-                                        <a class="dropdown-item" href="javascript:void(0);" (click)="logout()">Log Out</a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
+                <ng-container *ngIf="!token">
+                    <div class="float-right item_middle login_link mt-3">
+                        <a [routerLink]="['/login']">Login</a>
+                    </div>
+                </ng-container>
+    
+                <ng-container *ngIf="token">
+                    <div class="User_profile float-right">
+                        <nav class="navbar navbar-light navbar-expand-sm">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-list-4"
+                                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbar-list-4">
+                                <ul class="navbar-nav">
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                            <label class="mr-2">{{name}}</label>
+                                            <img [src]="profilePic ? profilePic : 'assets/img/avatar.png'" width="49" height="49" class="rounded-circle">
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                            <!-- <a class="dropdown-item" [routerLink]="['/my-profile']">My Profile</a> -->
+                                            <a class="dropdown-item" href="javascript:void(0);">My Profile</a>
+                                            <a class="dropdown-item" [routerLink]="['/my-suggestion']">My Suggestion</a>
+                                            <a class="dropdown-item" [routerLink]="['/my-plan']">My Plan</a>
+                                            <a class="dropdown-item" href="javascript:void(0);" (click)="logout()">Log Out</a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </ng-container>
             </div>
             <!-- End User-Profile -->
         </div>

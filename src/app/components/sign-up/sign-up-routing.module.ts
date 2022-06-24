@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SignUpComponent } from './sign-up.component';
+import { VerificationComponent } from './verification/verification.component';
 
 const routes: Routes = [
-  { path: '', component: SignUpComponent, data: { title: "Register - KPI Karta" } }
+  { path: '', component: SignUpComponent, data: { title: "Register - KPI Karta" } },
+  { path: 'verification', component: VerificationComponent, data: { title: "Verification - KPI Karta" } }
 ];
 
 @NgModule({

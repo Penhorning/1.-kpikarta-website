@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateChild, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CommonService } from '../_services/common.service';
+import { CommonService } from '@app/shared/_services/common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,6 @@ export class AuthGuard implements CanActivateChild {
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      console.log("child ", this._commonService.getSession())
       if (this._commonService.getSession() && this._commonService.getSession().token) {
         return true;
       } else {

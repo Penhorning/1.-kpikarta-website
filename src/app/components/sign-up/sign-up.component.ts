@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
+import { SignupService } from '@app/shared/_services/signup/signup.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -23,29 +24,40 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
+  wantToVerify: boolean = false;
 
   signupForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]],
     mobile: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(10), Validators.maxLength(10)]],
-    companyNumber: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(10), Validators.maxLength(10)]]
+    companyName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
   });
   get form() { return this.signupForm.controls; }
 
-  constructor(private fb: FormBuilder, private _commonService: CommonService, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private fb: FormBuilder,
+    private _commonService: CommonService,
+    private _signupService: SignupService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     this.user.userId = this.route.snapshot.queryParamMap.get("userId") || "";
     this.user.accessToken = this.route.snapshot.queryParamMap.get("access_token") || "";
     this.user.email = this.route.snapshot.queryParamMap.get("email") || "";
 
-    if (!this.user.userId) {
+    if (this.user.userId) {
+      this.signupForm.patchValue({
+        fullName: this.route.snapshot.queryParamMap.get("name"),
+        email: this.route.snapshot.queryParamMap.get("email")
+      });
+      this.signupForm.controls["fullName"].disable();
+      this.signupForm.controls["email"].disable();
+    } else {
       this.signupForm.addControl("password", this.fb.control('', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]));
     }
-    this.signupForm.patchValue({
-      fullName: this.route.snapshot.queryParamMap.get("name"),
-      email: this.route.snapshot.queryParamMap.get("email")
-    })
+    
   }
 
   // On submit
@@ -58,30 +70,33 @@ export class SignUpComponent implements OnInit, OnDestroy {
       this.submitFlag = true;
 
       if (!this.user.userId) {
-        this._commonService.signup(this.signupForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+        this._signupService.signup(this.signupForm.value).pipe(takeUntil(this.destroy$)).subscribe(
           (response: any) => {
             let { token, email } = response;
             let sessionData = {
-              userId: token.id,
-              email
+              token: token.id,
+              email,
+              stage: 1
             }
-            this._commonService.setSession(sessionData);
-            this.router.navigate(['/verification']);
+            this._signupService.setSignUpSession(sessionData);
+            this.router.navigate(['/sign-up/verification']);
           },
           (error: any) => {
             this.submitFlag = false;
+            if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+              this._commonService.errorToaster("This email already exist in the system");
+            }
           }
         );
       } else {
-        this.signupForm.value.userId = this.user.userId;
-        this.signupForm.value.accessToken = this.user.accessToken;
-        this._commonService.updateUser(this.signupForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+        this._signupService.updateUser(this.signupForm.getRawValue(), this.user.userId, this.user.accessToken).pipe(takeUntil(this.destroy$)).subscribe(
           (response: any) => {
             let sessionData = {
-              userId: this.user.accessToken,
-              email: this.user.email
+              token: this.user.accessToken,
+              email: this.user.email,
+              stage: 1
             }
-            this._commonService.setSession(sessionData);
+            this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/subscription-plan']);
           },
           (error: any) => {
@@ -90,6 +105,21 @@ export class SignUpComponent implements OnInit, OnDestroy {
         );
       }
     }
+  }
+
+  verifyMobile() {
+    this.wantToVerify = true;
+    this.signupForm.addControl("otp", this.fb.control(''));
+    console.log(this.signupForm.value.mobile);
+    // this._signupService.sendMobileOTP()
+  }
+
+  resendOtp() {
+    console.log("resned")
+  }
+
+  verifyOtp() {
+    console.log("veirfy")
   }
 
   ngOnDestroy(): void {

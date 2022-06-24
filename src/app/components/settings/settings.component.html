@@ -70,7 +70,12 @@
                       1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
                   </div>
                 </div>
-                <button class="btn btn-light btn_default max-270 mt-5">Change Password</button>
+                <button class="btn btn-light btn_default max-270 mt-5" [disabled]="submitFlag">
+                  <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                      <span class="sr-only">Loading...</span>
+                  </div>
+                  <ng-container *ngIf="!submitFlag">Change Password</ng-container>
+              </button>
               </form>
             </div>
           </div>

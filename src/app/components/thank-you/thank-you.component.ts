@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonService } from '@app/shared/_services/common.service';
+import { SignupService } from '@app/shared/_services/signup/signup.service';
 
 @Component({
   selector: 'app-thank-you',
@@ -9,11 +9,15 @@ import { CommonService } from '@app/shared/_services/common.service';
 })
 export class ThankYouComponent implements OnInit {
 
-  constructor(private _commonService: CommonService, private router: Router) {
-    if (!this._commonService.getUserId()) this.router.navigate(['/login']);
+  constructor(private _signupService: SignupService, private router: Router) {
+    if (!this._signupService.getSignUpSession().token) this.router.navigate(['/login']);
   }
 
   ngOnInit(): void {
+  }
+
+  login() {
+    this._signupService.deleteSignUpSession();
   }
 
 }
