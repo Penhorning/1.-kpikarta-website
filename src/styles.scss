@@ -1,7 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Importing Datepicker SCSS file. */
+@import "~ngx-bootstrap/datepicker/bs-datepicker";
+
+
 .disableDiv {
     opacity: 0.2;
     cursor: not-allowed;
     pointer-events: none;
+}
+.navbar_logo {
+    min-width: 250px;
+    min-height: 57px;
+    max-width: 250px;
+    max-height: 57px;
+}
+.login_profile {
+    min-width: 50px;
+    min-height: 48px;
+    max-width: 50px;
+    max-height: 48px;
 }

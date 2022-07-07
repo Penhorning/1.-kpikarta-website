@@ -17,6 +17,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
   submitted: boolean = false;
   submitFlag: boolean = false;
   deleteFlag: boolean = false;
+  isLoading: boolean = false;
 
   phases: any = [];
   suggestion: any;
@@ -42,19 +43,22 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
     });
     this.suggestion.descriptions.forEach((item: any) => {
       const descriptionForm = this.fb.group({
-        description: [item.description, [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+        description: [{value: item.description, disabled: true}, [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
       });
       this.descriptions.push(descriptionForm);
     });
   }
 
   getKartaPhases() {
+    this.isLoading = true;
     this._suggestionService.getPhases().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.phases = response;
         this.getSuggestion(this.phases[0].id);
       },
-      (error: any) => { }
+      (error: any) => {
+        this.isLoading = false;
+      }
     );
   }
 
@@ -71,7 +75,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
         this.patchForm();
       },
       (error: any) => { }
-    );
+    ).add(() => this.isLoading = false);
   }
 
   onPhaseChange(phaseId: string) {
@@ -79,14 +83,20 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
     
   }
 
+  enableDescription(descriptionIndex: number) {
+    this.descriptions.at(descriptionIndex).enable();
+  }
+
   addDescriptions() {
-    const descriptionForm = this.fb.group({
-      description: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
-    });
-    this.descriptions.push(descriptionForm);
-    setTimeout(()=> {
-      document.getElementById("textarea"+(this.descriptions.length-1))?.focus();
-    }, 100);
+    if (this.suggestionForm.controls["descriptions"].status !== "INVALID") {
+      const descriptionForm = this.fb.group({
+        description: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+      });
+      this.descriptions.push(descriptionForm);
+      setTimeout(()=> {
+        document.getElementById("textarea"+(this.descriptions.length-1))?.focus();
+      }, 100);
+    }
   }
 
   removeDescription(descriptionIndex: number) {
@@ -96,12 +106,12 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
   onSubmit() {
     this.submitted = true;
     
-    if (this.suggestionForm.valid) {
+    if ((this.suggestionForm.valid && this.suggestionForm.touched && this.suggestionForm.dirty) || (this.suggestionForm.valid && this.suggestion.descriptions.length != this.descriptions.length)) {
 
       this.submitFlag = true;
 
       if (this.suggestion.hasOwnProperty("userId")) {
-        this._suggestionService.updateSuggestion(this.suggestionForm.value, this.suggestion.id).pipe(takeUntil(this.destroy$)).subscribe(
+        this._suggestionService.updateSuggestion(this.suggestionForm.getRawValue(), this.suggestion.id).pipe(takeUntil(this.destroy$)).subscribe(
           (response: any) => {
             this._commonService.successToaster("Suggestion added successfully");
             this.submitted = false;
@@ -115,6 +125,8 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
       } else {
         this.suggestionForm.value.userId = this._commonService.getUserId();
         this.suggestionForm.value.phaseId = this.suggestion.phaseId;
+        this.suggestionForm.value.descriptions = this.suggestionForm.getRawValue().descriptions;
+        
         this._suggestionService.createSuggestion(this.suggestionForm.value).pipe(takeUntil(this.destroy$)).subscribe(
           (response: any) => {
             this._commonService.successToaster("Suggestion added successfully");
@@ -131,19 +143,25 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
   }
 
   deleteSuggestion() {
-    this.deleteFlag = true;
-    if (!this.suggestion.hasOwnProperty("userId")) {
-      this._commonService.successToaster("Suggestion reset successfully");
-      this.deleteFlag = false;
-    } else {
-      this._suggestionService.deleteSuggestion(this.suggestion.id).pipe(takeUntil(this.destroy$)).subscribe(
-        (response: any) => {
-          this.getSuggestion(this.suggestion.phaseId);
-          this._commonService.successToaster("Suggestion reset successfully");
-        },
-        (error: any) => { }
-      ).add(() => { this.deleteFlag = false });
-    }  
+    const phase = this.phases.filter((item: any) => item.id === this.suggestion.phaseId);
+
+    const result = confirm(`Are you sure, you want to reset your "${phase[0].name}" suggestions?`);
+    if (result) {
+      this.deleteFlag = true;
+      if (!this.suggestion.hasOwnProperty("userId")) {
+        this._commonService.successToaster("Suggestion reset successfully");
+        this.deleteFlag = false;
+        this.ngOnInit();
+      } else {
+        this._suggestionService.deleteSuggestion(this.suggestion.id).pipe(takeUntil(this.destroy$)).subscribe(
+          (response: any) => {
+            this.getSuggestion(this.suggestion.phaseId);
+            this._commonService.successToaster("Suggestion reset successfully");
+          },
+          (error: any) => { }
+        ).add(() => { this.deleteFlag = false });
+      }
+    }
   }
 
   ngOnDestroy(): void {

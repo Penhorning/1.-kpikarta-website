@@ -18,20 +18,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute, 
     private title: Title
-  ) {
-    // listenging to routing navigation event
-    // this.router.events.subscribe(event => {
-    //   if (event instanceof NavigationEnd) {
-    //     if (
-    //       event.url == "/" || event.url.substring(0,6) == "/login" || event.url == "/forgot-password" ||
-    //       event.url == "/verification" || event.url.substring(0,15) == "/reset-password" || event.url.substring(0,8) == "/sign-up" || 
-    //       event.url.substring(0,10) == "/thank-you"
-    //       ) {
-    //         this.showHeader = false;
-    //       } else this.showHeader = true;
-    //   }
-    // });
-  }
+  ) { }
 
   ngOnInit () {
     if (isPlatformBrowser(this.platformId)) {
@@ -46,7 +33,8 @@ export class AppComponent implements OnInit {
         filter((route) => route.outlet === 'primary'),
         mergeMap((route) => route.data)).subscribe(
           (event) => {
-          this.title.setTitle(event['title']);
+            console.log(event)
+            this.title.setTitle(event['title']);
         });
     }
   }

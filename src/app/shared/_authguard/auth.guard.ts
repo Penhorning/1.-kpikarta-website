@@ -45,7 +45,7 @@ export class LoginGuard implements CanActivateChild {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       if (this._commonService.getSession() && this._commonService.getSession().token) {
-        this.router.navigate(['/my-plan']);
+        this.router.navigate(['/dashboard']);
         return false;
       } else return true
   }

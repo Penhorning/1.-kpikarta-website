@@ -12,7 +12,7 @@ import * as moment from 'moment';
 export class CommonService {
 
   private BASE_URL = environment.API_URL;
-  public MEDIA_URL = `${this.BASE_URL}/public/uploads`;
+  public MEDIA_URL = `${this.BASE_URL}`;
   
   loginFlag: boolean = false;
   loader = `
@@ -70,9 +70,22 @@ export class CommonService {
     session.profilePic = updatedPic;
     window.localStorage.setItem("kpi-karta-session", JSON.stringify(session));
   }
+  updateCompanyLogoInSession(updatedLogo: string) {
+    let session = JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}");
+    session.companyLogo = updatedLogo;
+    window.localStorage.setItem("kpi-karta-session", JSON.stringify(session));
+  }
   deleteSession() {
     localStorage.removeItem("kpi-karta-session");
     this.router.navigate(['/login']);
+  }
+
+  // Remember me session
+  setRememberMeSession(sessionData: any) {
+    window.localStorage.setItem("kpi-karta-remember-me-session", JSON.stringify(sessionData));
+  }
+  getRememberMeSession() {
+    return JSON.parse(window.localStorage.getItem("kpi-karta-remember-me-session") || "{}");
   }
 
 

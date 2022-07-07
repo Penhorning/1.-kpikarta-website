@@ -1,82 +1,229 @@
 <app-header></app-header>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-lg-1">
-      <app-sidebar></app-sidebar>
-    </div>
-    <div class="col-lg-11">
-      <div class="settings-tab">
-        <!-- Settings Tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-          <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus active" data-toggle="tab" href="#tabs-1"
-              role="tab">Personal details</a> </li>
-          <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus" data-toggle="tab" href="#tabs-2"
-              role="tab">Multi factor Authentication</a> </li>
-          <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus" data-toggle="tab" href="#tabs-3"
-              role="tab">Change Password</a> </li>
-        </ul>
-        <!-- Tab panes -->
-        <div class="tab-content tab-content-cus">
-          <div class="tab-pane active" id="tabs-1" role="tabpanel">
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry's
-              standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it
-              to make
-              a type specimen book.</p>
-          </div>
-          <div class="tab-pane" id="tabs-2" role="tabpanel">
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry's
-              standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it
-              to make
-              a type specimen book.</p>
-          </div>
-          <div class="tab-pane" id="tabs-3" role="tabpanel">
-            <div class="max_center_400">
-              <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
-                <div class="form-group">
-                  <label for="oldPassword">Old Password:</label>
-                  <input type="password" class="form-control form-control2" id="oldPassword"
-                    formControlName="oldPassword"
-                    [ngClass]="{ 'is-invalid': (submitted || form.oldPassword.touched) && form.oldPassword.errors }">
-                  <div *ngIf="(submitted || form.oldPassword.touched) && form.oldPassword.errors"
-                    class="invalid-feedback">
-                    <div *ngIf="form.oldPassword.errors.required">Old password is required!</div>
-                    <div *ngIf="form.oldPassword.errors.pattern">Password should contain atleast 1 number,
-                      1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+<app-sidebar></app-sidebar>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="settings-tab">
+
+          <!-- Settings Tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab"
+                href="#tabs-1" role="tab">Settings</a> </li>
+            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2"
+                role="tab" (click)="checkMFAEnabled()">Multi factor Authentication</a> </li>
+            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3"
+                role="tab">Change Password</a> </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content tab-content-cus">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <div class="settings-gray-section">
+                <div class="row">
+                  <div class="col-lg-5">
+                    <div class="color-settings">
+                      <h5>Color Settings</h5>
+                      <div class="color-box">
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <div class="color-range">
+                              <p>Color Range <span class="color-range-box"></span></p>
+                            </div>
+                          </div>
+                          <div class="col-lg-6 text-right">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <form>
+                                  <input type="hidden" name="min-value" value="">
+                                  <input type="hidden" name="max-value" value="">
+                                </form>
+                              </div>
+                            </div>
+                            <div class="row slider-labels">
+                              <div class="col-xs-5 caption">
+                                <span id="slider-range-value1"></span><strong>%</strong>
+                              </div>
+                              <div class="col-xs-2"> - </div>
+                              <div class="col-xs-5 text-right caption">
+                                <span id="slider-range-value2"></span><strong>%</strong>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="container">
+                          <div class="row mt-4">
+                            <div class="col-sm-12">
+                              <div id="slider-range"></div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mt-4">
+                          <div class="col-lg-12 text-right">
+                            <div class="add-btn">
+                              <button class="add-button">Add</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="color-box-plus-min">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <h6>0-50%</h6>
+                        </div>
+                        <div class="col-lg-6 text-right">
+                          <div class="float-right d-flex">
+                            <div class="color-box-two"></div>
+                            <div class="plus-minus"><img src="assets/img/minus.png"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mt-2">
+                        <div class="col-lg-6">
+                          <h6>51-99%</h6>
+                        </div>
+                        <div class="col-lg-6 text-right">
+                          <div class="float-right d-flex">
+                            <div class="color-box-two"></div>
+                            <div class="plus-minus"><img src="assets/img/minus.png"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mt-2">
+                        <div class="col-lg-6">
+                          <h6>0-50%</h6>
+                        </div>
+                        <div class="col-lg-6 text-right">
+                          <div class="float-right d-flex">
+                            <div class="color-box-two"></div>
+                            <div class="plus-minus"><img src="assets/img/minus.png"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="newPassword">New Password:</label>
-                  <input type="password" class="form-control form-control2" id="newPassword"
-                    formControlName="newPassword"
-                    [ngClass]="{ 'is-invalid': (submitted || form.newPassword.touched) && form.newPassword.errors }">
-                  <div *ngIf="(submitted || form.newPassword.touched) && form.newPassword.errors"
-                    class="invalid-feedback">
-                    <div *ngIf="form.newPassword.errors.required">New password is required!</div>
-                    <div *ngIf="form.newPassword.errors.pattern">Password should contain atleast 1 number,
-                      1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12 text-center">
+                  <button class="save-btn">Save</button>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="tabs-2" role="tabpanel">
+
+              <div class="factor-cl" *ngIf="!qr.isAvailable">
+                <div class="row">
+                  <div class="col-8">
+                    <h5>{{qr.isMFASetup ? 'Reset authentication' : 'Setup Authenticator app'}}</h5>
+                  </div>
+                  <div class="col-4 text-right">
+                    <div class="">
+                      <div class="form-check custom-box">
+                        <input type="checkbox" class="form-check-input" id="generateCheck" [checked]="qr.isMFASetup" (click)="generateQRCode()">
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="confirmPassword">Confirm Password:</label>
-                  <input type="password" class="form-control form-control2" id="confirmPassword"
-                    formControlName="confirmPassword"
-                    [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
-                  <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors"
-                    class="invalid-feedback">
-                    <div *ngIf="form.confirmPassword.errors.required">Confirm password is required!</div>
-                    <div *ngIf="form.confirmPassword.errors.pattern">Password should contain atleast 1 number,
-                      1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+              </div>
+              <div class="factor-cl" *ngIf="qr.isAvailable">
+                <h1 class="font-weight-normal mb-4">Scan the QR code</h1>
+                <p>
+                  Use the authenticator app to scan the QR code. This will connect the Authenticator app with you account.
+                  <br>
+                  After you scan the QR code, Enter the code below:
+                </p>
+                <img [src]="qr.code" alt="">
+                <div>
+                  <form [formGroup]="authenticatorForm" (ngSubmit)="onAuthenticationSubmit()">
+                    <div class="form-group">
+                      <label class="font-weight-bold mb-0" for="code">Enter the 6-digit code you see in your authenticator app</label>
+                      <input type="text" class="form-control font-weight-normal" id="code" placeholder="Authentication code" formControlName="code" [maxlength]="6"
+                        [ngClass]="{ 'is-invalid': (qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors }">
+                      <div *ngIf="(qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors" class="invalid-feedback">
+                        <div *ngIf="authenticatorControls.code.errors.required">Code is required!</div>
+                      </div>
+                    </div>
+                    <button class="btn btn-light btn_default max-270 mt-5" [disabled]="qr.submitFlag">
+                      <div class="spinner-border text-light align-top" role="status" *ngIf="qr.submitFlag">
+                        <span class="sr-only">Loading...</span>
+                      </div>
+                      <ng-container *ngIf="!qr.submitFlag">Confirm</ng-container>
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <div class="factor-cl border-0">
+                <div class="row">
+                  <div class="col-8">
+                    <h5>Enable/Disable Multi factor authentication</h5>
+                  </div>
+                  <div class="col-4 text-right">
+                    <div class="toggle-tab">
+                      <label class="switch" for="checkbox">
+                        <input type="checkbox" id="checkbox" [checked]="qr.isMFAEnabled" [disabled]="!qr.isMFAEnabled" (click)="toggleMFA($event)"/>
+                        <div class="slider round" [ngStyle]="{'cursor': qr.isMFAEnabled ? 'pointer' : 'default'}"></div>
+                      </label>
+                    </div>
                   </div>
                 </div>
-                <button class="btn btn-light btn_default max-270 mt-5" [disabled]="submitFlag">
-                  <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+              </div>
+
+
+            </div>
+            <div class="tab-pane" id="tabs-3" role="tabpanel">
+              <div class="max_center_400 custom-tab-change-pass">
+                <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+                  <div class="form-group">
+                    <label for="oldPassword">Old Password:</label>
+                    <input type="password" class="form-control" id="oldPassword" placeholder="****************"
+                      formControlName="oldPassword"
+                      [ngClass]="{ 'is-invalid': (submitted || form.oldPassword.touched) && form.oldPassword.errors }">
+                    <div *ngIf="(submitted || form.oldPassword.touched) && form.oldPassword.errors"
+                      class="invalid-feedback">
+                      <div *ngIf="form.oldPassword.errors.required">Old password is required!</div>
+                      <div *ngIf="form.oldPassword.errors.pattern">Password should contain atleast 1 number,
+                        1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="newPassword">New Password:</label>
+                    <input type="password" class="form-control" id="newPassword" placeholder="****************"
+                      formControlName="newPassword"
+                      [ngClass]="{ 'is-invalid': (submitted || form.newPassword.touched) && form.newPassword.errors }">
+                    <div *ngIf="(submitted || form.newPassword.touched) && form.newPassword.errors"
+                      class="invalid-feedback">
+                      <div *ngIf="form.newPassword.errors.required">New password is required!</div>
+                      <div *ngIf="form.newPassword.errors.pattern">Password should contain atleast 1 number,
+                        1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="****************"
+                      formControlName="confirmPassword"
+                      [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
+                    <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors"
+                      class="invalid-feedback">
+                      <div *ngIf="form.confirmPassword.errors.required">Confirm password is required!</div>
+                      <div *ngIf="form.confirmPassword.errors.pattern">Password should contain atleast 1 number,
+                        1 lowercase, 1 uppercase, 1 special character and must of 8 digits.</div>
+                    </div>
+                  </div>
+                  <button class="btn btn-light btn_default max-270 mt-5" [disabled]="submitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
                       <span class="sr-only">Loading...</span>
-                  </div>
-                  <ng-container *ngIf="!submitFlag">Change Password</ng-container>
-              </button>
-              </form>
+                    </div>
+                    <ng-container *ngIf="!submitFlag">Change Password</ng-container>
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>

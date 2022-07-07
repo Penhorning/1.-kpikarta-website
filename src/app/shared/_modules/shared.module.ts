@@ -9,10 +9,14 @@ import { FooterComponent } from "@app/layout/footer/footer.component";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 
+// County code phone number module
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+
 const modules: any = [
     FormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxIntlTelInputModule
 ]
 
 @NgModule({

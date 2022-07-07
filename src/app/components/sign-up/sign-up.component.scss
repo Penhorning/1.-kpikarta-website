@@ -1,0 +1,25 @@
+.ngx_phone_number {
+    background: transparent;
+    border-color: #929cb2;
+    border-radius: .25rem .25rem .25rem .25rem !important;
+}
+.ngx_phone_number.is-invalid {
+    border-color: #dc3545;
+}
+.ngx_phone_number ::ng-deep input.custom {
+    border: 0px solid #fff !important;
+    outline-style: none !important;
+    box-shadow: none !important;
+    border-color: transparent;
+    background: transparent;
+    color: #fff;
+}
+.ngx_phone_number ::ng-deep input.custom:focus {
+    caret-color: #fff;
+}
+.ngx_phone_number ::ng-deep .iti {
+    color: #fff !important;
+}
+.ngx_phone_number ::ng-deep .iti__arrow {
+    border-top: 4px solid #929cb2;
+}

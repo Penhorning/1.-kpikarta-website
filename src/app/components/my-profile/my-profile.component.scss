@@ -1,0 +1,27 @@
+.ngx_phone_number.is-invalid {
+    border-color: #dc3545;
+}
+.ngx_phone_number ::ng-deep input.custom {
+    border: 0px solid #fff !important;
+    outline-style: none !important;
+}
+.input_logo {
+    position: absolute;
+    height: 90px;
+    width: 150px;
+    top: -10px;
+    right: 12px;
+    cursor: pointer;
+    background: transparent;
+    opacity: 0;
+}
+.input_preview {
+    height: 90px;
+    width: 150px;
+}
+.profile_logo {
+    min-width: 100px;
+    min-height: 75px;
+    max-width: 100px;
+    max-height: 75px;
+}

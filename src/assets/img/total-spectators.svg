@@ -1,0 +1,18 @@
+<svg id="total-spectators" xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62">
+  <g id="ic-users">
+    <g id="Oval" fill="rgba(0,88,255,0.03)" stroke="rgba(41,107,181,0.22)" stroke-width="1">
+      <circle cx="31" cy="31" r="31" stroke="none"/>
+      <circle cx="31" cy="31" r="30.5" fill="none"/>
+    </g>
+    <g id="Group_8431" data-name="Group 8431" transform="translate(-2435.924 -651)">
+      <path id="Path_38474" data-name="Path 38474" d="M292.828,242.459h8.078a4.122,4.122,0,0,0-8.078,0Z" transform="translate(2169.719 440.256)" fill="#296bb5"/>
+      <path id="Path_38475" data-name="Path 38475" d="M179.946,136.643a2.473,2.473,0,1,1-2.473-2.473,2.473,2.473,0,0,1,2.473,2.473" transform="translate(2279.221 537.83)" fill="#296bb5"/>
+      <path id="Path_38476" data-name="Path 38476" d="M432.828,242.459h8.078a4.122,4.122,0,0,0-8.078,0Z" transform="translate(2039.61 440.256)" fill="#296bb5"/>
+      <path id="Path_38477" data-name="Path 38477" d="M319.946,136.643a2.473,2.473,0,1,1-2.473-2.473,2.473,2.473,0,0,1,2.473,2.473" transform="translate(2149.113 537.83)" fill="#296bb5"/>
+      <path id="Path_38478" data-name="Path 38478" d="M128.33,344.17h31.324v5.77H128.33Z" transform="translate(2322.594 342.668)" fill="#296bb5"/>
+      <path id="Path_38479" data-name="Path 38479" d="M459.946,136.643a2.473,2.473,0,1,1-2.473-2.473,2.473,2.473,0,0,1,2.473,2.473" transform="translate(2019.005 537.83)" fill="#296bb5"/>
+      <path id="Path_38480" data-name="Path 38480" d="M159.654,309.17H128.33v.824h31.324Z" transform="translate(2322.594 375.195)" fill="#296bb5"/>
+      <path id="Path_38481" data-name="Path 38481" d="M152.828,242.459h8.078a4.122,4.122,0,0,0-8.078,0Z" transform="translate(2299.827 440.256)" fill="#296bb5"/>
+    </g>
+  </g>
+</svg>

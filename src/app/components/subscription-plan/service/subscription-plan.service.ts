@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '../http/http.service';
-import { SignupService } from '../signup/signup.service';
+import { HttpService } from '../../../shared/_services/http/http.service';
+import { SignupService } from '../../sign-up/service/signup.service';
 
 @Injectable({
   providedIn: 'root'

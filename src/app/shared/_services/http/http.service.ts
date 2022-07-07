@@ -25,9 +25,13 @@ export class HttpService {
   GET_BY_ID(url: string, id: any): Observable<any> {
     return this.httpClient.get(this.BASE_URL + "/api" + url + id);
   }
-  // Update data
+  // Update partial data
   PATCH(url: string, data: any): Observable<any> {
     return this.httpClient.patch(this.BASE_URL + "/api" + url, data);
+  }
+  // Update whole data
+  PUT(url: string, data?: any): Observable<any> {
+    return this.httpClient.put(this.BASE_URL + "/api" + url, data);
   }
   // Delete
   DELETE(url: string, id: any): Observable<any> {

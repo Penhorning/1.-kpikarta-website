@@ -13,8 +13,8 @@
 
                         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">
-                                <label for="name">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="name" formControlName="fullName"
+                                <label for="fullName">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1" id="fullName" formControlName="fullName"
                                     [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
                                 <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
                                     <div *ngIf="form.fullName.errors.required">Full name is required!</div>
@@ -38,36 +38,27 @@
                                     [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
                                 <div *ngIf="(submitted || form.password.touched) && form.password.errors" class="invalid-feedback">
                                     <div *ngIf="form.password.errors.required">Password is required!</div>
-                                    <div *ngIf="form.password.errors.pattern">Password should contain atleast 1 number,
-                                        1 lowercase, 1 uppercase, 1 special character and must of 8 digits.
+                                    <div *ngIf="form.password.errors.pattern">Password should contain at least 1 number,
+                                        1 lowercase, 1 uppercase, 1 special character and must include at least 8 digits.
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="mobile">Mobile Number <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control form-control1" id="mobile" formControlName="mobile"
-                                    [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
+                                <label class="w-100" for="mobile">Mobile Number <span class="text-danger">*</span></label>
+                                <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+                                [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true"
+                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+                                [selectedCountryISO]="CountryISO.Canada" [maxLength]=15 class="form-control ngx_phone_number"
+                                [phoneValidation]="true" [separateDialCode]="separateDialCode"
+                                [numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="mobile" 
+                                [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
+                                </ngx-intl-tel-input>
                                 <div *ngIf="(submitted || form.mobile.touched) && form.mobile.errors" class="invalid-feedback">
                                     <div *ngIf="form.mobile.errors.required">Mobile number is required!</div>
-                                    <div *ngIf="form.mobile.errors.pattern">Please enter a valid mobile number!</div>
-                                    <div
-                                        *ngIf="!form.mobile.errors.pattern && (form.mobile.errors.minlength || form.mobile.errors.maxlength)">
-                                        Moblie number must of 10 digit!
-                                    </div>
+                                    <div *ngIf="!form.mobile.errors.required && form.mobile.errors">Mobile number is invalid</div>
                                 </div>
                             </div>
-
-                            <!-- <button type="button" class="btn btn-info" (click)="verifyMobile()">Verify</button> -->
-                            <ng-container *ngIf="wantToVerify">
-
-                                <div class="form-group">
-                                    <label for="otp">Verification code <span class="text-danger">*</span></label>
-                                    <input type="tel" class="form-control form-control1" id="otp" formControlName="otp">
-                                </div>
-                                <button type="button" class="btn btn-secondary" (click)="resendOtp()">Resend</button>
-                                <button type="button" class="btn btn-success ml-2" (click)="verifyOtp()">Verify otp</button>
-                            </ng-container>
 
                             <div class="form-group">
                                 <label for="companyName">Organization Name <span class="text-danger">*</span></label>

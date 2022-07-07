@@ -33,7 +33,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
   }
 
-  showErrorMessage(message: string, type: string) {
+  showMessage(message: string, type: string) {
     this.message.msg = message;
     this.message.type = type;
     this.message.show = true;
@@ -57,7 +57,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         (response: any) => {
           this.submitted = false;
           this.forgotForm.controls["email"].reset();
-          this.showErrorMessage("An email with password reset instructions has been sent on registered email address", "Success");
+          this.showMessage("An email with password reset instructions has been sent on registered email address", "Success");
         },
         (error: any) => { }
       ).add(() => this.submitFlag = false);

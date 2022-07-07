@@ -2,9 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { SignupService } from '@app/shared/_services/signup/signup.service';
+import { SignupService } from '@app/components/sign-up/service/signup.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 
 @Component({
   selector: 'app-sign-up',
@@ -24,12 +25,18 @@ export class SignUpComponent implements OnInit, OnDestroy {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
-  wantToVerify: boolean = false;
+
+  // ngx-intl-tel-input config
+  separateDialCode = true;
+	SearchCountryField = SearchCountryField;
+	CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+	preferredCountries: CountryISO[] = [CountryISO.Canada, CountryISO.UnitedStates, CountryISO.India];
 
   signupForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]],
-    mobile: ['', [Validators.required, Validators.pattern("^[0-9]*$"), Validators.minLength(10), Validators.maxLength(10)]],
+    mobile: [{}, Validators.required],
     companyName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
   });
   get form() { return this.signupForm.controls; }
@@ -76,7 +83,9 @@ export class SignUpComponent implements OnInit, OnDestroy {
             let sessionData = {
               token: token.id,
               email,
-              stage: 1
+              stage: 1,
+              emailVerified: false,
+              mobileVerified: false
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
@@ -89,10 +98,14 @@ export class SignUpComponent implements OnInit, OnDestroy {
           }
         );
       } else {
-        this._signupService.updateUser(this.signupForm.getRawValue(), this.user.userId, this.user.accessToken).pipe(takeUntil(this.destroy$)).subscribe(
+        this.signupForm.value.fullName = this.signupForm.getRawValue().fullName;
+        this.signupForm.value.email = this.signupForm.getRawValue().email;
+        this.signupForm.value.type = "social_user";
+
+        this._signupService.updateUser(this.signupForm.value, this.user.userId, this.user.accessToken).pipe(takeUntil(this.destroy$)).subscribe(
           (response: any) => {
             let sessionData = {
-              token: this.user.accessToken,
+              token: response.accessToken,
               email: this.user.email,
               stage: 1
             }
@@ -105,21 +118,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
         );
       }
     }
-  }
-
-  verifyMobile() {
-    this.wantToVerify = true;
-    this.signupForm.addControl("otp", this.fb.control(''));
-    console.log(this.signupForm.value.mobile);
-    // this._signupService.sendMobileOTP()
-  }
-
-  resendOtp() {
-    console.log("resned")
-  }
-
-  verifyOtp() {
-    console.log("veirfy")
   }
 
   ngOnDestroy(): void {

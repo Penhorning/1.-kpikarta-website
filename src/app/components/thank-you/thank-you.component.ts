@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SignupService } from '@app/shared/_services/signup/signup.service';
+import { SignupService } from '@app/components/sign-up/service/signup.service';
 
 @Component({
   selector: 'app-thank-you',

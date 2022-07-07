@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '../http/http.service';
+import { HttpService } from '../../../shared/_services/http/http.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,12 @@ export class SignupService {
   }
   getSignUpSession() {
     return JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
+  }
+  updateSignUpVerificationSession(type: string) {
+    let session = JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
+    if (type == "mobile") session.mobileVerified = true;
+    else if (type == "email") session.emailVerified = true;
+    window.sessionStorage.setItem("kpi-karta-signup-session", JSON.stringify(session));
   }
   updateSignUpSession(stageNumber: number) {
     let session = JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
@@ -34,19 +40,16 @@ export class SignupService {
     return this._httpService.PATCH(`/users/${userId}?access_token=${accessToken}`, data);
   }
   verification(data: any) {
-    return this._httpService.GET(`/users/verify_email?otp=${data.code}&access_token=${this.getSignUpSession().token}`);
+    return this._httpService.POST(`/users/verify_email?access_token=${this.getSignUpSession().token}`, data);
   }
   resendVerification() {
-    return this._httpService.POST(`/users/resend_code?access_token=${this.getSignUpSession().token}`, "");
+    return this._httpService.POST(`/users/send_email_code?access_token=${this.getSignUpSession().token}`, "");
   }
-  sendMobileOTP(data: any) {
-    return this._httpService.POST('/mobiles', data);
+  sendMobileCode() {
+    return this._httpService.POST(`/users/send_mobile_code?access_token=${this.getSignUpSession().token}`, "");
   }
-  resendMobileOTP() {
-    return this._httpService.POST(`/users/resend_code?access_token=${this.getSignUpSession().token}`, "");
-  }
-  verifyMobileOTP() {
-    return this._httpService.POST(`/users/resend_code?access_token=${this.getSignUpSession().token}`, "");
+  verifyMobile(data: any) {
+    return this._httpService.POST(`/users/verify_mobile?access_token=${this.getSignUpSession().token}`, data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
 }

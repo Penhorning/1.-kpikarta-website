@@ -6,7 +6,7 @@ import { environment } from '@environments/environment';
 import { CommonService } from '@app/shared/_services/common.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SignupService } from '@app/shared/_services/signup/signup.service';
+import { SignupService } from '@app/components/sign-up/service/signup.service';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +26,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]],
-    password: ['', Validators.required]
+    password: ['', Validators.required],
+    rememberMe: [false]
   });
   get form() { return this.loginForm.controls };
 
@@ -36,7 +37,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     private _signupService: SignupService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    let email = this._commonService.getRememberMeSession().email;
+    if (email) {
+      this.loginForm.patchValue({ email });
+    }
+  }
 
   ngOnInit(): void {
     if (this.route.snapshot.queryParamMap.get("access_token") && this.route.snapshot.queryParamMap.get("userId")) {
@@ -45,10 +51,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         userId: this.route.snapshot.queryParamMap.get("userId") || "",
         name: this.route.snapshot.queryParamMap.get("name") || "",
         email: this.route.snapshot.queryParamMap.get("email") || "",
-        profilePic: ""
+        profilePic: this.route.snapshot.queryParamMap.get("profilePic") || "",
+        companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || ""
       }
       this._commonService.setSession(sessionData);
-      this.router.navigate(['/my-plan']);
+      this.router.navigate(['/dashboard']);
     }
   }
 
@@ -61,12 +68,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this._commonService.login(this.loginForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, currentPlan } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobileVerified, currentPlan } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
               email,
-              stage: 1
+              stage: 1,
+              mobileVerified: mobileVerified
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
@@ -84,10 +92,14 @@ export class LoginComponent implements OnInit, OnDestroy {
               userId: id,
               name: fullName,
               email,
-              profilePic
+              profilePic,
+              companyLogo: response.companyLogo
             }
             this._commonService.setSession(sessionData);
-            this.router.navigate(['/my-plan']);
+            if (this.loginForm.value.rememberMe) {
+              this._commonService.setRememberMeSession({email: this.loginForm.value.email});
+            }
+            this.router.navigate(['/dashboard']);
           }
         },
         (error: any) => {

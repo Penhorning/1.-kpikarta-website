@@ -14,9 +14,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   scrolled: boolean = false;
 
-  name: string = this._commonService.getSession().name;
-  token: string = this._commonService.getSession().token;
-  profilePic: string = this._commonService.getSession().profilePic;
+  // name: string = this._commonService.getSession().name;
+  // token: string = this._commonService.getSession().token;
+  // profilePic: string = this._commonService.getSession().profilePic;
 
 
   @HostListener("window:scroll", [])
@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.scrolled = window.scrollY > 0;
   }
 
-  constructor(private _commonService: CommonService) { }
+  constructor(public _commonService: CommonService) { }
 
   ngOnInit(): void {
   }
@@ -34,7 +34,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       (response: any) => {
         this._commonService.deleteSession();
       },
-      (error: any) => { }
+      (error: any) => {
+        this._commonService.deleteSession();
+      }
     );
   }
 

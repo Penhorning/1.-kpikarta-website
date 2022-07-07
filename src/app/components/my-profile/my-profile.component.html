@@ -1,0 +1,371 @@
+<app-header></app-header>
+<app-sidebar></app-sidebar>
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="my_profile_first_section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="avatar-upload">
+                                <div class="avatar-preview">
+                                    <ng-container *ngIf="_commonService.getSession().profilePic; else defaultImage">
+                                        <div id="imagePreview" [style.background]="'url('+ _commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic +')'"></div>
+                                    </ng-container>
+                                    <ng-template #defaultImage>
+                                        <div id="imagePreview" style="background-image: url('assets/img/avatar.png');"> </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mt-5">
+                                <h2 class="py-1">{{user?.fullName}}</h2>
+                                <p class="py-1"><img src="assets/img/map.png" class="mr-2" alt=""/>{{user?.region}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="my_profile_second_section">
+    
+                    <!-- Settings Tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus active" data-toggle="tab"
+                                href="#tabs-1" role="tab">Personal Details</a> </li>
+                        <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus" data-toggle="tab" href="#tabs-2"
+                                role="tab">Company Details</a> </li>
+    
+                    </ul>
+                    <!-- Tab panes -->
+    
+                    <div class="tab-content tab-content-cus">
+    
+                        <!-- Personal Details-->
+    
+                        <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-between mng-logo-import">
+                                            <div>
+                                                <img [src]="profileImage.fileImageUrl" class="img-thumbnail profile_logo" alt="" />
+                                            </div>
+                                            <ng-container *ngIf="!profileImage.fileUploading">
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="63.333" height="42.222" viewBox="0 0 63.333 42.222">
+                                                        <path
+                                                        d="M51.063,21.939a19.772,19.772,0,0,0-36.944-5.278,15.827,15.827,0,0,0,1.715,31.561H50.139a13.157,13.157,0,0,0,.924-26.283ZM36.944,29.75V40.306H26.389V29.75H18.472L31.667,16.556,44.861,29.75Z"
+                                                        transform="translate(0 -6)" />
+                                                    </svg>
+                                                    <span class="upload-text-msg">Upload your profile</span>
+                                                    <input type="file" id="profile_pic" name="profile_pic" class="input_logo" accept=".png, .jpg, .jpeg" (change)="uploadProfile($event)">
+                                                </div>
+                                            </ng-container>
+                                            <ng-container *ngIf="profileImage.fileUploading">
+                                                <div class="input_preview d-flex align-items-center justify-content-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="fullName">Full Name</label>
+                                            <input type="text" class="form-control form-control" id="fullName"
+                                                formControlName="fullName"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
+                                            <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="form.fullName.errors.required">Full name is required!</div>
+                                                <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">Email</label>
+                                            <input type="email" class="form-control form-control" id="email"
+                                                formControlName="email"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
+                                            <div *ngIf="(submitted || form.email.touched) && form.email.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="form.email.errors.required">Email is required!</div>
+                                                <div *ngIf="form.email.errors.pattern">Enter a valid email address!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="w-100" for="telephone">Telephone Number</label>
+                                            <input type="tel" class="form-control form-control" id="telephone" formControlName="telephone">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="w-100" for="mobile">Mobile Number</label>
+                                            <div class="d-flex">
+                                                <ngx-intl-tel-input [cssClass]="'custom'"
+                                                [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true"
+                                                [enablePlaceholder]="true" [searchCountryFlag]="true"
+                                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                                [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.Canada"
+                                                [maxLength]=15 class="form-control ngx_phone_number"
+                                                [phoneValidation]="true" [separateDialCode]="separateDialCode"
+                                                [numberFormat]="PhoneNumberFormat.National" name="phone"
+                                                formControlName="mobile" style="background: #e9ecef; margin-bottom: 0;"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
+                                                </ngx-intl-tel-input>
+                                                <ng-container *ngIf="numberType == 'Change'">
+                                                    <button type="button" class="btn btn-sm btn-outline-dark ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
+                                                      Change
+                                                    </button>
+                                                </ng-container>
+                                                <ng-container *ngIf="numberType == 'Verify'">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
+                                                      Verify
+                                                    </button>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-12 m3-5">
+                                        <h4 class="py-3 h3 my-4">ADDRESS</h4>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="street">Street</label>
+                                            <input type="text" class="form-control form-control" id="street"
+                                                formControlName="street"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.street.touched) && form.street.errors }">
+                                            <div *ngIf="(submitted || form.street.touched) && form.street.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="form.street.errors.pattern">Blank space is not allowed!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="city">City</label>
+                                            <input type="text" class="form-control form-control" id="city"
+                                                formControlName="city"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.city.touched) && form.city.errors }">
+                                            <div *ngIf="(submitted || form.city.touched) && form.city.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="form.city.errors.pattern">Blank space is not allowed!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="state">Province/State</label>
+                                            <input type="text" class="form-control form-control" id="state"
+                                                formControlName="state"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.state.touched) && form.state.errors }">
+                                            <div *ngIf="(submitted || form.state.touched) && form.state.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="form.state.errors.pattern">Blank space is not allowed!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="postal_code">Postal/Zip Code</label>
+                                            <input type="text" class="form-control form-control" id="postal_code"
+                                                formControlName="postal_code"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.postal_code.touched) && form.postal_code.errors }">
+                                            <div *ngIf="(submitted || form.postal_code.touched) && form.postal_code.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="form.postal_code.errors.pattern">Blank space is not allowed!
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="country">Country</label>
+                                            <input type="text" class="form-control form-control" id="country"
+                                                formControlName="country"
+                                                [ngClass]="{ 'is-invalid': (submitted || form.country.touched) && form.country.errors }">
+                                            <div *ngIf="(submitted || form.country.touched) && form.country.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="form.country.errors.pattern">Blank space is not allowed!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-light btn_default max-270" [disabled]="submitFlag">
+                                        <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                        <ng-container *ngIf="!submitFlag">Update</ng-container>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+    
+                        <!--End Tab Personal Details-->
+    
+                        <!--Company Details-->
+                        <div class="tab-pane" id="tabs-2" role="tabpanel">
+                            <form [formGroup]="companyForm" (ngSubmit)="onCompanySubmit()">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="d-flex justify-content-between mng-logo-import">
+                                            <div>
+                                                <img [src]="companyLogo.fileImageUrl" class="img-thumbnail navbar_logo" alt="" />
+                                            </div>
+                                            <ng-container *ngIf="!companyLogo.fileUploading">
+                                                <div class="align-self-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="63.333" height="42.222" viewBox="0 0 63.333 42.222">
+                                                        <path
+                                                        d="M51.063,21.939a19.772,19.772,0,0,0-36.944-5.278,15.827,15.827,0,0,0,1.715,31.561H50.139a13.157,13.157,0,0,0,.924-26.283ZM36.944,29.75V40.306H26.389V29.75H18.472L31.667,16.556,44.861,29.75Z"
+                                                        transform="translate(0 -6)" />
+                                                    </svg>
+                                                    <span class="upload-text-msg">Upload your logo</span>
+                                                    <input type="file" id="company_logo" name="company_logo" class="input_logo" accept=".png, .jpg, .jpeg" (change)="uploadCompanyLogo($event)">
+                                                </div>
+                                            </ng-container>
+                                            <ng-container *ngIf="companyLogo.fileUploading">
+                                                <div class="input_preview d-flex align-items-center justify-content-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="name">Company Name</label>
+                                            <input type="text" class="form-control form-control" id="name" formControlName="name"
+                                                [ngClass]="{ 'is-invalid': (companySubmitted || comp_form.name.touched) && comp_form.name.errors }">
+                                            <div *ngIf="(companySubmitted || comp_form.name.touched) && comp_form.name.errors" class="invalid-feedback">
+                                                <div *ngIf="comp_form.name.errors.required">Company name is required!</div>
+                                                <div *ngIf="comp_form.name.errors.pattern">Blank space is not allowed!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="job_title">Job Title</label>
+                                            <input type="text" class="form-control form-control" id="job_title" formControlName="job_title"
+                                                [ngClass]="{ 'is-invalid': (companySubmitted || comp_form.job_title.touched) && comp_form.job_title.errors }">
+                                            <div *ngIf="(companySubmitted || comp_form.job_title.touched) && comp_form.job_title.errors" class="invalid-feedback">
+                                                <div *ngIf="comp_form.job_title.errors.required">Job title is required!</div>
+                                                <div *ngIf="comp_form.job_title.errors.pattern">Blank space is not allowed!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="department">Department</label>
+                                            <select class="form-control" id="department" formControlName="department">
+                                                <option selected="" value="" disabled>Select department</option>
+                                                <option value="Accounting and Finance">Accounting and Finance</option>
+                                                <option value="Sales">Sales</option>
+                                                <option value="Operations">Operations</option>
+                                                <option value="Marketing">Marketing</option>
+                                            </select>
+                                            <div *ngIf="(companySubmitted || comp_form.department.touched) && comp_form.department.errors" class="invalid-feedback d-block">
+                                                <div *ngIf="comp_form.department.errors.required">Department is required!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="employee_count">Number of employees </label>
+                                            <select class="form-control" id="employee_count" formControlName="employee_count">
+                                                <option selected="" value="" disabled>Select employees</option>
+                                                <option value="101 - 1000">101 - 1000</option>
+                                                <option value="101 - 1000">101 - 1000</option>
+                                                <option value="101 - 1000">101 - 1000</option>
+                                                <option value="101 - 1000">101 - 1000</option>
+                                            </select>
+                                            <div *ngIf="(companySubmitted || comp_form.employee_count.touched) && comp_form.employee_count.errors" class="invalid-feedback d-block">
+                                                <div *ngIf="comp_form.employee_count.errors.required">No. of employee is required!</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-light btn_default max-270" [disabled]="companySubmitFlag">
+                                    <div class="spinner-border text-light align-top" role="status"
+                                        *ngIf="companySubmitFlag">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <ng-container *ngIf="!companySubmitFlag">Update</ng-container>
+                                </button>
+                            </form>
+                        </div>
+                        <!--End Tab Company Details-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Verify phone number modal starts -->
+<div class="modal fade" id="phoneModal" tabindex="-1" role="dialog" aria-labelledby="phoneModalLabel" aria-hidden="true"
+    data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="passwordModalLabel">{{numberType}} Phone Number</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form [formGroup]="phoneNumberForm">
+                <div class="modal-body">
+                    <ng-container *ngIf="!verifyButtonFlag; else verifyDiv">
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+                                [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true"
+                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.UnitedStates"
+                                [maxLength]="15" class="form-control ngx_phone_number" [phoneValidation]="true"
+                                [separateDialCode]="separateDialCode" [numberFormat]="PhoneNumberFormat.National"
+                                name="phone" formControlName="mobile">
+                            </ngx-intl-tel-input>
+                            <div *ngIf="phoneForm.mobile.touched && phoneForm.mobile.errors" class="phone_error">
+                                <div *ngIf="!phoneForm.mobile.errors.required && phoneForm.mobile.errors">Mobile
+                                    number is invalid</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-block btn-outline-dark btn-sm" [disabled]="phoneForm.mobile.errors || !phoneNumberForm.value.mobile || resendButtonSubmitFlag"
+                                (click)="sendCode()">Generate Code</button>
+                        </div>
+                    </ng-container>
+
+                    <ng-template #verifyDiv>
+                        <div class="form-group">
+                            <label>Verification Code</label>
+                            <input type="tel" class="form-control" [maxlength]="6" formControlName="code"
+                                placeholder="Enter verification code"
+                                [ngClass]="{ 'is-invalid': phoneForm.code.touched && phoneForm.code.errors }">
+                            <div *ngIf="phoneForm.code.touched && phoneForm.code.errors" class="invalid-feedback">
+                                <div *ngIf="phoneForm.code.errors.required">Verification code is required!</div>
+                                <div *ngIf="phoneForm.code.errors.pattern">Verification code is not valid!</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <a href="javascript:void(0);" class="px-1 text-primary" (click)="sendCode()" *ngIf="!resendButtonSubmitFlag">Resend Code</a>
+                            <div class="spinner-border spinner-grow-sm" role="status" *ngIf="resendButtonSubmitFlag">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <button class="btn btn-light btn_default mt-1"
+                                [disabled]="phoneForm.code.errors || !phoneNumberForm.value.code || verifyButtonSubmitFlag"
+                                (click)="verifyCode()">Verify</button>
+                        </div>
+                    </ng-template>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Verify phone number modal ends -->

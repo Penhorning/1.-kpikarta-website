@@ -9,30 +9,60 @@
             <div class="col-md-6">
                 <div class="mng_col">
                     <div class="login_form">
-                        <h2 class="text-white text-center pb-2">Verify Your Email</h2>
-                        <p class="text-white text-center mb-5">We have sent a verification code to your email.</p>
+                        <h2 class="text-white text-center pb-2">Verify Your Account</h2>
+                        <p class="text-white text-center mb-5" *ngIf="!mobileVerifiedFlag">We have sent a verification code to your registered email and mobile number.</p>
+                        <p class="text-white text-center mb-5" *ngIf="mobileVerifiedFlag">We have sent a verification code to your registered email.</p>
+
+                        <!-- Email verification -->
                         <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
-                            <div class="form-group">
-                                <label for="code">Verification Code</label>
-                                <input type="text" class="form-control form-control1" id="code" formControlName="code"
-                                    [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
+                            <div class="input-group">
+                                <label class="w-100" for="code">Email Verification Code <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1 border_radius" id="code" formControlName="code"
+                                [maxlength]="6" [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
+                                <button class="btn align-self-center ml-3" [disabled]="submitFlag || emailVerified" [ngClass]="emailVerified ? 'btn-success' : 'btn-light'">
+                                    <div class="spinner-border spinner-grow-sm" role="status" *ngIf="submitFlag">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <ng-container *ngIf="!submitFlag && !emailVerified">Verify</ng-container>
+                                    <ng-container *ngIf="!submitFlag && emailVerified">Verified</ng-container>
+                                </button>
                                 <div *ngIf="(submitted || form.code.touched) && form.code.errors" class="invalid-feedback">
                                     <div *ngIf="form.code.errors.required">Verification code is required!</div>
+                                    <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>
                                 </div>
                             </div>
-                            <button class="btn btn-outline-secondary btn-sm float-right text-white" (click)="resendCode()" [disabled]="verificationFlag">
-                                <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                                <ng-container *ngIf="!verificationFlag">Resend</ng-container>
-                            </button>
-                            <button class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">
-                                <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                                <ng-container *ngIf="!submitFlag">SUBMIT</ng-container>
-                            </button>
+                            <a href="javascript:void(0);" (click)="resendCode()" class="text-white send-otp" *ngIf="!verificationFlag && !emailVerified">Resend Code</a>
+                            <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">
+                                <span class="sr-only">Loading...</span>
+                            </div>                           
                         </form>
+
+                        <!-- Mobile verification -->
+                        <form [formGroup]="mobileVerificationForm" (ngSubmit)="onMobileSubmit()" class="mt-5">
+                            <div class="input-group">
+                                <label class="w-100" for="code">Mobile Verification Code</label>
+                                <input type="text" class="form-control form-control1 border_radius" id="code" formControlName="code"
+                                [maxlength]="6" [ngClass]="{ 'is-invalid': (mobileSubmitted || mobileForm.code.dirty) && mobileForm.code.errors }">
+                                <button class="btn align-self-center ml-3" [disabled]="mobileSubmitFlag || mobileVerified" [ngClass]="mobileVerified ? 'btn-success' : 'btn-light'">
+                                    <div class="spinner-border spinner-grow-sm" role="status" *ngIf="mobileSubmitFlag">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                    <ng-container *ngIf="!mobileSubmitFlag && !mobileVerified">Verify</ng-container>
+                                    <ng-container *ngIf="!mobileSubmitFlag && mobileVerified">Verified</ng-container>
+                                </button>
+                                <div *ngIf="(mobileSubmitted || mobileForm.code.dirty) && mobileForm.code.errors" class="invalid-feedback">
+                                    <div *ngIf="mobileForm.code.errors.pattern">Verification code is not valid!</div>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0);" (click)="resendMobileCode()" class="text-white send-otp" *ngIf="!mobileVerificationFlag && !mobileVerified">Resend Code</a>
+                            <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="mobileVerificationFlag">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </form>
+
+                        <div class="max_center_400">
+                            <button type="button" class="btn btn-light btn_default mb-3 mt-5" [disabled]="!emailVerified" (click)="goToNext()">NEXT</button>
+                        </div>
                         <div class="text-white text-center">
                             <p class="text-white">Back To <a [routerLink]="['/login']" class="text-white"><strong>Login</strong></a></p>
                         </div>

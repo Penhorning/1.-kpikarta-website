@@ -38,9 +38,9 @@ export class RequestInterceptor implements HttpInterceptor {
         } else if (error.status === 400 || error.status === 404) {
           this._commonService.errorToaster(error.error.error.message ? error.error.error.message : error.statusText);
         } else if (error.status >= 500 && error.status <= 505) {
-          if (error.error.error.message === "Invalid OTP") this._commonService.errorToaster("Invalid Code!")
           this._commonService.errorToaster('Error, Something went wrong');
         }
+        this._commonService.errorToaster('Error, Something went wrong');
         return throwError(error);
       })
     );
