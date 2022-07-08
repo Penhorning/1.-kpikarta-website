@@ -43,8 +43,8 @@ export class VerificationComponent implements OnInit, OnDestroy {
     private _signupService: SignupService,
     private router: Router
   ) {
-    if (!this._signupService.getSignUpSession().token) this.router.navigate(['/login']);
-    else if (this._signupService.getSignUpSession().stage == 2) this.router.navigate(['/subscription-plan']);
+    // Preventing back button in browser
+    window.onpopstate = function (e: any) { window.history.forward(); }
 
     // Check verification
     if (this._signupService.getSignUpSession().mobileVerified) {

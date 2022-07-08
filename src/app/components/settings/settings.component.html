@@ -11,12 +11,14 @@
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab"
                 href="#tabs-1" role="tab">Settings</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2"
-                role="tab" (click)="checkMFAEnabled()">Multi factor Authentication</a> </li>
+                role="tab" (click)="checkMFAConfig()">Multi factor Authentication</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3"
                 role="tab">Change Password</a> </li>
           </ul>
           <!-- Tab panes -->
           <div class="tab-content tab-content-cus">
+
+            <!-- Color settings -->
             <div class="tab-pane active" id="tabs-1" role="tabpanel">
               <div class="settings-gray-section">
                 <div class="row">
@@ -65,7 +67,6 @@
                           </div>
                         </div>
                       </div>
-
                     </div>
                   </div>
                   <div class="col-lg-4">
@@ -103,10 +104,7 @@
                           </div>
                         </div>
                       </div>
-
                     </div>
-
-
                   </div>
                 </div>
               </div>
@@ -116,67 +114,77 @@
                 </div>
               </div>
             </div>
+
+            <!-- Multi factor authentication -->
             <div class="tab-pane" id="tabs-2" role="tabpanel">
-
-              <div class="factor-cl" *ngIf="!qr.isAvailable">
-                <div class="row">
-                  <div class="col-8">
-                    <h5>{{qr.isMFASetup ? 'Reset authentication' : 'Setup Authenticator app'}}</h5>
-                  </div>
-                  <div class="col-4 text-right">
-                    <div class="">
-                      <div class="form-check custom-box">
-                        <input type="checkbox" class="form-check-input" id="generateCheck" [checked]="qr.isMFASetup" (click)="generateQRCode()">
+              <ng-container *ngIf="!qr.isChecking; else loading">
+                <div class="factor-cl" *ngIf="!qr.isAvailable">
+                  <div class="row">
+                    <div class="col-8">
+                      <h5>{{qr.isMFASetup ? 'Reset authentication' : 'Setup Authenticator app'}}</h5>
+                    </div>
+                    <div class="col-4 text-right">
+                      <div class="">
+                        <div class="form-check custom-box">
+                          <input type="checkbox" class="form-check-input" id="generateCheck" [checked]="qr.isMFASetup" [disabled]="qr.isGenerating || qr.isResetting" (change)="generateQRCode($event)">
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="factor-cl" *ngIf="qr.isAvailable">
-                <h1 class="font-weight-normal mb-4">Scan the QR code</h1>
-                <p>
-                  Use the authenticator app to scan the QR code. This will connect the Authenticator app with you account.
-                  <br>
-                  After you scan the QR code, Enter the code below:
-                </p>
-                <img [src]="qr.code" alt="">
-                <div>
-                  <form [formGroup]="authenticatorForm" (ngSubmit)="onAuthenticationSubmit()">
-                    <div class="form-group">
-                      <label class="font-weight-bold mb-0" for="code">Enter the 6-digit code you see in your authenticator app</label>
-                      <input type="text" class="form-control font-weight-normal" id="code" placeholder="Authentication code" formControlName="code" [maxlength]="6"
-                        [ngClass]="{ 'is-invalid': (qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors }">
-                      <div *ngIf="(qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors" class="invalid-feedback">
-                        <div *ngIf="authenticatorControls.code.errors.required">Code is required!</div>
+                <div class="factor-cl" *ngIf="qr.isAvailable">
+                  <h1 class="font-weight-normal mb-4">Scan the QR code</h1>
+                  <p>
+                    Use the authenticator app to scan the QR code. This will connect the Authenticator app with you account.
+                    <br>
+                    After you scan the QR code, Enter the code below:
+                  </p>
+                  <img [src]="qr.code" alt="">
+                  <div>
+                    <form [formGroup]="authenticatorForm" (ngSubmit)="onAuthenticationSubmit()">
+                      <div class="form-group">
+                        <label class="font-weight-bold mb-0" for="code">Enter the 6-digit code you see in your authenticator app</label>
+                        <input type="text" class="form-control font-weight-normal" id="code" placeholder="Authentication code" formControlName="code" [maxlength]="6"
+                          [ngClass]="{ 'is-invalid': (qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors }">
+                        <div *ngIf="(qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors" class="invalid-feedback">
+                          <div *ngIf="authenticatorControls.code.errors.required">Code is required!</div>
+                        </div>
                       </div>
-                    </div>
-                    <button class="btn btn-light btn_default max-270 mt-5" [disabled]="qr.submitFlag">
-                      <div class="spinner-border text-light align-top" role="status" *ngIf="qr.submitFlag">
-                        <span class="sr-only">Loading...</span>
-                      </div>
-                      <ng-container *ngIf="!qr.submitFlag">Confirm</ng-container>
-                    </button>
-                  </form>
-                </div>
-              </div>
-              <div class="factor-cl border-0">
-                <div class="row">
-                  <div class="col-8">
-                    <h5>Enable/Disable Multi factor authentication</h5>
-                  </div>
-                  <div class="col-4 text-right">
-                    <div class="toggle-tab">
-                      <label class="switch" for="checkbox">
-                        <input type="checkbox" id="checkbox" [checked]="qr.isMFAEnabled" [disabled]="!qr.isMFAEnabled" (click)="toggleMFA($event)"/>
-                        <div class="slider round" [ngStyle]="{'cursor': qr.isMFAEnabled ? 'pointer' : 'default'}"></div>
-                      </label>
-                    </div>
+                      <button class="btn btn-light btn_default max-270 mt-5" [disabled]="qr.submitFlag">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="qr.submitFlag">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <ng-container *ngIf="!qr.submitFlag">Confirm</ng-container>
+                      </button>
+                    </form>
                   </div>
                 </div>
-              </div>
-
-
+                <div class="factor-cl border-0">
+                  <div class="row">
+                    <div class="col-8">
+                      <h5>Enable/Disable Multi factor authentication</h5>
+                    </div>
+                    <div class="col-4 text-right">
+                      <div class="toggle-tab">
+                        <label class="switch" for="checkbox">
+                          <input type="checkbox" id="checkbox" [checked]="qr.isMFAEnabled" [disabled]="!qr.isMFASetup" (change)="toggleMFA($event)"/>
+                          <div class="slider round" [ngStyle]="{'cursor': qr.isMFASetup ? 'pointer' : 'default'}"></div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-template #loading>
+                <div class="input_preview d-flex align-items-center justify-content-center">
+                  <div class="spinner-border" role="status">
+                      <span class="sr-only">Loading...</span>
+                  </div>
+                </div>
+              </ng-template>
             </div>
+
+            <!-- Change password starts -->
             <div class="tab-pane" id="tabs-3" role="tabpanel">
               <div class="max_center_400 custom-tab-change-pass">
                 <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
@@ -225,6 +233,7 @@
                 </form>
               </div>
             </div>
+            <!-- Change password ends -->
           </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
 
 @Component({
@@ -9,8 +8,9 @@ import { SignupService } from '@app/components/sign-up/service/signup.service';
 })
 export class ThankYouComponent implements OnInit {
 
-  constructor(private _signupService: SignupService, private router: Router) {
-    if (!this._signupService.getSignUpSession().token) this.router.navigate(['/login']);
+  constructor(private _signupService: SignupService) {
+    // Preventing back button in browser
+    window.onpopstate = function (e: any) { window.history.forward(); }
   }
 
   ngOnInit(): void {

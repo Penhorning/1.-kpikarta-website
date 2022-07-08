@@ -14,6 +14,12 @@ export class ProfileService {
   getProfile(userId: string) {
     return this._httpService.GET_BY_ID('/users/', userId);
   }
+  getDepartments() {
+    return this._httpService.GET('/departments/');
+  }
+  getEmployeesRanges() {
+    return this._httpService.GET('/employees_ranges/');
+  }
   updateProfile(data: any, userId: string) {
     return this._httpService.PATCH(`/users/${userId}`, data);
   }

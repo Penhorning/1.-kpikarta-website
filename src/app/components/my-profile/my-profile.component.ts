@@ -30,14 +30,6 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     fileUploading: false
   }
 
-  // Compnay Image variables
-  // imageFile: any;
-  // fileImageUrl: string = "";
-  // oldCompanyLogo: string = "";
-  // newCompanyLogo: string = "";
-  // imageUploading: boolean = false;
-  // fileUploading: boolean = false;
-
   companyLogoFile: any;
   companyLogo = {
     fileImageUrl: "",
@@ -72,6 +64,9 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   get form() { return this.profileForm.controls; }
 
   // Company form
+
+  departments: any = [];
+  employeesRanges: any = [];
   companySubmitted: boolean = false;
   companySubmitFlag: boolean = false;
 
@@ -79,8 +74,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     name: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     job_title: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     logo: [''],
-    department: ['', Validators.required],
-    employee_count: ['', Validators.required]
+    departmentId: ['', Validators.required],
+    employeesRangeId: ['', Validators.required]
   });
   get comp_form() { return this.companyForm.controls; }
 
@@ -99,6 +94,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getUserProfile();
+    this.getDepartments();
+    this.getEmployeesRanges();
   }
 
   setRegion() {
@@ -147,6 +144,23 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     );
   }
 
+  getDepartments() {
+    this._profileService.getDepartments().pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+        this.departments = response;
+      },
+      (error: any) => { }
+    );
+  }
+  getEmployeesRanges() {
+    this._profileService.getEmployeesRanges().pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+        this.employeesRanges = response;
+      },
+      (error: any) => { }
+    );
+  }
+
   getCompanyProfile() {
     this._profileService.getCompanyByUser(this.user.id).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
@@ -154,8 +168,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this.companyForm.patchValue({
           name: this.company.name,
           job_title: this.company.job_title ? this.company.job_title : "",
-          department: this.company.department ? this.company.department : "",
-          employee_count: this.company.employee_count ? this.company.employee_count : ""
+          departmentId: this.company.departmentId ? this.company.departmentId : "",
+          employeesRangeId: this.company.employeesRangeId ? this.company.employeesRangeId : ""
         });
         // Set company logo variables
         this.companyLogo.oldImage = response.logo;

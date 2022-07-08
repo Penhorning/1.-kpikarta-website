@@ -16,55 +16,13 @@ export class SubscriptionPlanComponent implements OnInit, OnDestroy {
 
   submitFlag: boolean = false;
 
-  constructor(
-    private _signupService: SignupService,
-    private _subscriptionPlanService: SubscriptionPlanService,
-    private router: Router
-  ) {
-    if (!this._signupService.getSignUpSession().token) this.router.navigate(['/login']);
-    else if (this._signupService.getSignUpSession().stage == 3) this.router.navigate(['/thank-you']);
-    // router.events
-		// 	.pipe(
-		// 		filter(
-		// 			( event: NavigationEvent ) => {
-		// 				return( event instanceof NavigationStart );
-		// 			}
-		// 		)
-		// 	)
-		// 	.subscribe(
-		// 		( event: any ) => {
-		// 			console.group( "NavigationStart Event" );
-		// 			console.log( "navigation id:", event.id );
-		// 			console.log( "route:", event.url );
-		// 			console.log( "trigger:", event.navigationTrigger );
-		// 			if ( event.restoredState ) {
-		// 				console.warn(
-		// 					"restoring navigation id:",
-		// 					event.restoredState.navigationId
-		// 				);
-    //         this.router.navigate(['/subscription-plan']);
-		// 			}
-		// 			console.groupEnd();
-		// 		}
-		// 	);
-    // router.events
-    //   .subscribe((event: any) => {
-    //     if (event.navigationTrigger === 'popstate') {
-    //       // Perform actions
-    //       alert("back")
-    //     }
-    //   });
-    // this.location.subscribe(x => alert(x));
+  constructor(private _signupService: SignupService, private _subscriptionPlanService: SubscriptionPlanService, private router: Router) {
+    // Preventing back button in browser
+    window.onpopstate = function (e: any) { window.history.forward(); }
   }
 
   ngOnInit(): void {
   }
-
-  // @HostListener('window:popstate', ['$event'])
-  // onpopstate(event: any) {
-  //   console.log('Back button pressed', event);
-  //   alert("back")
-  // }
 
   selectPlan(type: string) {
 

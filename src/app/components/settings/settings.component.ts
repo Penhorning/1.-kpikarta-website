@@ -14,12 +14,15 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  isLoading: boolean = false;
+
+// MFA variables  
   qr = {
     code: "",
+    isChecking: false,
+    isGenerating: false,
+    isResetting: false,
     isMFASetup: false,
     isMFAEnabled: false,
-    isLoading: false,
     isAvailable: false,
     submitted: false,
     submitFlag: false
@@ -33,6 +36,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
 
 
+// Change password variables
   submitted: boolean = false;
   submitFlag: boolean = false;
 
@@ -49,26 +53,31 @@ export class SettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
   }
 
-  checkMFAEnabled() {
-    this.isLoading = true;
-    this._settingService.checkMFAEnabled().pipe(takeUntil(this.destroy$)).subscribe(
+// MFA functions
+  checkMFAConfig() {
+    this.qr.isChecking = true;
+    this._settingService.checkMFAConfig().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        if (response.enabled) this.qr.isMFAEnabled = this.qr.isMFASetup = true;
-        else this.qr.isMFAEnabled = false;
+        this.qr.isMFAEnabled = response.mfa.enabled;
+        if (response.mfa.secret && response.mfa.qrCode) {
+          this.qr.isMFASetup = true;
+        }
       },
       (error: any) => { }
-    ).add(() => this.isLoading = false );
+    ).add(() => this.qr.isChecking = false );
   }
 
-  generateQRCode() {
-    this.qr.isLoading = true;
-    this._settingService.generateMFAQRCode().pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {
-        this.qr.code = response.qrcode;
-        this.qr.isAvailable = true;
-      },
-      (error: any) => { }
-    ).add(() => this.qr.isLoading = false );
+  generateQRCode(e: any) {
+    if (e.target.checked && !this.qr.isMFASetup) {
+      this.qr.isGenerating = true;
+      this._settingService.generateMFAQRCode().pipe(takeUntil(this.destroy$)).subscribe(
+        (response: any) => {
+          this.qr.code = response.qrcode;
+          this.qr.isAvailable = true;
+        },
+        (error: any) => { }
+      ).add(() => this.qr.isGenerating = false );
+    } else this.resetMFA();
   }
 
   onAuthenticationSubmit() {
@@ -93,23 +102,33 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   resetMFA() {
-    this._settingService.resetMFAConfig().pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {
-        this._commonService.successToaster("You MFA resetted successfully");
-      },
-      (error: any) => { }
-    );
+    if (this.qr.isMFASetup) {
+      this.qr.isResetting = true;
+      this._settingService.resetMFAConfig().pipe(takeUntil(this.destroy$)).subscribe(
+        (response: any) => {
+          this.qr.isMFAEnabled = this.qr.isMFASetup = false;
+          this._commonService.successToaster("You MFA resetted successfully");
+        },
+        (error: any) => { }
+      ).add(() => this.qr.isResetting = false );
+    }
   }
 
   toggleMFA(e: any) {
-    this._settingService.toggleMFA(e).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {
-        this._commonService.successToaster("You MFA resetted successfully");
-      },
-      (error: any) => { }
-    );
+    if (this.qr.isMFASetup) {
+      this._settingService.toggleMFA({type: e.target.checked}).pipe(takeUntil(this.destroy$)).subscribe(
+        (response: any) => {
+          if (response.type === true) this._commonService.successToaster("You MFA enabled successfully");
+          else if (response.type === false) this._commonService.successToaster("You MFA disabled successfully");
+        },
+        (error: any) => { }
+      );
+    }
   }
 
+
+
+// Change password functions
   onPasswordSubmit() {
     this.submitted = true;
 

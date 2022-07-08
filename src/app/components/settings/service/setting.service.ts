@@ -21,8 +21,8 @@ export class SettingService {
   resetMFAConfig() {
     return this._httpService.PUT('/users/resetMFA');
   }
-  checkMFAEnabled() {
-    return this._httpService.POST('/users/checkMFAEnabled');
+  checkMFAConfig() {
+    return this._httpService.POST('/users/checkMFAConfig');
   }
   toggleMFA(data: any) {
     return this._httpService.PUT('/users/toggleMFA', data);
