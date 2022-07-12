@@ -13,7 +13,6 @@ import { filter, map, mergeMap } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
 
   private routeSub: Subscription = new Subscription();
-  showHeader: boolean = false;
 
   constructor( 
     @Inject(PLATFORM_ID) private platformId: Object,

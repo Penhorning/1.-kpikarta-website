@@ -7,6 +7,9 @@ import { MyProfileComponent } from './my-profile.component';
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
 
+// Third party module
+import { ImageCropperModule } from 'ngx-image-cropper';
+
 
 @NgModule({
   declarations: [
@@ -15,7 +18,8 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
   imports: [
     CommonModule,
     MyProfileRoutingModule,
-    SharedModule
+    SharedModule,
+    ImageCropperModule
   ]
 })
 export class MyProfileModule { }

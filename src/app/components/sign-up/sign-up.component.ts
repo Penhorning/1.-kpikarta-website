@@ -93,7 +93,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
           (error: any) => {
             this.submitFlag = false;
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-              this._commonService.errorToaster("This email already exist in the system");
+              this._commonService.errorToaster("Email is already registered, please try with a different one");
             }
           }
         );

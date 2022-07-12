@@ -14,7 +14,7 @@
                         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">
                                 <label for="fullName">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="fullName" formControlName="fullName"
+                                <input type="text" class="form-control form-control1" id="fullName" formControlName="fullName" [maxlength]="50"
                                     [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
                                 <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
                                     <div *ngIf="form.fullName.errors.required">Full name is required!</div>
@@ -34,7 +34,7 @@
 
                             <div class="form-group" *ngIf="!user.userId">
                                 <label for="password">Password <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control form-control1" id="password" formControlName="password"
+                                <input type="password" class="form-control form-control1" id="password" formControlName="password" [maxlength]="50"
                                     [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
                                 <div *ngIf="(submitted || form.password.touched) && form.password.errors" class="invalid-feedback">
                                     <div *ngIf="form.password.errors.required">Password is required!</div>
@@ -62,7 +62,7 @@
 
                             <div class="form-group">
                                 <label for="companyName">Organization Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="companyName" formControlName="companyName"
+                                <input type="text" class="form-control form-control1" id="companyName" formControlName="companyName" [maxlength]="50"
                                     [ngClass]="{ 'is-invalid': (submitted || form.companyName.touched) && form.companyName.errors }">
                                 <div *ngIf="(submitted || form.companyName.touched) && form.companyName.errors"
                                     class="invalid-feedback">

@@ -52,10 +52,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         name: this.route.snapshot.queryParamMap.get("name") || "",
         email: this.route.snapshot.queryParamMap.get("email") || "",
         profilePic: this.route.snapshot.queryParamMap.get("profilePic") || "",
-        companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || ""
+        companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || "",
+        mfaEnabled: this.route.snapshot.queryParamMap.get("mfaEnabled") || "false"
       }
-      this._commonService.setSession(sessionData);
-      this.router.navigate(['/dashboard']);
+      this._signupService.setSignUpSession(sessionData);
+      if (sessionData.mfaEnabled == "true") {
+        this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa' }});
+      } else this.router.navigate(['/two-step-verification']);
     }
   }
 
@@ -68,7 +71,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this._commonService.login(this.loginForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobileVerified, currentPlan } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobileVerified, currentPlan, mfaEnabled } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -95,11 +98,13 @@ export class LoginComponent implements OnInit, OnDestroy {
               profilePic,
               companyLogo: response.companyLogo
             }
-            this._commonService.setSession(sessionData);
+            this._signupService.setSignUpSession(sessionData);
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({email: this.loginForm.value.email});
             }
-            this.router.navigate(['/dashboard']);
+            if (mfaEnabled) {
+              this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa' }});
+            } else this.router.navigate(['/two-step-verification']);
           }
         },
         (error: any) => {

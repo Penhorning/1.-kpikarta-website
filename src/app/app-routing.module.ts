@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: 'settings', canActivateChild: [AuthGuard], loadChildren: () => import('./components/settings/settings.module').then(m => m.SettingsModule) },
   { path: 'my-suggestion', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-suggestion/my-suggestion.module').then(m => m.MySuggestionModule) },
   { path: 'my-profile', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-profile/my-profile.module').then(m => m.MyProfileModule) },
+  { path: 'two-step-verification', loadChildren: () => import('./components/two-step-verification/two-step-verification.module').then(m => m.TwoStepVerificationModule) },
   { path: '**', loadChildren: () => import('./components/page-not-found/page-not-found.module').then(m => m.PageNotFoundModule) }
 ];
 

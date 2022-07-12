@@ -35,15 +35,38 @@ a:hover {
   color: #243864
 }
 
+/*CSS for scroll view*/
 
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
 
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
 
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/*End CSS for scroll view*/
 
 /* New-css */
 .settings-gray-section {
   background-color: #FAFAFB;
   border: 1px solid #ebebeb;
-  padding-bottom: 5rem;
+  padding: 2rem;
 }
 .ui-slider .ui-btn-inner {
   padding: 4px 0 0 0 !important;
@@ -204,7 +227,7 @@ a:hover {
 .color-box{
   background-color: #fff;
   border: 1px solid #ebebeb;
-  padding: 1rem;
+  padding: 2rem 1rem;
 }
 span.color-range-box {
   width: 20px;
@@ -216,11 +239,11 @@ span.color-range-box {
 button.add-button {
   background: none;
   border: 1px solid #d1d1d1;
-  border-radius: 10px;
-  padding: 3px 14px;
+  border-radius: 30px;
+  padding: 2px 22px;
 }
 .color-settings {
-  margin: 4rem 0 0 3rem;
+/*  margin: 1rem;*/
 }
 .color-settings h5 {
   font-size: 17px;
@@ -231,8 +254,8 @@ button.add-button {
 .color-box-plus-min {
   background-color: #fff;
   border: 1px solid #ebebeb;
-  padding: 1rem;
-  margin-top: 6.4rem;
+  padding: 2rem 1rem;
+  margin-top: 2.4rem;
 }
 .color-box-two {
   background-color: #f85c5c;
@@ -261,8 +284,8 @@ button.save-btn {
 }
 .factor-cl {
   border-bottom: 1px solid #c7c7c7;
-  padding: 25px 0 25px 0;
-  width: 80%;
+  padding: 30px 0 30px 0;
+  width: 100%;
 }
 .switch {
   display: inline-block;
@@ -298,7 +321,7 @@ button.save-btn {
 }
 
 input:checked + .slider {
-  background-color: #66bb6a;
+  background-color: #243864;
 }
 
 input:checked + .slider:before {
@@ -417,7 +440,7 @@ li {
   border: 1px solid #243864;
   color: #fff !important;
   padding: 10px 30px;
-  border-radius: 8px;
+  border-radius: 5px;
   box-shadow: 0px 3px 10px #2929297d;
   width: 100%;
   font-weight: 500;
@@ -427,6 +450,9 @@ li {
   background-color: #296BB5 !important;
 }
 .header {position: fixed; z-index: 2;}
+.header .dropdown-item:focus, .dropdown-item:hover{background-color: #fff !important;}
+.header .dropdown-item.active, .dropdown-item:active {color: #333;}
+
 /*
 .header.fixed {
   width: 100% !important;
@@ -447,6 +473,7 @@ li {
 .login_form .btn-outline-secondary {
   border-color: #929cb2;
   color: #fff;
+	border-radius: 0px 4px 4px 0px !important;
 }
 .login_form .verify-otp {
   border-color: #27a746;
@@ -573,7 +600,7 @@ a.for_pass {
 #header {
   background-color: #fff;
   box-shadow: #e7e7e7 0px 2px 6px;
-  padding: 15px 15px 0px 15px;
+  padding: 0 15px 0px 15px;
   position: fixed;
   z-index: 2;
   width: 100%;
@@ -956,7 +983,7 @@ a.for_pass {
 /*Menu Sidebar*/
 .sidebar {
   position: fixed;
-  top: 95px;
+  top: 75px;
   left: 0;
   bottom: 0;
   width: 100px;
@@ -967,6 +994,7 @@ a.for_pass {
   scrollbar-color: #aab7cf transparent;
   box-shadow: 0px 0px 20px rgb(1 41 112 / 10%);
   background-color: #243864;
+  overflow-y: auto;
 }
 .sidebar ul {display: block;}
 .sidebar ul li {
@@ -979,7 +1007,7 @@ a.for_pass {
   color: #fff;
   display: block;
   text-align: center;
-  padding: 20px 15px;
+  padding: 20px 5px;
   font-size: 14px;
 }
 .sidebar ul a.active {
@@ -1000,10 +1028,25 @@ a.for_pass {
 }
 /* End Main Container*/
 /*Settings Tab CSS*/
+
+
+
 .settings-tab {
-  max-width: 70%;
+  max-width: 65%;
   margin: 0 auto;
 }
+.settings-tab .btn_default {
+    background-color: #243864;
+}
+.settings-tab .btn_default:hover {
+    background-color: #243864 !important;
+}
+
+.settings-tab .btn {
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+
 .settings-tab input:focus {
   outline: 0px !important;
   -webkit-appearance: none;
@@ -1017,7 +1060,7 @@ a.for_pass {
   border-radius: 0px;
 	padding-left: 0px;
 }
-.settings-tab .form-group{margin-bottom: 40px;}
+.settings-tab .form-group { margin-bottom: 40px; }
 .tabbable-panel {
   border: 1px solid #eee;
   padding: 10px;
@@ -1075,7 +1118,7 @@ a.for_pass {
 .tab-content-cus > .active {
   display: block;
   background: #fff;
-  padding: 50px 30px;
+  padding: 45px 90px;
   box-shadow: #ccc 0px 3px 6px;
 	margin-bottom: 50px;
 }
@@ -1099,13 +1142,15 @@ a.nav-link-cus {
 }
 a.nav-link-cus:hover {
   color: #000000;
-  border: none;
+  border: 1px solid transparent;
+  
 }
 .max-270 {
   max-width: 270px;
   margin: 0 auto;
   display: block;
 }
+/*.settings-tab .tab-content-cus > .active{margin-bottom: 0px;}*/
 /* End Settings Tab CSS*/
 
 /* My Suggestions CSS*/
@@ -1164,20 +1209,42 @@ a.nav-link-cus:hover {
 
 /* My Profile CSS */
 
+.User_profile .navbar{
+	padding: 0.3rem 0px;
+}
 .my_profile_first_section {
-  max-width: 80%;
+  max-width: 55%;
   margin: 0 auto;
   background-color: #fff;
   padding: 30px 45px;
   margin-bottom: 50px;
+  box-shadow: #ccc 0px 3px 6px;
+}
+.my_profile_first_section .profile_name{
+	width: 100%
+}
+.mng_per_logo {
+    float: left;
+}
+
+
+.my_profile_first_section .profile_img img {
+  width: 150px;
+  border-radius: 100%;
+  height: 150px;
+  max-width: 150px;
+}
+
+.my_profile_second_section .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+	color: #000;
 }
 .my_profile_second_section {
-  max-width: 80%;
+  max-width: 55%;
   margin: 0 auto;
   margin-top: 70px;
 }
 .my_profile_second_section li.nav-item-cus {
-  width: 25%;
+  width: 50%;
   text-align: center;
 }
 .my_profile_second_section .form-control {
@@ -1185,12 +1252,15 @@ a.nav-link-cus:hover {
   border-bottom: 1px solid #D9D9D9;
   font-size: 18px;
   font-weight: 500;
-  margin-bottom: 45px;
   border-radius: 0px;
   padding-left: 0px;
 }
+.my_profile_second_section .form-group {
+  margin-bottom: 40px;
+}
 .my_profile_second_section .btn {
-  margin-top: 70px;
+  margin-top: 20px;
+  margin-bottom: 30px;
 }
 .my_profile_second_section .btn_default {
   background-color: #243864;
@@ -1267,10 +1337,111 @@ a.nav-link-cus:hover {
 }
 /*End Edit profile CSS*/
 
+
+
 /* Rishab CSS  */
 
+
+
+
+.tutorial-second-page {
+  position: relative;
+  margin-top: 10rem;
+}
+section.Tutorial-sec {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  background-color: #000000d6;
+  z-index: 9999;
+  top: 0;
+  overflow: hidden;
+}
+.tutorial-img {
+  position: absolute;
+  top: 10rem;
+  left: 8rem;
+}
+.tutorial-img.text-center p {
+  color: #fff;
+  font-size: 17px;
+}
+.tutorial-aroow {
+  position: absolute;
+  top: 11rem;
+  left: 15.5rem;
+}
+.tutorial-one {
+  position: absolute;
+  top: 10rem;
+  left: 20rem;
+}
+.tutorial-one button {
+  border: 0;
+  background-color: #296bb5;
+  height: 50px;
+  padding: 0 15px 0 15px;
+  border-radius: 5px;
+  color: #fff;
+}
+.tutorial-two {
+  position: absolute;
+  top: 19rem;
+  left: 25rem;
+}
+.tutorial-two button {
+  border: 0;
+  background-color: #296bb5;
+  color: #fff;
+  height: 50px;
+  padding: 0 30px 0 30px;
+  border-radius: 5px;
+  box-shadow: 0 1px 10px 0 #296bb554;
+}
+.skip-btn {
+  margin: 24rem auto;
+  width: 0%;
+}
+.skip-btn button {
+  width: 85px;
+  height: 85px;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 100px;
+  color: #fff;
+  font-size: 16px;
+}
+.head_logo img {
+  margin-top: 12px;
+}
+button.next-btn {
+  width: 100%;
+  height: 60px;
+  margin-top: 2.2rem;
+  border: none;
+  background-color: #296bb5;
+  color: #fff;
+  font-size: 23px;
+  border-radius: 5px;
+  box-shadow: 0 1px 10px 0 #296bb554;
+}
+.form-group.name-input-karta label {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.form-group.name-input-karta input {
+  height: 60px;
+}
+.karta-setip-white-box {
+  max-width: 80%;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 4rem 4rem 4rem 4rem;
+  margin-top: 3rem;
+}
 .main-content {
-    margin-top: 125px;
+    margin-top: 112px;
     margin-left: 101px;
     padding: 15px;
     transition: all 0.3s ease;
@@ -1299,7 +1470,7 @@ a.dropdown-toggle.three-dots::after {
 }
 .own.d-flex p {
     padding: 0 0 0 8px;
-    font-size: 19px;
+    font-size: 17px;
     color: #000000;
 }
 .edit-btn-img {
@@ -1314,7 +1485,7 @@ a.dropdown-toggle.three-dots::after {
 .karata-card {
     box-shadow: 0 0 6px 0 #cbcbcb;
     border-radius: 10px;
-    padding: 20px 10px 20px 10px;
+    padding: 20px 16px 20px 16px;
     margin-bottom: 1rem;
     background-color: #fff;
 
@@ -1353,7 +1524,8 @@ a.dropdown-toggle.three-dots.change-acc {
     z-index: 999;
 }
 .Shared-with h5 {
-    font-size: 15px;
+    font-size: 14px;
+    color: rgb(131, 131, 131);
 }
 
 .dropdown-menu.custom-top-dropdwon-menu.show::after {
@@ -1418,6 +1590,10 @@ a.dropdown-item.logout-custom {
     color: #fff;
     text-align: center;
 }
+a.dropdown-item.logout-custom:hover {
+    background-color: #333 !important;
+}
+
 .total-inner-section.recent-view a {
     font-size: 13px;
 }
@@ -1501,9 +1677,7 @@ span.year-text {
 .KPI-dash-tab ul {
     width: 50%;
 }
-.KPI-dash-tab.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
-    text-align: left;
-}
+
 .dropdown.sort-drop {
     float: right;
 }
@@ -1584,7 +1758,7 @@ span.count-round {
     font-weight: 600;
 }
 span.used-text {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     color: #296bb5;
 }
@@ -1592,7 +1766,7 @@ span.used-text {
     height: 50px;
 }
 .form-group.search-filed.inventory svg {
-    margin: 10px 5px 0 0;
+    margin: 5px 5px 0 0;
 }
 .filter-icon img {
     width: 50px;
@@ -1645,7 +1819,8 @@ input.form-control.custom-input-share-link {
     padding: 0;
 }
 .form-control:focus {
-    box-shadow: none !important;
+  box-shadow: none !important;
+  border-color: #cdcdcd;
 }
 
 textarea.form-control.custom-text-area {

@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ProfileService } from './service/profile.service';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+import { ImageCroppedEvent, LoadedImage } from 'ngx-image-cropper';
 
 declare const $: any;
 
@@ -53,12 +54,12 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     fullName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]],
     mobile: [{value: {}, disabled: true}],
-    telephone: [''],
+    telephone: ['', [Validators.pattern("^[0-9]*$"), Validators.minLength(10), Validators.maxLength(10)]],
     profilePic: [''],
     street: ['', Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)], // Validtion for blank space
     city: ['', Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)], // Validtion for blank space
     state: ['', Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)], // Validtion for blank space
-    postal_code: ['', Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)], // Validtion for blank space
+    postal_code: ['', [Validators.minLength(5), Validators.maxLength(6)]],
     country: ['', Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)], // Validtion for blank space
   });
   get form() { return this.profileForm.controls; }
@@ -72,10 +73,10 @@ export class MyProfileComponent implements OnInit, OnDestroy {
 
   companyForm = this.fb.group({
     name: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
-    job_title: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+    job_title: ['', [Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     logo: [''],
-    departmentId: ['', Validators.required],
-    employeesRangeId: ['', Validators.required]
+    departmentId: [''],
+    employeesRangeId: ['']
   });
   get comp_form() { return this.companyForm.controls; }
 
@@ -218,6 +219,25 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  // imageChangedEvent: any = '';
+  //   croppedImage: any = '';
+
+  //   fileChangeEvent(event: any): void {
+  //       this.imageChangedEvent = event;
+  //   }
+  //   imageCropped(event: ImageCroppedEvent) {
+  //       this.croppedImage = event.base64;
+  //   }
+  //   imageLoaded() {
+  //       // show cropper
+  //   }
+  //   cropperReady() {
+  //       // cropper ready
+  //   }
+  //   loadImageFailed() {
+  //       // show message
+  //   }
+
   // Upload company logo
   uploadCompanyLogo(event: any) {
     if (event.target.files && event.target.files[0]) {
@@ -286,7 +306,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
               this.user = response;
               this.setRegion();
               this._commonService.updateUserNameInSession(this.profileForm.value.fullName);
-              this._commonService.updateUserImageInSession(this.profileImage.newImage);
+              if (this.profileImage.newImage) this._commonService.updateUserImageInSession(this.profileImage.newImage);
               this._commonService.successToaster("Profile updated successfully");
             },
             (error: any) => { }
@@ -347,7 +367,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     }
     this._profileService.sendMobileCode(data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        this._commonService.successToaster("Code sent successfully");
+        this._commonService.successToaster("Verification code resend successfully");
         this.verifyButtonFlag = true;
       },
       (error: any) => { }
@@ -360,7 +380,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     this._profileService.verifyMobile(this.phoneNumberForm.value).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         $('#phoneModal').modal('hide');
-        this._commonService.successToaster("Mobile verified successfully");
+        this._commonService.successToaster("Mobile Number is verified successfully");
         this.numberType = "Change";
         this.resetModal(phoneNumber);
       },

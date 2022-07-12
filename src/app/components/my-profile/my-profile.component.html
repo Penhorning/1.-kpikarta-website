@@ -5,24 +5,21 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="my_profile_first_section">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="avatar-upload">
-                                <div class="avatar-preview">
-                                    <ng-container *ngIf="_commonService.getSession().profilePic; else defaultImage">
-                                        <div id="imagePreview" [style.background]="'url('+ _commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic +')'"></div>
-                                    </ng-container>
-                                    <ng-template #defaultImage>
-                                        <div id="imagePreview" style="background-image: url('assets/img/avatar.png');"> </div>
-                                    </ng-template>
-                                </div>
-                            </div>
+                    <div class="profile-section">
+                        <div class="profile_img">
+                            <ng-container *ngIf="_commonService.getSession().profilePic; else defaultImage">
+                                <img [src]="_commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic" alt="">
+                            </ng-container>
+                            <ng-template #defaultImage>
+                                <img src="assets/img/avatar.png" alt="">
+                            </ng-template>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mt-5">
-                                <h2 class="py-1">{{user?.fullName}}</h2>
-                                <p class="py-1"><img src="assets/img/map.png" class="mr-2" alt=""/>{{user?.region}}</p>
-                            </div>
+                        <div class="mt-3 ml-3 profile_name">
+                            <h3 class="py-1 text-nowrap">{{user?.fullName}}</h3>
+                            <p class="d-flex py-1">
+                                <img src="assets/img/map.png" class="mr-2" alt="">
+                                <span class="align-self-center text-nowrap">{{user?.region}}</span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -48,7 +45,7 @@
                                     <div class="col-md-12">
                                         <div class="d-flex justify-content-between mng-logo-import">
                                             <div>
-                                                <img [src]="profileImage.fileImageUrl" class="img-thumbnail profile_logo" alt="" />
+                                                <img [src]="profileImage.fileImageUrl" class="img-thumbnail rounded-circle profile_logo" alt="" />
                                             </div>
                                             <ng-container *ngIf="!profileImage.fileUploading">
                                                 <div>
@@ -70,11 +67,11 @@
                                             </ng-container>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="fullName">Full Name</label>
                                             <input type="text" class="form-control form-control" id="fullName"
-                                                formControlName="fullName"
+                                                formControlName="fullName" [maxlength]="50"
                                                 [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
                                             <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors"
                                                 class="invalid-feedback">
@@ -83,26 +80,29 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="email">Email</label>
                                             <input type="email" class="form-control form-control" id="email"
                                                 formControlName="email"
                                                 [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
-                                            <div *ngIf="(submitted || form.email.touched) && form.email.errors"
-                                                class="invalid-feedback">
+                                            <div *ngIf="(submitted || form.email.touched) && form.email.errors" class="invalid-feedback">
                                                 <div *ngIf="form.email.errors.required">Email is required!</div>
                                                 <div *ngIf="form.email.errors.pattern">Enter a valid email address!</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="w-100" for="telephone">Telephone Number</label>
                                             <input type="tel" class="form-control form-control" id="telephone" formControlName="telephone">
+                                            <div *ngIf="(submitted || form.telephone.touched) && form.telephone.errors" class="invalid-feedback d-block">
+                                                <div *ngIf="form.telephone.errors.pattern">Telephone number is not valid!</div>
+                                                <div *ngIf="form.telephone.errors.minlength || form.telephone.errors.maxlength">Telephone number must of 10 digits!</div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="w-100" for="mobile">Mobile Number</label>
                                             <div class="d-flex">
@@ -118,12 +118,12 @@
                                                 [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
                                                 </ngx-intl-tel-input>
                                                 <ng-container *ngIf="numberType == 'Change'">
-                                                    <button type="button" class="btn btn-sm btn-outline-dark ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
+                                                    <button type="button" class="btn btn-outline-dark ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
                                                       Change
                                                     </button>
                                                 </ng-container>
                                                 <ng-container *ngIf="numberType == 'Verify'">
-                                                    <button type="button" class="btn btn-sm btn-outline-danger ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
+                                                    <button type="button" class="btn btn-outline-danger ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
                                                       Verify
                                                     </button>
                                                 </ng-container>
@@ -138,7 +138,7 @@
                                         <div class="form-group">
                                             <label for="street">Street</label>
                                             <input type="text" class="form-control form-control" id="street"
-                                                formControlName="street"
+                                                formControlName="street" [maxlength]="150"
                                                 [ngClass]="{ 'is-invalid': (submitted || form.street.touched) && form.street.errors }">
                                             <div *ngIf="(submitted || form.street.touched) && form.street.errors"
                                                 class="invalid-feedback">
@@ -150,7 +150,7 @@
                                         <div class="form-group">
                                             <label for="city">City</label>
                                             <input type="text" class="form-control form-control" id="city"
-                                                formControlName="city"
+                                                formControlName="city" [maxlength]="50"
                                                 [ngClass]="{ 'is-invalid': (submitted || form.city.touched) && form.city.errors }">
                                             <div *ngIf="(submitted || form.city.touched) && form.city.errors"
                                                 class="invalid-feedback">
@@ -162,7 +162,7 @@
                                         <div class="form-group">
                                             <label for="state">Province/State</label>
                                             <input type="text" class="form-control form-control" id="state"
-                                                formControlName="state"
+                                                formControlName="state" [maxlength]="50"
                                                 [ngClass]="{ 'is-invalid': (submitted || form.state.touched) && form.state.errors }">
                                             <div *ngIf="(submitted || form.state.touched) && form.state.errors"
                                                 class="invalid-feedback">
@@ -178,8 +178,9 @@
                                                 [ngClass]="{ 'is-invalid': (submitted || form.postal_code.touched) && form.postal_code.errors }">
                                             <div *ngIf="(submitted || form.postal_code.touched) && form.postal_code.errors"
                                                 class="invalid-feedback">
-                                                <div *ngIf="form.postal_code.errors.pattern">Blank space is not allowed!
-                                                </div>
+                                                <div *ngIf="form.postal_code.errors.pattern">Blank space is not allowed!</div>
+                                                <div *ngIf="form.postal_code.errors.minlength">Postal code must be of at least 5 digits!</div>
+                                                <div *ngIf="form.postal_code.errors.maxlength">Postal code should not be more than 6 digits!</div>
                                             </div>
                                         </div>
                                     </div>
@@ -187,7 +188,7 @@
                                         <div class="form-group">
                                             <label for="country">Country</label>
                                             <input type="text" class="form-control form-control" id="country"
-                                                formControlName="country"
+                                                formControlName="country" [maxlength]="50"
                                                 [ngClass]="{ 'is-invalid': (submitted || form.country.touched) && form.country.errors }">
                                             <div *ngIf="(submitted || form.country.touched) && form.country.errors"
                                                 class="invalid-feedback">
@@ -227,6 +228,16 @@
                                                     <input type="file" id="company_logo" name="company_logo" class="input_logo" accept=".png, .jpg, .jpeg" (change)="uploadCompanyLogo($event)">
                                                 </div>
                                             </ng-container>
+                                            <!-- <image-cropper
+                                                [imageChangedEvent]="imageChangedEvent"
+                                                [maintainAspectRatio]="true"
+                                                [aspectRatio]="4 / 3"
+                                                format="png"
+                                                (imageCropped)="imageCropped($event)"
+                                                (imageLoaded)="imageLoaded()"
+                                                (cropperReady)="cropperReady()"
+                                                (loadImageFailed)="loadImageFailed()"
+                                            ></image-cropper> -->
                                             <ng-container *ngIf="companyLogo.fileUploading">
                                                 <div class="input_preview d-flex align-items-center justify-content-center">
                                                     <div class="spinner-border" role="status">
@@ -239,7 +250,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="name">Company Name</label>
-                                            <input type="text" class="form-control form-control" id="name" formControlName="name"
+                                            <input type="text" class="form-control form-control" id="name" formControlName="name" [maxlength]="50"
                                                 [ngClass]="{ 'is-invalid': (companySubmitted || comp_form.name.touched) && comp_form.name.errors }">
                                             <div *ngIf="(companySubmitted || comp_form.name.touched) && comp_form.name.errors" class="invalid-feedback">
                                                 <div *ngIf="comp_form.name.errors.required">Company name is required!</div>
@@ -250,10 +261,9 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="job_title">Job Title</label>
-                                            <input type="text" class="form-control form-control" id="job_title" formControlName="job_title"
+                                            <input type="text" class="form-control form-control" id="job_title" formControlName="job_title" [maxlength]="50"
                                                 [ngClass]="{ 'is-invalid': (companySubmitted || comp_form.job_title.touched) && comp_form.job_title.errors }">
                                             <div *ngIf="(companySubmitted || comp_form.job_title.touched) && comp_form.job_title.errors" class="invalid-feedback">
-                                                <div *ngIf="comp_form.job_title.errors.required">Job title is required!</div>
                                                 <div *ngIf="comp_form.job_title.errors.pattern">Blank space is not allowed!</div>
                                             </div>
                                         </div>
@@ -262,24 +272,21 @@
                                         <div class="form-group">
                                             <label for="departmentId">Department</label>
                                             <select class="form-control" id="departmentId" formControlName="departmentId">
-                                                <option selected="" value="" disabled>Select department</option>
+                                                <option selected="" value="">Select department</option>
                                                 <option *ngFor="let department of departments" [value]="department.id">{{department.name}}</option>
                                             </select>
-                                            <div *ngIf="(companySubmitted || comp_form.departmentId.touched) && comp_form.departmentId.errors" class="invalid-feedback d-block">
+                                            <!-- <div *ngIf="(companySubmitted || comp_form.departmentId.touched) && comp_form.departmentId.errors" class="invalid-feedback d-block">
                                                 <div *ngIf="comp_form.departmentId.errors.required">Department is required!</div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="employeesRangeId">Number of employees </label>
+                                            <label for="employeesRangeId">Number of Employees </label>
                                             <select class="form-control" id="employeesRangeId" formControlName="employeesRangeId">
-                                                <option selected="" value="" disabled>Select employees</option>
+                                                <option selected="" value="">Select employees</option>
                                                 <option *ngFor="let employee_range of employeesRanges" [value]="employee_range.id">{{employee_range.range}}</option>
                                             </select>
-                                            <div *ngIf="(companySubmitted || comp_form.employeesRangeId.touched) && comp_form.employeesRangeId.errors" class="invalid-feedback d-block">
-                                                <div *ngIf="comp_form.employeesRangeId.errors.required">No. of employee is required!</div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -331,8 +338,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <button class="btn btn-block btn-outline-dark btn-sm" [disabled]="phoneForm.mobile.errors || !phoneNumberForm.value.mobile || resendButtonSubmitFlag"
-                                (click)="sendCode()">Generate Code</button>
+                            <button class="btn btn-outline-danger btn-sm mr-2" data-dismiss="modal" aria-label="Close">Cancel</button>
+                            <button class="btn btn-outline-dark btn-sm" [disabled]="phoneForm.mobile.errors || !phoneNumberForm.value.mobile || resendButtonSubmitFlag"
+                                (click)="sendCode()">Send Code</button>
                         </div>
                     </ng-container>
 

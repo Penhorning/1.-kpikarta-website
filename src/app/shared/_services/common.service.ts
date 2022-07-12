@@ -93,13 +93,13 @@ export class CommonService {
 /*============================== API FUNCTIONS STARTS ==============================*/
   // Login apis
   login(data: any) {
-    return this._httpService.POST('/users/login?include=user', data);
+    return this._httpService.POST('/users/login/user', data);
   }
   logout() {
     return this._httpService.POST(`/users/logout?access_token=${this.getSession().token}`);
   }
   forgotPassword(data: any) {
-    return this._httpService.POST('/users/reset', data);
+    return this._httpService.POST('/users/forgot-password/user', data);
   }
   resetPassword(data: any, accessToken: string) {
     return this._httpService.POST(`/users/reset-password?access_token=${accessToken}`, data);

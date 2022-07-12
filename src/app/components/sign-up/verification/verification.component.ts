@@ -72,7 +72,7 @@ export class VerificationComponent implements OnInit, OnDestroy {
       this._signupService.verification(this.verificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
           this.emailVerified = true;
-          this._commonService.successToaster("Email verified successfully");
+          this._commonService.successToaster("Email is verified successfully");
           this.verificationForm.controls["code"].disable();
           this._signupService.updateSignUpVerificationSession('email');
         },
@@ -85,7 +85,7 @@ export class VerificationComponent implements OnInit, OnDestroy {
     this.verificationFlag = true;
     this._signupService.resendVerification().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        this._commonService.successToaster("Code sent successfully");
+        this._commonService.successToaster("Verification code resend successfully");
       },
       (error: any) => { }
     ).add(() => this.verificationFlag = false);
@@ -102,7 +102,7 @@ export class VerificationComponent implements OnInit, OnDestroy {
       this._signupService.verifyMobile(this.mobileVerificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
           this.mobileVerified = true;
-          this._commonService.successToaster("Mobile verified successfully");
+          this._commonService.successToaster("Mobile Number is verified successfully");
           this.mobileVerificationForm.controls["code"].disable();
           this._signupService.updateSignUpVerificationSession('mobile');
         },
@@ -115,7 +115,7 @@ resendMobileCode() {
     this.mobileVerificationFlag = true;
     this._signupService.sendMobileCode().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        this._commonService.successToaster("Code sent successfully");
+        this._commonService.successToaster("Verification code resend successfully");
       },
       (error: any) => { }
     ).add(() => this.mobileVerificationFlag = false);
