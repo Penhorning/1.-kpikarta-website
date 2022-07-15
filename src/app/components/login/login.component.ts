@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit, OnDestroy {
               token: response.id,
               email,
               stage: 1,
-              mobileVerified: mobileVerified
+              mobileVerified
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
@@ -98,13 +98,21 @@ export class LoginComponent implements OnInit, OnDestroy {
               profilePic,
               companyLogo: response.companyLogo
             }
-            this._signupService.setSignUpSession(sessionData);
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({email: this.loginForm.value.email});
             }
             if (mfaEnabled) {
+              this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa' }});
-            } else this.router.navigate(['/two-step-verification']);
+            }
+            else if (mobileVerified) {
+              this._signupService.setSignUpSession(sessionData);
+              this.router.navigate(['/two-step-verification']);
+            }
+            else {
+              this._commonService.setSession(sessionData);
+              this.router.navigate(['/dashboard']);
+            }
           }
         },
         (error: any) => {

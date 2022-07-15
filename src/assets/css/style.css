@@ -1220,9 +1220,6 @@ a.nav-link-cus:hover {
   margin-bottom: 50px;
   box-shadow: #ccc 0px 3px 6px;
 }
-.my_profile_first_section .profile_name{
-	width: 100%
-}
 .mng_per_logo {
     float: left;
 }
@@ -1603,7 +1600,6 @@ a.dropdown-item.logout-custom:hover {
 .profile-section {
     display: flex;
     margin: 0 auto;
-    width: 50%;
 }
 .notification-box {
     background-color: #fff;

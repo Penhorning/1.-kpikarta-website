@@ -10,7 +10,7 @@
     height: 90px;
     width: 150px;
     top: -10px;
-    right: 12px;
+    right: 170px;
     cursor: pointer;
     background: transparent;
     opacity: 0;
@@ -24,4 +24,16 @@
     min-height: 75px;
     max-width: 100px;
     max-height: 75px;
+}
+
+.upload-text-msg {
+    position: relative;
+    display: block;
+    padding-bottom: 7px;
+}
+.phone_edit_icon {
+    cursor: pointer;
+}
+.phone_edit_icon, .verified_icon {
+    height: 40px;
 }

@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="my_profile_first_section">
-                    <div class="profile-section">
+                    <div class="profile-section justify-content-center">
                         <div class="profile_img">
                             <ng-container *ngIf="_commonService.getSession().profilePic; else defaultImage">
                                 <img [src]="_commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic" alt="">
@@ -15,10 +15,10 @@
                             </ng-template>
                         </div>
                         <div class="mt-3 ml-3 profile_name">
-                            <h3 class="py-1 text-nowrap">{{user?.fullName}}</h3>
+                            <h3 class="py-1">{{user?.fullName}}</h3>
                             <p class="d-flex py-1">
                                 <img src="assets/img/map.png" class="mr-2" alt="">
-                                <span class="align-self-center text-nowrap">{{user?.region}}</span>
+                                <span class="align-self-center">{{user?.region}}</span>
                             </p>
                         </div>
                     </div>
@@ -43,28 +43,13 @@
                             <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="d-flex justify-content-between mng-logo-import">
-                                            <div>
-                                                <img [src]="profileImage.fileImageUrl" class="img-thumbnail rounded-circle profile_logo" alt="" />
+                                        <div class="d-flex jumbotron justify-content-between mng-logo-import py-3">
+                                            <div class="align-self-center">
+                                                <img [src]="profileImage.fileImageUrl" class="rounded-circle profile_logo" alt="" />
                                             </div>
-                                            <ng-container *ngIf="!profileImage.fileUploading">
-                                                <div>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="63.333" height="42.222" viewBox="0 0 63.333 42.222">
-                                                        <path
-                                                        d="M51.063,21.939a19.772,19.772,0,0,0-36.944-5.278,15.827,15.827,0,0,0,1.715,31.561H50.139a13.157,13.157,0,0,0,.924-26.283ZM36.944,29.75V40.306H26.389V29.75H18.472L31.667,16.556,44.861,29.75Z"
-                                                        transform="translate(0 -6)" />
-                                                    </svg>
-                                                    <span class="upload-text-msg">Upload your profile</span>
-                                                    <input type="file" id="profile_pic" name="profile_pic" class="input_logo" accept=".png, .jpg, .jpeg" (change)="uploadProfile($event)">
-                                                </div>
-                                            </ng-container>
-                                            <ng-container *ngIf="profileImage.fileUploading">
-                                                <div class="input_preview d-flex align-items-center justify-content-center">
-                                                    <div class="spinner-border" role="status">
-                                                        <span class="sr-only">Loading...</span>
-                                                    </div>
-                                                </div>
-                                            </ng-container>
+                                            <div class="align-self-center">
+                                                <button type="button" class="btn btn-secondary" (click)="resetCropModel('user', 150, 150)" data-toggle="modal" data-target="#cropperModal">Upload</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -118,14 +103,14 @@
                                                 [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
                                                 </ngx-intl-tel-input>
                                                 <ng-container *ngIf="numberType == 'Change'">
-                                                    <button type="button" class="btn btn-outline-dark ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
-                                                      Change
-                                                    </button>
+                                                    <img src="assets/img/check_circle.png" class="text-center ml-2 verified_icon" title="Verified" alt="" />
+                                                    <img src="assets/img/edit.png" class="text-center ml-1 phone_edit_icon" title="Edit" alt="" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal"/>
                                                 </ng-container>
                                                 <ng-container *ngIf="numberType == 'Verify'">
-                                                    <button type="button" class="btn btn-outline-danger ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
+                                                    <!-- <button type="button" class="btn btn-outline-danger ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
                                                       Verify
-                                                    </button>
+                                                    </button> -->
+                                                    <img src="assets/img/images.png" class="text-center ml-1 phone_edit_icon" title="Unverified" alt="" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal"/>
                                                 </ng-container>
                                             </div>
                                         </div>
@@ -213,38 +198,13 @@
                             <form [formGroup]="companyForm" (ngSubmit)="onCompanySubmit()">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="d-flex justify-content-between mng-logo-import">
-                                            <div>
-                                                <img [src]="companyLogo.fileImageUrl" class="img-thumbnail navbar_logo" alt="" />
+                                        <div class="d-flex jumbotron justify-content-between mng-logo-import py-3">
+                                            <div class="align-self-center">
+                                                <img [src]="companyLogo.fileImageUrl" class="navbar_logo" alt="" />
                                             </div>
-                                            <ng-container *ngIf="!companyLogo.fileUploading">
-                                                <div class="align-self-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="63.333" height="42.222" viewBox="0 0 63.333 42.222">
-                                                        <path
-                                                        d="M51.063,21.939a19.772,19.772,0,0,0-36.944-5.278,15.827,15.827,0,0,0,1.715,31.561H50.139a13.157,13.157,0,0,0,.924-26.283ZM36.944,29.75V40.306H26.389V29.75H18.472L31.667,16.556,44.861,29.75Z"
-                                                        transform="translate(0 -6)" />
-                                                    </svg>
-                                                    <span class="upload-text-msg">Upload your logo</span>
-                                                    <input type="file" id="company_logo" name="company_logo" class="input_logo" accept=".png, .jpg, .jpeg" (change)="uploadCompanyLogo($event)">
-                                                </div>
-                                            </ng-container>
-                                            <!-- <image-cropper
-                                                [imageChangedEvent]="imageChangedEvent"
-                                                [maintainAspectRatio]="true"
-                                                [aspectRatio]="4 / 3"
-                                                format="png"
-                                                (imageCropped)="imageCropped($event)"
-                                                (imageLoaded)="imageLoaded()"
-                                                (cropperReady)="cropperReady()"
-                                                (loadImageFailed)="loadImageFailed()"
-                                            ></image-cropper> -->
-                                            <ng-container *ngIf="companyLogo.fileUploading">
-                                                <div class="input_preview d-flex align-items-center justify-content-center">
-                                                    <div class="spinner-border" role="status">
-                                                        <span class="sr-only">Loading...</span>
-                                                    </div>
-                                                </div>
-                                            </ng-container>
+                                            <div class="align-self-center">
+                                                <button type="button" class="btn btn-secondary" (click)="resetCropModel('company', 394, 91)" data-toggle="modal" data-target="#cropperModal">Upload</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -371,3 +331,54 @@
     </div>
 </div>
 <!-- Verify phone number modal ends -->
+
+<!-- Image cropper modal starts -->
+<div class="modal fade" id="cropperModal" tabindex="-1" role="dialog" aria-labelledby="cropperModalLabel" aria-hidden="true"
+    data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-capitalize" id="passwordModalLabel">Upload {{cropperModel.type}} logo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <ng-container *ngIf="!imageChangedEvent">
+                        <div class="col-md-12 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="63.333" height="42.222" viewBox="0 0 63.333 42.222">
+                                <path
+                                d="M51.063,21.939a19.772,19.772,0,0,0-36.944-5.278,15.827,15.827,0,0,0,1.715,31.561H50.139a13.157,13.157,0,0,0,.924-26.283ZM36.944,29.75V40.306H26.389V29.75H18.472L31.667,16.556,44.861,29.75Z"
+                                transform="translate(0 -6)" />
+                            </svg>
+                            <span class="upload-text-msg">Upload Your Logo</span>
+                            <input type="file" id="company_logo" name="company_logo" class="input_logo" accept=".png, .jpg, .jpeg" (change)="fileChangeEvent($event)">
+                        </div>
+                    </ng-container>
+                    <div class="col-md-12 text-center" [hidden]="!imageChangedEvent">
+                        <h5>Crop Image</h5>
+                        <p>To crop this image, drag the region below and then click "Submit"</p>
+                        <image-cropper 
+                        [imageChangedEvent]="imageChangedEvent" 
+                        [maintainAspectRatio]="true"
+                        [cropperStaticWidth]="cropperModel.staticWidth"
+                        [cropperStaticHeight]="cropperModel.staticHeight"
+                        format="png" 
+                        (imageCropped)="imageCropped($event)">
+                        </image-cropper>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light btn_default max-270" (click)="uploadFile()" [disabled]="!croppedImage || companyLogo.fileUploading">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="companyLogo.fileUploading">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!companyLogo.fileUploading">Upload</ng-container>
+                  </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Image cropper modal ends -->

@@ -22,21 +22,26 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   company: any;
   isLoading: boolean = false;
 
-  // User Image variables
-  profileImageFile: any;
+  // Image variables
   profileImage = {
     fileImageUrl: "",
     oldImage: "",
     newImage: "",
     fileUploading: false
   }
-
-  companyLogoFile: any;
   companyLogo = {
     fileImageUrl: "",
     oldImage: "",
     newImage: "",
     fileUploading: false
+  }
+  // Cropper variables
+  imageChangedEvent: any;
+  croppedImage: string = "";
+  cropperModel = {
+    type: "",
+    staticWidth: 0,
+    staticHeight: 0
   }
 
   // ngx-intl-tel-input config
@@ -182,97 +187,66 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Upload profile
-  uploadProfile(event: any) {
-    if (event.target.files && event.target.files[0]) {
-      if (event.target.files[0].type == "image/jpeg" || event.target.files[0].type == "image/jpg" || event.target.files[0].type == "image/png") {
-        if ((event.target.files[0].size / 1024 / 1024) > 20) {
-          alert("File must not be greater than 20MB");
-          event.target.value = "";
-        }
-        else {
-          this.profileImageFile = <File>event.target.files[0];
-          let reader = new FileReader();
-
-          reader.readAsDataURL(event.target.files[0]); // read file as data url
-          reader.onload = (event: any) => {           // called once readAsDataURL is completed 
-            this.profileImage.fileImageUrl = event.target.result;
-            this.profileImage.fileUploading = true;
-            const imageData = new FormData();
-            imageData.append('photo', this.profileImageFile, this.profileImageFile.name);
-            this._profileService.uploadFile(imageData, 'user').pipe(takeUntil(this.destroy$)).subscribe(
-              (response: any) => {
-              this.profileImage.newImage = response.result.files.photo[0].name;
-              this.profileImage.fileUploading = false;
-              },
-              (error: any) => {}
-            );
-          }
-        }
-      } else {
-        alert("File must be JPEG, JPG or PNG only.");
-        event.target.value = "";
-      }
-    } else {
-      alert("File not found!");
-      event.target.value = "";
-    }
+  resetCropModel(type: string, width: number, height: number) {
+    this.cropperModel.type = type;
+    this.cropperModel.staticWidth = width;
+    this.cropperModel.staticHeight = height;
+    this.imageChangedEvent = "";
   }
-
-  // imageChangedEvent: any = '';
-  //   croppedImage: any = '';
-
-  //   fileChangeEvent(event: any): void {
-  //       this.imageChangedEvent = event;
-  //   }
-  //   imageCropped(event: ImageCroppedEvent) {
-  //       this.croppedImage = event.base64;
-  //   }
-  //   imageLoaded() {
-  //       // show cropper
-  //   }
-  //   cropperReady() {
-  //       // cropper ready
-  //   }
-  //   loadImageFailed() {
-  //       // show message
-  //   }
-
-  // Upload company logo
-  uploadCompanyLogo(event: any) {
-    if (event.target.files && event.target.files[0]) {
-      if (event.target.files[0].type == "image/jpeg" || event.target.files[0].type == "image/jpg" || event.target.files[0].type == "image/png") {
-        if ((event.target.files[0].size / 1024 / 1024) > 20) {
-          alert("File must not be greater than 20MB");
-          event.target.value = "";
-        }
-        else {
-          this.companyLogoFile = <File>event.target.files[0];
-          let reader = new FileReader();
-
-          reader.readAsDataURL(event.target.files[0]); // read file as data url
-          reader.onload = (event: any) => {           // called once readAsDataURL is completed 
-            this.companyLogo.fileImageUrl = event.target.result;
-            this.companyLogo.fileUploading = true;
-            const imageData = new FormData();
-            imageData.append('photo', this.companyLogoFile, this.companyLogoFile.name);
-            this._profileService.uploadFile(imageData, 'company').pipe(takeUntil(this.destroy$)).subscribe(
-              (response: any) => {
-              this.companyLogo.newImage = response.result.files.photo[0].name;
-              this.companyLogo.fileUploading = false;
-              },
-              (error: any) => {}
-            );
-          }
-        }
-      } else {
-        alert("File must be JPEG, JPG or PNG only.");
-        event.target.value = "";
-      }
-    } else {
+  fileChangeEvent(event: any): void {
+    if (!event.target.files && !event.target.files[0]) {
       alert("File not found!");
       event.target.value = "";
+    } else if (event.target.files[0].type !== "image/jpeg" && event.target.files[0].type !== "image/jpg" && event.target.files[0].type !== "image/png") {
+      alert("File must be JPEG, JPG or PNG only.");
+      event.target.value = "";
+    } else this.imageChangedEvent = event;
+  }
+  imageCropped(event: ImageCroppedEvent) {
+      this.croppedImage = event.base64 || "";
+  }
+  base64ToBlob(base64: any, mime: any) {
+    mime = mime || '';
+    var sliceSize = 1024;
+    var byteChars = window.atob(base64);
+    var byteArrays = [];
+
+    for (var offset = 0, len = byteChars.length; offset < len; offset += sliceSize) {
+        var slice = byteChars.slice(offset, offset + sliceSize);
+        var byteNumbers = new Array(slice.length);
+        for (var i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+        var byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
     }
+    return new Blob(byteArrays, {type: mime});
+  }
+  uploadFile() {
+    if (this.cropperModel.type == "company") {
+      this.companyLogo.fileImageUrl = this.croppedImage;
+      this.companyLogo.fileUploading = true;
+    } else {
+      this.profileImage.fileImageUrl = this.croppedImage;
+      this.profileImage.fileUploading = true;
+    }
+    const base64ImageContent = this.croppedImage.replace(/^data:image\/(png|jpg);base64,/, "");
+    const blob = this.base64ToBlob(base64ImageContent, 'image/png');                
+    const formData = new FormData();
+    formData.append('photo', blob);
+    this._profileService.uploadFile(formData, this.cropperModel.type).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+      if (this.cropperModel.type == "company") {
+        this.companyLogo.newImage = response.result.files.photo[0].name;
+        this.companyLogo.fileUploading = false;
+      } else {
+        this.profileImage.newImage = response.result.files.photo[0].name;
+        this.profileImage.fileUploading = false;
+      }
+      $('#cropperModal').modal('hide');
+      },
+      (error: any) => {}
+    );
   }
 
   // On submit
@@ -340,7 +314,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   
           this._profileService.updateCompany(this.companyForm.value, this.company.id).pipe(takeUntil(this.destroy$)).subscribe(
             (response: any) => {
-              this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
+              if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
               this._commonService.successToaster("Company details updated successfully");
             },
             (error: any) => { }
