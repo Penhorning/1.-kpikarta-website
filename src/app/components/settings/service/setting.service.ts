@@ -9,9 +9,16 @@ export class SettingService {
 
   constructor(private _httpService: HttpService, private _commonService: CommonService) { }
 
-  changePassword(data: any) {
-    return this._httpService.POST(`/users/change-password?access_token=${this._commonService.getSession().token}`, data);
+  getColorSettingByUser(data: any) {
+    return this._httpService.POST('/color-settings-by-user', data);
   }
+  createColorSetting(data: any) {
+    return this._httpService.POST('/color_settings', data);
+  }
+  updateColorSetting(data: any, settingId: string) {
+    return this._httpService.PATCH(`/color_settings/${settingId}`, data);
+  }
+
   generateMFAQRCode() {
     return this._httpService.PUT('/users/generateMFAQRCode');
   }
@@ -26,6 +33,10 @@ export class SettingService {
   }
   toggleMFA(data: any) {
     return this._httpService.PUT('/users/toggleMFA', data);
+  }
+
+  changePassword(data: any) {
+    return this._httpService.POST(`/users/change-password?access_token=${this._commonService.getSession().token}`, data);
   }
 
 }
