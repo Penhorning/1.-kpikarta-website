@@ -11,7 +11,7 @@
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab"
                 href="#tabs-1" role="tab">Settings</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2"
-                role="tab" (click)="checkMFAConfig()">Multi factor Authentication</a> </li>
+                role="tab" (click)="checkMFAConfig()">Multi Factor Authentication</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3"
                 role="tab">Change Password</a> </li>
           </ul>
@@ -178,9 +178,8 @@
               <div class="max_center_400 custom-tab-change-pass">
                 <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
                   <div class="form-group">
-                    <label for="oldPassword">Old Password:</label>
-                    <input type="password" class="form-control" id="oldPassword" placeholder="****************"
-                      formControlName="oldPassword"
+                    <label for="oldPassword">Old Password</label>
+                    <input type="password" class="form-control" id="oldPassword" formControlName="oldPassword"
                       [ngClass]="{ 'is-invalid': (submitted || form.oldPassword.touched) && form.oldPassword.errors }">
                     <div *ngIf="(submitted || form.oldPassword.touched) && form.oldPassword.errors"
                       class="invalid-feedback">
@@ -190,9 +189,8 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="newPassword">New Password:</label>
-                    <input type="password" class="form-control" id="newPassword" placeholder="****************"
-                      formControlName="newPassword"
+                    <label for="newPassword">New Password</label>
+                    <input type="password" class="form-control" id="newPassword" formControlName="newPassword"
                       [ngClass]="{ 'is-invalid': (submitted || form.newPassword.touched) && form.newPassword.errors }">
                     <div *ngIf="(submitted || form.newPassword.touched) && form.newPassword.errors"
                       class="invalid-feedback">
@@ -202,9 +200,8 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="confirmPassword">Confirm Password:</label>
-                    <input type="password" class="form-control" id="confirmPassword" placeholder="****************"
-                      formControlName="confirmPassword"
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
                       [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
                     <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors"
                       class="invalid-feedback">

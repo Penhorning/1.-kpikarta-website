@@ -4,11 +4,6 @@
 @import "~ngx-bootstrap/datepicker/bs-datepicker";
 
 
-.disableDiv {
-    opacity: 0.2;
-    cursor: not-allowed;
-    pointer-events: none;
-}
 .navbar_logo {
     min-width: 250px;
     min-height: 57px;
@@ -20,4 +15,14 @@
     min-height: 48px;
     max-width: 50px;
     max-height: 48px;
+}
+
+.disableDiv {
+    opacity: 0.2;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.next-btn:hover, .next-btn:active, .next-btn:focus, .next-btn:disabled {
+    background-color: #5186c2 !important;
 }

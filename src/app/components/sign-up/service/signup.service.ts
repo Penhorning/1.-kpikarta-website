@@ -40,19 +40,20 @@ export class SignupService {
     return this._httpService.PATCH(`/users/${userId}?access_token=${accessToken}`, data);
   }
   verification(data: any) {
-    return this._httpService.POST(`/users/verify_email?access_token=${this.getSignUpSession().token}`, data);
+    return this._httpService.POST(`/users/verify-email?access_token=${this.getSignUpSession().token}`, data);
   }
   resendVerification() {
-    return this._httpService.POST(`/users/send_email_code?access_token=${this.getSignUpSession().token}`, "");
+    return this._httpService.POST(`/users/send-email-code?access_token=${this.getSignUpSession().token}`, "");
   }
   sendMobileCode() {
-    return this._httpService.POST(`/users/send_mobile_code?access_token=${this.getSignUpSession().token}`, "");
+    return this._httpService.POST(`/users/send-mobile-code?access_token=${this.getSignUpSession().token}`, "");
   }
   verifyMFACode(data: any) {
     return this._httpService.PUT(`/users/verifyMFAToken?access_token=${this.getSignUpSession().token}`, data);
   }
   verifyMobile(data: any) {
-    return this._httpService.POST(`/users/verify_mobile?access_token=${this.getSignUpSession().token}`, data);
+    return this._httpService.POST(`/users/verify-mobile?access_token=${this.getSignUpSession().token}`, data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
+
 }

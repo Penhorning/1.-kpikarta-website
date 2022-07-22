@@ -1,0 +1,38 @@
+<app-header></app-header>
+<app-sidebar></app-sidebar>
+
+<!-- main-section -->
+<div class="main-content">
+    <div class="container-fluid">
+      <div class="karta-setip-white-box">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h2>Karta Setup</h2>
+            </div>
+          </div>
+          <form [formGroup]="kartaForm" (ngSubmit)="onSubmit()">
+            <div class="row mt-5">
+                <div class="col-lg-6">
+                  <div class="form-group name-input-karta">
+                    <label for="name">Karta Name</label>
+                    <input type="text" id="name" class="form-control" formControlName="name" [maxlength]="20"
+                    [ngClass]="{ 'is-invalid': (submitted || form.name.touched) && form.name.errors }">
+                    <div *ngIf="(submitted || form.name.touched) && form.name.errors" class="invalid-feedback">
+                        <div *ngIf="form.name.errors.required">Name is required!</div>
+                        <div *ngIf="form.name.errors.pattern">Blank space is not allowed!</div>
+                    </div>
+                  </div>
+                </div>  
+                <div class="col-lg-6">
+                  <button class="next-btn" [disabled]="submitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!submitFlag">Next</ng-container>
+                  </button>
+                </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

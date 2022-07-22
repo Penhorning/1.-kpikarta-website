@@ -9,6 +9,7 @@ export class SettingService {
 
   constructor(private _httpService: HttpService, private _commonService: CommonService) { }
 
+/*============================== API FUNCTIONS STARTS ==============================*/
   getColorSettingByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);
   }
@@ -38,5 +39,6 @@ export class SettingService {
   changePassword(data: any) {
     return this._httpService.POST(`/users/change-password?access_token=${this._commonService.getSession().token}`, data);
   }
+/*============================== API FUNCTIONS ENDS ==============================*/
 
 }

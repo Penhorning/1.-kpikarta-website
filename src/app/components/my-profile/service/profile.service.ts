@@ -8,8 +8,6 @@ export class ProfileService {
 
   constructor(private _httpService: HttpService) { }
 
-
-
 /*============================== API FUNCTIONS STARTS ==============================*/
   getProfile(userId: string) {
     return this._httpService.GET_BY_ID('/users/', userId);
@@ -33,10 +31,11 @@ export class ProfileService {
     return this._httpService.PATCH(`/companies/${companyId}`, data);
   }
   sendMobileCode(data: any) {
-    return this._httpService.POST('/users/send_mobile_code', data);
+    return this._httpService.POST('/users/send-mobile-code', data);
   }
   verifyMobile(data: any) {
-    return this._httpService.POST('/users/verify_mobile', data);
+    return this._httpService.POST('/users/verify-mobile', data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
+
 }

@@ -8,8 +8,6 @@ export class SuggestionService {
 
   constructor(private _httpService: HttpService) { }
 
-
-
 /*============================== API FUNCTIONS STARTS ==============================*/
   getPhases() {
     return this._httpService.GET('/kartaphases');
@@ -27,5 +25,6 @@ export class SuggestionService {
     return this._httpService.DELETE('/suggestions/', suggestionId);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
+
 }
 

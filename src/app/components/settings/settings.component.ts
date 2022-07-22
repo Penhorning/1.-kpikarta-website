@@ -177,11 +177,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     if (this.authenticatorForm.valid) {
       this.qr.submitFlag = true;
-
-      if (this.passwordForm.value.newPassword != this.passwordForm.value.confirmPassword) {
-        this._commonService.errorToaster("Confirm password should be same as new password");
-      }
-      
       this._settingService.enableMFA(this.authenticatorForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
           this._commonService.successToaster("MFA setup successfully");
@@ -225,18 +220,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.submitted = true;
 
     if (this.passwordForm.valid) {
-      this.submitFlag = true;
-
       if (this.passwordForm.value.newPassword != this.passwordForm.value.confirmPassword) {
         this._commonService.errorToaster("Confirm password should be same as new password");
+      } else {
+        this.submitFlag = true;
+        this._settingService.changePassword(this.passwordForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+          (response: any) => {
+            this.passwordForm.reset();
+            this.passwordForm.markAsPristine();
+            this.submitted = false;
+            this._commonService.successToaster("Your password changed successfully");
+          },
+          (error: any) => { }
+        ).add(() => this.submitFlag = false );
       }
-      
-      this._settingService.changePassword(this.passwordForm.value).pipe(takeUntil(this.destroy$)).subscribe(
-        (response: any) => {
-          this._commonService.successToaster("Your password changed successfully");
-        },
-        (error: any) => { }
-      ).add(() => this.submitFlag = false );
     }
   }
 
