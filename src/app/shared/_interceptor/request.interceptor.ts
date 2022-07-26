@@ -29,7 +29,10 @@ export class RequestInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         console.log("Request error: ", error);
         
-        if (error.status === 401 && error.error.error.message === "Authorization Required") {
+        if (
+          error.status === 401 && (error.error.error.message === "Authorization Required"
+          || error.error.error.message === "could not find a valid user" || error.error.error.message === "could not find accessToken")
+          ) {
           this._commonService.deleteSession();
           this.router.navigate(['']);
           this._commonService.errorToaster('Your session expired');

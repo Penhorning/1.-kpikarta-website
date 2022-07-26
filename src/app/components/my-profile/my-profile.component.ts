@@ -282,6 +282,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
               this._commonService.updateUserNameInSession(this.profileForm.value.fullName);
               if (this.profileImage.newImage) this._commonService.updateUserImageInSession(this.profileImage.newImage);
               this._commonService.successToaster("Profile updated successfully");
+              this.profileImage.oldImage = response.profilePic;
             },
             (error: any) => { }
           ).add(() => this.submitFlag = false ); 
@@ -316,6 +317,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
             (response: any) => {
               if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
               this._commonService.successToaster("Company details updated successfully");
+              this.companyLogo.oldImage = response.logo;
             },
             (error: any) => { }
           ).add(() => this.companySubmitFlag = false );

@@ -151,7 +151,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this._settingService.checkMFAConfig().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.qr.isMFAEnabled = response.mfa.enabled;
-        if (response.mfa.secret && response.mfa.qrCode) {
+        if (response.mfa.secret && response.mfa.qrCode && response.mfa.verified) {
           this.qr.isMFASetup = true;
         }
       },
