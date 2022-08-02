@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this._commonService.login(this.loginForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobileVerified, currentPlan, mfaEnabled } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobileVerified, currentPlan, mfaEnabled, mfaVerified } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -101,7 +101,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({email: this.loginForm.value.email});
             }
-            if (mfaEnabled) {
+            if (mfaEnabled && mfaVerified) {
               this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa' }});
             }

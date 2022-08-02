@@ -69,8 +69,8 @@
                       <ng-container *ngFor="let setting of colorSettings?.settings; let i = index">
                         <div class="row" [ngClass]="{'mt-2' : i > 0}">
                           <div class="col-lg-6">
-                            <ng-container *ngIf="setting.min == 100 && setting.max == 100; else not100">
-                              <h6>{{setting.max}}%+</h6>
+                            <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
+                              <h6>100%+</h6>
                             </ng-container>
                             <ng-template #not100>
                               <h6>{{setting.min}}-{{setting.max}}%</h6>
@@ -78,10 +78,19 @@
                           </div>
                           <div class="col-lg-6 text-right">
                             <div class="float-right d-flex">
-                              <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
-                              <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
-                                <img src="assets/img/minus.png">
-                              </div>
+                              <!-- <div class="color-box-two" [ngStyle]="{'background-color': setting.color}" [style.background]="defaultColor"></div> -->
+                              <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
+                                <div class="color-box-two" [ngStyle]="{'background-color': setting.color}" [style.background]="defaultColor2"></div>
+                                <div class="plus-minus" [(colorPicker)]="defaultColor2" (colorPickerChange)="onColorChange2($event, i)" style="cursor: pointer;">
+                                  <img src="assets/img/edit.png" style="height: 30px;">
+                                </div>
+                              </ng-container>
+                              <ng-template #not100Color>
+                                <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
+                                <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
+                                  <img src="assets/img/minus.png">
+                                </div>
+                              </ng-template>
                             </div>
                           </div>
                         </div>
@@ -102,14 +111,16 @@
               <ng-container *ngIf="!qr.isChecking; else loading">
                 <div class="factor-cl" *ngIf="!qr.isAvailable">
                   <div class="row">
-                    <div class="col-8">
-                      <h5>{{qr.isMFASetup ? 'Reset authentication' : 'Setup Authenticator app'}}</h5>
+                    <div class="col-8 align-self-center pt-1">
+                      <h5>{{qr.isMFASetup ? 'Reset Authentication' : 'Setup Authenticator App'}}</h5>
                     </div>
                     <div class="col-4 text-right">
                       <div class="">
                         <div class="form-check custom-box">
-                          <input type="checkbox" class="form-check-input" id="generateCheck" [checked]="qr.isMFASetup"
-                            [disabled]="qr.isGenerating || qr.isResetting" (change)="generateQRCode($event)">
+                          <!-- <input type="checkbox" class="form-check-input" id="generateCheck" [checked]="qr.isMFASetup"
+                            [disabled]="qr.isGenerating || qr.isResetting" (change)="generateQRCode($event)"> -->
+                          <button class="btn btn-outline-dark my-0" *ngIf="!qr.isMFASetup" (click)="generateQRCode()" [disabled]="qr.isGenerating">Set Up</button>
+                          <button class="btn btn-danger my-0"*ngIf="qr.isMFASetup" (click)="resetMFA()" [disabled]="qr.isResetting">Reset</button>
                         </div>
                       </div>
                     </div>
@@ -178,7 +189,7 @@
               <div class="max_center_400 custom-tab-change-pass">
                 <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
                   <div class="form-group">
-                    <label for="oldPassword">Old Password <span class="text-danger">*</span></label>
+                    <label for="oldPassword">Old Password<span class="text-danger">*</span></label>
                     <input type="password" class="form-control" id="oldPassword" formControlName="oldPassword"
                       [ngClass]="{ 'is-invalid': (submitted || form.oldPassword.touched) && form.oldPassword.errors }">
                     <div *ngIf="(submitted || form.oldPassword.touched) && form.oldPassword.errors"
@@ -189,7 +200,7 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="newPassword">New Password <span class="text-danger">*</span></label>
+                    <label for="newPassword">New Password<span class="text-danger">*</span></label>
                     <input type="password" class="form-control" id="newPassword" formControlName="newPassword"
                       [ngClass]="{ 'is-invalid': (submitted || form.newPassword.touched) && form.newPassword.errors }">
                     <div *ngIf="(submitted || form.newPassword.touched) && form.newPassword.errors"
@@ -200,7 +211,7 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="confirmPassword">Confirm Password <span class="text-danger">*</span></label>
+                    <label for="confirmPassword">Confirm Password<span class="text-danger">*</span></label>
                     <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
                       [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
                     <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors"

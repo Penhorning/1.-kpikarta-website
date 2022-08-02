@@ -18,8 +18,8 @@ export class KartaService {
   deleteKarta(id: string) {
     return this._httpService.DELETE('/karta/', id);
   }
-  // getSuggestionByUser(data: any) {
-  //   return this._httpService.POST('/suggestion-by-user', data);
+  // getSuggestion(data: any) {
+  //   return this._httpService.POST('/suggestion-by-phase', data);
   // }
   // createSuggestion(data: any) {
   //   return this._httpService.POST('/suggestions', data);

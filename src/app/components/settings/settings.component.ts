@@ -19,6 +19,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   colorSubmitFlag: boolean = false;
   colorSettings: any;
   defaultColor: string = "#F85C5C";
+  defaultColor2: string = "#F85C5C";
   minValue: number = 0;
   maxValue: number = 100;
   options: Options = {
@@ -75,9 +76,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this._settingService.getColorSettingByUser({ userId: this._commonService.getUserId() }).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.colorSettings = response;
-        this.colorForm.patchValue({
-          minMax: [this.colorSettings.settings[0].min,this.colorSettings.settings[0].max]
-        });
+        this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
       }
     );
   }
@@ -86,6 +85,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
   onColorChange(colorCode: string) {
     this.colorForm.patchValue({ color: colorCode });
+  }
+  onColorChange2(colorCode: string, index: number) {
+    this.colorSettings.settings[index].color = colorCode;
   }
   onMinValueChange(value: number) {
     this.colorForm.patchValue({ min: value });
@@ -104,14 +106,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
     return this.colorSettings.settings.find((item: any) => item.color === color);
   }
   sumOfRange() {
-    let sum = this.colorSettings.settings.reduce((acc: any, item: any) => { return acc + (item.max - item.min); }, 0);
-    return sum += this.colorSettings.settings.length-1;
+    let sum = 0;
+    for (let i=0; i<this.colorSettings.settings.length; i++) {
+      if (this.colorSettings.settings[i].min < 101 && this.colorSettings.settings[i].max < 101) {
+        sum+= this.colorSettings.settings[i].max - this.colorSettings.settings[i].min;
+      }
+    }
+    return sum += this.colorSettings.settings.length-2;
   }
   onColorSubmit() {
     if (this.checkInRange(this.colorForm.value.min, this.colorForm.value.max)) {
       this._commonService.errorToaster("You cannot add this range of color!");
     } else {
-      console.log(this.findColorInRange(this.colorForm.value.color))
       if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
       else this.colorSettings.settings.push(this.colorForm.value);
     }
@@ -159,8 +165,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     ).add(() => this.qr.isChecking = false );
   }
 
-  generateQRCode(e: any) {
-    if (e.target.checked && !this.qr.isMFASetup) {
+  generateQRCode() {
+    if (!this.qr.isMFASetup) {
       this.qr.isGenerating = true;
       this._settingService.generateMFAQRCode().pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
@@ -169,7 +175,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         },
         (error: any) => { }
       ).add(() => this.qr.isGenerating = false );
-    } else this.resetMFA();
+    }
   }
 
   onAuthenticationSubmit() {
@@ -189,7 +195,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   resetMFA() {
-    if (this.qr.isMFASetup) {
+    const result = confirm("Are you sure you want to reset your MFA?");
+    if (result && this.qr.isMFASetup) {
       this.qr.isResetting = true;
       this._settingService.resetMFAConfig().pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {

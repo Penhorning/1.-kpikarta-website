@@ -67,7 +67,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
       userId: this._commonService.getUserId(),
       phaseId: id
     }
-    this._suggestionService.getSuggestionByUser(data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._suggestionService.getSuggestion(data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.suggestionForm.reset();
         this.descriptions.clear();

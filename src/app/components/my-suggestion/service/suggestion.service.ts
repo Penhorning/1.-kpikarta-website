@@ -12,8 +12,8 @@ export class SuggestionService {
   getPhases() {
     return this._httpService.GET('/kartaphases');
   }
-  getSuggestionByUser(data: any) {
-    return this._httpService.POST('/suggestion-by-user', data);
+  getSuggestion(data: any) {
+    return this._httpService.POST('/suggestion-by-phase', data);
   }
   createSuggestion(data: any) {
     return this._httpService.POST('/suggestions', data);
