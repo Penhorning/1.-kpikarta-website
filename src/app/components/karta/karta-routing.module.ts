@@ -9,7 +9,7 @@ const routes: Routes = [
   { path: '', component: KartaComponent,
     children: [
       { path: 'create-karta', component: CreateKartaComponent, data: { title: 'Create Karta - Karta'} },
-      { path: 'edit-karta', component: EditKartaComponent, data: { title: 'Edit Karta - Karta'} }
+      { path: 'edit-karta/:id', component: EditKartaComponent, data: { title: 'Edit Karta - Karta'} }
     ]
   }
 ];

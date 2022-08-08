@@ -9,8 +9,17 @@ export class KartaService {
   constructor(private _httpService: HttpService) { }
 
 /*============================== API FUNCTIONS STARTS ==============================*/
+  getPhases() {
+    return this._httpService.GET('/kartaphases');
+  }
+  getSuggestion(data: any) {
+    return this._httpService.POST('/suggestion-by-phase', data);
+  }
   createKarta(data: any) {
     return this._httpService.POST('/karta', data);
+  }
+  getKarta(kartaId: string) {
+    return this._httpService.GET_BY_ID('/karta/', kartaId);
   }
   getKartas() {
     return this._httpService.GET('/karta?filter[limit]=3&filter[order]=createdAt Desc');
@@ -18,6 +27,12 @@ export class KartaService {
   deleteKarta(id: string) {
     return this._httpService.DELETE('/karta/', id);
   }
+  addNode(data: any) {
+    return this._httpService.POST('/kartanodes', data);
+  }
+  // getNodes() {
+  //   return this._httpService.GET('/karta?filter[limit]=3&filter[order]=crea');
+  // }
   // getSuggestion(data: any) {
   //   return this._httpService.POST('/suggestion-by-phase', data);
   // }

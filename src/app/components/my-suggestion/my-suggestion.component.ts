@@ -79,8 +79,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
   }
 
   onPhaseChange(phaseId: string) {
-    this.getSuggestion(phaseId);
-    
+    this.getSuggestion(phaseId); 
   }
 
   enableDescription(descriptionIndex: number) {

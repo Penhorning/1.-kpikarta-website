@@ -199,7 +199,7 @@
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
-                <p>Karta Name</p>
+                <p>{{karta?.name}}</p>
               </div>
             </div>
             <div class="col-lg-3 pl-0">
@@ -424,35 +424,10 @@
         <div class="col-lg-3 p-0">
           <div class="vertical-tabs">
             <ul class="nav nav-tabs" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link active" data-toggle="tab" href="#pag1" role="tab" aria-controls="home">Goal</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#pag2" role="tab" aria-controls="profile">Critical Success Factor</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#pag3" role="tab" aria-controls="messages">Phase</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#pag4" role="tab" aria-controls="settings">Segment</a>
-              </li>
-      
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#pag5" role="tab" aria-controls="settings">Approach</a>
-              </li>
-      
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#pag6" role="tab" aria-controls="settings">Action</a>
-              </li>
-      
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#pag7" role="tab" aria-controls="settings">KPI</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#pag8" role="tab" aria-controls="settings">Target</a>
+              <li class="nav-item" *ngFor="let phase of phases; let i = index">
+                <a class="nav-link" data-toggle="tab" href="#pag1" role="tab" [ngClass]="{ 'active': i == 0 }" (click)="onPhaseChange(phase?.id)">{{phase?.name}}</a>
               </li>
             </ul>
-            
           </div>
         </div>
         <div class="col-lg-9">
@@ -463,53 +438,6 @@
                 <!-- <img src="assets/img/demo-img.png" alt="" class="img-fluid" draggable="false"> -->
               </div>
             </div>
-            <div class="tab-pane" id="pag2" role="tabpanel">
-              <div class="sv-tab-panel">
-                <h3>TAB 2</h3>
-                <p>CONTEUDO 2</p>
-              </div>
-            </div>
-            <div class="tab-pane" id="pag3" role="tabpanel">
-              <div class="sv-tab-panel">
-                <h3>TAB 3</h3>
-                <p>CONTEUDO 3</p>
-              </div>
-            </div>
-            <div class="tab-pane" id="pag4" role="tabpanel">
-              <div class="sv-tab-panel">
-               <h3>TAB 4</h3>
-                <p>CONTEUDO 4</p>
-              </div>
-            </div>
-    
-            <div class="tab-pane" id="pag5" role="tabpanel">
-              <div class="sv-tab-panel">
-                <h3>TAB 5</h3>
-                <p>CONTEUDO 5</p>
-              </div>
-            </div>
-    
-            <div class="tab-pane" id="pag6" role="tabpanel">
-              <div class="sv-tab-panel">
-                <h3>TAB 6</h3>
-                <p>CONTEUDO 6</p>
-              </div>
-            </div>
-    
-            <div class="tab-pane" id="pag7" role="tabpanel">
-              <div class="sv-tab-panel">
-                <h3>TAB 7</h3>
-                <p>CONTEUDO 7</p>
-              </div>
-            </div>
-  
-            <div class="tab-pane" id="pag8" role="tabpanel">
-              <div class="sv-tab-panel">
-                <h3>TAB 7</h3>
-                <p>CONTEUDO 7</p>
-              </div>
-            </div>
-    
           </div>
         </div>
       </div>
@@ -561,9 +489,7 @@
         <div class="col-lg-12">
           <div class="right-side-bar-content">
             <h5>Definition</h5>
-            <p>Broad desired outcome. It states “what” we want to 
-              accomplish but not “how.”  It states where you are
-              going rather than how you will get there.</p>
+            <p>{{suggestion?.definition}}</p>
           </div>
         </div>
       </div>
@@ -571,7 +497,9 @@
         <div class="col-lg-12">
           <div class="right-side-bar-content">
             <h5>Suggestions</h5>
-            <p>Decrease Support Services costs</p>
+            <ng-container *ngFor="let x of suggestion?.descriptions">
+                <p>{{x?.description}}</p>
+            </ng-container>
           </div>
         </div>
       </div>
