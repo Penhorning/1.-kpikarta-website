@@ -53,12 +53,20 @@ export class LoginComponent implements OnInit, OnDestroy {
         email: this.route.snapshot.queryParamMap.get("email") || "",
         profilePic: this.route.snapshot.queryParamMap.get("profilePic") || "",
         companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || "",
-        mfaEnabled: this.route.snapshot.queryParamMap.get("mfaEnabled") || "false"
+        mfaEnabled: this.route.snapshot.queryParamMap.get("mfaEnabled") || "false",
+        mfaVerified: this.route.snapshot.queryParamMap.get("mfaVerified") || "false",
+        mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false"
       }
-      this._signupService.setSignUpSession(sessionData);
-      if (sessionData.mfaEnabled == "true") {
-        this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa' }});
-      } else this.router.navigate(['/two-step-verification']);
+      if (sessionData.mfaEnabled == "true" && sessionData.mfaVerified == "true") {
+        this._signupService.setSignUpSession(sessionData);
+        this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa', 'mobile': sessionData.mobileVerified }});
+      } else if (sessionData.mobileVerified == "true") {
+        this._signupService.setSignUpSession(sessionData);
+        this.router.navigate(['/two-step-verification']);
+      } else {
+        this._commonService.setSession(sessionData);
+        this.router.navigate(['/dashboard']);
+      }
     }
   }
 
@@ -103,7 +111,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             }
             if (mfaEnabled && mfaVerified) {
               this._signupService.setSignUpSession(sessionData);
-              this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa' }});
+              this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa', 'mobile': mobileVerified ? mobileVerified : false }});
             }
             else if (mobileVerified) {
               this._signupService.setSignUpSession(sessionData);

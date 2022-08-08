@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <g id="filter" transform="translate(-1559 -160)">
+    <g id="Rectangle_1728" data-name="Rectangle 1728" transform="translate(1559 160)" fill="none" stroke="#e0e0e0" stroke-width="1">
+      <rect width="40" height="40" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="39" height="39" rx="5.5" fill="none"/>
+    </g>
+    <g id="icons_darl_filter" data-name="icons/darl/filter" transform="translate(1565 166)">
+      <rect id="Rectangle_557" data-name="Rectangle 557" width="28" height="28" fill="rgba(255,255,255,0)"/>
+      <path id="filter-2" data-name="filter" d="M21.983,3H2l7.993,9.662v6.68l4,2.043V12.662Z" transform="translate(2 2)" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+    </g>
+  </g>
+</svg>

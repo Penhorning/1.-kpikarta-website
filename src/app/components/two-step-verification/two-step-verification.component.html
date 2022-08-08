@@ -23,9 +23,11 @@
                                         <div *ngIf="form.code.errors.required">Verification code is required!</div>
                                         <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>
                                     </div>
-                                    <label for="phone" class="mt-2 w-100">
-                                        <a href="javascript:void(0);" class="text-white send-otp" (click)="showTwoFactor()">Try to another way for sign in</a>
-                                    </label>
+                                    <ng-container *ngIf="mobileType === 'true'">
+                                        <label for="phone" class="mt-2 w-100">
+                                            <a href="javascript:void(0);" class="text-white send-otp" (click)="showTwoFactor()">Try to another way for sign in</a>
+                                        </label>
+                                    </ng-container>
                                 </div>
                                 <button class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">SUBMIT</button>
                             </form>

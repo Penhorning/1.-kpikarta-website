@@ -16,6 +16,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   authType: string = "";
+  mobileType: string = "";
 
   submitted: boolean = false;
   submitFlag: boolean = false;
@@ -43,6 +44,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) {
     this.authType = this.route.snapshot.queryParamMap.get("auth") || "";
+    this.mobileType = this.route.snapshot.queryParamMap.get("mobile") || "";
   }
 
   ngOnInit(): void {

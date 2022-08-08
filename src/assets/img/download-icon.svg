@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <g id="download-icon" transform="translate(-1435 -160)">
+    <g id="Rectangle_1731" data-name="Rectangle 1731" transform="translate(1435 160)" fill="none" stroke="#e0e0e0" stroke-width="1">
+      <rect width="40" height="40" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="39" height="39" rx="5.5" fill="none"/>
+    </g>
+    <g id="Download" transform="translate(1419.5 158.5)">
+      <g id="Download-2" data-name="Download" transform="translate(26.5 12.5)">
+        <path id="Vector" d="M18.786,14.611v3.131a1.044,1.044,0,0,1-1.044,1.044H1.044A1.044,1.044,0,0,1,0,17.742V14.611M15.655,8.349,9.467,14.537a.1.1,0,0,1-.148,0L3.131,8.349M9.393,0V13.568" transform="translate(0 0)" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25"/>
+      </g>
+    </g>
+  </g>
+</svg>
