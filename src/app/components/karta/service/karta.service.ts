@@ -19,16 +19,19 @@ export class KartaService {
     return this._httpService.POST('/karta', data);
   }
   getKarta(kartaId: string) {
-    return this._httpService.GET_BY_ID('/karta/', kartaId);
+    return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
-  getKartas() {
-    return this._httpService.GET('/karta?filter[limit]=3&filter[order]=createdAt Desc');
+  getKartas(userId: string) {
+    return this._httpService.GET(`/karta?filter[limit]=3&filter[where][userId]=${userId}&filter[order]=createdAt Desc`);
   }
   deleteKarta(id: string) {
     return this._httpService.DELETE('/karta/', id);
   }
   addNode(data: any) {
     return this._httpService.POST('/kartanodes', data);
+  }
+  removeNode(nodeId: string) {
+    return this._httpService.DELETE('/kartanodes/', nodeId);
   }
   // getNodes() {
   //   return this._httpService.GET('/karta?filter[limit]=3&filter[order]=crea');

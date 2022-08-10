@@ -285,7 +285,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
               this.profileImage.oldImage = response.profilePic;
             },
             (error: any) => { }
-          ).add(() => this.submitFlag = false ); 
+          ).add(() => this.submitFlag = false );
         }
       }
     }

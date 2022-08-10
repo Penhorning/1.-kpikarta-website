@@ -1,7 +1,7 @@
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js");
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
-    var margin = { top: 40, right: 120, bottom: 20, left: 120 };
-    var width = window.screen.width - margin.right - margin.left;
+    var margin = { top: 0, right: 120, bottom: 20, left: 120 };
+    var width = 600 - margin.right - margin.left;
     var height = window.screen.height - margin.top - margin.bottom;
 
     var i = 0, duration = 750;
@@ -120,7 +120,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         addNode: (d) => {
             d.children = d.children || []
             d.children.push({
-                "name": "#" + Date.now(),
+                "name": "child",
                 "children": []
             })
             update(d)

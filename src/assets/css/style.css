@@ -1565,9 +1565,9 @@ button.Apply-btn.karta-edit {
   font-size: 13px;
   border: 1px solid #CCCCCC;
   color: #171725;
-  height: 55px;
-  width: 165px;
-  padding-top: 13px;
+  height: 65px;
+  width: 200px;
+  padding-top: 1.4rem;
   font-weight: 600;
 }
 .vertical-tabs .nav-tabs .nav-link.active{
@@ -1604,7 +1604,7 @@ button.Apply-btn.karta-edit {
   border-left: 1px solid #e1e1e1;
   padding: 15px;
   height: 900px;
-  width: 22%;
+  width: 32%;
   overflow-y: scroll;
 }
 .karta-name {
@@ -1872,12 +1872,12 @@ button.slide-toggle {
   left: 6.3rem;
   top: 0;
 } */
-.box {
+/* .box {
   float: left;
   overflow: auto;
   background: #4c659e;
   height: 100vh;
-}
+} */
 /* Add padding and border to inner content
 for better animation effect */
 .box-inner{
@@ -2148,11 +2148,6 @@ a.dropdown-item.logout-custom {
 }
 .total-inner-section.Recently-tagged p {
     font-size: 15px;
-}
-.profile-section {
-    display: flex;
-    margin: 0 auto;
-    width: 50%;
 }
 .notification-box {
     background-color: #fff;
@@ -2447,5 +2442,3 @@ button.send-btn {
     width: 30%;
   }
 }
-
-

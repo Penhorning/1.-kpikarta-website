@@ -1,0 +1,9 @@
+.karta-container {
+    width: 625px;
+    height: 513px;
+    overflow: auto;
+}
+.description_div {
+    max-height: 100px;
+    overflow-y: scroll;
+}

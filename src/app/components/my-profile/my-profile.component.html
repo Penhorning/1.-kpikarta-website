@@ -4,8 +4,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <div class="my_profile_first_section">
-                    <div class="profile-section justify-content-center">
+                <div class="my_profile_first_section d-flex justify-content-center">
+                    <div class="profile-section d-flex align-self-center">
                         <div class="profile_img">
                             <ng-container *ngIf="_commonService.getSession().profilePic; else defaultImage">
                                 <img [src]="_commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic" alt="">

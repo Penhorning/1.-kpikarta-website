@@ -43,7 +43,7 @@ export class CreateKartaComponent implements OnInit,OnDestroy {
       this.kartaForm.value.userId = this._commonService.getUserId();
       this._kartaService.createKarta(this.kartaForm.value).pipe(takeUntil(this.destroy$)).subscribe(
         (response: any) => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/karta/edit-karta', response.id]);
         },
         (error: any) => {
           this.submitFlag = false;

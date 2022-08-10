@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getKartas() {
-    this._kartaService.getKartas().pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.getKartas(this._commonService.getUserId()).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.kartas = response;
       }
