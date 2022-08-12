@@ -34,11 +34,14 @@
       </div>
       <div class="row">
         <div class="col-lg-12">
+          <div *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" class="bg-light bootstrap-tagsinput ml-2" style="cursor: default;">
+            <p class="text-success">Root Node</p>
+          </div>
           <div class="owl-carousel owl-theme custom-slider">
             <div class="item p-2">
               <div class="card custom-card side-bar-card ">
                 <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
                   <p class="pt-2">Price</p>
                   </div>
                  
@@ -425,7 +428,7 @@
           <div class="vertical-tabs">
             <ul class="nav nav-tabs" role="tablist">
               <li class="nav-item" *ngFor="let phase of phases; let i = index">
-                <a class="nav-link" data-toggle="tab" href="#pag1" role="tab" [ngClass]="{ 'active': phase.id == phaseId }" (click)="onPhaseChange(phase?.id)">{{phase?.name}}</a>
+                <a class="nav-link" [ngClass]="{ 'active': phase.id == phaseId }">{{phase?.name}}</a>
               </li>
             </ul>
           </div>
@@ -433,9 +436,16 @@
         <div class="col-lg-9 p-0">
           <div class="tab-content">
             <div class="tab-pane active" id="pag1" role="tabpanel">
-              <div class="sv-tab-panel demo-img karta-container">
-                <div id="karta-svg"></div>
-                <!-- <img src="assets/img/demo-img.png" alt="" class="img-fluid" draggable="false"> -->
+              <ng-container *ngIf="loadingKarta">
+                <div class="p-5" [innerHtml]="loader"></div>
+              </ng-container>
+              <div class="sv-tab-panel demo-img karta-container" [hidden]="loadingKarta">
+                <div id="karta-svg" [hidden]="!showSVG"></div>
+                <div *ngIf="!showSVG">
+                  <ng-container *ngFor="let phase of phases; let i = index">
+                    <div class="d-block border" style="padding: 31px;" [id]="phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"></div>
+                  </ng-container>
+                </div>
               </div>
             </div>
           </div>

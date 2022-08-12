@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { Subject } from 'rxjs';
@@ -23,6 +23,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   phaseId: string = "";
   phases: any = [];
   suggestion: any;
+  loadingKarta: boolean = true;
+  loader: any = this._commonService.loader;
+  showSVG: boolean = false;
 
   constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
 
@@ -71,6 +74,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           nodeItem: (d: any) => {
             this.phaseId = d.phaseId;
             this.currentNode = d.name;
+            this.getNodeDetails(d);
               console.log(d);
               // console.log('Node selected:',$(d3.event.target).attr('nodeid'));
           },
@@ -87,9 +91,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       (response: any) => {
         this.karta = response;
         this.updateKarta(this.karta.node);
+        if (this.karta.node) this.showSVG = true;
       },
       (error: any) => {}
-    );
+    ).add(() => this.loadingKarta = false );
   }
 
   // Get all phases
@@ -118,8 +123,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     );
   }
 
-  onPhaseChange(phaseId: string) {
-    this.getSuggestion(phaseId); 
+  getNodeDetails(node: any) {
+    this.getSuggestion(node.phaseId); 
   }
 
   // Add node in karta
@@ -139,6 +144,43 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   removeNode(param: any) {
     this._kartaService.removeNode(param.id).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {},
+      (error: any) => {}
+    );
+  }
+
+  onDragOver(ev: any) {
+    ev.preventDefault();
+    let element = document.getElementById(ev.target.id);
+    if (element) element.classList.add("selectedPhase");
+  }
+  onDragLeave(ev: any) {
+    ev.preventDefault();
+    let element = document.getElementById(ev.target.id);
+    if (element) element.classList.remove("selectedPhase");
+  }
+  
+  onDragStart(ev: any) {
+    // console.log(ev)
+    // ev.dataTransfer.setData("text", ev.target.id);
+  }
+  
+  onDrop(ev: any) {
+    ev.preventDefault();
+    // var data = ev.dataTransfer.getData("text");
+    let element = document.getElementById(ev.target.id);
+    if (element) element.classList.remove("selectedPhase");
+    // ev.target.appendChild(document.getElementById(data));
+    let data = {
+      name: "Root",
+      phaseId: ev.target.id,
+      kartaId: this.kartaId
+    }
+    this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+        this.getKartaInfo();
+        this.showSVG = true;
+        this.phaseId = ev.target.id;
+      },
       (error: any) => {}
     );
   }
