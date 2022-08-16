@@ -27,6 +27,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
 
+  // Node properties
+  currentNodeName: string = "";
+
   constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -64,6 +67,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     });
   }
 
+  updateNodeProperties(param: any) {
+    this.phaseId = param.phaseId;
+    this.currentNode = param;
+    this.currentNodeName = param.name;
+    this.getNodeDetails(param);
+  }
+
   // Update karta nodes
   updateKarta(data: any) {
     KpiKarta(data, "#karta-svg", {
@@ -72,9 +82,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             this.addNode(d);
           },
           nodeItem: (d: any) => {
-            this.phaseId = d.phaseId;
-            this.currentNode = d.name;
-            this.getNodeDetails(d);
+            this.updateNodeProperties(d);
               console.log(d);
               // console.log('Node selected:',$(d3.event.target).attr('nodeid'));
           },
@@ -90,8 +98,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this._kartaService.getKarta(this.kartaId).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.karta = response;
-        this.updateKarta(this.karta.node);
-        if (this.karta.node) this.showSVG = true;
+        if (this.karta.node) {
+          this.updateKarta(this.karta.node);
+          this.showSVG = true;
+        }
       },
       (error: any) => {}
     ).add(() => this.loadingKarta = false );
@@ -102,7 +112,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this._kartaService.getPhases().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.phases = response;
-        this.phaseId = this.phases[0].id;
+        // this.phaseId = this.phases[0].id;
         this.getSuggestion(this.phases[0].id);
       },
       (error: any) => {}
@@ -179,7 +189,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       (response: any) => {
         this.getKartaInfo();
         this.showSVG = true;
-        this.phaseId = ev.target.id;
+        let data = {
+          name: "Root",
+          phaseId: ev.target.id,
+        }
+        this.updateNodeProperties(data);
       },
       (error: any) => {}
     );
