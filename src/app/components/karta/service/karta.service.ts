@@ -33,6 +33,9 @@ export class KartaService {
   addNode(data: any) {
     return this._httpService.POST('/kartanodes', data);
   }
+  updateNode(nodeId: string, data: any) {
+    return this._httpService.PATCH(`/kartanodes/${nodeId}`, data);
+  }
   removeNode(nodeId: string) {
     return this._httpService.DELETE('/kartanodes/', nodeId);
   }

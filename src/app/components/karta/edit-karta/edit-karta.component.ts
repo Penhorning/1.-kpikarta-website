@@ -27,9 +27,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   loadingKarta: boolean = true;
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
-
+  isMatrics: boolean = false;
   // Node properties
   currentNodeName: string = "";
+  selectedFont: any = "";
+  selectedColor: any = "";
+  selectedAlignment: any ="";
+
 
   constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
 
@@ -70,11 +74,61 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Current font style change
+  onFontStyleChange(value: any) {
+    let data = {
+      font_style: value,
+    }
+    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {  }
+    );
+  }
+
+   // Current alignment change
+  onAlignmentChange(value: any) {
+    let data = {
+      alignment: value,
+    }
+    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {  }
+    );
+  }
+
+   // Current text tolor change
+  onChangeColor(color: any){
+    let data = {
+      text_color: color,
+    }
+    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {  }
+    );
+  }
+
+  // Current node name change
+  onNameChange() {
+    let data = {
+      name: this.currentNodeName,
+    }
+    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {  }
+    );
+  }
+
   updateNodeProperties(param: any) {
+    console.log("paramas", param)
     this.phaseId = param.phaseId;
     this.currentNode = param;
     this.currentNodeName = param.name;
+    this.selectedFont = param.font_style;
+    this.selectedColor = param.text_color;
+    this.selectedAlignment = param.alignment;
     this.getNodeDetails(param);
+    let phaseIndex = this.phases.findIndex((item: any) => {
+      return item.id === this.phaseId;
+    });
+    if (this.phases[phaseIndex].name === "KPI") {
+      this.isMatrics = true;
+    }
   }
 
   // Update karta nodes
@@ -118,19 +172,20 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.showSVG = true;
         }
       },
-      (error: any) => {}
-    ).add(() => this.loadingKarta = false );
+      (error: any) => { }
+    ).add(() => this.loadingKarta = false);
   }
 
   // Get all phases
   getPhases() {
     this._kartaService.getPhases().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
+        console.log("response", response)
         this.phases = response;
         // this.phaseId = this.phases[0].id;
         this.getSuggestion(this.phases[0].id);
       },
-      (error: any) => {}
+      (error: any) => { }
     );
   }
 
@@ -158,7 +213,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   getNodeDetails(node: any) {
-    this.getSuggestion(node.phaseId); 
+    this.getSuggestion(node.phaseId);
   }
 
   // Add node in karta
@@ -169,16 +224,18 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       parentId: param.id
     }
     this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {},
-      (error: any) => {}
+      (response: any) => {
+        this.getKartaInfo();
+      },
+      (error: any) => { }
     );
   }
 
   // Remove node from karta
   removeNode(param: any) {
     this._kartaService.removeNode(param.id).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {},
-      (error: any) => {}
+      (response: any) => { },
+      (error: any) => { }
     );
   }
 
@@ -192,12 +249,12 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.remove("selectedPhase");
   }
-  
+
   onDragStart(ev: any) {
     // console.log(ev)
     // ev.dataTransfer.setData("text", ev.target.id);
   }
-  
+
   onDrop(ev: any) {
     ev.preventDefault();
     // var data = ev.dataTransfer.getData("text");
@@ -220,7 +277,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         $('#sidebar-two').addClass('active');
         this.updateNodeProperties(data);
       },
-      (error: any) => {}
+      (error: any) => { }
     );
   }
 

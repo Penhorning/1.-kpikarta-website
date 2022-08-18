@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4412 --configuration development",
+    "startDev": "ng serve --port 4412 --configuration dev",
     "build": "ng build",
     "buildDev": "ng build --aot --configuration dev",
     "buildStage": "ng build --aot --configuration stage",

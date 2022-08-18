@@ -490,7 +490,8 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="search-sugg mt-3">
-            <input type="text" class="form-control" placeholder="" [(ngModel)]="currentNodeName">
+            <input type="text" class="form-control" placeholder="" [(ngModel)]="currentNodeName" (mouseout)="onNameChange()">
+            <!-- <input type="text" class="form-control" placeholder=""> -->
           </div>
         </div>
       </div>
@@ -532,10 +533,10 @@
           <h6 class="pt-2">Font Style</h6>
         </div>
         <div class="col-lg-7">
-          <select class="form-control font-style">
-            <option>Roboto</option>
-            <option>Poppins</option>
-            <option>Rockwell</option>
+          <select #Font class="form-control font-style" [(ngModel)]="selectedFont" (change)="onFontStyleChange(Font.value)">
+            <option value="Roboto">Roboto</option>
+            <option value="Poppins">Poppins</option>
+            <option value="Rockwell">Rockwell</option>
         </select>
         </div>
       </div>
@@ -545,9 +546,9 @@
         </div>
         <div class="col-lg-7">
         <div class="">
-          <span><a href="#"><img src="assets/img/left-align.svg" class="img-fluid mr-2"></a></span>
-          <span><a href="#"><img src="assets/img/center-align.svg" class="img-fluid"></a></span>
-          <span><a href="#"><img src="assets/img/right-align.svg" class="img-fluid ml-2"></a></span>
+          <span><a style="cursor: pointer;" (click)="onAlignmentChange('left')" ><img src="assets/img/left-align.svg" class="img-fluid mr-2"></a></span>
+          <span><a style="cursor: pointer;" (click)="onAlignmentChange('center')"><img src="assets/img/center-align.svg" class="img-fluid"></a></span>
+          <span><a style="cursor: pointer;" (click)="onAlignmentChange('right')"><img src="assets/img/right-align.svg" class="img-fluid ml-2"></a></span>
          
         </div>
         </div>
@@ -558,11 +559,12 @@
         </div>
         <div class="col-lg-7">
         <div class="color-picker">
-          <input type="color" id="colorpicker" value="#0000ff">
+          <input type="color" id="colorpicker" #color value="#0000ff" [(ngModel)]="selectedColor" (change)="onChangeColor(color.value)">
         </div>
         </div>
       </div>
       <hr>
+      <div *ngIf="isMatrics">
       <div class="row">
         <div class="col-lg-12">
           <h5>Type</h5>
@@ -618,7 +620,7 @@
       <div class="col-lg-5">
         <div class="custom-input-side-r">
           <div class="form-group ">
-            <input type="text" class="form-control"   placeholder="">
+            <input type="text" class="form-control" placeholder="">
           </div>
         </div>
       </div>
@@ -776,7 +778,7 @@
           </div>
         </div>
       </div>
-  
+    </div>
   
   
   
