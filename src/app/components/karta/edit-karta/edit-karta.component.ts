@@ -4,7 +4,7 @@ import { CommonService } from '@app/shared/_services/common.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { KartaService } from '../service/karta.service';
-import  * as KpiKarta from "../utils/d3.js";
+import  * as BuildKPIKarta from "../utils/d3.js";
 
 declare const $: any;
 
@@ -22,6 +22,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   currentNode: any;
   phaseId: string = "";
   phases: any = [];
+  colorSettings: any = [];
   suggestion: any;
   loadingKarta: boolean = true;
   loader: any = this._commonService.loader;
@@ -35,6 +36,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Get phases
     this.getPhases();
+    // Get color settings
+    this.getColorSettings();
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
     // Get karta info
@@ -76,19 +79,31 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Update karta nodes
   updateKarta(data: any) {
-    KpiKarta(data, "#karta-svg", {
+    BuildKPIKarta(data, "#karta-svg", {
       events: {
-          addNode: (d: any) => {
-            this.addNode(d);
-          },
-          nodeItem: (d: any) => {
-            this.updateNodeProperties(d);
-              console.log(d);
-              // console.log('Node selected:',$(d3.event.target).attr('nodeid'));
-          },
-          removeNode: (d: any) => {
-            this.removeNode(d);
-          }
+        addNode: (d: any) => {
+          this.addNode(d);
+        },
+        nodeItem: (d: any) => {
+          this.updateNodeProperties(d);
+            console.log(d);
+            // console.log('Node selected:',$(d3.event.target).attr('nodeid'));
+        },
+        removeNode: (d: any) => {
+          this.removeNode(d);
+        },
+        linkColor:(d: any) => {
+          let node_percentage = parseInt((d.target).target_value);
+          console.log("node target value for color", node_percentage)
+          let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
+          console.log(colorSetting);
+          return colorSetting[0]?.color ? colorSetting[0]?.color : 'black';
+        },
+        linkWidth:(d: any) => {
+          let node_percentage = parseInt((d.target).target_value);
+          console.log("node target value for width ", node_percentage)
+          return node_percentage/10;
+        }
       }
     });
   }
@@ -130,6 +145,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.suggestion = response;
       },
       (error: any) => { }
+    );
+  }
+
+  // Get color settings
+  getColorSettings() {
+    this._kartaService.getColorSettingByUser({ userId: this._commonService.getUserId() }).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+        this.colorSettings = response;
+      }
     );
   }
 
@@ -193,6 +217,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           name: "Root",
           phaseId: ev.target.id,
         }
+        $('#sidebar-two').addClass('active');
         this.updateNodeProperties(data);
       },
       (error: any) => {}

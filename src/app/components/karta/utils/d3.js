@@ -1,7 +1,7 @@
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js");
-module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
-    var margin = { top: 0, right: 120, bottom: 20, left: 120 };
-    var width = 600 - margin.right - margin.left;
+module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
+    var margin = { top: 40, right: 120, bottom: 20, left: 120 };
+    var width = window.screen.width - margin.right - margin.left;
     var height = window.screen.height - margin.top - margin.bottom;
 
     var i = 0, duration = 750;
@@ -39,7 +39,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("width", 120)
             .attr("height", 80)
             .attr("transform", function (d) {
-                return "translate(" + source.x0 + "," + source.y0 + ")";
+                return "translate(" + source.x + "," + source.y + ")";
                 //   });
             }).on("click", nodeclick);
         nodeEnter
@@ -72,13 +72,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                     d.source.yupdated = true;
                 }
                 return d.target.id;
-            });
+            })
         // Enter the links.
         link.enter().insert("path", "g")
             .attr("class", "link")
-
+            .attr("stroke", options.events.linkColor)
+            .attr("stroke-width", options.events.linkWidth)
             .attr("d", function (d) {
-                var o = { x: source.x0, y: source.y0 };
+                var o = { x: source.x, y: source.y };
                 return diagonal({ source: o, target: o });
             });
         // Transition links to their new position.
@@ -108,11 +109,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Toggle children on click.
     function nodeclick(d) {
         d3.event.stopPropagation();
-        if(options.events && options.events[d3.event.target.id]){
-            options.events[d3.event.target.id](d);
-        }
         if (events[d3.event.target.id]) {
             events[d3.event.target.id](d);
+        }
+        if(options.events && options.events[d3.event.target.id]){
+            options.events[d3.event.target.id](d);
         }
     }
 
@@ -120,7 +121,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         addNode: (d) => {
             d.children = d.children || []
             d.children.push({
-                "name": "child",
+                "name": "#" + Date.now(),
                 "children": []
             })
             update(d)
