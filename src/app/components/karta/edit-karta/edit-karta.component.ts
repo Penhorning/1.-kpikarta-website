@@ -31,7 +31,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   currentNodeName: string = "";
   selectedFont: any = "";
   selectedColor: any = "";
-  selectedAlignment: any ="";
+  selectedAlignment: any = "";
+  left: string = "non_active_align";
+  center: string = "non_active_align";
+  right: string = "non_active_align";
 
 
   constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
@@ -77,27 +80,40 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       font_style: value,
     }
     this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
+      (response: any) => { }
     );
   }
 
-   // Current alignment change
+  // Current alignment change
   onAlignmentChange(value: any) {
+    if (value === 'left') {
+      this.left = 'active_align';
+      this.center = 'non_active_align';
+      this.right = 'non_active_align';
+    } else if (value === 'center') {
+      this.center = 'active_align';
+      this.left = 'non_active_align';
+      this.right = 'non_active_align';
+    } else if (value === 'right') {
+      this.right = 'active_align';
+      this.center = 'non_active_align';
+      this.left = 'non_active_align';
+    }
     let data = {
       alignment: value,
     }
     this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
+      (response: any) => { }
     );
   }
 
-   // Current text tolor change
-  onChangeColor(color: any){
+  // Current text tolor change
+  onChangeColor(color: any) {
     let data = {
       text_color: color,
     }
     this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
+      (response: any) => { }
     );
   }
 
@@ -107,7 +123,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       name: this.currentNodeName,
     }
     this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
+      (response: any) => { }
     );
   }
 
@@ -123,9 +139,25 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     let phaseIndex = this.phases.findIndex((item: any) => {
       return item.id === this.phaseId;
     });
+    
     if (this.phases[phaseIndex].name === "KPI") {
       this.isMatrics = true;
     }
+
+    if (param.alignment === 'left') {
+      this.left = 'active_align';
+      this.center = 'non_active_align';
+      this.right = 'non_active_align';
+    } else if (param.alignment === 'center') {
+      this.center = 'active_align';
+      this.left = 'non_active_align';
+      this.right = 'non_active_align';
+    } else if (param.alignment === 'right') {
+      this.right = 'active_align';
+      this.center = 'non_active_align';
+      this.left = 'non_active_align';
+    }
+
   }
 
   // Update karta nodes

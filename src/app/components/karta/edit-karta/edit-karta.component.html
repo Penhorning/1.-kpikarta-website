@@ -476,10 +476,6 @@
           </div>
         </div>
      </div>
-  
-  
-  
-  
      <div class="right-side-bar">
       <div class="row">
         <div class="col-lg-12">
@@ -547,9 +543,9 @@
         </div>
         <div class="col-lg-7">
         <div class="">
-          <span><a style="cursor: pointer;" (click)="onAlignmentChange('left')" ><img src="assets/img/left-align.svg" class="img-fluid mr-2"></a></span>
-          <span><a style="cursor: pointer;" (click)="onAlignmentChange('center')"><img src="assets/img/center-align.svg" class="img-fluid"></a></span>
-          <span><a style="cursor: pointer;" (click)="onAlignmentChange('right')"><img src="assets/img/right-align.svg" class="img-fluid ml-2"></a></span>
+          <span><a style="cursor: pointer;" (click)="onAlignmentChange('left')" ><img src="assets/img/left-align.svg" [ngClass]="left" class="img-fluid mr-2"></a></span>
+          <span><a style="cursor: pointer;" (click)="onAlignmentChange('center')"><img src="assets/img/center-align.svg" [ngClass]="center" class="img-fluid"></a></span>
+          <span><a style="cursor: pointer; " (click)="onAlignmentChange('right')"><img src="assets/img/right-align.svg" [ngClass]="right" class="img-fluid ml-2"></a></span>
          
         </div>
         </div>

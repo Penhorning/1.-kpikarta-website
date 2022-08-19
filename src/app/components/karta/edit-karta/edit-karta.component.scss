@@ -3,10 +3,25 @@
     height: 513px;
     overflow: auto;
 }
+
 .description_div {
     max-height: 100px;
     overflow-y: scroll;
 }
+
 .selectedPhase {
     background-color: #4c659e80;
+}
+
+.not-active {
+    // border: 1px solid black;
+    // padding: 1rem;
+    cursor: pointer;
+}
+
+.active_align {
+    background-color: #ccc;
+    border-radius: 2px;
+    padding: 3px;
+    cursor: pointer;
 }
