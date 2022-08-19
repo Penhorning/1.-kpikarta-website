@@ -16,11 +16,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x + 60, d.y + 40]; });
     var svg = d3.select(treeContainerDom).append("svg")
-        .attr("width", width + margin.right + margin.left)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width)
+        .attr("height", height)
         .append("g")
-        .attr("transform", "translate(" + ((width / 2) + 60) + "," + (margin.top + 10) + ")");
+        .attr("transform", "translate(" + ((width / 2) + 120) + "," + (margin.top + 10) + ")");
     var root = treeData;
+
+    // Setup lining
+    (new Array(parseInt(window.screen.height/100))).fill(0).forEach((val,index)=>{
+        var pathGenerator =d3.svg.line();
+        svg.append('path')
+        .attr('stroke','grey')
+        .attr('stroke-width','.5')
+        .attr('d',pathGenerator([[-(window.screen.width/2),(index+1)*100],[window.screen.width/2,(1+index)*100]]))
+    })
 
     update(root);
     function update(source) {
@@ -121,7 +130,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         addNode: (d) => {
             d.children = d.children || []
             d.children.push({
-                "name": "#" + Date.now(),
+                "name": "child",
                 "children": []
             })
             update(d)

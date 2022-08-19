@@ -50,6 +50,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     $('#sidebarCollapse').on('click', function () {
       $('#sidebar-two').toggleClass('active');
     });
+    // Set karta's div width
+    const maxWidth = window.innerWidth - 500;
+    $('#karta-svg').css("max-width", maxWidth);
     // Owl carousel
     $('.owl-carousel').owlCarousel({
       loop: true,
@@ -122,6 +125,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.selectedFont = param.font_style;
     this.selectedColor = param.text_color;
     this.selectedAlignment = param.alignment;
+    // Show properties div
+    $('#rightSidebar').addClass("d-block");
     this.getNodeDetails(param);
     let phaseIndex = this.phases.findIndex((item: any) => {
       return item.id === this.phaseId;
@@ -262,7 +267,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (element) element.classList.remove("selectedPhase");
     // ev.target.appendChild(document.getElementById(data));
     let data = {
-      name: "Root",
+      name: "Empty",
       phaseId: ev.target.id,
       kartaId: this.kartaId
     }
@@ -271,7 +276,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.getKartaInfo();
         this.showSVG = true;
         let data = {
-          name: "Root",
+          name: "Empty",
           phaseId: ev.target.id,
         }
         $('#sidebar-two').addClass('active');

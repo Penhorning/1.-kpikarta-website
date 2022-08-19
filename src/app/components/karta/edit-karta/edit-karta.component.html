@@ -32,10 +32,23 @@
           </div>
         </div>
       </div>
+
       <div class="row">
         <div class="col-lg-12">
+          <div class="item p-2">
+            <div class="card custom-card side-bar-card ">
+              <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
+                <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
+                <p class="pt-2">Empty</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row">
+        <div class="col-lg-12">
           <div *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" class="bg-light bootstrap-tagsinput ml-2" style="cursor: default;">
-            <p class="text-success">Root Node</p>
+            <p class="text-success">Empty</p>
           </div>
           <div class="owl-carousel owl-theme custom-slider">
             <div class="item p-2">
@@ -74,11 +87,11 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
   
       <div class="line-slide-bar"></div>
   
-      <div class="row mb-3">
+      <!-- <div class="row mb-3">
         <div class="col-lg-6 text-left">
           <div class="slider-top-text">
             <p>Metrics</p>
@@ -184,7 +197,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
        
   
        
@@ -421,9 +434,9 @@
       </div>
      </div>
   <div class="main-center-content d-flex">
-    <div class="center-content mt-4">
+    <div class="center-content mt-4 w-100">
       <div class="row tab-content-center">
-        <div class="col-lg-3">
+        <div class="col-lg-2 p-0">
           <div class="vertical-tabs">
             <ul class="nav nav-tabs" role="tablist">
               <li class="nav-item" *ngFor="let phase of phases; let i = index">
@@ -432,20 +445,18 @@
             </ul>
           </div>
         </div>
-        <div class="col-lg-9 p-0">
+        <div class="col-lg-10 p-0">
           <div class="tab-content">
             <div class="tab-pane active" id="pag1" role="tabpanel">
               <ng-container *ngIf="loadingKarta">
                 <div class="p-5" [innerHtml]="loader"></div>
               </ng-container>
-              <div [hidden]="loadingKarta" style="overflow: auto;">
-                <div id="karta-svg" [hidden]="!showSVG"></div>
+              <div id="karta-svg" [hidden]="!showSVG && loadingKarta"></div>
                 <div *ngIf="!showSVG">
                   <ng-container *ngFor="let phase of phases; let i = index">
                     <div class="d-block border" style="padding: 31px;" [id]="phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"></div>
                   </ng-container>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -479,7 +490,7 @@
   
   
   
-     <div class="right-side-bar">
+     <div class="right-side-bar d-none" id="rightSidebar">
       <div class="row">
         <div class="col-lg-12">
           <div class="goal-name mt-3">
@@ -517,7 +528,10 @@
       </div>
       <hr>
       <div class="row">
-        <div class="col-lg-8">
+        <div class="col-md-12">
+          <h5>Typography</h5>
+        </div>
+        <!-- <div class="col-lg-8">
           <div class="">
             <h5>Typography</h5>
           </div>
@@ -526,7 +540,7 @@
           <div class="minus-btn-r-side text-right">
             <img src="assets/img/minus-r-side.svg" class="img-fluid" alt="">
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="row mt-4">
         <div class="col-lg-5">
