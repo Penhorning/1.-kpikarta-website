@@ -15,6 +15,9 @@ export class KartaService {
   getSuggestion(data: any) {
     return this._httpService.POST('/suggestion-by-phase', data);
   }
+  getColorSettingByUser(data: any) {
+    return this._httpService.POST('/color-settings-by-user', data);
+  }
   createKarta(data: any) {
     return this._httpService.POST('/karta', data);
   }

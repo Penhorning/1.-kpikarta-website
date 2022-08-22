@@ -32,10 +32,23 @@
           </div>
         </div>
       </div>
+
       <div class="row">
         <div class="col-lg-12">
+          <div class="item p-2">
+            <div class="card custom-card side-bar-card ">
+              <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
+                <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
+                <p class="pt-2">Empty</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="row">
+        <div class="col-lg-12">
           <div *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" class="bg-light bootstrap-tagsinput ml-2" style="cursor: default;">
-            <p class="text-success">Root Node</p>
+            <p class="text-success">Empty</p>
           </div>
           <div class="owl-carousel owl-theme custom-slider">
             <div class="item p-2">
@@ -74,11 +87,11 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
   
       <div class="line-slide-bar"></div>
   
-      <div class="row mb-3">
+      <!-- <div class="row mb-3">
         <div class="col-lg-6 text-left">
           <div class="slider-top-text">
             <p>Metrics</p>
@@ -184,14 +197,14 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
        
   
        
     </nav>
     <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle">
       <img src="assets/img/side-arrow-new-bar1.svg.png" alt="">
-  </button>
+    </button>
   
     <!-- Page Content  -->
     <div id="content" class="karta-edit-contnet">
@@ -319,7 +332,6 @@
                       </div>
                     </div>
                  
-                      
                   </div>
                 </div>
   
@@ -422,9 +434,9 @@
       </div>
      </div>
   <div class="main-center-content d-flex">
-    <div class="center-content mt-4">
+    <div class="center-content mt-4 w-100">
       <div class="row tab-content-center">
-        <div class="col-lg-3 p-0">
+        <div class="phase_column">
           <div class="vertical-tabs">
             <ul class="nav nav-tabs" role="tablist">
               <li class="nav-item" *ngFor="let phase of phases; let i = index">
@@ -433,20 +445,18 @@
             </ul>
           </div>
         </div>
-        <div class="col-lg-9 p-0">
+        <div class="karta_column" id="karta_col">
           <div class="tab-content">
             <div class="tab-pane active" id="pag1" role="tabpanel">
               <ng-container *ngIf="loadingKarta">
                 <div class="p-5" [innerHtml]="loader"></div>
               </ng-container>
-              <div class="sv-tab-panel demo-img karta-container" [hidden]="loadingKarta">
-                <div id="karta-svg" [hidden]="!showSVG"></div>
+              <div id="karta-svg" [hidden]="!showSVG && loadingKarta"></div>
                 <div *ngIf="!showSVG">
                   <ng-container *ngFor="let phase of phases; let i = index">
                     <div class="d-block border" style="padding: 31px;" [id]="phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"></div>
                   </ng-container>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -476,7 +486,11 @@
           </div>
         </div>
      </div>
-     <div class="right-side-bar">
+  
+  
+  
+  
+     <div class="right-side-bar d-none" id="rightSidebar">
       <div class="row">
         <div class="col-lg-12">
           <div class="goal-name mt-3">
@@ -487,8 +501,22 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="search-sugg mt-3">
-            <input type="text" class="form-control" placeholder="" [(ngModel)]="currentNodeName" (mouseout)="onNameChange()">
-            <!-- <input type="text" class="form-control" placeholder=""> -->
+            <input type="text" class="form-control" [(ngModel)]="currentNodeName" (mouseout)="updateNode('name', currentNodeName)">
+          </div>
+        </div>
+      </div>
+      <!-- Weightage -->
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="goal-name mt-3">
+            <h6>Weightage</h6>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="search-sugg mt-3">
+            <input type="text" class="form-control" [(ngModel)]="currentNodeWeight" (mouseout)="updateNode('weightage', currentNodeWeight)">
           </div>
         </div>
       </div>
@@ -514,7 +542,10 @@
       </div>
       <hr>
       <div class="row">
-        <div class="col-lg-8">
+        <div class="col-md-12">
+          <h5>Typography</h5>
+        </div>
+        <!-- <div class="col-lg-8">
           <div class="">
             <h5>Typography</h5>
           </div>
@@ -523,17 +554,17 @@
           <div class="minus-btn-r-side text-right">
             <img src="assets/img/minus-r-side.svg" class="img-fluid" alt="">
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="row mt-4">
         <div class="col-lg-5">
           <h6 class="pt-2">Font Style</h6>
         </div>
         <div class="col-lg-7">
-          <select #Font class="form-control font-style" [(ngModel)]="selectedFont" (change)="onFontStyleChange(Font.value)">
-            <option value="Roboto">Roboto</option>
-            <option value="Poppins">Poppins</option>
-            <option value="Rockwell">Rockwell</option>
+          <select class="form-control font-style" [(ngModel)]="selectedFont" (change)="updateNode('font_style', selectedFont)">
+            <option value="system-ui">System-UI</option>
+            <option value="sans-serif">Sans-Serif</option>
+            <option value="monospace">Monospace</option>
         </select>
         </div>
       </div>
@@ -542,11 +573,22 @@
           <h6 class="pt-2">Alignment</h6>
         </div>
         <div class="col-lg-7">
-        <div class="">
-          <span><a style="cursor: pointer;" (click)="onAlignmentChange('left')" ><img src="assets/img/left-align.svg" [ngClass]="left" class="img-fluid mr-2"></a></span>
-          <span><a style="cursor: pointer;" (click)="onAlignmentChange('center')"><img src="assets/img/center-align.svg" [ngClass]="center" class="img-fluid"></a></span>
-          <span><a style="cursor: pointer; " (click)="onAlignmentChange('right')"><img src="assets/img/right-align.svg" [ngClass]="right" class="img-fluid ml-2"></a></span>
-         
+        <div>
+          <span>
+            <a style="cursor: pointer;" (click)="updateNode('alignment', 'left')">
+              <img src="assets/img/left-align.svg" class="img-fluid mr-2 font_alignment_img" [ngClass]="{'selected_alignment': selectedAlignment === 'left'}">
+            </a>
+          </span>
+          <span>
+            <a style="cursor: pointer;" (click)="updateNode('alignment', 'center')">
+              <img src="assets/img/center-align.svg" class="img-fluid font_alignment_img" [ngClass]="{'selected_alignment': selectedAlignment === 'center'}">
+            </a>
+          </span>
+          <span>
+            <a style="cursor: pointer;" (click)="updateNode('alignment', 'right')">
+              <img src="assets/img/right-align.svg" class="img-fluid ml-2 font_alignment_img" [ngClass]="{'selected_alignment': selectedAlignment === 'right'}">
+            </a>
+          </span>
         </div>
         </div>
       </div>
@@ -556,7 +598,7 @@
         </div>
         <div class="col-lg-7">
         <div class="color-picker">
-          <input type="color" id="colorpicker" #color value="#0000ff" [(ngModel)]="selectedColor" (change)="onChangeColor(color.value)">
+          <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor" (change)="updateNode('text_color', selectedColor)">
         </div>
         </div>
       </div>

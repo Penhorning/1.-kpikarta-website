@@ -1,9 +1,15 @@
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js");
-module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
-    var margin = { top: 0, right: 120, bottom: 20, left: 120 };
-    var width = 600 - margin.right - margin.left;
-    var height = window.screen.height - margin.top - margin.bottom;
 
+var getSVGSize = (tree,size={width:0,height:0})=>{
+    if(size.width<tree.children.length*120){
+        size.width =tree.children.length*120;
+    }
+    return tree.children.length;
+}
+module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
+    var margin = { top: 0, right: 120, bottom: 20, left: 120 };
+    var width = window.screen.width - margin.right - margin.left;
+    var height = window.screen.height - margin.top - margin.bottom;
     var i = 0, duration = 750;
     var tree = d3.layout.tree()
         .nodeSize([150, 100])
@@ -14,13 +20,24 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
 
     var diagonal = d3.svg.diagonal()
-        .projection(function (d) { return [d.x + 60, d.y + 40]; });
+        .projection(function (d) { return [d.x + 60, d.y + 30]; });
     var svg = d3.select(treeContainerDom).append("svg")
-        .attr("width", width + margin.right + margin.left)
-        .attr("height", height + margin.top + margin.bottom)
+        .style("width", "100%")
+        .style("height", "100vh")
         .append("g")
-        .attr("transform", "translate(" + ((width / 2) + 60) + "," + (margin.top + 10) + ")");
+        .attr("transform", "translate(" + ((width / 2) + 120) + "," + (margin.top) + ")");
     var root = treeData;
+
+    // Setup lining
+    (new Array(parseInt(window.screen.height/65))).fill(0).forEach((val,index)=>{
+        if (index <=7) {
+            var pathGenerator =d3.svg.line();
+            svg.append('path')
+            .attr('stroke','grey')
+            .attr('stroke-width','.5')
+            .attr('d',pathGenerator([[-(window.screen.width/2),(index+1)*65],[window.screen.width/2,(1+index)*65]]))
+        }  
+    })
 
     update(root);
     function update(source) {
@@ -29,7 +46,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             links = tree.links(nodes);
 
         // Normalize for fixed-depth.
-        nodes.forEach(function (d) { d.y = d.depth * 100; });
+        nodes.forEach(function (d) { d.y = d.depth * 65; });
         // Declare the nodes…
         var node = svg.selectAll("g.node")
             .data(nodes, function (d) { return d.id || (d.id = ++i); });
@@ -37,16 +54,16 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
             .attr("width", 120)
-            .attr("height", 80)
+            .attr("height", 60)
             .attr("transform", function (d) {
-                return "translate(" + source.x0 + "," + source.y0 + ")";
+                return "translate(" + source.x + "," + source.y + ")";
                 //   });
             }).on("click", nodeclick);
         nodeEnter
             .append("foreignObject")
             .attr("class", "mindmap-node")
             .attr("width", 120)
-            .attr("height", 80)
+            .attr("height", 60)
             .html(node => nodeToHTML(node, nodeEnter))
         //.attr("r", 10)
         //.style("fill", "#fff");
@@ -72,13 +89,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                     d.source.yupdated = true;
                 }
                 return d.target.id;
-            });
+            })
         // Enter the links.
         link.enter().insert("path", "g")
             .attr("class", "link")
-
+            .attr("stroke", options.events.linkColor)
+            .attr("stroke-width", options.events.linkWidth)
             .attr("d", function (d) {
-                var o = { x: source.x0, y: source.y0 };
+                var o = { x: source.x, y: source.y };
                 return diagonal({ source: o, target: o });
             });
         // Transition links to their new position.
@@ -108,11 +126,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Toggle children on click.
     function nodeclick(d) {
         d3.event.stopPropagation();
-        if(options.events && options.events[d3.event.target.id]){
-            options.events[d3.event.target.id](d);
-        }
         if (events[d3.event.target.id]) {
             events[d3.event.target.id](d);
+        }
+        if(options.events && options.events[d3.event.target.id]){
+            options.events[d3.event.target.id](d);
         }
     }
 

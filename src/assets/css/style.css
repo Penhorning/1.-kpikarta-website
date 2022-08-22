@@ -1566,7 +1566,7 @@ button.Apply-btn.karta-edit {
   border: 1px solid #CCCCCC;
   color: #171725;
   height: 65px;
-  width: 200px;
+  /* width: 200px; */
   padding-top: 1.4rem;
   font-weight: 600;
 }
