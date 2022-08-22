@@ -28,8 +28,36 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
   isMatrics: boolean = false;
+
+  // D3 karta events
+  D3SVG: any = {
+    events: {
+      addNode: (d: any) => {
+        this.addNode(d);
+      },
+      nodeItem: (d: any) => {
+        this.updateNodeProperties(d);
+          console.log(d);
+      },
+      removeNode: (d: any) => {
+        this.removeNode(d);
+      },
+      linkColor:(d: any) => {
+        let node_percentage = parseInt((d.target).target_value);
+        if (this.colorSettings.settings) {
+          let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
+          return colorSetting[0]?.color ? colorSetting[0]?.color : 'black';
+        } else return 'black';
+      },
+      linkWidth:(d: any) => {
+        let node_percentage = parseInt((d.target).target_value);
+        return node_percentage/10;
+      }
+    }
+  }
   // Node properties
   currentNodeName: string = "";
+  currentNodeWeight: string = "";
   selectedFont: any = "";
   selectedColor: any = "";
   selectedAlignment: any ="";
@@ -37,7 +65,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
 
-  ngOnInit(): void {
+  ngOnInit (): void {
+    // Sidebar
+    $('#sidebarCollapse').on('click', function () {
+      $('#sidebar-two').toggleClass('active');
+    });
     // Get phases
     this.getPhases();
     // Get color settings
@@ -46,13 +78,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
     // Get karta info
     this.getKartaInfo();
-    // Sidebar
-    $('#sidebarCollapse').on('click', function () {
-      $('#sidebar-two').toggleClass('active');
-    });
-    // Set karta's div width
-    const maxWidth = window.innerWidth - 500;
-    $('#karta-svg').css("max-width", maxWidth);
     // Owl carousel
     $('.owl-carousel').owlCarousel({
       loop: true,
@@ -77,57 +102,30 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Current font style change
-  onFontStyleChange(value: any) {
-    let data = {
-      font_style: value,
-    }
-    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
-    );
-  }
-
-   // Current alignment change
-  onAlignmentChange(value: any) {
-    let data = {
-      alignment: value,
-    }
-    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
-    );
-  }
-
-   // Current text tolor change
-  onChangeColor(color: any){
-    let data = {
-      text_color: color,
-    }
-    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
-    );
-  }
-
-  // Current node name change
-  onNameChange() {
-    let data = {
-      name: this.currentNodeName,
-    }
-    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
-      (response: any) => {  }
-    );
+  setKartaWidthAndHeight () {
+    // Set karta's div width
+    const maxWidth = $(".karta_column").width();
+    const height = $(".karta_column").height();
+    // const maxHeight = $(".karta_column").height();
+    console.log(maxWidth, " === ", height)
+    // $('#karta-svg').css("max-width", maxWidth);
+    // $('#karta-svg svg').attr("width", maxWidth);
+    // $('#karta-svg svg').attr("height", height);
   }
 
   updateNodeProperties(param: any) {
-    console.log("paramas", param)
     this.phaseId = param.phaseId;
     this.currentNode = param;
     this.currentNodeName = param.name;
     this.selectedFont = param.font_style;
     this.selectedColor = param.text_color;
     this.selectedAlignment = param.alignment;
+    this.currentNodeWeight = param.weightage;
     // Show properties div
     $('#rightSidebar').addClass("d-block");
+    // Get current node details
     this.getNodeDetails(param);
+    // Show Measure and metrics when KPI's node selected
     let phaseIndex = this.phases.findIndex((item: any) => {
       return item.id === this.phaseId;
     });
@@ -136,36 +134,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Update karta nodes
-  updateKarta(data: any) {
-    BuildKPIKarta(data, "#karta-svg", {
-      events: {
-        addNode: (d: any) => {
-          this.addNode(d);
-        },
-        nodeItem: (d: any) => {
-          this.updateNodeProperties(d);
-            console.log(d);
-            // console.log('Node selected:',$(d3.event.target).attr('nodeid'));
-        },
-        removeNode: (d: any) => {
-          this.removeNode(d);
-        },
-        linkColor:(d: any) => {
-          let node_percentage = parseInt((d.target).target_value);
-          console.log("node target value for color", node_percentage)
-          let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
-          console.log(colorSetting);
-          return colorSetting[0]?.color ? colorSetting[0]?.color : 'black';
-        },
-        linkWidth:(d: any) => {
-          let node_percentage = parseInt((d.target).target_value);
-          console.log("node target value for width ", node_percentage)
-          return node_percentage/10;
-        }
-      }
-    });
-  }
+  // // Update karta nodes
+  // updateKarta(data: any) {
+  //   BuildKPIKarta(data, "#karta-svg", this.D3SVG);
+  // }
 
   // Get karta details including all nodes
   getKartaInfo() {
@@ -173,7 +145,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       (response: any) => {
         this.karta = response;
         if (this.karta.node) {
-          this.updateKarta(this.karta.node);
+          // this.updateKarta(this.karta.node);
+          BuildKPIKarta(this.karta.node, "#karta-svg", this.D3SVG);
+          this.setKartaWidthAndHeight();
           this.showSVG = true;
         }
       },
@@ -185,10 +159,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   getPhases() {
     this._kartaService.getPhases().pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        console.log("response", response)
         this.phases = response;
         // this.phaseId = this.phases[0].id;
         this.getSuggestion(this.phases[0].id);
+        // this.setKartaWidthAndHeight();
       },
       (error: any) => { }
     );
@@ -225,12 +199,28 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   addNode(param: any) {
     let data = {
       name: "Child",
+      font_style: "sans-serif",
+      alignment: "center",
+      text_color: "#000000",
       phaseId: this.phases[param.depth + 1].id,
       parentId: param.id
     }
     this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        this.getKartaInfo();
+        //this.getKartaInfo();
+      },
+      (error: any) => { }
+    );
+  }
+
+  // Update node
+  updateNode(key: string, value: any) {
+    if (key === "alignment") this.selectedAlignment = value;
+    let data = { [key]: value }
+    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+        this.currentNode[key] = value;
+        this.D3SVG.updateNode(this.currentNode);
       },
       (error: any) => { }
     );

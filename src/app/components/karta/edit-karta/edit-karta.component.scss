@@ -1,3 +1,12 @@
+.phase_column {
+    width: 20%;
+}
+.phase_column ul {
+    width: 100%;
+}
+.karta_column {
+    width: 80%;
+}
 #karta-svg {
     overflow: auto;
     width: 100%;
@@ -8,4 +17,9 @@
 }
 .selectedPhase {
     background-color: #4c659e80;
+}
+.selected_alignment, .font_alignment_img:hover{
+    background: #ccc;
+    border-radius: 2px;
+    padding: 3px;
 }
