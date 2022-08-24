@@ -8,8 +8,10 @@
     width: 80%;
 }
 #karta-svg {
-    overflow: auto;
-    width: 100%;
+    // overflow: auto;
+    // width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 .description_div {
     max-height: 100px;

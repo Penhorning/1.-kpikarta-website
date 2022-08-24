@@ -28,7 +28,7 @@
         </div>
         <div class="col-lg-6 text-right">
           <div class="slider-top-text">
-            <a href="">See All</a>
+            <a href="javascript:void(0);">See All</a>
           </div>
         </div>
       </div>
@@ -42,6 +42,25 @@
                 <p class="pt-2">Empty</p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card custom-card side-bar-card ">
+            <div class="goal-img">
+              <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+              <p class="pt-2">Price</p>
+              </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card custom-card side-bar-card ">
+            <div class="goal-img">
+              <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+              <p class="pt-2">Price</p>
+              </div>
           </div>
         </div>
       </div>
@@ -440,7 +459,7 @@
           <div class="vertical-tabs">
             <ul class="nav nav-tabs" role="tablist">
               <li class="nav-item" *ngFor="let phase of phases; let i = index">
-                <a class="nav-link" [ngClass]="{ 'active': phase.id == phaseId }">{{phase?.name}}</a>
+                <a class="nav-link text-nowrap" [ngClass]="{ 'active': phase.id == phaseId }">{{phase?.name}}</a>
               </li>
             </ul>
           </div>

@@ -2409,6 +2409,68 @@ button.send-btn {
     width: 20px;
 }
 
+/* 20-aug */
+
+
+
+.card.custom_accordion {
+
+  background-color: transparent;
+
+  border: 0;
+
+}
+
+.card-header.accordion_header_custom {
+
+  border-radius: 0;
+
+  background-color: transparent;
+
+  border: 0;
+
+  padding: 0;
+
+}
+
+button.btn.btn-link.see_all_btn {
+
+  float: right;
+
+  font-size: 14px;
+
+  
+
+}
+
+.card-header.accordion_header_custom button {
+
+  color: #fff;
+
+  text-decoration: none;
+
+}
+
+.btn.focus, .btn:focus {
+
+  outline: 0;
+
+  box-shadow: none !important;
+
+}
+
+.line-slide-bar {
+
+  width: 100%;
+
+  height: 1px;
+
+  background-color: #ffffff40;
+
+  margin: 20px 0 20px 0;
+
+}
+
 
 @media (max-width: 560px) {
     .profile-section {

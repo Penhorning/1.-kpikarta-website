@@ -36,8 +36,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.addNode(d);
       },
       nodeItem: (d: any) => {
+        console.log(d);
         this.updateNodeProperties(d);
-          console.log(d);
       },
       removeNode: (d: any) => {
         this.removeNode(d);
@@ -78,6 +78,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
     // Get karta info
     this.getKartaInfo();
+    // this.setKartaWidthAndHeight();
     // Owl carousel
     $('.owl-carousel').owlCarousel({
       loop: true,
@@ -108,9 +109,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     const height = $(".karta_column").height();
     // const maxHeight = $(".karta_column").height();
     console.log(maxWidth, " === ", height)
-    // $('#karta-svg').css("max-width", maxWidth);
-    // $('#karta-svg svg').attr("width", maxWidth);
-    // $('#karta-svg svg').attr("height", height);
+    $('#karta-svg').css("max-width", maxWidth);
+    // $('#karta-svg svg').css("width", maxWidth);
+    // $('#karta-svg svg').css("height", height);
   }
 
   updateNodeProperties(param: any) {
@@ -207,6 +208,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
     this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
+        // this.D3SVG.updateNode(this.currentNode);
         //this.getKartaInfo();
       },
       (error: any) => { }
