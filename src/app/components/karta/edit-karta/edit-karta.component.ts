@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { Subject } from 'rxjs';
@@ -16,7 +17,6 @@ declare const $: any;
 export class EditKartaComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<boolean> = new Subject<boolean>();
-
   kartaId: string = "";
   karta: any;
   currentNode: any;
@@ -58,17 +58,32 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   // Node properties
   currentNodeName: string = "";
   currentNodeWeight: string = "";
+  isMeasureDiv: boolean = true;
+  isMatricsDiv: boolean = false;
   selectedFont: any = "";
+  selectedFontType: any = "measure";
+  selectedTargetValueType: any = "weekly";
   selectedColor: any = "";
   selectedAlignment: any = "";
   left: string = "non_active_align";
   center: string = "non_active_align";
   right: string = "non_active_align";
-
-
-  constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
+  targetInput: any = "";
+  dueDate: any = "";
+  achievedValue: any = "";
+  measureForm!: FormGroup;
+  i:any="";
+  constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute, private _fb:FormBuilder) { }
 
   ngOnInit (): void {
+
+    // Measure
+    this.measureForm = this._fb.group({
+      phaseExecutions: this._fb.group({
+        measureArrayForm: this._fb.array([this.addMeasurePhase()])
+      })
+    });
+
     // Sidebar
     $('#sidebarCollapse').on('click', function () {
       $('#sidebar-two').toggleClass('active');
@@ -105,6 +120,29 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Measure calculation section
+
+  get measureArray() {
+    const control = <FormArray>(<FormGroup>this.measureForm.get('phaseExecutions')).get('measureArrayForm');
+    return control;
+  }
+
+  addMeasurePhase() {
+    return this._fb.group({
+      targetType: [''],
+      targetValue: ['']
+    });
+  }
+
+  addMorePhase() {
+    this.measureArray.push(this.addMeasurePhase());
+  }
+
+  onSubmit() {
+    this.measureForm.markAllAsTouched();
+    console.log(this.measureForm.value);
+  }
+
   setKartaWidthAndHeight () {
     // Set karta's div width
     const maxWidth = $(".karta_column").width();
@@ -117,6 +155,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   updateNodeProperties(param: any) {
+    console.log("UpdatedProperties",param)
     this.phaseId = param.phaseId;
     this.currentNode = param;
     this.currentNodeName = param.name;
@@ -124,6 +163,12 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.selectedColor = param.text_color;
     this.selectedAlignment = param.alignment;
     this.currentNodeWeight = param.weightage;
+    this.achievedValue = param.achieved_value;
+    this.dueDate = param.due_date;
+    this.targetInput = param.target_value;
+    this.selectedTargetValueType = param.target_value_type;
+
+    
     // Show properties div
     $('#rightSidebar').addClass("d-block");
     // Get current node details
@@ -224,6 +269,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Update node
   updateNode(key: string, value: any) {
+    console.log("Test",key,value)
+    if (value === "measure"){ this.isMeasureDiv = true; this.isMatricsDiv = false; }
+    if (value === "metrics"){ this.isMeasureDiv = false; this.isMatricsDiv = true; }
     if (key === "alignment") this.selectedAlignment = value;
     let data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
