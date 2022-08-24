@@ -1,27 +1,42 @@
 .phase_column {
     width: 20%;
 }
+
 .phase_column ul {
     width: 100%;
 }
+
 .karta_column {
     width: 80%;
 }
+
 #karta-svg {
     // overflow: auto;
     // width: 100%;
     overflow-x: auto;
     overflow-y: auto;
 }
+
 .description_div {
     max-height: 100px;
     overflow-y: scroll;
 }
+
 .selectedPhase {
     background-color: #4c659e80;
 }
-.selected_alignment, .font_alignment_img:hover{
+
+.selected_alignment,
+.font_alignment_img:hover {
     background: #ccc;
     border-radius: 2px;
     padding: 3px;
+}
+
+#target_input {
+    margin-top: 0px !important;
+}
+
+#measure_select {
+    -webkit-appearance: auto !important;
 }
