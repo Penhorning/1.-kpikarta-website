@@ -2,25 +2,28 @@
 <app-sidebar></app-sidebar>
 <!-- main-section -->
 <div class="wrapper">
-    <!-- Sidebar  -->
-    <nav id="sidebar-two">
-      <div class="box-inner">
-        <div class="row mt-3 mb-3">
-          <div class="col-lg-12">
-            <div class="search-bar">
-               <form action="" class="search-form">
-                    <div class="form-group search-filed side-bar-search m-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-                      </svg>
-                    <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
-                  </div>
-                </form>
-            </div>
+  <!-- Sidebar  -->
+  <nav id="sidebar-two">
+    <div class="box-inner">
+      <div class="row mt-3 mb-3">
+        <div class="col-lg-12">
+          <div class="search-bar">
+            <form action="" class="search-form">
+              <div class="form-group search-filed side-bar-search m-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                  </path>
+                </svg>
+                <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
+              </div>
+            </form>
           </div>
         </div>
       </div>
-      <div class="row mb-3">
+    </div>
+    <!-- <div class="row mb-3">
         <div class="col-lg-6 text-left">
           <div class="slider-top-text">
             <p>Nodes</p>
@@ -31,9 +34,9 @@
             <a href="javascript:void(0);">See All</a>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="row">
+    <!-- <div class="row">
         <div class="col-lg-12">
           <div class="item p-2">
             <div class="card custom-card side-bar-card ">
@@ -44,180 +47,116 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-6">
-          <div class="card custom-card side-bar-card ">
-            <div class="goal-img">
-              <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-              <p class="pt-2">Price</p>
-              </div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-          <div class="card custom-card side-bar-card ">
-            <div class="goal-img">
-              <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-              <p class="pt-2">Price</p>
-              </div>
-          </div>
-        </div>
-      </div>
-      <!-- <div class="row">
-        <div class="col-lg-12">
-          <div *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" class="bg-light bootstrap-tagsinput ml-2" style="cursor: default;">
-            <p class="text-success">Empty</p>
-          </div>
-          <div class="owl-carousel owl-theme custom-slider">
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
-                  <p class="pt-2">Price</p>
-                  </div>
-                 
-              </div>
-            </div>
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-              </div>
-            </div>
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">ROI</p>
-                  </div>
-              </div>
-            </div>
-         
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div> -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="">
+          <div id="accordion">
+            <div class="card custom_accordion">
+              <div class="card-header accordion_header_custom" id="headingOne">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                    aria-controls="collapseOne">
+                    Nodes
+                  </button>
+                  <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
+                    See All
+                  </button>
+                </h5>
+              </div>
 
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                  <div class="row mt-3">
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card">
+                        <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true"
+                          (dragstart)="onDragStart($event)" style="cursor: pointer;">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
+                          <p class="pt-2">Empty</p>
+                        </div>
+                        <div class="goal-img" *ngIf="showSVG">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Price</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card ">
+                        <div class="goal-img">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Price</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card ">
+                        <div class="goal-img">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Price</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card ">
+                        <div class="goal-img">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Price</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="line-slide-bar"></div>
+
+            <div class="card custom_accordion">
+              <div class="card-header accordion_header_custom" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="false" aria-controls="collapseTwo">
+                    Measure
+                  </button>
+                  <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseOne">
+                    See All
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body p-0">
+                  <div class="row mt-3">
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card ">
+                        <div class="goal-img">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Price</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card ">
+                        <div class="goal-img">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Price</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="line-slide-bar"></div>
-
-    <!-- <div class="row mb-3">
-        <div class="col-lg-6 text-left">
-          <div class="slider-top-text">
-            <p>Metrics</p>
-          </div>
-        </div>
-        <div class="col-lg-6 text-right">
-          <div class="slider-top-text">
-            <a href="">See All</a>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="owl-carousel owl-theme custom-slider">
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-                 
-              </div>
-            </div>
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-              </div>
-            </div>
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">ROI</p>
-                  </div>
-              </div>
-            </div>
-         
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <div class="line-slide-bar"></div>
-  
-      <div class="row mb-3">
-        <div class="col-lg-6 text-left">
-          <div class="slider-top-text">
-            <p>Measures</p>
-          </div>
-        </div>
-        <div class="col-lg-6 text-right">
-          <div class="slider-top-text">
-            <a href="">See All</a>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="owl-carousel owl-theme custom-slider">
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-                 
-              </div>
-            </div>
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-              </div>
-            </div>
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">ROI</p>
-                  </div>
-              </div>
-            </div>
-         
-            <div class="item p-2">
-              <div class="card custom-card side-bar-card ">
-                <div class="goal-img">
-                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                  <p class="pt-2">Price</p>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
 
 
   </nav>
@@ -234,7 +173,7 @@
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
-                <p>{{karta?.name}}</p>
+                <p style="text-overflow: ellipsis; white-space: nowrap;" [title]="karta?.name">{{karta?.name}}</p>
               </div>
             </div>
             <div class="col-lg-3 pl-0">
@@ -454,30 +393,31 @@
           </div>
         </div>
       </div>
-     </div>
-  <div class="main-center-content d-flex">
-    <div class="center-content mt-4 w-100">
-      <div class="row tab-content-center">
-        <div class="phase_column">
-          <div class="vertical-tabs">
-            <ul class="nav nav-tabs" role="tablist">
-              <li class="nav-item" *ngFor="let phase of phases; let i = index">
-                <a class="nav-link text-nowrap" [ngClass]="{ 'active': phase.id == phaseId }">{{phase?.name}}</a>
-              </li>
-            </ul>
+    </div>
+    <div class="main-center-content d-flex">
+      <div class="center-content mt-4 w-100">
+        <div class="row tab-content-center">
+          <div class="phase_column">
+            <div class="vertical-tabs">
+              <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" *ngFor="let phase of phases; let i = index">
+                  <a class="nav-link text-nowrap" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">{{phase?.name}}</a>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
-        <div class="karta_column" id="karta_col">
-          <div class="tab-content">
-            <div class="tab-pane active" id="pag1" role="tabpanel">
-              <ng-container *ngIf="loadingKarta">
-                <div class="p-5" [innerHtml]="loader"></div>
-              </ng-container>
-              <div id="karta-svg" [hidden]="!showSVG && loadingKarta"></div>
+          <div class="karta_column">
+            <div class="tab-content">
+              <div class="tab-pane active" id="pag1" role="tabpanel">
+                <ng-container *ngIf="loadingKarta">
+                  <div class="p-5" [innerHtml]="loader"></div>
+                </ng-container>
+                <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
                 <div *ngIf="!showSVG">
                   <ng-container *ngFor="let phase of phases; let i = index">
-                    <div class="d-block border" style="padding: 31px;" [id]="phase?.id" (drop)="onDrop($event)"
+                    <div class="d-block border" *ngIf="phase.name !== 'Target'" style="padding: 31px;" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
                       (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"></div>
+                    <div class="d-block border" *ngIf="phase.name === 'Target'" style="padding: 31px;" [id]="phase?.id"></div>
                   </ng-container>
                 </div>
               </div>
@@ -525,7 +465,7 @@
           <div class="col-lg-12">
             <div class="search-sugg mt-3">
               <input type="text" class="form-control" [(ngModel)]="currentNodeName"
-                (mouseout)="updateNode('name', currentNodeName)">
+                (blur)="updateNode('name', currentNodeName)">
             </div>
           </div>
         </div>
@@ -541,7 +481,7 @@
           <div class="col-lg-12">
             <div class="search-sugg mt-3">
               <input type="text" class="form-control" [(ngModel)]="currentNodeWeight"
-                (mouseout)="updateNode('weightage', currentNodeWeight)">
+                (blur)="updateNode('weightage', currentNodeWeight)">
             </div>
           </div>
         </div>
@@ -632,8 +572,9 @@
             </div>
           </div>
         </div>
-        <hr>
-        <div *ngIf="isMatrics">
+        
+        <div *ngIf="showKPICalculation">
+          <hr>
           <div class="row">
             <div class="col-lg-12">
               <h5>Type</h5>
@@ -641,73 +582,53 @@
           </div>
           <div class="row mt-3">
             <div class="col-lg-12">
-              <select class="form-control type-select" [(ngModel)]="selectedFontType"
-                (change)="updateNode('font_type', selectedFontType)">
+              <select class="form-control type-select" [(ngModel)]="kpiType">
                 <option value="measure">Measure</option>
                 <option value="metrics">Metrics</option>
               </select>
             </div>
           </div>
 
-          <!-- measure div -->
-          <div *ngIf="isMeasureDiv">
-            <div>
-              <div class="selct-option-side-r">
-                <label>Due Date</label>
-                <input type="date" name="bday" max="3000-12-31" min="1000-01-01" class="form-control"
-                  [(ngModel)]="dueDate" (change)="updateNode('due_date', dueDate)">
-              </div>
+          <!-- Measure div -->
+          <div *ngIf="kpiType === 'measure' ">
+            <div class="selct-option-side-r mt-2">
+              <label>Due Date</label>
+              <input type="date" class="form-control" [value]="currentNode.due_date"
+                (change)="updateNode('due_date', $any($event.target).value)">
             </div>
-         <form [formGroup]="measureForm">
-          <div formArrayName="measureArrayForm">
-            <ng-container *ngFor="let phase of measureArray.controls; let i = index">
-              <!-- *ngFor="let phase of phaseArray.controls; let i = index" -->
-            <div [formGroupName]="i">
-             <div class="row mt-3">
-              <div class="col-lg-5">
-                <div class="selct-option-side-r">
-                  <label>Target Type</label>
-                  <select class="form-control" [(ngModel)]="selectedTargetValueType" id="measure_select"
-                  >
-                  <!-- (change)="updateNode('target_value_type', selectedTargetValueType)" -->
-                    <option value="weekly">Weekly</option>
-                    <option value="half_yearly">Half Yearly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="yearly">Yearly</option>
-                  </select>
+            <ng-container *ngFor="let t of target; let i = index">
+              <div class="row mt-3">
+                <div class="col-lg-6 pr-0">
+                  <div class="selct-option-side-r">
+                    <label class="text-nowrap" style="margin-bottom: 6px;">Target Value</label>
+                    <select class="form-control" [value]="t.frequency" (change)="setTarget('frequency', $event, i)">
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                      <option value="Annually">Annually</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <div class="col-lg-5">
-                <div class="custom-input-side-r">
-                  <div class="form-group">
-                    <label style="font-weight: 500;">Target Value</label>
-                    <input class="form-control" placeholder="" id="target_input" [(ngModel)]="targetInput"
-                    >
-                    <!-- (mouseout)="updateNode('target_value', targetInput)" -->
+                <div class="col-lg-4 px-2">
+                  <div class="custom-input-side-r">
+                    <input type="number" class="form-control" [value]="t.value" (blur)="setTarget('value', $event, i)">
+                  </div>
+                </div>
+                <div class="col-lg-2 px-2">
+                  <div class="add-btn-side-r" style="cursor: pointer;" (click)="addMoreTarget()">
+                    <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
                   </div>
                 </div>
               </div>
-              <div class="col-lg-2">
-                <div class="add-btn-side-r">
-                  <img src="assets/img/add-btn-side-r.svg" class="img-fluid"
-                  formGroupName="phaseExecutions"
-                  (click)="addMorePhase()">
-                </div>
-              </div>
-              
-             </div>
-            </div>
-          </ng-container>
-          </div>
-          </form>
+            </ng-container>
 
 
             <div class="row mt-3">
               <div class="col-lg-12">
                 <div class="form-group">
                   <label style="font-weight: 500;">Achieved Value</label>
-                  <input type="text" class="form-control" placeholder="" [(ngModel)]="achievedValue"
-                    (mouseout)="updateNode('achieved_value', achievedValue)">
+                  <input type="text" class="form-control" [value]="currentNode.achieved_value"
+                    (blur)="updateNode('achieved_value', $any($event.target).value)">
                 </div>
               </div>
             </div>
@@ -716,34 +637,19 @@
               <div class="col-lg-12">
                 <div class="selct-option-side-r">
                   <label>KPI Calculation Periods</label>
-                  <select class="form-control ">
-                    <option>Month to Date</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
+                  <select class="form-control" [value]="currentNode.kpi_calc_period" (change)="updateNode('kpi_calc_period', $any($event.target).value)">
+                    <option value="month-to-date">Month to date</option>
+                    <option value="year-to-date">Year to date</option>
+                    <option value="month-over-month">Month over month</option>
+                    <option value="year-over-year">Year over year</option>
+                    <option value="entire-history">Entire history</option>
                   </select>
                 </div>
               </div>
             </div>
-
-            <!-- <hr> -->
-            <!-- <div class="row mt-3">
-      <div class="col-lg-6">
-        <h5>Contributor</h5>
-      </div>
-      <div class="col-lg-6 text-right">
-        <a href="" class="add-side-r-custom">+ ADD</a>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="custom-tag mt-3">
-          <input type="text" class="form-control p-4 w-100 border-0" data-role="tagsinput" />
-        </div>
-      </div>
-    </div> -->
           </div>
-          <!--   matrics div -->
-          <div *ngIf="isMatricsDiv">
+          <!--   Metrics div -->
+          <div *ngIf="kpiType === 'metrics' ">
             <div class="row mt-3">
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
@@ -936,54 +842,6 @@
               </div>
             </div>
           </div>
-
-
-
-
-          <!-- share-link-model
-        <div class="row">
-          <div class="col-lg-12"></div>
-        </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <!-- <div *ngIf="isMeasureDiv">
-            <select class="form-control" [(ngModel)]="selectedDateType"
-              (change)="updateNode('font_type', selectedDateType)">
-              <option value="weekly">Weekly</option>
-              <option value="quarterly">Quarterly</option>
-              <option value="yearly">Yearly</option>
-            </select>
-
-            <div class="row mt-3">
-              <div class="col-lg-6">
-                <div class="custom-input-side-r">
-                  <div class="form-group">
-                    <label style="font-weight: 500;">Target Value</label>
-                    <input type="text" class="form-control" placeholder="" id="target_input">
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="selct-option-side-r">
-                  <label>Start Date</label>
-                  <input type="date" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
-                </div>
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-lg-12">
-                <div class="form-group">
-                  <label style="font-weight: 500;">Achieved Value</label>
-                  <input type="text" class="form-control" placeholder="">
-                </div>
-              </div>
-            </div>
-          </div> -->
-          <!-- share-link-model -->
 
           <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">

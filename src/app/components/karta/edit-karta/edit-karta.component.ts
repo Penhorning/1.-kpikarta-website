@@ -1,5 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { Subject } from 'rxjs';
@@ -27,7 +26,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   loadingKarta: boolean = true;
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
-  isMatrics: boolean = false;
 
   // D3 karta events
   D3SVG: any = {
@@ -43,50 +41,44 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.removeNode(d);
       },
       linkColor:(d: any) => {
-        let node_percentage = parseInt((d.target).target_value);
+        let node_percentage = parseInt((d.target).weightage);
         if (this.colorSettings.settings) {
           let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
           return colorSetting[0]?.color ? colorSetting[0]?.color : 'black';
         } else return 'black';
       },
       linkWidth:(d: any) => {
-        let node_percentage = parseInt((d.target).target_value);
+        let weightage: any = (d.target).weightage <=0 ? 10 : (d.target).weightage;
+        let node_percentage = parseInt(weightage);
         return node_percentage/10;
       }
     }
   }
-  // Node properties
+  /* Node properties */
   currentNodeName: string = "";
-  currentNodeWeight: string = "";
-  isMeasureDiv: boolean = true;
-  isMatricsDiv: boolean = false;
+  currentNodeWeight: number = 0;
+  // Typography
   selectedFont: any = "";
-  selectedFontType: any = "measure";
-  selectedTargetValueType: any = "weekly";
   selectedColor: any = "";
   selectedAlignment: any = "";
-  left: string = "non_active_align";
-  center: string = "non_active_align";
-  right: string = "non_active_align";
-  targetInput: any = "";
-  dueDate: any = "";
-  achievedValue: any = "";
-  measureForm!: FormGroup;
-  i:any="";
-  constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute, private _fb:FormBuilder) { }
+  // Kpi Type
+  kpiType: string = "measure";
+  showKPICalculation: boolean = false;
+  target: any = [
+    {
+      frequency: "monthly",
+      value: 0
+    }
+  ]
+  
+  constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
 
   ngOnInit (): void {
-
-    // Measure
-    this.measureForm = this._fb.group({
-      phaseExecutions: this._fb.group({
-        measureArrayForm: this._fb.array([this.addMeasurePhase()])
-      })
-    });
-
     // Sidebar
+    const that = this;
     $('#sidebarCollapse').on('click', function () {
       $('#sidebar-two').toggleClass('active');
+      that.setKartaDimension();
     });
     // Get phases
     this.getPhases();
@@ -96,67 +88,34 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
     // Get karta info
     this.getKartaInfo();
-    // this.setKartaWidthAndHeight();
-    // Owl carousel
-    $('.owl-carousel').owlCarousel({
-      loop: true,
-      margin: 10,
-      responsiveClass: true,
-      responsive: {
-        0: {
-          items: 1,
-          nav: true
-        },
-        600: {
-          items: 3,
-          nav: false
-        },
-        1000: {
-          items: 2,
-          nav: true,
-          loop: false,
-          margin: 20
-        }
-      }
-    });
+    
+    // this.setKartaDimension();
+    // window.onresize = function(event: any) {
+    //   console.log("resize = ", $(".karta_column").width())
+    // };
   }
 
   // Measure calculation section
-
-  get measureArray() {
-    const control = <FormArray>(<FormGroup>this.measureForm.get('phaseExecutions')).get('measureArrayForm');
-    return control;
+  setTarget(type: string, e: any, index: any) {
+    if (type === 'frequency') this.target[index].type = e.target.value;
+    else this.target[index].value = parseInt(e.target.value);
+    this.updateNode('target', this.target);
   }
-
-  addMeasurePhase() {
-    return this._fb.group({
-      targetType: [''],
-      targetValue: ['']
+  addMoreTarget() {
+    this.target.push({
+      type: "weekly",
+      value: 0
     });
   }
 
-  addMorePhase() {
-    this.measureArray.push(this.addMeasurePhase());
-  }
-
-  onSubmit() {
-    this.measureForm.markAllAsTouched();
-    console.log(this.measureForm.value);
-  }
-
-  setKartaWidthAndHeight () {
+  setKartaDimension() {
     // Set karta's div width
-    const maxWidth = $(".karta_column").width();
-    const height = $(".karta_column").height();
-    // const maxHeight = $(".karta_column").height();
-    console.log(maxWidth, " === ", height)
-    $('#karta-svg').css("max-width", maxWidth);
-    // $('#karta-svg svg').css("width", maxWidth);
-    // $('#karta-svg svg').css("height", height);
+    let width = $(".karta_column").width();
+    $('#karta-svg').css("max-width", width);
+    // $('#karta-svg svg').attr("width", width);
   }
 
   updateNodeProperties(param: any) {
-    console.log("UpdatedProperties",param)
     this.phaseId = param.phaseId;
     this.currentNode = param;
     this.currentNodeName = param.name;
@@ -164,13 +123,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.selectedColor = param.text_color;
     this.selectedAlignment = param.alignment;
     this.currentNodeWeight = param.weightage;
-    this.achievedValue = param.achieved_value;
-    this.dueDate = param.due_date;
-    this.targetInput = param.target_value;
-    this.selectedTargetValueType = param.target_value_type;
-
     
-    // Show properties div
+    // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");
     // Get current node details
     this.getNodeDetails(param);
@@ -178,9 +132,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     let phaseIndex = this.phases.findIndex((item: any) => {
       return item.id === this.phaseId;
     });
-    
     if (this.phases[phaseIndex].name === "KPI") {
-      this.isMatrics = true;
+      this.showKPICalculation = true;
+      this.target = param.target;
+      this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
     }
   }
 
@@ -189,10 +144,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   //   BuildKPIKarta(data, "#karta-svg", this.D3SVG);
   // }
 
-  // // Update karta nodes
-  // updateKarta(data: any) {
-  //   BuildKPIKarta(data, "#karta-svg", this.D3SVG);
-  // }
+  // Calculate each node percentage
+  calculatePercentage(params: any) {
+    console.log("Recursive param = ", params);
+    if (params.children) {
+      params.children.forEach((element: any) => {
+        this.calculatePercentage(element);   
+      });
+    }
+  }
 
   // Get karta details including all nodes
   getKartaInfo() {
@@ -201,8 +161,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.karta = response;
         if (this.karta.node) {
           // this.updateKarta(this.karta.node);
+          // this.calculatePercentage(this.karta.node);
           BuildKPIKarta(this.karta.node, "#karta-svg", this.D3SVG);
-          this.setKartaWidthAndHeight();
+          this.setKartaDimension();
           this.showSVG = true;
         }
       },
@@ -217,7 +178,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.phases = response;
         // this.phaseId = this.phases[0].id;
         this.getSuggestion(this.phases[0].id);
-        // this.setKartaWidthAndHeight();
+        // this.setKartaDimension();
       },
       (error: any) => { }
     );
@@ -252,17 +213,25 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Add node in karta
   addNode(param: any) {
-    let data = {
+    let phase = this.phases[param.depth + 1];
+    let data: any = {
       name: "Child",
       font_style: "sans-serif",
       alignment: "center",
       text_color: "#000000",
-      phaseId: this.phases[param.depth + 1].id,
-      parentId: param.id
+      phaseId: phase.id,
+      parentId: param.id,
+      weightage: 0
+    }
+    if (phase.name === "KPI") {
+      data.due_date = new Date();
+      data.target = this.target;
+      data.achieved_value = 0;
+      data.kpi_calc_period = "month-to-date";
     }
     this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        // this.D3SVG.updateNode(this.currentNode);
+        this.D3SVG.updateNode(response);
         //this.getKartaInfo();
       },
       (error: any) => { }
@@ -271,9 +240,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Update node
   updateNode(key: string, value: any) {
-    console.log("Test",key,value)
-    if (value === "measure"){ this.isMeasureDiv = true; this.isMatricsDiv = false; }
-    if (value === "metrics"){ this.isMeasureDiv = false; this.isMatricsDiv = true; }
     if (key === "alignment") this.selectedAlignment = value;
     let data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
@@ -317,18 +283,23 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     // ev.target.appendChild(document.getElementById(data));
     let data = {
       name: "Empty",
+      font_style: "sans-serif",
+      alignment: "center",
+      text_color: "#000000",
       phaseId: ev.target.id,
-      kartaId: this.kartaId
+      kartaId: this.kartaId,
+      weightage: 0
     }
     this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
+        $('#sidebar-two').addClass('active');
         this.getKartaInfo();
         this.showSVG = true;
         let data = {
           name: "Empty",
           phaseId: ev.target.id,
         }
-        $('#sidebar-two').addClass('active');
+        this.setKartaDimension();
         this.updateNodeProperties(data);
       },
       (error: any) => { }

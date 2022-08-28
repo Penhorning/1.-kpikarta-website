@@ -1,88 +1,45 @@
+'use strict';
+
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js");
 
-var getSVGSize = (tree,size={width:0,height:0},level=0)=>{
-    if(size.width<tree.children.length*120){
-        size.width =tree.children.length*120;
-    }
-    size.height=65*(level+1);
-    return tree.children.length;
-}
-var tree = null,selectedNode = null;
-
-function initiateDrag(d, domNode) {
-    draggingNode = d;
-    d3.select(domNode).select('.ghostCircle').attr('pointer-events', 'none');
-    d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
-    d3.select(domNode).attr('class', 'node activeDrag');
-
-    d3.selectAll("g.node").sort(function(a, b) { // select the parent and sort the path's
-        if (a.id != draggingNode.id) return 1; // a is not the hovered element, send "a" to the back
-        else return -1; // a is the hovered element, bring "a" to the front
-    });
-    // if nodes has children, remove the links and nodes
-    if (nodes.length > 1) {
-        // remove link paths
-        links = tree.links(nodes);
-        nodePaths = d3.selectAll("path.link")
-            .data(links, function(d) {
-                return d.target.id;
-            }).remove();
-        // remove child nodes
-        nodesExit = d3.selectAll("g.node")
-            .data(nodes, function(d) {
-                return d.id;
-            }).filter(function(d, i) {
-                if (d.id == draggingNode.id) {
-                    return false;
-                }
-                return true;
-            }).remove();
-    }
-
-    // remove parent link
-    parentLink = tree.links(tree.nodes(draggingNode.parent));
-    d3.selectAll('path.link').filter(function(d, i) {
-        if (d.target.id == draggingNode.id) {
-            return true;
+var levelDepth = [];
+var levelHeight = 0;
+let width2;
+var getSVGSize = (tree,level=0)=>{
+    var children = (tree.children || tree._children || []);
+    width2 = $(".karta_column").width();
+    if(!level){
+        levelDepth = [children.length*170 || width2];
+    } else {
+        if(!levelDepth[level]){
+            levelDepth[level] = children.length*170
+        } else {
+            levelDepth[level] += children.length*170
         }
-        return false;
-    }).remove();
-
-    dragStarted = null;
-}
-
-
-var updateTempConnector = function() {
-    var data = [];
-    if (draggingNode !== null && selectedNode !== null) {
-        // have to flip the source coordinates since we did this for the existing connectors on the original tree
-        data = [{
-            source: {
-                x: selectedNode.y0,
-                y: selectedNode.x0
-            },
-            target: {
-                x: draggingNode.y0,
-                y: draggingNode.x0
-            }
-        }];
     }
-    var link = d3.selectAll(".templink").data(data);
+    if((level+1)*65 > levelHeight){
+        levelHeight = (level+1)*65;
+    }
 
-    link.enter().append("path")
-        .attr("class", "templink")
-        .attr("d", d3.svg.diagonal())
-        .attr('pointer-events', 'none');
-
-    link.attr("d", d3.svg.diagonal());
-
-    link.exit().remove();
-};
+    children.forEach(child=>{
+        getSVGSize(child,level+1);
+    })
+    return {
+        width:levelDepth.reduce((a,b)=>a>b?a:b) < width2 ? width2 : levelDepth.reduce((a,b)=>a>b?a:b),
+        height:levelHeight
+    };
+}
+var tree = null,selectedNode = null,root = null,
+dragStarted = null,nodes = null, domNode = null,parentLink = null;
+var draggingNode = null, links = null, nodePaths = null,nodesExit = null;
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
-    var margin = { top: 0, right: 120, bottom: 20, left: 120 };
+    var margin = { top: 0, right: 0, bottom: 20, left: 0 };
     var width = window.screen.width - margin.right - margin.left;
-    var height = (65*8) - margin.top - margin.bottom;
+    var height = window.screen.height - margin.top - margin.bottom;
+    var svgSize = getSVGSize(treeData);
+    var width = svgSize.width;
+    var height = svgSize.height;
     var i = 0, duration = 750;
     tree = d3.layout.tree()
         .nodeSize([150, 100])
@@ -95,23 +52,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x + 60, d.y + 30]; });
     var svg = d3.select(treeContainerDom).append("svg")
-        .style("width", width)
-        .style("height", height)
-        // .attr("viewBox", [0, 0, width, height])
+        .attr("width",width)
+        .attr("height",height)
         .append("g")
-        .attr("transform", "translate(" + ((width / 2)) + "," + (margin.top) + ")");
-    var root = treeData;
+        .attr("transform", "translate(" + ((width / 2)-60) + "," + (margin.top) + ")");
+    root = treeData;
 
     // Setup lining
-    (new Array(parseInt(window.screen.height/65))).fill(0).forEach((val,index)=>{
-        if (index <=7) {
-            var pathGenerator =d3.svg.line();
-            svg.append('path')
-            .attr('stroke','lightgrey')
-            .attr('stroke-width','1px')
-            .attr('d',pathGenerator([[-(window.screen.width/2),(index+1)*65],[window.screen.width/2,(1+index)*65]]))
-        }
-    })
+    buildKartaDivider();
 
     // Drag/Drop
     var dragListener = d3.behavior.drag()
@@ -165,7 +113,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         return;
     }
     domNode = this;
-    if (selectedNode) {
+    if (selectedNode && draggingNode) {
         // now remove the element from the parent, and insert it into the new elements children
         var index = draggingNode.parent.children.indexOf(draggingNode);
         if (index > -1) {
@@ -183,7 +131,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         }
         // Make sure that the node being added to is expanded so user can see added node is correctly moved
         // expand(selectedNode);
-        // sortTree();
         endDrag();
     } else {
         endDrag();
@@ -192,8 +139,16 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
     // Drag/Drop
 
     update(root);
+
     function update(source) {
         // Compute the new tree layout.
+        var svgSize = getSVGSize(root);
+        var svg = d3.select('#karta-svg svg')
+        .attr("width",svgSize.width)
+        .attr("height",svgSize.height)
+        .select('g')
+        .attr("transform", "translate(" + ((svgSize.width / 2)) + "," + (margin.top) + ")");
+        buildKartaDivider()
         var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
 
@@ -279,6 +234,76 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         });
     }
 
+    function initiateDrag(d, domNode) {
+        draggingNode = d;
+        // d3.select(domNode).select('.ghostCircle').attr('pointer-events', 'none');
+        // d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
+        d3.select(domNode).attr('class', 'node activeDrag');
+    
+        d3.selectAll("g.node").sort(function(a, b) { // select the parent and sort the path's
+            if (a.id != draggingNode.id) return 1; // a is not the hovered element, send "a" to the back
+            else return -1; // a is the hovered element, bring "a" to the front
+        });
+        // if nodes has children, remove the links and nodes
+        if (nodes.length > 1) {
+            // remove link paths
+            links = tree.links(nodes);
+            nodePaths = d3.selectAll("path.link")
+                .data(links, function(d) {
+                    return d.target.id;
+                }).remove();
+            // remove child nodes
+            nodesExit = d3.selectAll("g.node")
+                .data(nodes, function(d) {
+                    return d.id;
+                }).filter(function(d, i) {
+                    if (d.id == draggingNode.id) {
+                        return false;
+                    }
+                    return true;
+                }).remove();
+        }
+    
+        // remove parent link
+        parentLink = tree.links(tree.nodes(draggingNode.parent));
+        d3.selectAll('path.link').filter(function(d, i) {
+            if (d.target.id == draggingNode.id) {
+                return true;
+            }
+            return false;
+        }).remove();
+    
+        dragStarted = null;
+    }
+    
+    
+    var updateTempConnector = function() {
+        var data = [];
+        if (draggingNode !== null && selectedNode !== null) {
+            // have to flip the source coordinates since we did this for the existing connectors on the original tree
+            data = [{
+                source: {
+                    x: selectedNode.y0,
+                    y: selectedNode.x0
+                },
+                target: {
+                    x: draggingNode.y0,
+                    y: draggingNode.x0
+                }
+            }];
+        }
+        var link = d3.selectAll(".templink").data(data);
+    
+        link.enter().append("path")
+            .attr("class", "templink")
+            .attr("d", d3.svg.diagonal())
+            .attr('pointer-events', 'none');
+    
+        link.attr("d", d3.svg.diagonal());
+    
+        link.exit().remove();
+    };
+
     // Toggle children on click.
     function nodeclick(d) {
         d3.event.stopPropagation();
@@ -289,6 +314,25 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
             options.events[d3.event.target.id](d);
         }
     }
+
+    function buildKartaDivider() {
+        svg.selectAll('.karta_divider').remove();
+        (new Array(parseInt(window.screen.height / 64))).fill(0).forEach((val, index) => {
+            var pathGenerator = d3.svg.line();
+            width2 = $(".karta_column").width();
+            svg.append('path')
+                .attr("class", "karta_divider")
+                .attr('stroke', 'lightgrey')
+                .attr('stroke-width', '1px')
+                .attr('d', pathGenerator([[-width2, (index + 1) * 64], [width2, (1 + index) * 64]]));
+        });
+    }
+    $(document).on('click', '#sidebarCollapse', function () {
+        width2 = $(".karta_column").width();
+        d3.select('#karta-svg svg')
+        .attr("width", width2);
+        buildKartaDivider();
+    });
 
     function updateNode(d) {
         $(`.node-text[nodeid=${d.id}]`).html(d.name)
@@ -318,8 +362,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
                 "name": "Child",
                 "children": []
             })
-            width = 120*d.children.length;
-            update(d)
+            update(d);
         },
         removeNode: (d) => {
             d.parent.children = d.parent.children.filter(c => {

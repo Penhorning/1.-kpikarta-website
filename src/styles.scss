@@ -10,6 +10,7 @@
     max-width: 250px;
     max-height: 57px;
 }
+
 .login_profile {
     min-width: 50px;
     min-height: 48px;
@@ -23,7 +24,10 @@
     pointer-events: none;
 }
 
-.next-btn:hover, .next-btn:active, .next-btn:focus, .next-btn:disabled {
+.next-btn:hover,
+.next-btn:active,
+.next-btn:focus,
+.next-btn:disabled {
     background-color: #5186c2 !important;
 }
 
@@ -51,52 +55,52 @@
     fill: none;
 }
 
-// svg {
-//     position: absolute;
-//     width: 100%;
-//     height: 100%;
-// }
+#karta-svg svg {
+    min-width: 500px;
+    min-height: 500px;
+    background: white;
+}
 
-.karta-svg {
-    height: 100vh;
-    width: 100vw;
+#karta-svg {
     margin-bottom: 10px;
     overflow: auto;
     resize: both;
 }
 
-.karta-svg:focus {
+#karta-svg:focus {
     outline: none;
 }
-  
-.karta-svg .mindmap-node--editable {
+
+#karta-svg .mindmap-node--editable {
     cursor: all-scroll;
 }
-.karta-svg .mindmap-node--editable a {
+
+#karta-svg .mindmap-node--editable a {
     pointer-events: none;
 }
 
-.karta-svg .mindmap-subnode-group {
+#karta-svg .mindmap-subnode-group {
     align-items: center;
     border-left: 4px solid #6a6a6a;
     display: flex;
     margin-left: 15px;
     padding: 5px;
 }
-.karta-svg .mindmap-subnode-group a {
+
+#karta-svg .mindmap-subnode-group a {
     color: #212121;
     font-family: "Raleway";
     font-size: 16px;
     padding: 2px 5px;
 }
 
-.karta-svg .mindmap-emoji {
+#karta-svg .mindmap-emoji {
     height: 24px;
     vertical-align: bottom;
     width: 24px;
 }
 
-.karta-svg .mindmap-emoji {
+#karta-svg .mindmap-emoji {
     height: 24px;
     vertical-align: bottom;
     width: 24px;
@@ -124,13 +128,15 @@
     color: darkgray;
     margin-top: -25px;
 }
-  
+
 .mindmap-node .node-body .options .option:hover .add-item {
     color: #19bb19;
 }
+
 .mindmap-node .node-body .options .option:hover .remove-item {
     color: #666565;
 }
+
 .mindmap-node .node-body .options .option:hover .toggle-item {
     color: #ee6969;
 }
@@ -138,9 +144,11 @@
 .mindmap-node:hover .node-body {
     background-color: #eef;
 }
+
 .mindmap-node:hover .node-body .options {
     display: flex;
 }
+
 .mindmap-node {
     overflow: auto;
 }
@@ -156,4 +164,19 @@
 
 .mindmap-node:hover {
     cursor: pointer;
+}
+
+
+.overlay {
+    background-color: #EEE;
+}
+
+.templink {
+    /* fill: none; */
+    stroke: red;
+    stroke-width: 3px;
+}
+
+.ghostCircle.show {
+    display: block;
 }
