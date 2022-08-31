@@ -78,7 +78,7 @@
                         </div>
                         <div class="goal-img" *ngIf="showSVG">
                           <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Price</p>
+                          <p class="pt-2">Goal</p>
                         </div>
                       </div>
                     </div>
@@ -86,7 +86,7 @@
                       <div class="card custom-card side-bar-card ">
                         <div class="goal-img">
                           <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Price</p>
+                          <p class="pt-2">CSF</p>
                         </div>
                       </div>
                     </div>
@@ -96,7 +96,7 @@
                       <div class="card custom-card side-bar-card ">
                         <div class="goal-img">
                           <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Price</p>
+                          <p class="pt-2">Phase</p>
                         </div>
                       </div>
                     </div>
@@ -104,7 +104,7 @@
                       <div class="card custom-card side-bar-card ">
                         <div class="goal-img">
                           <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Price</p>
+                          <p class="pt-2">Segment</p>
                         </div>
                       </div>
                     </div>
@@ -135,7 +135,7 @@
                       <div class="card custom-card side-bar-card ">
                         <div class="goal-img">
                           <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Price</p>
+                          <p class="pt-2">Measure 1</p>
                         </div>
                       </div>
                     </div>
@@ -143,7 +143,46 @@
                       <div class="card custom-card side-bar-card ">
                         <div class="goal-img">
                           <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Price</p>
+                          <p class="pt-2">Measure 2</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="line-slide-bar"></div>
+
+            <div class="card custom_accordion">
+              <div class="card-header accordion_header_custom" id="headingThree">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                    aria-expanded="false" aria-controls="collapseThree">
+                    Metric
+                  </button>
+                  <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseThree"
+                    aria-expanded="true" aria-controls="collapseOne">
+                    See All
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                <div class="card-body p-0">
+                  <div class="row mt-3">
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card ">
+                        <div class="goal-img">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Metric 1</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="card custom-card side-bar-card ">
+                        <div class="goal-img">
+                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                          <p class="pt-2">Metric 2</p>
                         </div>
                       </div>
                     </div>
@@ -173,7 +212,7 @@
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
-                <p style="text-overflow: ellipsis; white-space: nowrap;" [title]="karta?.name">{{karta?.name}}</p>
+                <p [title]="karta?.name">{{karta?.name}}</p>
               </div>
             </div>
             <div class="col-lg-3 pl-0">
@@ -186,7 +225,7 @@
             </div>
             <div class="col-lg-6 p-0">
               <div class="time-select-karta">
-                <span class="last-saved">Last Saved:</span><span> 07-Mar-2022 10:30 AM</span>
+                <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'medium'}}</span>
               </div>
             </div>
           </div>
@@ -299,9 +338,7 @@
             </div>
             <div class="col-lg-4">
               <div class="save-setting-btn">
-                <button class="save-btn-karta mr-1">Save</button>
-
-
+                <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
 
                 <div class="dropdown filter-option m-0">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
@@ -401,7 +438,8 @@
             <div class="vertical-tabs">
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" *ngFor="let phase of phases; let i = index">
-                  <a class="nav-link text-nowrap" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">{{phase?.name}}</a>
+                  <a class="nav-link text-nowrap" [ngClass]="{ 'active': phase.id == phaseId }"
+                    [id]="phase.id">{{phase?.name}}</a>
                 </li>
               </ul>
             </div>
@@ -415,9 +453,11 @@
                 <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
                 <div *ngIf="!showSVG">
                   <ng-container *ngFor="let phase of phases; let i = index">
-                    <div class="d-block border" *ngIf="phase.name !== 'Target'" style="padding: 31px;" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
-                      (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"></div>
-                    <div class="d-block border" *ngIf="phase.name === 'Target'" style="padding: 31px;" [id]="phase?.id"></div>
+                    <div class="d-block border karta_dummy_lines" *ngIf="phase.name !== 'Target'"
+                      [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)"
+                      (dragleave)="onDragLeave($event)"></div>
+                    <div class="d-block border karta_dummy_lines" *ngIf="phase.name === 'Target'" [id]="phase?.id">
+                    </div>
                   </ng-container>
                 </div>
               </div>
@@ -454,6 +494,11 @@
 
 
       <div class="right-side-bar d-none" id="rightSidebar">
+        <!-- <div class="test">
+          <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle">
+            <img src="assets/img/side-arrow-new-bar1.svg.png" alt="">
+          </button>
+        </div> -->
         <div class="row">
           <div class="col-lg-12">
             <div class="goal-name mt-3">
@@ -470,21 +515,23 @@
           </div>
         </div>
         <!-- Weightage -->
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="goal-name mt-3">
-              <h6>Weightage</h6>
+        <ng-container *ngIf="phaseId !== '62b07978c389310e2c74f586' && phaseId !== '62b079b4c389310e2c74f58d'">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="goal-name mt-3">
+                <h6>Weightage</h6>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="search-sugg mt-3">
-              <input type="text" class="form-control" [(ngModel)]="currentNodeWeight"
-                (blur)="updateNode('weightage', currentNodeWeight)">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="search-sugg mt-3">
+                <input type="text" class="form-control" [(ngModel)]="currentNodeWeight"
+                  (blur)="updateNode('weightage', currentNodeWeight)">
+              </div>
             </div>
           </div>
-        </div>
+        </ng-container>
         <div class="row mt-4">
           <div class="col-lg-12">
             <div class="right-side-bar-content">
@@ -572,7 +619,7 @@
             </div>
           </div>
         </div>
-        
+
         <div *ngIf="showKPICalculation">
           <hr>
           <div class="row">
@@ -598,7 +645,7 @@
             </div>
             <ng-container *ngFor="let t of target; let i = index">
               <div class="row mt-3">
-                <div class="col-lg-6 pr-0">
+                <div class="col-lg-5 pr-0">
                   <div class="selct-option-side-r">
                     <label class="text-nowrap" style="margin-bottom: 6px;">Target Value</label>
                     <select class="form-control" [value]="t.frequency" (change)="setTarget('frequency', $event, i)">
@@ -614,7 +661,12 @@
                     <input type="number" class="form-control" [value]="t.value" (blur)="setTarget('value', $event, i)">
                   </div>
                 </div>
-                <div class="col-lg-2 px-2">
+                <div class="col-lg-3 d-flex px-2">
+                  <ng-container *ngIf="target.length > 1">
+                    <div class="add-btn-side-r" style="cursor: pointer;" (click)="removeTarget(i)">
+                      <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
+                    </div>
+                  </ng-container>
                   <div class="add-btn-side-r" style="cursor: pointer;" (click)="addMoreTarget()">
                     <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
                   </div>
@@ -637,7 +689,8 @@
               <div class="col-lg-12">
                 <div class="selct-option-side-r">
                   <label>KPI Calculation Periods</label>
-                  <select class="form-control" [value]="currentNode.kpi_calc_period" (change)="updateNode('kpi_calc_period', $any($event.target).value)">
+                  <select class="form-control" [value]="currentNode.kpi_calc_period"
+                    (change)="updateNode('kpi_calc_period', $any($event.target).value)">
                     <option value="month-to-date">Month to date</option>
                     <option value="year-to-date">Year to date</option>
                     <option value="month-over-month">Month over month</option>
@@ -916,3 +969,5 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>

@@ -48,6 +48,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         });
     //   .size([height, width])
     options.updateNode = updateNode;
+    options.updateNewNode = updateNewNode;
 
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x + 60, d.y + 30]; });
@@ -317,14 +318,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
 
     function buildKartaDivider() {
         svg.selectAll('.karta_divider').remove();
-        (new Array(parseInt(window.screen.height / 64))).fill(0).forEach((val, index) => {
+        (new Array(parseInt(window.screen.height / 65))).fill(0).forEach((val, index) => {
             var pathGenerator = d3.svg.line();
             width2 = $(".karta_column").width();
             svg.append('path')
                 .attr("class", "karta_divider")
                 .attr('stroke', 'lightgrey')
                 .attr('stroke-width', '1px')
-                .attr('d', pathGenerator([[-width2, (index + 1) * 64], [width2, (1 + index) * 64]]));
+                .attr('d', pathGenerator([[-width2, (index + 1) * 65], [width2, (1 + index) * 65]]));
         });
     }
     $(document).on('click', '#sidebarCollapse', function () {
@@ -335,10 +336,16 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
     });
 
     function updateNode(d) {
-        $(`.node-text[nodeid=${d.id}]`).html(d.name)
+        $(`.node-text[nodeid=${d.id}]`).html(d.name + ' <b>(50%)</b>');
         $(`.node-text[nodeid=${d.id}]`).css('color',d.text_color);
         $(`.node-text[nodeid=${d.id}]`).css('font-family',d.font_style);
         $(`.node-text[nodeid=${d.id}]`).css('text-align',d.alignment);
+    }
+    function updateNewNode(parent, d) {
+        parent.children = parent.children || []
+        d.children = [];
+        parent.children.push(d);
+        update(parent);
     }
 
     function endDrag() {
@@ -357,12 +364,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
 
     var events = {
         addNode: (d) => {
-            d.children = d.children || []
-            d.children.push({
-                "name": "Child",
-                "children": []
-            })
-            update(d);
+            // d.children = d.children || []
+            // d.children.push({
+            //     "name": "Child",
+            //     "children": []
+            // })
+            // update(d);
         },
         removeNode: (d) => {
             d.parent.children = d.parent.children.filter(c => {
@@ -373,13 +380,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         toggleNode: (d) => {
             if (d.children) {
                 if (d.children.length) {
-                    $(d3.event.target).toggleClass('fa-eye fa-eye-slash')
+                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up')
                 }
                 d._children = d.children;
                 d.children = null;
             } else {
                 if (d._children.length) {
-                    $(d3.event.target).toggleClass('fa-eye fa-eye-slash')
+                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up')
                 }
                 d.children = d._children;
                 d._children = null;

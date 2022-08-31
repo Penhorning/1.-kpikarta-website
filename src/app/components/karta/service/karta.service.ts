@@ -21,6 +21,9 @@ export class KartaService {
   createKarta(data: any) {
     return this._httpService.POST('/karta', data);
   }
+  updateKarta(kartaId: string, data: any) {
+    return this._httpService.PATCH(`/karta/${kartaId}`, data);
+  }
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }

@@ -48,9 +48,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         } else return 'black';
       },
       linkWidth:(d: any) => {
-        let weightage: any = (d.target).weightage <=0 ? 10 : (d.target).weightage;
-        let node_percentage = parseInt(weightage);
-        return node_percentage/10;
+        let weightage = parseInt(d.target.weightage);
+        weightage = weightage <=0 ? 10 : weightage;
+        return weightage/10;
       }
     }
   }
@@ -80,6 +80,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       $('#sidebar-two').toggleClass('active');
       that.setKartaDimension();
     });
+    // Hide sidebar when click outside
+    $(document).on('click', function (event: any) {
+      if (!$(event.target).closest('#rightSidebar').length && event.target.id !== "delete_btn") {
+        $('#rightSidebar').removeClass("d-block");
+      }
+      that.setKartaDimension();
+    });
     // Get phases
     this.getPhases();
     // Get color settings
@@ -87,7 +94,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
     // Get karta info
-    this.getKartaInfo();
+    // this.getKartaInfo();
     
     // this.setKartaDimension();
     // window.onresize = function(event: any) {
@@ -97,22 +104,41 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Measure calculation section
   setTarget(type: string, e: any, index: any) {
-    if (type === 'frequency') this.target[index].type = e.target.value;
-    else this.target[index].value = parseInt(e.target.value);
-    this.updateNode('target', this.target);
+    if (type === 'frequency') {
+      this.target[index].type = e.target.value;
+      this.updateNode('target', this.target);
+    }
+    else {
+      this.target[index].value = parseInt(e.target.value);
+      this.updateNode('target', this.target, 'yes');
+    }
   }
   addMoreTarget() {
     this.target.push({
-      type: "weekly",
+      frequency: "monthly",
       value: 0
     });
+  }
+
+  removeTarget(index: number) {
+    this.target.splice(index, 1);
+    this.updateNode('target', this.target);
   }
 
   setKartaDimension() {
     // Set karta's div width
     let width = $(".karta_column").width();
     $('#karta-svg').css("max-width", width);
-    // $('#karta-svg svg').attr("width", width);
+    let svg_width = $("#karta-svg svg").width();
+    if (svg_width > width) $('#karta-svg svg').attr("width", svg_width);
+    else $('#karta-svg svg').attr("width", width);
+  }
+
+  // Find phase index
+  phaseIndex(phaseId: string) {
+    return this.phases.findIndex((item: any) => {
+      return item.id === phaseId;
+    });
   }
 
   updateNodeProperties(param: any) {
@@ -123,18 +149,26 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.selectedColor = param.text_color;
     this.selectedAlignment = param.alignment;
     this.currentNodeWeight = param.weightage;
+
+    this.showKPICalculation = false;
     
     // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");
+    $('body').addClass("rightSidebarOpened");
     // Get current node details
     this.getNodeDetails(param);
     // Show Measure and metrics when KPI's node selected
-    let phaseIndex = this.phases.findIndex((item: any) => {
-      return item.id === this.phaseId;
-    });
-    if (this.phases[phaseIndex].name === "KPI") {
+    if (this.phases[this.phaseIndex(param.phaseId)].name === "KPI") {
       this.showKPICalculation = true;
-      this.target = param.target;
+      if (param.target) this.target = param.target;
+      else {
+        this.target = [
+          {
+            frequency: "monthly",
+            value: 0
+          }
+        ]
+      }
       this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
     }
   }
@@ -145,14 +179,60 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   // }
 
   // Calculate each node percentage
-  calculatePercentage(params: any) {
-    console.log("Recursive param = ", params);
-    if (params.children) {
-      params.children.forEach((element: any) => {
-        this.calculatePercentage(element);   
-      });
-    }
+  calculatePercentage(params: any, percentage: number) :any {
+    // console.log("Recursive param = ", params);
+    // let percentage = 0;
+    // params.children.forEach((element: any) => {
+    //   if (element.hasOwnProperty('achieved_value')) {
+    //     percentage = (element.achieved_value/element.target[0].value) * 100;
+    //     element.percentage = parseFloat(percentage.toFixed(2));
+    //   }
+    //   else this.calculatePercentage(element);
+    // });
+    params.children.forEach((element: any) => {
+      if (element.hasOwnProperty('achieved_value')) {
+        percentage = (element.achieved_value/element.target[0].value) * 100;
+        element.percentage = parseFloat(percentage.toFixed(2));
+      }
+      else {
+       var  tempPercentage = this.calculatePercentage(element,percentage);
+        element.percentage = parseFloat(tempPercentage.toFixed(2));
+        // if (params.children.length > 1) {
+        //   let aggregatePercentage = 0;
+        //   params.children.forEach((elementnest: any) => {
+        //     aggregatePercentage += elementnest.percentage;
+        //   });
+        //   // params.percentage = aggregatePercentage;
+        //   var  tempPercentage = this.calculatePercentage(element,aggregatePercentage);
+        //   element.percentage = parseFloat(tempPercentage.toFixed(2));
+        // } else {
+        //   var  tempPercentage = this.calculatePercentage(element,percentage);
+        // element.percentage = parseFloat(tempPercentage.toFixed(2));
+        // }
+      }
+    });
+    console.log(percentage);
+    return percentage;
   }
+
+  // Set calculated percentage
+  // setPercentage(params: any) {
+  //   console.log("Set percentage = ", params);
+  //   params.children.forEach((element: any) => {
+  //     if (element.hasOwnProperty('percentage')) {
+        // if (params.children.length > 1) {
+        //   let aggregatePercentage = 0;
+        //   params.children.forEach((element: any) => {
+        //     aggregatePercentage += element.percentage;
+        //   });
+        //   params.percentage = aggregatePercentage;
+        // } else params.percentage = element.percentage;
+  //       this.setPercentage(element);
+  //     }
+
+  //    else this.setPercentage(element);
+  //   });
+  // }
 
   // Get karta details including all nodes
   getKartaInfo() {
@@ -161,7 +241,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.karta = response;
         if (this.karta.node) {
           // this.updateKarta(this.karta.node);
-          // this.calculatePercentage(this.karta.node);
+          this.calculatePercentage(this.karta.node,0);
+          // this.setPercentage(this.karta.node);
           BuildKPIKarta(this.karta.node, "#karta-svg", this.D3SVG);
           this.setKartaDimension();
           this.showSVG = true;
@@ -203,6 +284,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this._kartaService.getColorSettingByUser({ userId: this._commonService.getUserId() }).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.colorSettings = response;
+        this.getKartaInfo();
       }
     );
   }
@@ -212,10 +294,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   // Add node in karta
-  addNode(param: any) {
-    let phase = this.phases[param.depth + 1];
+  addNode(param: any, name?: string) {
+    let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     let data: any = {
-      name: "Child",
+      name: name ? name : "Child",
       font_style: "sans-serif",
       alignment: "center",
       text_color: "#000000",
@@ -225,13 +307,18 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
     if (phase.name === "KPI") {
       data.due_date = new Date();
-      data.target = this.target;
+      data.target = [
+        {
+          frequency: "monthly",
+          value: 0
+        }
+      ];
       data.achieved_value = 0;
       data.kpi_calc_period = "month-to-date";
     }
     this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        this.D3SVG.updateNode(response);
+        this.D3SVG.updateNewNode(param, response);
         //this.getKartaInfo();
       },
       (error: any) => { }
@@ -239,13 +326,17 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   // Update node
-  updateNode(key: string, value: any) {
+  updateNode(key: string, value: any, addTarget?: string) {
     if (key === "alignment") this.selectedAlignment = value;
     let data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
         this.currentNode[key] = value;
         this.D3SVG.updateNode(this.currentNode);
+        if (addTarget === "yes" && !this.currentNode.children) {
+          this.addNode(this.currentNode, `${value[0].value} per target`);
+        }
+        // if (key === "weightage") this.D3SVG.events.linkWidth(this.currentNode);
       },
       (error: any) => { }
     );
@@ -286,7 +377,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       font_style: "sans-serif",
       alignment: "center",
       text_color: "#000000",
-      phaseId: ev.target.id,
+      phaseId: ev.target.id.substring(9),
       kartaId: this.kartaId,
       weightage: 0
     }
@@ -297,10 +388,23 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.showSVG = true;
         let data = {
           name: "Empty",
-          phaseId: ev.target.id,
+          phaseId: ev.target.id.substring(9),
         }
         this.setKartaDimension();
         this.updateNodeProperties(data);
+      },
+      (error: any) => { }
+    );
+  }
+
+  // Save karta
+  saveKarta() {
+    let data = {
+      name: this.karta.name
+    }
+    this._kartaService.updateKarta(this.karta.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+      (response: any) => {
+        this.karta = response;
       },
       (error: any) => { }
     );

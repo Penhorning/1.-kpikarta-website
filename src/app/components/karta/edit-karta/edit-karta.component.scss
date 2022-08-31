@@ -1,3 +1,8 @@
+.karta-name p {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 .phase_column {
     width: 20%;
 }
@@ -8,6 +13,10 @@
 
 .karta_column {
     width: 80%;
+}
+
+.karta_dummy_lines {
+    padding: 31.5px;
 }
 
 .description_div {

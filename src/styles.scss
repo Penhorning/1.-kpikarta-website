@@ -31,6 +31,13 @@
     background-color: #5186c2 !important;
 }
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none; 
+}
+
 
 
 // D3 Styles
@@ -42,7 +49,7 @@
     font: 10px sans-serif;
     fill: #fff;
     margin: auto;
-    margin-top: 7px;
+    margin-top: 12px;
     width: auto;
     text-align: center;
     text-decoration: none;
@@ -62,7 +69,6 @@
 }
 
 #karta-svg {
-    margin-bottom: 10px;
     overflow: auto;
     resize: both;
 }
@@ -107,10 +113,10 @@
 }
 
 .mindmap-node .node-body {
-    background-color: white;
-    border: 1px solid darkgray;
-    border-radius: 5px;
-    box-shadow: 1px 1px 5px gray;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    box-shadow: rgb(0 0 0 / 20%) 0px 0.5px 3px -1px, rgb(0 0 0 / 15%) 0px 5px 30px -10px;
     min-height: 40px;
     min-width: 100px;
     margin-top: 20px;
@@ -119,6 +125,7 @@
 .mindmap-node .node-body .options {
     display: none;
     position: absolute;
+    right: 17px;
 }
 
 .mindmap-node .node-body .options .option {
@@ -127,6 +134,12 @@
     margin-right: 10px;
     color: darkgray;
     margin-top: -25px;
+}
+
+.mindmap-node .node-body .options .option .fa {
+    border-radius: 100%;
+    background-color: rgb(240, 241, 242);
+    color: rgb(138, 148, 153);
 }
 
 .mindmap-node .node-body .options .option:hover .add-item {
