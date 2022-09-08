@@ -142,24 +142,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Drag/Drop
 
     // Find max depth of subphases
-    function getSubPhaseDepth(node,depth){
-        if (options.subPhases().map(item => item.id).indexOf(node.phaseId)>-1) {
-            return 0;
-        }
-        var currentnode = node;
-        while(currentnode && currentnode.parent && options.subPhases().map(item=>item.id).indexOf(currentnode.parent.phaseId)>-1){
-            depth++;
-            currentnode = node.parent;
-        }
-
-        // var children = (node.parent || {children:[]}).children;
-        // var hasSubPhases = children.find(child=>options.subPhases().map(item => item.id).indexOf(child.phaseId)>-1);
-        // if(hasSubPhases){
-        //     depth++;
-        // }
-        return depth;
+    function getPhaseDepth(node){
+        return options.phases().map(item => item.id).indexOf(node.phaseId);
     }
-
+    var initialDepth = getPhaseDepth(root);
     update(root);
 
     function update(source) {
@@ -179,10 +165,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             let children = (d.parent || {children:[]}).children;
             let hasSubPhases = children.find(item => options.subPhases().map(item => item.id).indexOf(item));
             if (hasSubPhases) {
-                let subPhaseDepth = getSubPhaseDepth(d, 0);
-                d.y = (d.depth + subPhaseDepth)* 65;
+                let subPhaseDepth = getPhaseDepth(d, 0);
+                d.y = (subPhaseDepth)* 65;
             }
-            else d.y = d.depth * 65;
+            else d.y = (d.depth+initialDepth) * 65;
         });
         // Declare the nodes…
         var node = svg.selectAll("g.node")
@@ -393,6 +379,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         d.children = [];
         parent.children.push(d);
         update(parent);
+        update(root);
     }
 
     function endDrag() {
