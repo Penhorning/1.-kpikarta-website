@@ -445,21 +445,21 @@
             </div>
           </div>
           <div class="karta_column">
-            <div class="tab-content">
-              <div class="tab-pane active" id="pag1" role="tabpanel">
-                <ng-container *ngIf="loadingKarta">
-                  <div class="p-5" [innerHtml]="loader"></div>
+            <div class="tab-pane active">
+              <ng-container *ngIf="loadingKarta">
+                <div class="p-5" [innerHtml]="loader"></div>
+              </ng-container>
+              <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
+              <div *ngIf="!showSVG && !loadingKarta">
+                <ng-container *ngFor="let phase of phases; let i = index">
+                  <div class="align-items-center border d-block d-flex justify-content-center karta_dummy_lines" *ngIf="phase.name !== 'Target'"
+                    [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)"
+                    (dragleave)="onDragLeave($event)" (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
+                    <button class="btn btn-sm btn-light" (click)="addRoteNode($event)"><i class="fa fa-plus-circle"></i> Node</button>
+                  </div>
+                  <div class="d-block border karta_dummy_lines" *ngIf="phase.name === 'Target'" [id]="phase?.id">
+                  </div>
                 </ng-container>
-                <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
-                <div *ngIf="!showSVG">
-                  <ng-container *ngFor="let phase of phases; let i = index">
-                    <div class="d-block border karta_dummy_lines" *ngIf="phase.name !== 'Target'"
-                      [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)"
-                      (dragleave)="onDragLeave($event)"></div>
-                    <div class="d-block border karta_dummy_lines" *ngIf="phase.name === 'Target'" [id]="phase?.id">
-                    </div>
-                  </ng-container>
-                </div>
               </div>
             </div>
           </div>
@@ -502,7 +502,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="goal-name mt-3">
-              <h6>Goal Name</h6>
+              <h6>{{currentPhase?.name}}</h6>
             </div>
           </div>
         </div>

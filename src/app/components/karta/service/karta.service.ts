@@ -12,6 +12,12 @@ export class KartaService {
   getPhases() {
     return this._httpService.GET('/kartaphases');
   }
+  addSubPhase(data: any) {
+    return this._httpService.POST('/karta_sub_phases', data);
+  }
+  getSubPhases(kartaId: string) {
+    return this._httpService.GET(`/karta_sub_phases?filter[where][kartaId]=${kartaId}&filter[order]=createdAt Desc`);
+  }
   getSuggestion(data: any) {
     return this._httpService.POST('/suggestion-by-phase', data);
   }

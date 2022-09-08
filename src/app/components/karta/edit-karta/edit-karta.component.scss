@@ -4,7 +4,7 @@
     overflow: hidden;
 }
 .phase_column {
-    width: 20%;
+    width: 23%;
 }
 
 .phase_column ul {
@@ -12,11 +12,11 @@
 }
 
 .karta_column {
-    width: 80%;
+    width: 77%;
 }
 
 .karta_dummy_lines {
-    padding: 31.5px;
+    height: 65px;
 }
 
 .description_div {
@@ -26,6 +26,13 @@
 
 .selectedPhase {
     background-color: #4c659e80;
+}
+
+.karta_dummy_lines button {
+    display: none;
+}
+.selectedPhase:hover button {
+    display: block;
 }
 
 .selected_alignment, .font_alignment_img:hover {

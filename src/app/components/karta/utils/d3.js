@@ -33,7 +33,7 @@ var tree = null,selectedNode = null,root = null,
 dragStarted = null,nodes = null, domNode = null,parentLink = null;
 var draggingNode = null, links = null, nodePaths = null,nodesExit = null;
 
-module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
+module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var margin = { top: 0, right: 0, bottom: 20, left: 0 };
     var width = window.screen.width - margin.right - margin.left;
     var height = window.screen.height - margin.top - margin.bottom;
@@ -42,102 +42,123 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
     var height = svgSize.height;
     var i = 0, duration = 750;
     tree = d3.layout.tree()
-        .nodeSize([150, 100])
+        .nodeSize([90, 60])
         .separation(function (a, b) {
             return a.parent == b.parent ? 1 : 1.25;
         });
     //   .size([height, width])
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
+    options.buildOneKartaDivider = buildOneKartaDivider;
+    // options.removeOneKartaDivider = removeOneKartaDivider;
 
     var diagonal = d3.svg.diagonal()
-        .projection(function (d) { return [d.x + 60, d.y + 30]; });
+        .projection(function (d) { return [d.x + 45, d.y + 35]; });
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width",width)
         .attr("height",height)
         .append("g")
-        .attr("transform", "translate(" + ((width / 2)-60) + "," + (margin.top) + ")");
+        .attr("transform", "translate(" + ((width / 2)-45) + "," + (margin.top) + ")");
     root = treeData;
 
     // Setup lining
     buildKartaDivider();
 
     // Drag/Drop
-    var dragListener = d3.behavior.drag()
-.on("dragstart", function(d) {
-    if (d == root) {
-        return;
-    }
-    dragStarted = true;
-    nodes = tree.nodes(d);
-    d3.event.sourceEvent.stopPropagation();
-    // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
-}).on("drag", function(d) {
-    if (d == root) {
-        return;
-    }
-    if (dragStarted) {
-        domNode = this;
-        initiateDrag(d, domNode);
-    }
+//     var dragListener = d3.behavior.drag()
+// .on("dragstart", function(d) {
+//     if (d == root) {
+//         return;
+//     }
+//     dragStarted = true;
+//     nodes = tree.nodes(d);
+//     d3.event.sourceEvent.stopPropagation();
+//     // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
+// }).on("drag", function(d) {
+//     if (d == root) {
+//         return;
+//     }
+//     if (dragStarted) {
+//         domNode = this;
+//         initiateDrag(d, domNode);
+//     }
 
-    // get coords of mouseEvent relative to svg container to allow for panning
-    // relCoords = d3.mouse($('svg').get(0));
-    // if (relCoords[0] < panBoundary) {
-    //     panTimer = true;
-    //     pan(this, 'left');
-    // } else if (relCoords[0] > ($('svg').width() - panBoundary)) {
+//     // get coords of mouseEvent relative to svg container to allow for panning
+//     // relCoords = d3.mouse($('svg').get(0));
+//     // if (relCoords[0] < panBoundary) {
+//     //     panTimer = true;
+//     //     pan(this, 'left');
+//     // } else if (relCoords[0] > ($('svg').width() - panBoundary)) {
 
-    //     panTimer = true;
-    //     pan(this, 'right');
-    // } else if (relCoords[1] < panBoundary) {
-    //     panTimer = true;
-    //     pan(this, 'up');
-    // } else if (relCoords[1] > ($('svg').height() - panBoundary)) {
-    //     panTimer = true;
-    //     pan(this, 'down');
-    // } else {
-    //     try {
-    //         clearTimeout(panTimer);
-    //     } catch (e) {
+//     //     panTimer = true;
+//     //     pan(this, 'right');
+//     // } else if (relCoords[1] < panBoundary) {
+//     //     panTimer = true;
+//     //     pan(this, 'up');
+//     // } else if (relCoords[1] > ($('svg').height() - panBoundary)) {
+//     //     panTimer = true;
+//     //     pan(this, 'down');
+//     // } else {
+//     //     try {
+//     //         clearTimeout(panTimer);
+//     //     } catch (e) {
 
-    //     }
-    // }
+//     //     }
+//     // }
 
-    d.x0 += d3.event.dy;
-    d.y0 += d3.event.dx;
-    var node = d3.select(this);
-    node.attr("transform", "translate(" + d.y0 + "," + d.x0 + ")");
-    updateTempConnector();
-}).on("dragend", function(d) {
-    if (d == root) {
-        return;
-    }
-    domNode = this;
-    if (selectedNode && draggingNode) {
-        // now remove the element from the parent, and insert it into the new elements children
-        var index = draggingNode.parent.children.indexOf(draggingNode);
-        if (index > -1) {
-            draggingNode.parent.children.splice(index, 1);
-        }
-        if (typeof selectedNode.children !== 'undefined' || typeof selectedNode._children !== 'undefined') {
-            if (typeof selectedNode.children !== 'undefined') {
-                selectedNode.children.push(draggingNode);
-            } else {
-                selectedNode._children.push(draggingNode);
-            }
-        } else {
-            selectedNode.children = [];
-            selectedNode.children.push(draggingNode);
-        }
-        // Make sure that the node being added to is expanded so user can see added node is correctly moved
-        // expand(selectedNode);
-        endDrag();
-    } else {
-        endDrag();
-    }
-});
+//     d.x0 += d3.event.dy;
+//     d.y0 += d3.event.dx;
+//     var node = d3.select(this);
+//     node.attr("transform", "translate(" + d.y0 + "," + d.x0 + ")");
+//     updateTempConnector();
+// }).on("dragend", function(d) {
+//     if (d == root) {
+//         return;
+//     }
+//     domNode = this;
+//     if (selectedNode && draggingNode) {
+//         // now remove the element from the parent, and insert it into the new elements children
+//         var index = draggingNode.parent.children.indexOf(draggingNode);
+//         if (index > -1) {
+//             draggingNode.parent.children.splice(index, 1);
+//         }
+//         if (typeof selectedNode.children !== 'undefined' || typeof selectedNode._children !== 'undefined') {
+//             if (typeof selectedNode.children !== 'undefined') {
+//                 selectedNode.children.push(draggingNode);
+//             } else {
+//                 selectedNode._children.push(draggingNode);
+//             }
+//         } else {
+//             selectedNode.children = [];
+//             selectedNode.children.push(draggingNode);
+//         }
+//         // Make sure that the node being added to is expanded so user can see added node is correctly moved
+//         // expand(selectedNode);
+//         endDrag();
+//     } else {
+//         endDrag();
+//     }
+// });
     // Drag/Drop
+
+    // Find max depth of subphases
+    function getSubPhaseDepth(node,depth){
+        if (options.subPhases().map(item => item.id).indexOf(node.phaseId)>-1) {
+            return 0;
+        }
+        var currentnode = node;
+        while(currentnode && currentnode.parent && options.subPhases().map(item=>item.id).indexOf(currentnode.parent.phaseId)>-1){
+            depth++;
+            currentnode = node.parent;
+        }
+
+        // var children = (node.parent || {children:[]}).children;
+        // var hasSubPhases = children.find(child=>options.subPhases().map(item => item.id).indexOf(child.phaseId)>-1);
+        // if(hasSubPhases){
+        //     depth++;
+        // }
+        return depth;
+    }
 
     update(root);
 
@@ -149,20 +170,28 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         .attr("height",svgSize.height)
         .select('g')
         .attr("transform", "translate(" + ((svgSize.width / 2)) + "," + (margin.top) + ")");
-        buildKartaDivider()
+        buildKartaDivider();
         var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
 
         // Normalize for fixed-depth.
-        nodes.forEach(function (d) { d.y = d.depth * 65; });
+        nodes.forEach(function (d) {
+            let children = (d.parent || {children:[]}).children;
+            let hasSubPhases = children.find(item => options.subPhases().map(item => item.id).indexOf(item));
+            if (hasSubPhases) {
+                let subPhaseDepth = getSubPhaseDepth(d, 0);
+                d.y = (d.depth + subPhaseDepth)* 65;
+            }
+            else d.y = d.depth * 65;
+        });
         // Declare the nodes…
         var node = svg.selectAll("g.node")
             .data(nodes, function (d) { return d.id || (d.id = ++i); });
         // Enter the nodes.
         var nodeEnter = node.enter().append("g")
-            .call(dragListener)
+            // .call(dragListener)
             .attr("class", "node")
-            .attr("width", 120)
+            .attr("width", 90)
             .attr("height", 60)
             .on("mouseover", function(node) {
                 selectedNode =node;
@@ -174,7 +203,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         nodeEnter
             .append("foreignObject")
             .attr("class", "mindmap-node")
-            .attr("width", 120)
+            .attr("width", 90)
             .attr("height", 60)
             .html(node => nodeToHTML(node, nodeEnter))
         //.attr("r", 10)
@@ -197,7 +226,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
             .data(links, function (d) {
                 if (!d.source.yupdated || (d.source.oldy && (d.source.oldy == d.source.y))) {
                     d.source.oldy = d.source.y;
-                    d.source.y += 30;
+                    d.source.y += 25;
                     d.source.yupdated = true;
                 }
                 return d.target.id;
@@ -318,7 +347,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
 
     function buildKartaDivider() {
         svg.selectAll('.karta_divider').remove();
-        (new Array(parseInt(window.screen.height / 65))).fill(0).forEach((val, index) => {
+        (new Array(parseInt($(".karta_column").height() / 65))).fill(0).forEach((val, index) => {
             var pathGenerator = d3.svg.line();
             width2 = $(".karta_column").width();
             svg.append('path')
@@ -328,6 +357,22 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
                 .attr('d', pathGenerator([[-width2, (index + 1) * 65], [width2, (1 + index) * 65]]));
         });
     }
+
+    function buildOneKartaDivider() {
+        var pathGenerator = d3.svg.line();
+        width2 = $(".karta_column").width();
+        svg.append('path')
+            .attr("class", "karta_divider")
+            .attr('stroke', 'lightgrey')
+            .attr('stroke-width', '1px')
+            .attr('d', pathGenerator([[-width2, 65], [width2, 65]]));
+    }
+    // function removeOneKartaDivider() {
+    //     let dividers = svg.selectAll('.karta_divider')[0];
+    //     // console.log(dividers)
+    //     (dividers.length - 1).remove();
+    // }
+
     $(document).on('click', '#sidebarCollapse', function () {
         width2 = $(".karta_column").width();
         d3.select('#karta-svg svg')
@@ -335,7 +380,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
         buildKartaDivider();
     });
 
-    function updateNode(d) {
+    function updateNode(d, param = {}) {
+        // d.children[d.children.length-1].phaseId = param.phaseId;
+        // d.children[d.children.length-1] = {...d.children[d.children.length-1], ...param};
         $(`.node-text[nodeid=${d.id}]`).html(d.name + ' <b>(50%)</b>');
         $(`.node-text[nodeid=${d.id}]`).css('color',d.text_color);
         $(`.node-text[nodeid=${d.id}]`).css('font-family',d.font_style);
@@ -370,6 +417,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom,options) {
             //     "children": []
             // })
             // update(d);
+        },
+        addNodeRight: (d) => {
         },
         removeNode: (d) => {
             d.parent.children = d.parent.children.filter(c => {
