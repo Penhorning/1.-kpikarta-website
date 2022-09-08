@@ -21,7 +21,9 @@ const routes: Routes = [
   { path: 'my-suggestion', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-suggestion/my-suggestion.module').then(m => m.MySuggestionModule) },
   { path: 'my-profile', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-profile/my-profile.module').then(m => m.MyProfileModule) },
   { path: 'karta', canActivateChild: [AuthGuard], loadChildren: () => import('./components/karta/karta.module').then(m => m.KartaModule) },
-  { path: '**', loadChildren: () => import('./components/page-not-found/page-not-found.module').then(m => m.PageNotFoundModule) }
+  { path: 'my-kpi', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-kpi/my-kpi.module').then(m => m.MyKpiModule) },
+  { path: '**', loadChildren: () => import('./components/page-not-found/page-not-found.module').then(m => m.PageNotFoundModule) },
+
 ];
 
 @NgModule({

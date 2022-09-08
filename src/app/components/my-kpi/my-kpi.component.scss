@@ -1,0 +1,15 @@
+::ng-deep {
+    .ngx-slider .ngx-slider-pointer, .ngx-slider .ngx-slider-selection {
+        background-color: #345DBB !important;
+    }
+    .ngx-slider .ngx-slider-pointer {
+        width: 13px !important;
+        height: 13px !important;
+    }
+    .ngx-slider .ngx-slider-pointer:after {
+        display: none;
+    }
+    .ngx-slider .ngx-slider-bar-wrapper {
+        padding-top: 7px !important;
+    }
+}

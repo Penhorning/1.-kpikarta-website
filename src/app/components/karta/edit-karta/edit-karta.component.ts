@@ -71,6 +71,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   targetInput: any = "";
   dueDate: any = "";
   achievedValue: any = "";
+  percentageValue: any = "";
   measureForm!: FormGroup;
   i:any="";
   constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute, private _fb:FormBuilder) { }

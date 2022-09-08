@@ -137,6 +137,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
         this.profileImage.oldImage = response.profilePic;
         if (response.profilePic) {
           this.profileImage.fileImageUrl = `${this._commonService.MEDIA_URL}/user/${response.profilePic}`;
+          console.log("this.profileImage.fileImageUrl",this.profileImage.fileImageUrl);
+          
         } else this.profileImage.fileImageUrl = "assets/img/avatar.png";
 
         this.profileForm.controls["email"].disable();
@@ -170,6 +172,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   getCompanyProfile() {
     this._profileService.getCompanyByUser(this.user.id).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
+        console.log("logo",response);
+        
         this.company = response;
         this.companyForm.patchValue({
           name: this.company.name,
@@ -236,6 +240,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     formData.append('photo', blob);
     this._profileService.uploadFile(formData, this.cropperModel.type).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
+        console.log("response",response);
+        
       if (this.cropperModel.type == "company") {
         this.companyLogo.newImage = response.result.files.photo[0].name;
         this.companyLogo.fileUploading = false;
@@ -275,6 +281,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
           this.profileForm.value.mobile = this.profileForm.getRawValue().mobile;
   
           let userId = this._commonService.getUserId();
+          console.log("FileForm",this.profileForm.value);
+          
           this._profileService.updateProfile(this.profileForm.value, userId).pipe(takeUntil(this.destroy$)).subscribe(
             (response: any) => {
               this.user = response;
@@ -312,7 +320,8 @@ export class MyProfileComponent implements OnInit, OnDestroy {
           }
 
           this.companySubmitFlag = true;
-  
+     console.log("this.companyForm.value",this.companyForm.value);
+     
           this._profileService.updateCompany(this.companyForm.value, this.company.id).pipe(takeUntil(this.destroy$)).subscribe(
             (response: any) => {
               if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
