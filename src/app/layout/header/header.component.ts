@@ -1,16 +1,12 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonService } from '@app/shared/_services/common.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class HeaderComponent implements OnInit {
 
   scrolled: boolean = false;
 
@@ -30,7 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this._commonService.logout().pipe(takeUntil(this.destroy$)).subscribe(
+    this._commonService.logout().subscribe(
       (response: any) => {
         this._commonService.deleteSession();
       },
@@ -38,11 +34,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this._commonService.deleteSession();
       }
     );
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

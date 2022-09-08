@@ -1,19 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-verification',
   templateUrl: './verification.component.html',
   styleUrls: ['./verification.component.scss']
 })
-export class VerificationComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class VerificationComponent implements OnInit {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
@@ -69,7 +65,7 @@ export class VerificationComponent implements OnInit, OnDestroy {
 
       this.submitFlag = true;
 
-      this._signupService.verification(this.verificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._signupService.verification(this.verificationForm.value).subscribe(
         (response: any) => {
           this.emailVerified = true;
           this._commonService.successToaster("Email is verified successfully");
@@ -83,7 +79,7 @@ export class VerificationComponent implements OnInit, OnDestroy {
 
   resendCode() {
     this.verificationFlag = true;
-    this._signupService.resendVerification().pipe(takeUntil(this.destroy$)).subscribe(
+    this._signupService.resendVerification().subscribe(
       (response: any) => {
         this._commonService.successToaster("Verification code resend successfully");
       },
@@ -99,7 +95,7 @@ export class VerificationComponent implements OnInit, OnDestroy {
 
       this.mobileSubmitFlag = true;
 
-      this._signupService.verifyMobile(this.mobileVerificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._signupService.verifyMobile(this.mobileVerificationForm.value).subscribe(
         (response: any) => {
           this.mobileVerified = true;
           this._commonService.successToaster("Mobile Number is verified successfully");
@@ -113,7 +109,7 @@ export class VerificationComponent implements OnInit, OnDestroy {
 
 resendMobileCode() {
     this.mobileVerificationFlag = true;
-    this._signupService.sendMobileCode().pipe(takeUntil(this.destroy$)).subscribe(
+    this._signupService.sendMobileCode().subscribe(
       (response: any) => {
         this._commonService.successToaster("Verification code resend successfully");
       },
@@ -126,11 +122,6 @@ resendMobileCode() {
       this.router.navigate(['/subscription-plan']);
       this._signupService.updateSignUpSession(2);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

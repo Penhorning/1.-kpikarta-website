@@ -1,19 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-two-step-verification',
   templateUrl: './two-step-verification.component.html',
   styleUrls: ['./two-step-verification.component.scss']
 })
-export class TwoStepVerificationComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class TwoStepVerificationComponent implements OnInit {
 
   authType: string = "";
   mobileType: string = "";
@@ -59,7 +55,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 
       this.submitFlag = true;
 
-      this._signupService.verifyMFACode(this.verificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._signupService.verifyMFACode(this.verificationForm.value).subscribe(
         (response: any) => {
           this._commonService.setSession(this._signupService.getSignUpSession());
           this._signupService.deleteSignUpSession();
@@ -78,7 +74,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 
       this.mobileSubmitFlag = true;
 
-      this._signupService.verifyMobile(this.mobileVerificationForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._signupService.verifyMobile(this.mobileVerificationForm.value).subscribe(
         (response: any) => {
           this._commonService.setSession(this._signupService.getSignUpSession());
           this._signupService.deleteSignUpSession();
@@ -91,7 +87,7 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 
   resendMobileCode() {
     this.mobileVerificationFlag = true;
-    this._signupService.sendMobileCode().pipe(takeUntil(this.destroy$)).subscribe(
+    this._signupService.sendMobileCode().subscribe(
       (response: any) => {
         this._commonService.successToaster("Verification code resend successfully");
       },
@@ -101,15 +97,10 @@ export class TwoStepVerificationComponent implements OnInit, OnDestroy {
 
   showTwoFactor() {
     this.twoFactorFlag = true;
-    this._signupService.sendMobileCode().pipe(takeUntil(this.destroy$)).subscribe(
+    this._signupService.sendMobileCode().subscribe(
       (response: any) => { },
       (error: any) => { }
     );
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

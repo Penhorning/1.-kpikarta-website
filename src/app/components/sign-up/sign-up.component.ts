@@ -1,10 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 
 @Component({
@@ -12,9 +10,7 @@ import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-
   templateUrl: './sign-up.component.html',
   styleUrls: ['./sign-up.component.scss']
 })
-export class SignUpComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class SignUpComponent implements OnInit {
 
   user: any = {
     name: "",
@@ -77,7 +73,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       this.submitFlag = true;
 
       if (!this.user.userId) {
-        this._signupService.signup(this.signupForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+        this._signupService.signup(this.signupForm.value).subscribe(
           (response: any) => {
             let { token, email } = response;
             let sessionData = {
@@ -102,7 +98,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
         this.signupForm.value.email = this.signupForm.getRawValue().email;
         this.signupForm.value.type = "social_user";
 
-        this._signupService.updateUser(this.signupForm.value, this.user.userId, this.user.accessToken).pipe(takeUntil(this.destroy$)).subscribe(
+        this._signupService.updateUser(this.signupForm.value, this.user.userId, this.user.accessToken).subscribe(
           (response: any) => {
             let sessionData = {
               token: response.accessToken,
@@ -118,11 +114,6 @@ export class SignUpComponent implements OnInit, OnDestroy {
         );
       }
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

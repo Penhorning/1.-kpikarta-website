@@ -1,18 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SuggestionService } from './service/suggestion.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-suggestion',
   templateUrl: './my-suggestion.component.html',
   styleUrls: ['./my-suggestion.component.scss']
 })
-export class MySuggestionComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class MySuggestionComponent implements OnInit {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
@@ -51,7 +47,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
 
   getKartaPhases() {
     this.isLoading = true;
-    this._suggestionService.getPhases().pipe(takeUntil(this.destroy$)).subscribe(
+    this._suggestionService.getPhases().subscribe(
       (response: any) => {
         this.phases = response;
         this.getSuggestion(this.phases[0].id);
@@ -67,7 +63,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
       userId: this._commonService.getUserId(),
       phaseId: id
     }
-    this._suggestionService.getSuggestion(data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._suggestionService.getSuggestion(data).subscribe(
       (response: any) => {
         this.suggestionForm.reset();
         this.descriptions.clear();
@@ -110,7 +106,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
       this.submitFlag = true;
 
       if (this.suggestion.hasOwnProperty("userId")) {
-        this._suggestionService.updateSuggestion(this.suggestionForm.getRawValue(), this.suggestion.id).pipe(takeUntil(this.destroy$)).subscribe(
+        this._suggestionService.updateSuggestion(this.suggestionForm.getRawValue(), this.suggestion.id).subscribe(
           (response: any) => {
             this._commonService.successToaster("Suggestion added successfully");
             this.submitted = false;
@@ -126,7 +122,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
         this.suggestionForm.value.phaseId = this.suggestion.phaseId;
         this.suggestionForm.value.descriptions = this.suggestionForm.getRawValue().descriptions;
         
-        this._suggestionService.createSuggestion(this.suggestionForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+        this._suggestionService.createSuggestion(this.suggestionForm.value).subscribe(
           (response: any) => {
             this._commonService.successToaster("Suggestion added successfully");
             this.submitted = false;
@@ -152,7 +148,7 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
         this.deleteFlag = false;
         this.ngOnInit();
       } else {
-        this._suggestionService.deleteSuggestion(this.suggestion.id).pipe(takeUntil(this.destroy$)).subscribe(
+        this._suggestionService.deleteSuggestion(this.suggestion.id).subscribe(
           (response: any) => {
             this.getSuggestion(this.suggestion.phaseId);
             this._commonService.successToaster("Suggestion reset successfully");
@@ -161,11 +157,6 @@ export class MySuggestionComponent implements OnInit, OnDestroy {
         ).add(() => { this.deleteFlag = false });
       }
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

@@ -1,9 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SettingService } from '@app/components/settings/service/setting.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { Options } from '@angular-slider/ngx-slider';
 
 @Component({
@@ -11,9 +9,7 @@ import { Options } from '@angular-slider/ngx-slider';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class SettingsComponent implements OnInit {
 
 // Color variables
   colorSubmitFlag: boolean = false;
@@ -73,7 +69,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 // Color setting functions 
   getColorSettings() {
-    this._settingService.getColorSettingByUser({ userId: this._commonService.getUserId() }).pipe(takeUntil(this.destroy$)).subscribe(
+    this._settingService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
         this.colorSettings = response;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
@@ -127,7 +123,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
         if (this.colorSettings.hasOwnProperty("userId")) {
-          this._settingService.updateColorSetting(this.colorSettings, this.colorSettings.id).pipe(takeUntil(this.destroy$)).subscribe(
+          this._settingService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
             (response: any) => {
               this._commonService.successToaster("Settings saved successfully");
               this.getColorSettings();
@@ -138,7 +134,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
             userId: this._commonService.getUserId(),
             settings: this.colorSettings.settings
           }
-          this._settingService.createColorSetting(settingData).pipe(takeUntil(this.destroy$)).subscribe(
+          this._settingService.createColorSetting(settingData).subscribe(
             (response: any) => {
               this._commonService.successToaster("Settings saved successfully");
               this.getColorSettings();
@@ -154,7 +150,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 // MFA functions
   checkMFAConfig() {
     this.qr.isChecking = true;
-    this._settingService.checkMFAConfig().pipe(takeUntil(this.destroy$)).subscribe(
+    this._settingService.checkMFAConfig().subscribe(
       (response: any) => {
         this.qr.isMFAEnabled = response.mfa.enabled;
         if (response.mfa.secret && response.mfa.qrCode && response.mfa.verified) {
@@ -168,7 +164,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   generateQRCode() {
     if (!this.qr.isMFASetup) {
       this.qr.isGenerating = true;
-      this._settingService.generateMFAQRCode().pipe(takeUntil(this.destroy$)).subscribe(
+      this._settingService.generateMFAQRCode().subscribe(
         (response: any) => {
           this.qr.code = response.qrcode;
           this.qr.isAvailable = true;
@@ -183,7 +179,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     if (this.authenticatorForm.valid) {
       this.qr.submitFlag = true;
-      this._settingService.enableMFA(this.authenticatorForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._settingService.enableMFA(this.authenticatorForm.value).subscribe(
         (response: any) => {
           this._commonService.successToaster("MFA setup successfully");
           this.qr.isMFAEnabled = this.qr.isMFASetup = true;
@@ -198,7 +194,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     const result = confirm("Are you sure you want to reset your MFA?");
     if (result && this.qr.isMFASetup) {
       this.qr.isResetting = true;
-      this._settingService.resetMFAConfig().pipe(takeUntil(this.destroy$)).subscribe(
+      this._settingService.resetMFAConfig().subscribe(
         (response: any) => {
           this.qr.isMFAEnabled = this.qr.isMFASetup = false;
           this._commonService.successToaster("Your MFA resetted successfully");
@@ -210,7 +206,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   toggleMFA(e: any) {
     if (this.qr.isMFASetup) {
-      this._settingService.toggleMFA({type: e.target.checked}).pipe(takeUntil(this.destroy$)).subscribe(
+      this._settingService.toggleMFA({type: e.target.checked}).subscribe(
         (response: any) => {
           if (response.type === true) this._commonService.successToaster("Your MFA enabled successfully");
           else if (response.type === false) this._commonService.successToaster("Your MFA disabled successfully");
@@ -231,7 +227,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this._commonService.errorToaster("Confirm password should be same as new password");
       } else {
         this.submitFlag = true;
-        this._settingService.changePassword(this.passwordForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+        this._settingService.changePassword(this.passwordForm.value).subscribe(
           (response: any) => {
             this.passwordForm.reset();
             this.passwordForm.markAsPristine();
@@ -242,11 +238,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
         ).add(() => this.submitFlag = false );
       }
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

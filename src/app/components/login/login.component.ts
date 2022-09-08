@@ -1,11 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { environment } from '@environments/environment';
 import { CommonService } from '@app/shared/_services/common.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
 
 @Component({
@@ -13,9 +11,7 @@ import { SignupService } from '@app/components/sign-up/service/signup.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class LoginComponent implements OnInit {
 
   facebookUrl: string = `${environment.API_URL}/auth/facebook`;
   googleUrl: string = `${environment.API_URL}/auth/google`;
@@ -77,7 +73,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.loginForm.valid) {
       this.submitFlag = true;
 
-      this._commonService.login(this.loginForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
           let { id, fullName, email, profilePic, emailVerified, mobileVerified, currentPlan, mfaEnabled, mfaVerified } = response.user;
           if (!emailVerified) {
@@ -128,11 +124,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       );
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

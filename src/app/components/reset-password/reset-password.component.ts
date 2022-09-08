@@ -1,18 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss']
 })
-export class ResetPasswordComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class ResetPasswordComponent implements OnInit {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
@@ -44,7 +40,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       } else {
 
         this.submitFlag = true;
-        this._commonService.resetPassword(this.resetPasswordForm.value, this.accessToken).pipe(takeUntil(this.destroy$)).subscribe(
+        this._commonService.resetPassword(this.resetPasswordForm.value, this.accessToken).subscribe(
           (response: any) => {
             this._commonService.successToaster("Your password has been changed successfully. Please login with your new password");
             this.router.navigate(['']);
@@ -55,11 +51,6 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         )
       }
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

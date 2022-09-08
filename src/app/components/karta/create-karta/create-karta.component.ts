@@ -1,9 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { KartaService } from '../service/karta.service';
 
 @Component({
@@ -11,9 +9,7 @@ import { KartaService } from '../service/karta.service';
   templateUrl: './create-karta.component.html',
   styleUrls: ['./create-karta.component.scss']
 })
-export class CreateKartaComponent implements OnInit,OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class CreateKartaComponent implements OnInit {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
@@ -41,7 +37,7 @@ export class CreateKartaComponent implements OnInit,OnDestroy {
       this.submitFlag = true;
 
       this.kartaForm.value.userId = this._commonService.getUserId();
-      this._kartaService.createKarta(this.kartaForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._kartaService.createKarta(this.kartaForm.value).subscribe(
         (response: any) => {
           this.router.navigate(['/karta/edit-karta', response.id]);
         },
@@ -50,11 +46,6 @@ export class CreateKartaComponent implements OnInit,OnDestroy {
         }
       );
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

@@ -1,18 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss']
 })
-export class ForgotPasswordComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class ForgotPasswordComponent implements OnInit {
 
   submitted: boolean = false;
   submitFlag: boolean = false;
@@ -53,7 +49,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
       this.submitFlag = true;
 
-      this._commonService.forgotPassword(this.forgotForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+      this._commonService.forgotPassword(this.forgotForm.value).subscribe(
         (response: any) => {
           this.submitted = false;
           this.forgotForm.controls["email"].reset();
@@ -62,11 +58,6 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         (error: any) => { }
       ).add(() => this.submitFlag = false);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 
 }

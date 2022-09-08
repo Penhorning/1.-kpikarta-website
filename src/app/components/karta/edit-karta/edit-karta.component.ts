@@ -1,8 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { KartaService } from '../service/karta.service';
 import  * as BuildKPIKarta from "../utils/d3.js";
 
@@ -13,9 +11,8 @@ declare const $: any;
   templateUrl: './edit-karta.component.html',
   styleUrls: ['./edit-karta.component.scss']
 })
-export class EditKartaComponent implements OnInit, OnDestroy {
+export class EditKartaComponent implements OnInit {
 
-  destroy$: Subject<boolean> = new Subject<boolean>();
   kartaId: string = "";
   karta: any;
   currentNode: any;
@@ -237,7 +234,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Get karta details including all nodes
   getKartaInfo() {
-    this._kartaService.getKarta(this.kartaId).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
         this.karta = response;
         if (this.karta.node) {
@@ -255,10 +252,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Get all phases
   getPhases() {
-    this._kartaService.getPhases().pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.getPhases().subscribe(
       (response: any) => {
         this.phases = response;
-        this._kartaService.getSubPhases(this.kartaId).pipe(takeUntil(this.destroy$)).subscribe(
+        this._kartaService.getSubPhases(this.kartaId).subscribe(
           (response: any) => {
             this.subPhases = response;
             this.phases.forEach((item: any, index: number) => {
@@ -280,7 +277,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       userId: this._commonService.getUserId(),
       phaseId: phase.kartaphaseId ? phase.kartaphaseId : phase.id
     }
-    this._kartaService.getSuggestion(data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.getSuggestion(data).subscribe(
       (response: any) => {
         this.suggestion = response;
       },
@@ -290,7 +287,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Get color settings
   getColorSettings() {
-    this._kartaService.getColorSettingByUser({ userId: this._commonService.getUserId() }).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
         this.colorSettings = response;
         this.getPhases();
@@ -321,7 +318,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       data.achieved_value = 0;
       data.kpi_calc_period = "month-to-date";
     }
-    this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.addNode(data).subscribe(
       (response: any) => {
         this.D3SVG.updateNewNode(param, response);
         this.setKartaDimension();
@@ -355,7 +352,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         "parentId": param.phaseId,
         "kartaphaseId": mainPhase
       }
-      this._kartaService.addSubPhase(data).pipe(takeUntil(this.destroy$)).subscribe(
+      this._kartaService.addSubPhase(data).subscribe(
         (response: any) => {
           let resopnse_data = {
             "id": response.id,
@@ -376,7 +373,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   updateNode(key: string, value: any, addTarget?: string) {
     if (key === "alignment") this.selectedAlignment = value;
     let data = { [key]: value }
-    this._kartaService.updateNode(this.currentNode.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
         this.currentNode[key] = value;
         this.D3SVG.updateNode(this.currentNode);
@@ -390,7 +387,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Remove node from karta
   removeNode(param: any) {
-    this._kartaService.removeNode(param.id).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.removeNode(param.id).subscribe(
       (response: any) => {
         this.setKartaDimension();
         // this.D3SVG.removeOneKartaDivider();
@@ -446,7 +443,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       kartaId: this.kartaId,
       weightage: 0
     }
-    this._kartaService.addNode(data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.addNode(data).subscribe(
       (response: any) => {
         $('#sidebar-two').addClass('active');
         this.getKartaInfo();
@@ -466,15 +463,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     let data = {
       name: this.karta.name
     }
-    this._kartaService.updateKarta(this.karta.id, data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._kartaService.updateKarta(this.karta.id, data).subscribe(
       (response: any) => {
         this.karta = response;
       }
     );
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

@@ -1,8 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CommonService } from '@app/shared/_services/common.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { ProfileService } from './service/profile.service';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -14,9 +12,7 @@ declare const $: any;
   templateUrl: './my-profile.component.html',
   styleUrls: ['./my-profile.component.scss']
 })
-export class MyProfileComponent implements OnInit, OnDestroy {
-
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class MyProfileComponent implements OnInit {
 
   user: any;
   company: any;
@@ -116,7 +112,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
 
   getUserProfile() {
     this.isLoading = true;
-    this._profileService.getProfile(this._commonService.getUserId()).pipe(takeUntil(this.destroy$)).subscribe(
+    this._profileService.getProfile(this._commonService.getUserId()).subscribe(
       (response: any) => {
         this.user = response;
         this.setRegion();
@@ -153,7 +149,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   getDepartments() {
-    this._profileService.getDepartments().pipe(takeUntil(this.destroy$)).subscribe(
+    this._profileService.getDepartments().subscribe(
       (response: any) => {
         this.departments = response;
       },
@@ -161,7 +157,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     );
   }
   getEmployeesRanges() {
-    this._profileService.getEmployeesRanges().pipe(takeUntil(this.destroy$)).subscribe(
+    this._profileService.getEmployeesRanges().subscribe(
       (response: any) => {
         this.employeesRanges = response;
       },
@@ -170,7 +166,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   }
 
   getCompanyProfile() {
-    this._profileService.getCompanyByUser(this.user.id).pipe(takeUntil(this.destroy$)).subscribe(
+    this._profileService.getCompanyByUser(this.user.id).subscribe(
       (response: any) => {
         console.log("logo",response);
         
@@ -238,7 +234,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
     const blob = this.base64ToBlob(base64ImageContent, 'image/png');                
     const formData = new FormData();
     formData.append('photo', blob);
-    this._profileService.uploadFile(formData, this.cropperModel.type).pipe(takeUntil(this.destroy$)).subscribe(
+    this._profileService.uploadFile(formData, this.cropperModel.type).subscribe(
       (response: any) => {
         console.log("response",response);
         
@@ -283,7 +279,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
           let userId = this._commonService.getUserId();
           console.log("FileForm",this.profileForm.value);
           
-          this._profileService.updateProfile(this.profileForm.value, userId).pipe(takeUntil(this.destroy$)).subscribe(
+          this._profileService.updateProfile(this.profileForm.value, userId).subscribe(
             (response: any) => {
               this.user = response;
               this.setRegion();
@@ -322,7 +318,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
           this.companySubmitFlag = true;
      console.log("this.companyForm.value",this.companyForm.value);
      
-          this._profileService.updateCompany(this.companyForm.value, this.company.id).pipe(takeUntil(this.destroy$)).subscribe(
+          this._profileService.updateCompany(this.companyForm.value, this.company.id).subscribe(
             (response: any) => {
               if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
               this._commonService.successToaster("Company details updated successfully");
@@ -350,7 +346,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       type: "updateProfile",
       mobile: this.phoneNumberForm.value.mobile
     }
-    this._profileService.sendMobileCode(data).pipe(takeUntil(this.destroy$)).subscribe(
+    this._profileService.sendMobileCode(data).subscribe(
       (response: any) => {
         this._commonService.successToaster("Verification code resend successfully");
         this.verifyButtonFlag = true;
@@ -362,7 +358,7 @@ export class MyProfileComponent implements OnInit, OnDestroy {
   verifyCode() {
     this.verifyButtonSubmitFlag = true;
     const phoneNumber = this.phoneNumberForm.value.mobile;
-    this._profileService.verifyMobile(this.phoneNumberForm.value).pipe(takeUntil(this.destroy$)).subscribe(
+    this._profileService.verifyMobile(this.phoneNumberForm.value).subscribe(
       (response: any) => {
         $('#phoneModal').modal('hide');
         this._commonService.successToaster("Mobile Number is verified successfully");
@@ -372,9 +368,5 @@ export class MyProfileComponent implements OnInit, OnDestroy {
       (error: any) => { }
     ).add(() => this.verifyButtonSubmitFlag = false );
   }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
-  }
+  
 }
