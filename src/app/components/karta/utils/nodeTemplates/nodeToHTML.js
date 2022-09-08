@@ -6,7 +6,7 @@ module.exports = (node, source) => {
   if (node.phaseId === "62b079b0c389310e2c74f58c") {
     return `
     <div id="nodeItem" nodeid=${node.id} class="align-self-center d-flex">
-      <div class="center-options" style="right: 47px;">
+      <div class="center-options">
         <div class="option remove-item"><i id="removeNode" class="fa fa-minus-circle"></i></div>
       </div>
       <div id="nodeItem" nodeid=${node.id} class="node-text node-body" style="font-family:${node.font_style};text-align:${node.alignment};color:${node.text_color}">${node.name || ''} <b>(${node.percentage || 0}%)</b></div>

@@ -183,20 +183,22 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   // Calculate each node percentage
-  calculatePercentage(params: any, percentage: number) :any {
+  calculatePercentage(params: any, percentage: number = 0): any {
     let siblingCount = 0, totalPercentage = 0;
     let dep=6;
     
     params.children.forEach((element: any) => {
       if (element.hasOwnProperty('achieved_value')) {
+        console.log("if", element.id)
         let currentPercentage= (element.achieved_value/element.target[0].value) * 100;
         siblingCount++;
         totalPercentage += currentPercentage;
-        element.percentage = parseFloat(currentPercentage.toFixed(2));
+        element.percentage = Math.round(currentPercentage);
       }
       else {
-       let tempPercentage = this.calculatePercentage(element, percentage);
-        element.percentage = parseFloat(tempPercentage.toFixed(2));
+        console.log("else ", element.id)
+        let tempPercentage = this.calculatePercentage(element, percentage);
+        element.percentage = Math.round(tempPercentage);
         // if (params.children.length > 1) {
         //   let aggregatePercentage = 0;
         //   params.children.forEach((elementnest: any) => {
@@ -240,7 +242,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.karta = response;
         if (this.karta.node) {
           // this.updateKarta(this.karta.node);
-          // this.calculatePercentage(this.karta.node,0);
+          this.calculatePercentage(this.karta.node);
           // this.setPercentage(this.karta.node);
           // $('#karta-svg').empty();
           BuildKPIKarta(this.karta.node, "#karta-svg", this.D3SVG);
