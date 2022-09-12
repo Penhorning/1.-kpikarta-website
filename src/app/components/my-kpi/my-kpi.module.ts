@@ -8,7 +8,6 @@ import { MyKpiComponent } from './my-kpi.component';
 import { SharedModule } from '@app/shared/_modules/shared.module';
 
 // Third party module
-import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 
@@ -20,7 +19,6 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
     CommonModule,
     MyKpiRoutingModule,
     SharedModule,
-    ColorPickerModule,
     NgxSliderModule
   ]
 })

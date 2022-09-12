@@ -9,11 +9,12 @@ export class MyKpiService {
   constructor(private _httpService: HttpService) { }
 
   /*============================== API FUNCTIONS STARTS ==============================*/
-  getMyKPIs() {
-    return this._httpService.GET('/karta_nodes?filter[where][achieved_value]=0');
+  getMyKPIs(userId: string) {
+    return this._httpService.GET(`/karta_nodes?filter[include]=karta_detail&[where][contributors.userId]=${userId}`);
   }
 
   getColorSettingByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);
   }
 }
+

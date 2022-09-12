@@ -3,6 +3,7 @@
     white-space: nowrap;
     overflow: hidden;
 }
+
 .phase_column {
     width: 23%;
 }
@@ -31,11 +32,13 @@
 .karta_dummy_lines button {
     display: none;
 }
+
 .selectedPhase:hover button {
     display: block;
 }
 
-.selected_alignment, .font_alignment_img:hover {
+.selected_alignment,
+.font_alignment_img:hover {
     background: #ccc;
     border-radius: 2px;
     padding: 3px;
@@ -47,4 +50,21 @@
 
 #measure_select {
     -webkit-appearance: auto !important;
+}
+
+::ng-deep .dropdown-list ul {
+    width: auto !important;
+}
+
+::ng-deep .dropdown-btn .selected-item:hover {
+    box-shadow: none !important;
+}
+
+::ng-deep .multiselect-dropdown .dropdown-btn{
+height: 100px !important;
+overflow: auto;
+}
+
+::ng-deep .multiselect-dropdown .dropdown-btn .selected-item{
+ margin-top: 4px!important;
 }

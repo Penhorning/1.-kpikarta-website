@@ -8,8 +8,7 @@ import { CreateKartaComponent } from './create-karta/create-karta.component';
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
 import { EditKartaComponent } from './edit-karta/edit-karta.component';
-import { ColorPickerModule } from 'ngx-color-picker';
-
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 @NgModule({
@@ -22,7 +21,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
     CommonModule,
     KartaRoutingModule,
     SharedModule,
-    ColorPickerModule
+    NgMultiSelectDropDownModule.forRoot()
   ]
 })
 export class KartaModule { }

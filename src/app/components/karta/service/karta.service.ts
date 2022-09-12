@@ -48,6 +48,10 @@ export class KartaService {
   removeNode(nodeId: string) {
     return this._httpService.DELETE('/karta_nodes/', nodeId);
   }
+  getAllUsers() {
+    return this._httpService.POST('/users/get-all');
+  }
+  // /api/users/get-all
   // getNodes() {
   //   return this._httpService.GET('/karta?filter[limit]=3&filter[order]=crea');
   // }

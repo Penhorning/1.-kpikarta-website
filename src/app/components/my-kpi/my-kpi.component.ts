@@ -16,12 +16,11 @@ export class MyKpiComponent implements OnInit, OnDestroy {
   kpis: any = [];
   completion: any;
   colorSettings: any = [];
-  
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService) { }
 
   ngOnInit(): void {
     this.getColorSettings();
-    this.getMyKPIs();
+    this.getMyKPIsList();
   }
 
   // Get color settings
@@ -35,21 +34,22 @@ export class MyKpiComponent implements OnInit, OnDestroy {
   }
 
   // Get MY-KPIs
-  getMyKPIs() {
-    this._myKpiService.getMyKPIs().pipe(takeUntil(this.destroy$)).subscribe(
+  getMyKPIsList() {
+    this._myKpiService.getMyKPIs(this._commonService.getUserId()).pipe(takeUntil(this.destroy$)).subscribe(
       (response: any) => {
-        if (response) {
-          response.forEach((element: any) => {
-            const calc_percentage = isNaN((element.achieved_value / element.target?.[0].value) * 100) ? 0 : (120 / element.target?.[0].value) * 100;
-            element.percentage = `${calc_percentage.toFixed()}%`;
-            const color_per_calc = calc_percentage.toFixed()
-            if (this.colorSettings.settings) {
-              let colorSetting = this.colorSettings.settings.filter((item: any) => color_per_calc >= item.min && color_per_calc <= item.max);
-              element.barColor = colorSetting ? colorSetting[0]?.color : 'black';
-            }
-            this.kpis.push(element);
-          });
-        }
+        console.log("response", response)
+        // if (response) {
+        //   response.forEach((element: any) => {
+        //     const calc_percentage = isNaN((element.achieved_value / element.target?.[0].value) * 100) ? 0 : (120 / element.target?.[0].value) * 100;
+        //     element.percentage = `${calc_percentage.toFixed()}%`;
+        //     const color_per_calc = calc_percentage.toFixed()
+        //     if (this.colorSettings.settings) {
+        //       let colorSetting = this.colorSettings.settings.filter((item: any) => color_per_calc >= item.min && color_per_calc <= item.max);
+        //       element.barColor = colorSetting ? colorSetting[0]?.color : 'black';
+        //     }
+        //     this.kpis.push(element);
+        //   });
+        // }
       }
     )
   }

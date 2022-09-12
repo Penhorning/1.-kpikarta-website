@@ -842,15 +842,20 @@
               <div class="col-lg-6">
                 <h5>Contributor</h5>
               </div>
-              <div class="col-lg-6 text-right">
+              <!-- <div class="col-lg-6 text-right">
                 <a href="" class="add-side-r-custom">+ ADD</a>
-              </div>
+              </div> -->
             </div>
             <div class="row">
               <div class="col-lg-12">
-                <div class="custom-tag mt-3">
-                  <input type="text" class="form-control p-4 w-100 border-0" data-role="tagsinput" />
-                </div>
+                <ng-multiselect-dropdown
+                    [(ngModel)]="selectedContributorUsers"
+                    [placeholder]="'Select contributors'"
+                    [settings]="dropdownSettings"
+                    [data]="users"
+                    (onSelect)="onItemSelect($event)"
+                    (onDeSelect)="onItemDeSelect($event)">
+                </ng-multiselect-dropdown>
               </div>
             </div>
             <hr>
