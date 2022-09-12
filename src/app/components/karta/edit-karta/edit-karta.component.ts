@@ -182,55 +182,22 @@ export class EditKartaComponent implements OnInit {
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0): any {
     let siblingCount = 0, totalPercentage = 0;
-    let dep=6;
     
     params.children.forEach((element: any) => {
+      siblingCount++;
       if (element.hasOwnProperty('achieved_value')) {
-        console.log("if", element.id)
         let currentPercentage= (element.achieved_value/element.target[0].value) * 100;
-        siblingCount++;
         totalPercentage += currentPercentage;
         element.percentage = Math.round(currentPercentage);
       }
       else {
-        console.log("else ", element.id)
-        let tempPercentage = this.calculatePercentage(element, percentage);
-        element.percentage = Math.round(tempPercentage);
-        // if (params.children.length > 1) {
-        //   let aggregatePercentage = 0;
-        //   params.children.forEach((elementnest: any) => {
-        //     aggregatePercentage += elementnest.percentage;
-        //   });
-        //   // params.percentage = aggregatePercentage;
-        //   var  tempPercentage = this.calculatePercentage(element,aggregatePercentage);
-        //   element.percentage = parseFloat(tempPercentage.toFixed(2));
-        // } else {
-        //   var  tempPercentage = this.calculatePercentage(element,percentage);
-        // element.percentage = parseFloat(tempPercentage.toFixed(2));
-        // }
+        let returnedPercentage = this.calculatePercentage(element, percentage);
+        element.percentage = Math.round(returnedPercentage);
+        totalPercentage += element.percentage;
       }
     });
     return totalPercentage/siblingCount;
   }
-
-  // Set calculated percentage
-  // setPercentage(params: any) {
-  //   console.log("Set percentage = ", params);
-  //   params.children.forEach((element: any) => {
-  //     if (element.hasOwnProperty('percentage')) {
-        // if (params.children.length > 1) {
-        //   let aggregatePercentage = 0;
-        //   params.children.forEach((element: any) => {
-        //     aggregatePercentage += element.percentage;
-        //   });
-        //   params.percentage = aggregatePercentage;
-        // } else params.percentage = element.percentage;
-  //       this.setPercentage(element);
-  //     }
-
-  //    else this.setPercentage(element);
-  //   });
-  // }
 
   // Get karta details including all nodes
   getKartaInfo() {
@@ -239,8 +206,7 @@ export class EditKartaComponent implements OnInit {
         this.karta = response;
         if (this.karta.node) {
           // this.updateKarta(this.karta.node);
-          this.calculatePercentage(this.karta.node);
-          // this.setPercentage(this.karta.node);
+          this.karta.node.percentage = this.calculatePercentage(this.karta.node);
           // $('#karta-svg').empty();
           BuildKPIKarta(this.karta.node, "#karta-svg", this.D3SVG);
           this.setKartaDimension();
@@ -260,7 +226,7 @@ export class EditKartaComponent implements OnInit {
             this.subPhases = response;
             this.phases.forEach((item: any, index: number) => {
               this.subPhases.forEach((sub_item: any) => {
-                if (item.id === sub_item.kartaphaseId) this.phases.splice(index+1, 0, sub_item);
+                if (item.id === sub_item.kartaPhaseId) this.phases.splice(index+1, 0, sub_item);
               });
             });
             this.getKartaInfo();
@@ -275,7 +241,7 @@ export class EditKartaComponent implements OnInit {
     let phase = this.phases[this.phaseIndex(param.phaseId)];
     let data = {
       userId: this._commonService.getUserId(),
-      phaseId: phase.kartaphaseId ? phase.kartaphaseId : phase.id
+      phaseId: phase.kartaPhaseId ? phase.kartaPhaseId : phase.id
     }
     this._kartaService.getSuggestion(data).subscribe(
       (response: any) => {
@@ -303,6 +269,7 @@ export class EditKartaComponent implements OnInit {
       font_style: "sans-serif",
       alignment: "center",
       text_color: "#000000",
+      kartaDetailId: this.kartaId,
       phaseId: phase.id,
       parentId: param.id,
       weightage: 0
@@ -336,7 +303,7 @@ export class EditKartaComponent implements OnInit {
     });
     if (isExists.length <= 0) {
       let mainPhase: string = "";
-      if (this.phases[currentPhaseIndex].hasOwnProperty("kartaphaseId")) mainPhase = this.phases[currentPhaseIndex].kartaphaseId;
+      if (this.phases[currentPhaseIndex].hasOwnProperty("kartaPhaseId")) mainPhase = this.phases[currentPhaseIndex].kartaPhaseId;
       else mainPhase = this.phases[currentPhaseIndex].id;
       // Set new phase name
       let nameString, lastString, num, joinedName, newName;
@@ -350,7 +317,7 @@ export class EditKartaComponent implements OnInit {
         "name": newName,
         "kartaId": this.kartaId,
         "parentId": param.phaseId,
-        "kartaphaseId": mainPhase
+        "kartaPhaseId": mainPhase
       }
       this._kartaService.addSubPhase(data).subscribe(
         (response: any) => {
@@ -358,7 +325,7 @@ export class EditKartaComponent implements OnInit {
             "id": response.id,
             "name": response.name,
             "parentId": param.phaseId,
-            "kartaphaseId": mainPhase
+            "kartaPhaseId": mainPhase
           }
           this.phases.splice((currentPhaseIndex + 1), 0, resopnse_data);
           this.addNode(param);

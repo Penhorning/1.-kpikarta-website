@@ -452,7 +452,7 @@
               <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
               <div *ngIf="!showSVG && !loadingKarta">
                 <ng-container *ngFor="let phase of phases; let i = index">
-                  <div class="align-items-center border d-block d-flex justify-content-center karta_dummy_lines" *ngIf="phase.name !== 'Target'"
+                  <div class="align-items-center border d-block d-flex justify-content-end karta_dummy_lines pr-3" *ngIf="phase.name !== 'Target'"
                     [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)"
                     (dragleave)="onDragLeave($event)" (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
                     <button class="btn btn-sm btn-light" (click)="addRoteNode($event)"><i class="fa fa-plus-circle"></i> Node</button>

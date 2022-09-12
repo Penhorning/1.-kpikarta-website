@@ -53,7 +53,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
     var diagonal = d3.svg.diagonal()
-        .projection(function (d) { return [d.x + 45, d.y + 35]; });
+        .projection(function (d) { return [d.x + 45, d.y + 30]; });
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width",width)
         .attr("height",height)
@@ -177,7 +177,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         var nodeEnter = node.enter().append("g")
             // .call(dragListener)
             .attr("class", "node")
-            .attr("width", 90)
+            .attr("width", 93)
             .attr("height", 60)
             .on("mouseover", function(node) {
                 selectedNode =node;
@@ -189,7 +189,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         nodeEnter
             .append("foreignObject")
             .attr("class", "mindmap-node")
-            .attr("width", 90)
+            .attr("width", 93)
             .attr("height", 60)
             .html(node => nodeToHTML(node, nodeEnter))
         //.attr("r", 10)
@@ -369,7 +369,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     function updateNode(d, param = {}) {
         // d.children[d.children.length-1].phaseId = param.phaseId;
         // d.children[d.children.length-1] = {...d.children[d.children.length-1], ...param};
-        $(`.node-text[nodeid=${d.id}]`).html(d.name + ' <b>(50%)</b>');
+        var ttt = `
+            <p class="py-1">
+                <span class="d-block" title="${d.name}">${d.name || ''}</span>
+                <span class="font-weight-bold">(${d.percentage || 0}%)</span>
+            </p>`;
+        $(`.node-text[nodeid=${d.id}]`).html(ttt);
         $(`.node-text[nodeid=${d.id}]`).css('color',d.text_color);
         $(`.node-text[nodeid=${d.id}]`).css('font-family',d.font_style);
         $(`.node-text[nodeid=${d.id}]`).css('text-align',d.alignment);

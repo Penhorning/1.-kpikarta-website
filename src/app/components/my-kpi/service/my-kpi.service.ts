@@ -10,7 +10,7 @@ export class MyKpiService {
 
   /*============================== API FUNCTIONS STARTS ==============================*/
   getMyKPIs() {
-    return this._httpService.GET('/kartanodes?filter[where][achieved_value]=0');
+    return this._httpService.GET('/karta_nodes?filter[where][achieved_value]=0');
   }
 
   getColorSettingByUser(data: any) {

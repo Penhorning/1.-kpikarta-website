@@ -16,7 +16,7 @@ export class ProfileService {
     return this._httpService.GET('/departments/');
   }
   getEmployeesRanges() {
-    return this._httpService.GET('/employees_ranges/');
+    return this._httpService.GET('/employee_ranges/');
   }
   updateProfile(data: any, userId: string) {
     return this._httpService.PATCH(`/users/${userId}`, data);
