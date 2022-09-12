@@ -1,8 +1,9 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
-import  * as BuildKPIKarta from "../utils/d3.js";
+import * as BuildKPIKarta from "../utils/d3.js";
 
 declare const $: any;
 
@@ -29,7 +30,7 @@ export class EditKartaComponent implements OnInit {
   // D3 karta events
   D3SVG: any = {
     subPhases: (() => this.subPhases),
-    phases:()=>this.phases,
+    phases: () => this.phases,
     events: {
       addNode: (d: any) => {
         this.addNode(d);
@@ -44,17 +45,17 @@ export class EditKartaComponent implements OnInit {
       removeNode: (d: any) => {
         this.removeNode(d);
       },
-      linkColor:(d: any) => {
+      linkColor: (d: any) => {
         let node_percentage = parseInt((d.target).weightage);
         if (this.colorSettings.settings) {
           let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
           return colorSetting[0]?.color ? colorSetting[0]?.color : 'black';
         } else return 'black';
       },
-      linkWidth:(d: any) => {
+      linkWidth: (d: any) => {
         let weightage = parseInt(d.target.weightage);
-        weightage = weightage <=0 ? 10 : weightage;
-        return weightage/10;
+        weightage = weightage <= 0 ? 10 : weightage;
+        return weightage / 10;
       }
     }
   }
@@ -74,10 +75,20 @@ export class EditKartaComponent implements OnInit {
       value: 0
     }
   ]
-  
+  // Contributors
+  disabled = false;
+  ShowFilter = false;
+  limitSelection = false;
+  users: any = [];
+  selectedItems: any = [];
+  dropdownSettings: any = {};
+  contributorUsers: any = [];
+  selectedContributorUsers: any = [];
+
+
   constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
 
-  ngOnInit (): void {
+  ngOnInit(): void {
     // Sidebar
     const that = this;
     $('#sidebarCollapse').on('click', function () {
@@ -97,7 +108,39 @@ export class EditKartaComponent implements OnInit {
     this.getColorSettings();
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
+
+    // Ng Multi Select Dropdown properties
+    this.users = [];
+    this.selectedItems = [];
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: '_id',
+      textField: 'fullName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      allowSearchFilter: true,
+    };
+    // Get users
+    this.getAllUser();
   }
+
+  onItemSelect(item: any) {
+    this.contributorUsers.push({ userId: item._id });
+    this.updateNode('contributors', this.contributorUsers);
+  }
+
+  onItemDeSelect(item: any) {
+    this.contributorUsers = this.contributorUsers.filter((item: any) => item.userId !== item._id);
+    this.updateNode('contributors', this.contributorUsers);
+  }
+
+  getAllUser() {
+    this._kartaService.getAllUsers().subscribe((response) => {
+      this.users = response.users[0].data;
+    })
+  }
+
+
 
   // Measure calculation section
   setTarget(type: string, e: any, index: any) {
@@ -156,7 +199,13 @@ export class EditKartaComponent implements OnInit {
     this.currentNodeWeight = param.weightage;
 
     this.showKPICalculation = false;
-    
+
+    // Populating contributors
+    param.contributors.forEach((item: any) => 
+    this.selectedContributorUsers.push({"_id": item.userId})
+
+    );
+
     // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");
     $('body').addClass("rightSidebarOpened");
@@ -182,12 +231,12 @@ export class EditKartaComponent implements OnInit {
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0): any {
     let siblingCount = 0, totalPercentage = 0;
-    let dep=6;
-    
+    let dep = 6;
+
     params.children.forEach((element: any) => {
       if (element.hasOwnProperty('achieved_value')) {
         console.log("if", element.id)
-        let currentPercentage= (element.achieved_value/element.target[0].value) * 100;
+        let currentPercentage = (element.achieved_value / element.target[0].value) * 100;
         siblingCount++;
         totalPercentage += currentPercentage;
         element.percentage = Math.round(currentPercentage);
@@ -210,7 +259,7 @@ export class EditKartaComponent implements OnInit {
         // }
       }
     });
-    return totalPercentage/siblingCount;
+    return totalPercentage / siblingCount;
   }
 
   // Set calculated percentage
@@ -218,13 +267,13 @@ export class EditKartaComponent implements OnInit {
   //   console.log("Set percentage = ", params);
   //   params.children.forEach((element: any) => {
   //     if (element.hasOwnProperty('percentage')) {
-        // if (params.children.length > 1) {
-        //   let aggregatePercentage = 0;
-        //   params.children.forEach((element: any) => {
-        //     aggregatePercentage += element.percentage;
-        //   });
-        //   params.percentage = aggregatePercentage;
-        // } else params.percentage = element.percentage;
+  // if (params.children.length > 1) {
+  //   let aggregatePercentage = 0;
+  //   params.children.forEach((element: any) => {
+  //     aggregatePercentage += element.percentage;
+  //   });
+  //   params.percentage = aggregatePercentage;
+  // } else params.percentage = element.percentage;
   //       this.setPercentage(element);
   //     }
 
@@ -260,7 +309,7 @@ export class EditKartaComponent implements OnInit {
             this.subPhases = response;
             this.phases.forEach((item: any, index: number) => {
               this.subPhases.forEach((sub_item: any) => {
-                if (item.id === sub_item.kartaphaseId) this.phases.splice(index+1, 0, sub_item);
+                if (item.id === sub_item.kartaphaseId) this.phases.splice(index + 1, 0, sub_item);
               });
             });
             this.getKartaInfo();
@@ -303,6 +352,7 @@ export class EditKartaComponent implements OnInit {
       font_style: "sans-serif",
       alignment: "center",
       text_color: "#000000",
+      kartaDetailId: this.kartaId,
       phaseId: phase.id,
       parentId: param.id,
       weightage: 0

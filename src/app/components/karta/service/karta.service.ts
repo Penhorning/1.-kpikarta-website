@@ -10,7 +10,7 @@ export class KartaService {
 
 /*============================== API FUNCTIONS STARTS ==============================*/
   getPhases() {
-    return this._httpService.GET('/kartaphases');
+    return this._httpService.GET('/karta_phases');
   }
   addSubPhase(data: any) {
     return this._httpService.POST('/karta_sub_phases', data);
@@ -40,14 +40,18 @@ export class KartaService {
     return this._httpService.DELETE('/karta/', id);
   }
   addNode(data: any) {
-    return this._httpService.POST('/kartanodes', data);
+    return this._httpService.POST('/karta_nodes', data);
   }
   updateNode(nodeId: string, data: any) {
-    return this._httpService.PATCH(`/kartanodes/${nodeId}`, data);
+    return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
   }
   removeNode(nodeId: string) {
-    return this._httpService.DELETE('/kartanodes/', nodeId);
+    return this._httpService.DELETE('/karta_nodes/', nodeId);
   }
+  getAllUsers() {
+    return this._httpService.POST('/users/get-all');
+  }
+  // /api/users/get-all
   // getNodes() {
   //   return this._httpService.GET('/karta?filter[limit]=3&filter[order]=crea');
   // }
