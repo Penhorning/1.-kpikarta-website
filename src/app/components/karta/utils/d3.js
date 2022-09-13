@@ -142,10 +142,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Drag/Drop
 
     // Find max depth of subphases
-    function getPhaseDepth(node){
-        return options.phases().map(item => item.id).indexOf(node.phaseId);
-    }
-    var initialDepth = getPhaseDepth(root);
+    // function getPhaseDepth(node){
+    //     return options.phases().map(item => item.id).indexOf(node.phaseId);
+    // }
+    // var initialDepth = getPhaseDepth(root);
     update(root);
 
     function update(source) {
@@ -161,15 +161,16 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             links = tree.links(nodes);
 
         // Normalize for fixed-depth.
-        nodes.forEach(function (d) {
-            let children = (d.parent || {children:[]}).children;
-            let hasSubPhases = children.find(item => options.subPhases().map(item => item.id).indexOf(item));
-            if (hasSubPhases) {
-                let subPhaseDepth = getPhaseDepth(d, 0);
-                d.y = (subPhaseDepth)* 65;
-            }
-            else d.y = (d.depth+initialDepth) * 65;
-        });
+        // nodes.forEach(function (d) {
+        //     let children = (d.parent || {children:[]}).children;
+        //     let hasSubPhases = children.find(item => options.subPhases().map(item => item.id).indexOf(item));
+        //     if (hasSubPhases) {
+        //         let subPhaseDepth = getPhaseDepth(d, 0);
+        //         d.y = (subPhaseDepth)* 65;
+        //     }
+        //     else d.y = (d.depth+initialDepth) * 65;
+        // });
+        nodes.forEach(function (d) { d.y = d.depth * 65; });
         // Declare the nodes…
         var node = svg.selectAll("g.node")
             .data(nodes, function (d) { return d.id || (d.id = ++i); });
@@ -410,8 +411,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // })
             // update(d);
         },
-        addNodeRight: (d) => {
-        },
+        // addNodeRight: (d) => {
+        // },
         removeNode: (d) => {
             d.parent.children = d.parent.children.filter(c => {
                 return c.id != d.id;

@@ -28,12 +28,8 @@ module.exports = (node, source) => {
   } else {
     return `
     <div id="nodeItem" nodeid=${node.id} class="align-self-center d-flex">
-      <div class="left-options">
-        <div class="option add-item"><i id="addNodeRight" class="fa fa-plus-circle"></i></div>
-      </div>
       <div class="center-options">
         <div class="option add-item"><i id="addNode" class="fa fa-plus-circle"></i></div>
-        <div class="option add-item"><i id="addNodeAbove" class="fa fa-arrow-up"></i></div>
         <div class="option remove-item"><i id="removeNode" class="fa fa-minus-circle"></i></div>
         <div class="option toggle-item"><i id="toggleNode" class="fa ${node.children?'fa-chevron-circle-up':'fa-chevron-circle-up'}"></i></div>
       </div>
@@ -42,9 +38,6 @@ module.exports = (node, source) => {
           <span class="d-block" title="${node.name}">${node.name || ''}</span>
           <span class="font-weight-bold">(${node.percentage || 0}%)</span>
         </p>
-      </div>
-      <div class="right-options">
-        <div class="option add-item"><i id="addNodeRight" class="fa fa-plus-circle"></i></div>
       </div>
     </div>`;
   }

@@ -20,7 +20,7 @@ export class EditKartaComponent implements OnInit {
   currentPhase: any;
   phaseId: string = "";
   phases: any = [];
-  subPhases: any = [];
+  // subPhases: any = [];
   colorSettings: any = [];
   suggestion: any;
   loadingKarta: boolean = true;
@@ -29,15 +29,15 @@ export class EditKartaComponent implements OnInit {
 
   // D3 karta events
   D3SVG: any = {
-    subPhases: (() => this.subPhases),
+    // subPhases: (() => this.subPhases),
     phases: () => this.phases,
     events: {
       addNode: (d: any) => {
         this.addNode(d);
       },
-      addNodeRight: (d: any) => {
-        this.addNodeRight(d);
-      },
+      // addNodeRight: (d: any) => {
+      //   this.addNodeRight(d);
+      // },
       nodeItem: (d: any) => {
         console.log(d);
         this.updateNodeProperties(d);
@@ -80,7 +80,6 @@ export class EditKartaComponent implements OnInit {
   ShowFilter = false;
   limitSelection = false;
   users: any = [];
-  selectedItems: any = [];
   dropdownSettings: any = {};
   contributorUsers: any = [];
   selectedContributorUsers: any = [];
@@ -110,8 +109,6 @@ export class EditKartaComponent implements OnInit {
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
 
     // Ng Multi Select Dropdown properties
-    this.users = [];
-    this.selectedItems = [];
     this.dropdownSettings = {
       singleSelection: false,
       idField: '_id',
@@ -124,20 +121,23 @@ export class EditKartaComponent implements OnInit {
     this.getAllUser();
   }
 
+  // Ng Multi Select Dropdown
   onItemSelect(item: any) {
     this.contributorUsers.push({ userId: item._id });
     this.updateNode('contributors', this.contributorUsers);
   }
 
   onItemDeSelect(item: any) {
-    this.contributorUsers = this.contributorUsers.filter((item: any) => item.userId !== item._id);
+    this.contributorUsers = this.contributorUsers.filter((el: any) => el.userId !== item._id);
     this.updateNode('contributors', this.contributorUsers);
   }
 
   getAllUser() {
-    this._kartaService.getAllUsers().subscribe((response) => {
+    this._kartaService.getAllUsers().subscribe(
+      (response: any) => {
       this.users = response.users[0].data;
-    })
+      }
+    );
   }
 
   // Measure calculation section
@@ -199,10 +199,14 @@ export class EditKartaComponent implements OnInit {
     this.showKPICalculation = false;
 
     // Populating contributors
-    param.contributors.forEach((item: any) => 
-    this.selectedContributorUsers.push({"_id": item.userId})
-
-    );
+    if (param.hasOwnProperty("contributors")) {
+      this.contributorUsers = param.contributors;
+      this.users.forEach((user: any) => {
+        param.contributors.forEach((item: any) => {
+          if (item.userId === user._id) this.selectedContributorUsers.push(user);
+        })
+      });
+    }
 
     // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");
@@ -268,17 +272,18 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getPhases().subscribe(
       (response: any) => {
         this.phases = response;
-        this._kartaService.getSubPhases(this.kartaId).subscribe(
-          (response: any) => {
-            this.subPhases = response;
-            this.phases.forEach((item: any, index: number) => {
-              this.subPhases.forEach((sub_item: any) => {
-                if (item.id === sub_item.kartaPhaseId) this.phases.splice(index+1, 0, sub_item);
-              });
-            });
-            this.getKartaInfo();
-          }
-        );
+        this.getKartaInfo();
+        // this._kartaService.getSubPhases(this.kartaId).subscribe(
+        //   (response: any) => {
+        //     this.subPhases = response;
+        //     this.phases.forEach((item: any, index: number) => {
+        //       this.subPhases.forEach((sub_item: any) => {
+        //         if (item.id === sub_item.kartaPhaseId) this.phases.splice(index+1, 0, sub_item);
+        //       });
+        //     });
+        //     this.getKartaInfo();
+        //   }
+        // );
       }
     );
   }
@@ -343,45 +348,45 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Add right node
-  addNodeRight(param: any) {
-    let currentPhaseIndex = this.phaseIndex(param.phaseId);
-    const isExists = this.phases.filter((item: any): any => {
-      if (item.hasOwnProperty("parentId")) return item.parentId === param.phaseId;
-    });
-    if (isExists.length <= 0) {
-      let mainPhase: string = "";
-      if (this.phases[currentPhaseIndex].hasOwnProperty("kartaPhaseId")) mainPhase = this.phases[currentPhaseIndex].kartaPhaseId;
-      else mainPhase = this.phases[currentPhaseIndex].id;
-      // Set new phase name
-      let nameString, lastString, num, joinedName, newName;
-      nameString = this.phases[currentPhaseIndex].name.split(" ");
-      lastString = parseInt(nameString[nameString.length - 1]);
-      num = lastString ? lastString + 1 : 1;
-      lastString ? nameString.pop() : nameString;
-      joinedName = nameString.join(" ");
-      newName = `${joinedName} ${num}`;
-      let data = {
-        "name": newName,
-        "kartaId": this.kartaId,
-        "parentId": param.phaseId,
-        "kartaPhaseId": mainPhase
-      }
-      this._kartaService.addSubPhase(data).subscribe(
-        (response: any) => {
-          let resopnse_data = {
-            "id": response.id,
-            "name": response.name,
-            "parentId": param.phaseId,
-            "kartaPhaseId": mainPhase
-          }
-          this.phases.splice((currentPhaseIndex + 1), 0, resopnse_data);
-          this.addNode(param);
-        }
-      );
-    } else this.addNode(param, 'Child 2');
-    this.setKartaDimension();
-    this.D3SVG.buildOneKartaDivider();
-  }
+  // addNodeRight(param: any) {
+  //   let currentPhaseIndex = this.phaseIndex(param.phaseId);
+  //   const isExists = this.phases.filter((item: any): any => {
+  //     if (item.hasOwnProperty("parentId")) return item.parentId === param.phaseId;
+  //   });
+  //   if (isExists.length <= 0) {
+  //     let mainPhase: string = "";
+  //     if (this.phases[currentPhaseIndex].hasOwnProperty("kartaPhaseId")) mainPhase = this.phases[currentPhaseIndex].kartaPhaseId;
+  //     else mainPhase = this.phases[currentPhaseIndex].id;
+  //     // Set new phase name
+  //     let nameString, lastString, num, joinedName, newName;
+  //     nameString = this.phases[currentPhaseIndex].name.split(" ");
+  //     lastString = parseInt(nameString[nameString.length - 1]);
+  //     num = lastString ? lastString + 1 : 1;
+  //     lastString ? nameString.pop() : nameString;
+  //     joinedName = nameString.join(" ");
+  //     newName = `${joinedName} ${num}`;
+  //     let data = {
+  //       "name": newName,
+  //       "kartaId": this.kartaId,
+  //       "parentId": param.phaseId,
+  //       "kartaPhaseId": mainPhase
+  //     }
+  //     this._kartaService.addSubPhase(data).subscribe(
+  //       (response: any) => {
+  //         let resopnse_data = {
+  //           "id": response.id,
+  //           "name": response.name,
+  //           "parentId": param.phaseId,
+  //           "kartaPhaseId": mainPhase
+  //         }
+  //         this.phases.splice((currentPhaseIndex + 1), 0, resopnse_data);
+  //         this.addNode(param);
+  //       }
+  //     );
+  //   } else this.addNode(param, 'Child 2');
+  //   this.setKartaDimension();
+  //   this.D3SVG.buildOneKartaDivider();
+  // }
 
   // Update node
   updateNode(key: string, value: any, addTarget?: string) {

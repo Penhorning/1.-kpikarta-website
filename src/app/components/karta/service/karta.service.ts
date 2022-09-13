@@ -51,22 +51,6 @@ export class KartaService {
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
   }
-  // /api/users/get-all
-  // getNodes() {
-  //   return this._httpService.GET('/karta?filter[limit]=3&filter[order]=crea');
-  // }
-  // getSuggestion(data: any) {
-  //   return this._httpService.POST('/suggestion-by-phase', data);
-  // }
-  // createSuggestion(data: any) {
-  //   return this._httpService.POST('/suggestions', data);
-  // }
-  // updateSuggestion(data: any, suggestionId: string) {
-  //   return this._httpService.PATCH(`/suggestions/${suggestionId}`, data);
-  // }
-  // deleteSuggestion(suggestionId: string) {
-  //   return this._httpService.DELETE('/suggestions/', suggestionId);
-  // }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }
