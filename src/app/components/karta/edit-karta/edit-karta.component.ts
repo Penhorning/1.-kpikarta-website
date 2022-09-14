@@ -110,12 +110,10 @@ export class EditKartaComponent implements OnInit {
 
     // Ng Multi Select Dropdown properties
     this.dropdownSettings = {
-      singleSelection: false,
+      enableCheckAll: false,
       idField: '_id',
       textField: 'fullName',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      allowSearchFilter: true,
+      allowSearchFilter: true
     };
     // Get users
     this.getAllUser();
@@ -232,22 +230,22 @@ export class EditKartaComponent implements OnInit {
 
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0): any {
-    let siblingCount = 0, totalPercentage = 0;
+    let totalPercentage: any = [];
     
     params.children.forEach((element: any) => {
-      siblingCount++;
       if (element.hasOwnProperty('achieved_value')) {
         let currentPercentage= (element.achieved_value/element.target[0].value) * 100;
-        totalPercentage += currentPercentage;
         element.percentage = Math.round(currentPercentage);
+        totalPercentage.push((element.percentage * element.weightage) / 100);
       }
       else {
         let returnedPercentage = this.calculatePercentage(element, percentage);
         element.percentage = Math.round(returnedPercentage);
-        totalPercentage += element.percentage;
+        totalPercentage.push((element.percentage * element.weightage) / 100);
       }
     });
-    return totalPercentage / siblingCount;
+    let aggregate_percentage = totalPercentage.reduce((acc: number, num: number) => acc + num, 0);
+    return aggregate_percentage;
   }
 
   // Get karta details including all nodes

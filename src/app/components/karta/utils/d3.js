@@ -49,7 +49,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     //   .size([height, width])
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
-    options.buildOneKartaDivider = buildOneKartaDivider;
+    // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
     var diagonal = d3.svg.diagonal()
@@ -65,80 +65,80 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     buildKartaDivider();
 
     // Drag/Drop
-//     var dragListener = d3.behavior.drag()
-// .on("dragstart", function(d) {
-//     if (d == root) {
-//         return;
-//     }
-//     dragStarted = true;
-//     nodes = tree.nodes(d);
-//     d3.event.sourceEvent.stopPropagation();
-//     // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
-// }).on("drag", function(d) {
-//     if (d == root) {
-//         return;
-//     }
-//     if (dragStarted) {
-//         domNode = this;
-//         initiateDrag(d, domNode);
-//     }
+    var dragListener = d3.behavior.drag()
+.on("dragstart", function(d) {
+    if (d == root) {
+        return;
+    }
+    dragStarted = true;
+    nodes = tree.nodes(d);
+    d3.event.sourceEvent.stopPropagation();
+    // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
+}).on("drag", function(d) {
+    if (d == root) {
+        return;
+    }
+    if (dragStarted) {
+        domNode = this;
+        initiateDrag(d, domNode);
+    }
 
-//     // get coords of mouseEvent relative to svg container to allow for panning
-//     // relCoords = d3.mouse($('svg').get(0));
-//     // if (relCoords[0] < panBoundary) {
-//     //     panTimer = true;
-//     //     pan(this, 'left');
-//     // } else if (relCoords[0] > ($('svg').width() - panBoundary)) {
+    // get coords of mouseEvent relative to svg container to allow for panning
+    // relCoords = d3.mouse($('svg').get(0));
+    // if (relCoords[0] < panBoundary) {
+    //     panTimer = true;
+    //     pan(this, 'left');
+    // } else if (relCoords[0] > ($('svg').width() - panBoundary)) {
 
-//     //     panTimer = true;
-//     //     pan(this, 'right');
-//     // } else if (relCoords[1] < panBoundary) {
-//     //     panTimer = true;
-//     //     pan(this, 'up');
-//     // } else if (relCoords[1] > ($('svg').height() - panBoundary)) {
-//     //     panTimer = true;
-//     //     pan(this, 'down');
-//     // } else {
-//     //     try {
-//     //         clearTimeout(panTimer);
-//     //     } catch (e) {
+    //     panTimer = true;
+    //     pan(this, 'right');
+    // } else if (relCoords[1] < panBoundary) {
+    //     panTimer = true;
+    //     pan(this, 'up');
+    // } else if (relCoords[1] > ($('svg').height() - panBoundary)) {
+    //     panTimer = true;
+    //     pan(this, 'down');
+    // } else {
+    //     try {
+    //         clearTimeout(panTimer);
+    //     } catch (e) {
 
-//     //     }
-//     // }
+    //     }
+    // }
 
-//     d.x0 += d3.event.dy;
-//     d.y0 += d3.event.dx;
-//     var node = d3.select(this);
-//     node.attr("transform", "translate(" + d.y0 + "," + d.x0 + ")");
-//     updateTempConnector();
-// }).on("dragend", function(d) {
-//     if (d == root) {
-//         return;
-//     }
-//     domNode = this;
-//     if (selectedNode && draggingNode) {
-//         // now remove the element from the parent, and insert it into the new elements children
-//         var index = draggingNode.parent.children.indexOf(draggingNode);
-//         if (index > -1) {
-//             draggingNode.parent.children.splice(index, 1);
-//         }
-//         if (typeof selectedNode.children !== 'undefined' || typeof selectedNode._children !== 'undefined') {
-//             if (typeof selectedNode.children !== 'undefined') {
-//                 selectedNode.children.push(draggingNode);
-//             } else {
-//                 selectedNode._children.push(draggingNode);
-//             }
-//         } else {
-//             selectedNode.children = [];
-//             selectedNode.children.push(draggingNode);
-//         }
-//         // Make sure that the node being added to is expanded so user can see added node is correctly moved
-//         // expand(selectedNode);
-//         endDrag();
-//     } else {
-//         endDrag();
-//     }
-// });
+    d.x0 += d3.event.dy;
+    d.y0 += d3.event.dx;
+    var node = d3.select(this);
+    node.attr("transform", "translate(" + d.y0 + "," + d.x0 + ")");
+    updateTempConnector();
+}).on("dragend", function(d) {
+    if (d == root) {
+        return;
+    }
+    domNode = this;
+    if (selectedNode && draggingNode) {
+        // now remove the element from the parent, and insert it into the new elements children
+        var index = draggingNode.parent.children.indexOf(draggingNode);
+        if (index > -1) {
+            draggingNode.parent.children.splice(index, 1);
+        }
+        if (typeof selectedNode.children !== 'undefined' || typeof selectedNode._children !== 'undefined') {
+            if (typeof selectedNode.children !== 'undefined') {
+                selectedNode.children.push(draggingNode);
+            } else {
+                selectedNode._children.push(draggingNode);
+            }
+        } else {
+            selectedNode.children = [];
+            selectedNode.children.push(draggingNode);
+        }
+        // Make sure that the node being added to is expanded so user can see added node is correctly moved
+        // expand(selectedNode);
+        endDrag();
+    } else {
+        endDrag();
+    }
+});
     // Drag/Drop
 
     // Find max depth of subphases
@@ -176,7 +176,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .data(nodes, function (d) { return d.id || (d.id = ++i); });
         // Enter the nodes.
         var nodeEnter = node.enter().append("g")
-            // .call(dragListener)
+            .call(dragListener)
             .attr("class", "node")
             .attr("width", 93)
             .attr("height", 60)
@@ -345,15 +345,15 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         });
     }
 
-    function buildOneKartaDivider() {
-        var pathGenerator = d3.svg.line();
-        width2 = $(".karta_column").width();
-        svg.append('path')
-            .attr("class", "karta_divider")
-            .attr('stroke', 'lightgrey')
-            .attr('stroke-width', '1px')
-            .attr('d', pathGenerator([[-width2, 65], [width2, 65]]));
-    }
+    // function buildOneKartaDivider() {
+    //     var pathGenerator = d3.svg.line();
+    //     width2 = $(".karta_column").width();
+    //     svg.append('path')
+    //         .attr("class", "karta_divider")
+    //         .attr('stroke', 'lightgrey')
+    //         .attr('stroke-width', '1px')
+    //         .attr('d', pathGenerator([[-width2, 65], [width2, 65]]));
+    // }
     // function removeOneKartaDivider() {
     //     let dividers = svg.selectAll('.karta_divider')[0];
     //     // console.log(dividers)
