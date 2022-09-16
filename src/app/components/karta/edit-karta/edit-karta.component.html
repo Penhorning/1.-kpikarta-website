@@ -526,7 +526,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="search-sugg mt-3">
-                <input type="text" class="form-control" [(ngModel)]="currentNodeWeight"
+                <input type="number" class="form-control" [(ngModel)]="currentNodeWeight"
                   (blur)="updateNode('weightage', currentNodeWeight)">
               </div>
             </div>
@@ -680,7 +680,7 @@
                 <div class="form-group">
                   <label style="font-weight: 500;">Achieved Value</label>
                   <input type="text" class="form-control" [value]="currentNode.achieved_value"
-                    (blur)="updateNode('achieved_value', $any($event.target).value)">
+                    (blur)="updateAchievedValue($any($event.target).value)">
                 </div>
               </div>
             </div>

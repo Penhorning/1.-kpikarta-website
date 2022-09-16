@@ -38,6 +38,9 @@ export class EditKartaComponent implements OnInit {
       // addNodeRight: (d: any) => {
       //   this.addNodeRight(d);
       // },
+      updateDrag: (d: any) => {
+        console.log("updated nodes ", d)
+      },
       nodeItem: (d: any) => {
         console.log(d);
         this.updateNodeProperties(d);
@@ -70,10 +73,7 @@ export class EditKartaComponent implements OnInit {
   kpiType: string = "measure";
   showKPICalculation: boolean = false;
   target: any = [
-    {
-      frequency: "monthly",
-      value: 0
-    }
+    { frequency: "monthly", value: 0, percentage: 0 }
   ]
   // Contributors
   disabled = false;
@@ -101,13 +101,10 @@ export class EditKartaComponent implements OnInit {
       }
       that.setKartaDimension();
     });
-    // Get phases
-    // this.getPhases();
     // Get color settings
     this.getColorSettings();
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
-
     // Ng Multi Select Dropdown properties
     this.dropdownSettings = {
       enableCheckAll: false,
@@ -119,17 +116,33 @@ export class EditKartaComponent implements OnInit {
     this.getAllUser();
   }
 
+  // Set karta's div width
+  setKartaDimension() {
+    let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
+    karta_col_width = $(".karta_column").width();
+    karta_col_height = $(".karta_column").height();
+    svg_width = $("#karta-svg svg").width();
+    svg_height = $("#karta-svg svg").height();
+
+    width = svg_width > karta_col_width ? svg_width : karta_col_width;
+    height = svg_height > karta_col_height ? svg_height : karta_col_height;
+
+    $('#karta-svg').css("max-width", karta_col_width);
+    // $('#karta-svg').css("max-height", karta_col_height + 5);   // For multiple phases
+    $('#karta-svg').css("max-height", karta_col_height);
+    $('#karta-svg svg').attr("width", width);
+    $('#karta-svg svg').attr("height", height);
+  }
+
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
     this.contributorUsers.push({ userId: item._id });
     this.updateNode('contributors', this.contributorUsers);
   }
-
   onItemDeSelect(item: any) {
     this.contributorUsers = this.contributorUsers.filter((el: any) => el.userId !== item._id);
     this.updateNode('contributors', this.contributorUsers);
   }
-
   getAllUser() {
     this._kartaService.getAllUsers().subscribe(
       (response: any) => {
@@ -141,10 +154,12 @@ export class EditKartaComponent implements OnInit {
   // Measure calculation section
   setTarget(type: string, e: any, index: any) {
     if (type === 'frequency') {
-      this.target[index].type = e.target.value;
+      this.target[index].frequency = e.target.value;
       this.updateNode('target', this.target);
     }
     else {
+      let percentage= (this.currentNode.achieved_value/e.target.value) * 100;
+      this.target[index].percentage = Math.round(percentage);
       this.target[index].value = parseInt(e.target.value);
       this.updateNode('target', this.target, 'yes');
     }
@@ -152,30 +167,24 @@ export class EditKartaComponent implements OnInit {
   addMoreTarget() {
     this.target.push({
       frequency: "monthly",
-      value: 0
+      value: 0,
+      percentage: 0
     });
   }
-
   removeTarget(index: number) {
     this.target.splice(index, 1);
     this.updateNode('target', this.target);
   }
-
-  setKartaDimension() {
-    // Set karta's div width
-    let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
-    karta_col_width = $(".karta_column").width();
-    karta_col_height = $(".karta_column").height();
-    svg_width = $("#karta-svg svg").width();
-    svg_height = $("#karta-svg svg").height();
-
-    width = svg_width > karta_col_width ? svg_width : karta_col_width;
-    height = svg_height > karta_col_height ? svg_height : karta_col_height;
-
-    $('#karta-svg').css("max-width", karta_col_width);
-    $('#karta-svg').css("max-height", karta_col_height + 5);
-    $('#karta-svg svg').attr("width", width);
-    $('#karta-svg svg').attr("height", height);
+  updateAchievedValue(ach_val: number) {
+    this.target.forEach((element: any) => {
+      let percentage= (ach_val/element.value) * 100;
+      return element.percentage = Math.round(percentage);
+    });
+    let data = {
+      'achieved_value': ach_val,
+      'target': this.target
+    }
+    this.updateNode('achieved_value', data);
   }
 
   // Find phase index
@@ -185,6 +194,7 @@ export class EditKartaComponent implements OnInit {
     });
   }
 
+  // Update node properties
   updateNodeProperties(param: any) {
     this.currentNode = param;
     this.phaseId = param.phaseId;
@@ -205,7 +215,6 @@ export class EditKartaComponent implements OnInit {
         })
       });
     }
-
     // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");
     $('body').addClass("rightSidebarOpened");
@@ -218,10 +227,7 @@ export class EditKartaComponent implements OnInit {
       if (param.target) this.target = param.target;
       else {
         this.target = [
-          {
-            frequency: "monthly",
-            value: 0
-          }
+          { frequency: "monthly", value: 0, percentage: 0 }
         ]
       }
       this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
@@ -229,22 +235,20 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Calculate each node percentage
-  calculatePercentage(params: any, percentage: number = 0): any {
-    let totalPercentage: any = [];
+  calculatePercentage(params: any, percentage: number = 0) {
+    let total_percentage: number[] = [];
     
     params.children.forEach((element: any) => {
-      if (element.hasOwnProperty('achieved_value')) {
-        let currentPercentage= (element.achieved_value/element.target[0].value) * 100;
-        element.percentage = Math.round(currentPercentage);
-        totalPercentage.push((element.percentage * element.weightage) / 100);
-      }
-      else {
+      if (element.hasOwnProperty("achieved_value")) {
+        let current_percentage= (element.achieved_value/element.target[0].value) * 100;
+        element.percentage = Math.round(current_percentage);
+      } else {
         let returnedPercentage = this.calculatePercentage(element, percentage);
         element.percentage = Math.round(returnedPercentage);
-        totalPercentage.push((element.percentage * element.weightage) / 100);
       }
+      total_percentage.push(element.percentage * element.weightage / 100);
     });
-    let aggregate_percentage = totalPercentage.reduce((acc: number, num: number) => acc + num, 0);
+    let aggregate_percentage = total_percentage.reduce((acc: number, num: number) => acc + num, 0);
     return aggregate_percentage;
   }
 
@@ -255,7 +259,7 @@ export class EditKartaComponent implements OnInit {
         this.karta = response;
         if (this.karta.node) {
           // this.updateKarta(this.karta.node);
-          this.karta.node.percentage = this.calculatePercentage(this.karta.node);
+          this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
           // $('#karta-svg').empty();
           BuildKPIKarta(this.karta.node, "#karta-svg", this.D3SVG);
           this.setKartaDimension();
@@ -327,10 +331,7 @@ export class EditKartaComponent implements OnInit {
     if (phase.name === "KPI") {
       data.due_date = new Date();
       data.target = [
-        {
-          frequency: "monthly",
-          value: 0
-        }
+        { frequency: "monthly", value: 0, percentage: 0 }
       ];
       data.achieved_value = 0;
       data.kpi_calc_period = "month-to-date";
@@ -388,11 +389,13 @@ export class EditKartaComponent implements OnInit {
 
   // Update node
   updateNode(key: string, value: any, addTarget?: string) {
+    let data;
     if (key === "alignment") this.selectedAlignment = value;
-    let data = { [key]: value }
+    if (key === "achieved_value") data = value;
+    else data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
-        this.currentNode[key] = value;
+        this.currentNode[key] = key === "achieved_value" ? value.achieved_value : value;
         this.D3SVG.updateNode(this.currentNode);
         if (addTarget === "yes" && !this.currentNode.children) {
           this.addNode(this.currentNode, `${value[0].value} per target`);
