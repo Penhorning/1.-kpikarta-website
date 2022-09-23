@@ -9,7 +9,8 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 
 // Third party module
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-
+import { DatepickerModule, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,10 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
     CommonModule,
     MyKpiRoutingModule,
     SharedModule,
-    NgxSliderModule
+    NgxSliderModule,
+    BsDatepickerModule.forRoot(),
+    DatepickerModule.forRoot(),
+    NgMultiSelectDropDownModule.forRoot() 
   ]
 })
 export class MyKpiModule { }

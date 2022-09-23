@@ -14,3 +14,111 @@
     }
 }
 
+
+::ng-deep .dropdown-menu{
+    transform:translateX(10px) !important;
+    top: auto !important;
+    margin-left: -100px !important;
+ 
+} 
+::ng-deep #kartaDrp{
+    height: 300px !important;
+    overflow: auto !important;
+} 
+
+#sortBydropdownMenuButton::after{
+right: 13px !important;
+}
+
+.form-group .form-control {
+    padding-left: 2.375rem;
+}
+
+.form-group .form-control-icon {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: right;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.search_input .search_cross_btn {
+    cursor: pointer;
+    position: absolute;
+    right: 6px;
+    font-size: 20px;
+}
+
+// .ngx_date_picker .search_cross_btn {
+//     cursor: pointer;
+//     position: absolute;
+//     right: 6px;
+//     font-size: 20px;
+//     font-weight: 600;
+//     bottom: 5px;
+// }
+
+// .ngx_date_picker{
+//     width: 230px !important;
+// }
+// .form-control{
+// width: 252px;
+// }
+::ng-deep .theme-green .bs-datepicker-head {
+    background-color: #243864;
+}
+::ng-deep .theme-green .bs-datepicker-body table td span.selected{
+    background-color: #243864;
+}
+::ng-deep .theme-green .bs-datepicker-body table td.week span {
+    color: #243864;
+}
+::ng-deep .select-last-edit{
+    height: 58px !important;
+}
+::ng-deep .select-date-required{
+    height: 58px !important;
+ }
+ #form-control-date-required {
+    width: 215px !important;
+    padding-left: 18px;
+ }
+ #form-control-last-date{
+    width: 215px !important;
+    padding-left: 18px;
+ }
+ #kartaDrp{
+    width: 100% !important;
+ }
+
+.multiselect-dropdown .dropdown-btn {
+    display: inline-block;
+    border: 1px solid #adadad;
+    width: 100%;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.1;
+    text-align: left;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border-radius: 4px;
+}
+
+::ng-deep .dropdown-list ul {
+    width: auto !important;
+}
+
+::ng-deep .dropdown-btn .selected-item:hover {
+    box-shadow: none !important;
+}
+
+::ng-deep .multiselect-dropdown .dropdown-btn .selected-item{
+ margin-top: 4px!important;
+}

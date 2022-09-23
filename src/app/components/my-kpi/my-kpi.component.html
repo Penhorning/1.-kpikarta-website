@@ -18,7 +18,7 @@
               <h5 class="m-0 ">All</h5>
             </div>
             <div class="col-4">
-              <p class="">25</p>
+              <p class="">{{all}}</p>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
               <h5 class="m-0">In Progress</h5>
             </div>
             <div class="col-3">
-              <p class="">18</p>
+              <p class="">{{inProgress}}</p>
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@
               <h5 class="m-0">Completed</h5>
             </div>
             <div class="col-3">
-              <p class="">10</p>
+              <p class="">{{completed}}</p>
             </div>
           </div>
         </div>
@@ -57,12 +57,19 @@
         <div class="search-bar">
           <form action="" class="search-form">
             <div class="form-group search-filed m-0">
+              <input type="text" class="form-control" name="search" [(ngModel)]="search_text" id="search"
+                placeholder="Search...">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg"
+                viewBox="0 0 16 16" style="cursor: pointer; margin-right: 30px; margin-top: 3px;" *ngIf="search_text"
+                (click)="clearSearch()">
+                <path
+                  d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+              </svg>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
-                viewBox="0 0 16 16">
+                style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
                 <path
                   d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
               </svg>
-              <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
             </div>
           </form>
         </div>
@@ -73,25 +80,62 @@
       <div class="col-lg-12">
         <div class="KPI-dash-tab">
           <div class="dropdown sort-drop">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="sortBydropdownMenuButton"
               data-toggle="dropdown" aria-expanded="false">
               Sort By:
             </button>
-            <div class="dropdown-menu drop-list" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="#">All</a>
-              <a class="dropdown-item" href="#">Worst to Best Performing</a>
-              <a class="dropdown-item" href="#">Oldest to Newest</a>
-              <a class="dropdown-item" href="#">Newest to Oldest</a>
+            <div class="dropdown-menu drop-list" aria-labelledby="sortBydropdownMenuButton">
+              <div class="row pb-2">
+                <div class="col-9">
+                  <h6 class="pl-2 m-0 pt-1">Worst to Best Performing</h6>
+                </div>
+                <div class="col-3 text-center">
+                  <div class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" (change)="onSortBy($event, 'worst')">
+                  </div>
+                </div>
+              </div>
+              <div class="row pb-2">
+                <div class="col-9">
+                  <h6 class="pl-2 m-0 pt-1">Best to Worst Performing</h6>
+                </div>
+                <div class="col-3 text-center">
+                  <div class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" (change)="onSortBy($event, 'best')">
+                  </div>
+                </div>
+              </div>
+              <div class="row pb-2">
+                <div class="col-9">
+                  <h6 class="pl-2 m-0 pt-1">Oldest to Newest</h6>
+                </div>
+                <div class="col-3 text-center">
+                  <div class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" (change)="onSortBy($event, 'oldest')">
+                  </div>
+                </div>
+              </div>
+              <div class="row pb-2">
+                <div class="col-9">
+                  <h6 class="pl-2 m-0 pt-1">Newest to Oldest</h6>
+                </div>
+                <div class="col-3 text-center">
+                  <div class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" (change)="onSortBy($event, 'newest')">
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <!-- KPI Tabs -->
           <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab"
-                href="#tabs-1" role="tab">Assigned to me</a> </li>
-            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2"
-                role="tab">Shared with me</a> </li>
-
+            <li class="nav-item nav-item-cus" (click)="onTabSwitch('assigned')"> <a
+                class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1" role="tab">Assigned to me</a>
+            </li>
+            <li class="nav-item nav-item-cus" (click)="onTabSwitch('shared')"> <a class="nav-link nav-link-cus pl-0"
+                data-toggle="tab" href="#tabs-2" role="tab">Shared with me</a> </li>
           </ul>
+
           <!-- Tab panes -->
           <div class="tab-content tab-content-cus">
             <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
@@ -107,17 +151,24 @@
                               <span>
                                 <div class="dropdown filter-option">
                                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    id="kartaDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                       class="bi bi-funnel" viewBox="0 0 16 16">
                                       <path
                                         d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
                                     </svg>
                                   </button>
-                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
-                                    <div class="row pb-2">
+                                  <div class="dropdown-menu" aria-labelledby="kartaDropdownMenuButton">
+                                    <div class="main">
+                                      <form class="form-group form-inline">
+                                        <input class="form-control mr-2 ml-2" id="searchInput" type="search"
+                                          placeholder="Search" aria-label="Search">
+                                        <span class="fa fa-search form-control-icon"></span>
+                                      </form>
+                                    </div>
+                                    <div class="row pb-2" *ngFor="let user of users">
                                       <div class="col-6">
-                                        <h6 class="pl-2 m-0 pt-1">All</h6>
+                                        <h6 class="pl-2 m-0 pt-1">{{user.fullName}}</h6>
                                       </div>
                                       <div class="col-6 text-right">
                                         <div class="form-check custom-box mr-2">
@@ -129,7 +180,6 @@
                                 </div>
                               </span>
                             </div>
-
                           </th>
                           <th scope="col">KPI</th>
                           <th scope="col">
@@ -146,39 +196,227 @@
                                     </svg>
                                   </button>
                                   <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
-                                    <div class="row pb-2">
-                                      <div class="col-6">
-                                        <h6 class="pl-2 m-0 pt-1">All</h6>
-                                      </div>
-                                      <div class="col-6 text-right">
-                                        <div class="form-check custom-box mr-2">
-                                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                    <div *ngFor="let targets of targetTypesList;">
+                                      <div class="row pb-2">
+                                        <div class="col-6">
+                                          <h6 class="pl-2 m-0 pt-1">{{targets.name}}</h6>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                          <div class="form-check custom-box mr-2">
+                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                              [(ngModel)]="targets.selected"
+                                              (change)="onTargetSelect($event, targets.value)">
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
-                                    <div class="row pb-2">
-                                      <div class="col-6">
-                                        <h6 class="pl-2 m-0 pt-1">Weekly</h6>
-                                      </div>
-                                      <div class="col-6 text-right">
-                                        <div class="form-check custom-box mr-2">
-                                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
+                          </th>
+                          <th scope="col">Actual</th>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span class="text-nowrap">Last Edited </span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dateDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu select-last-edit" aria-labelledby="dateDropdownMenuButton">
+                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
+                                      style="display:flex;">
+                                      <input class="form-control" id="form-control-last-date"
+                                        placeholder="Daterangepicker" [(ngModel)]="lastEditSelectedDates"
+                                        bsDaterangepicker (ngModelChange)="onDateChange($event)" [maxDate]="maxDate">
+                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
+                                        (click)="resetDates()">Clear</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
+                          </th>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span class="text-nowrap">Due Date</span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu select-date-required"
+                                    aria-labelledby="dateDropdownMenuButton">
+                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
+                                      style="display:flex;">
+                                      <input class="form-control" id="form-control-date-required"
+                                        placeholder="Daterangepicker" [(ngModel)]="dueDateRequiredSelectedDates"
+                                        bsDaterangepicker (ngModelChange)="onDueDateChange($event)"
+                                        [bsConfig]="{ showClearButton: true }">
+                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
+                                        (click)="resetDates()">Clear</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
+                          </th>
+                          <th scope="col" class="text-nowrap">Days Left</th>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span>Completion </span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
+                                    <div *ngFor="let percent of percentageList;">
+                                      <div class="row pb-2">
+                                        <div class="col-6">
+                                          <h6 class="pl-2 m-0 pt-1">{{percent.name}}</h6>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                          <div class="form-check custom-box mr-2">
+                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                              [(ngModel)]="percent.selected"
+                                              (change)="onPercentSelect($event, percent.value)">
+                                          </div>
                                         </div>
                                       </div>
                                     </div>
-                                    <div class="row pb-2">
-                                      <div class="col-6">
-                                        <h6 class="pl-2 m-0 pt-1">Quarterly</h6>
-                                      </div>
-                                      <div class="col-6 text-right">
-                                        <div class="form-check custom-box mr-2">
-                                          <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                        </div>
-                                      </div>
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="border-0">
+                        <tr *ngFor="let kpi of kpis">
+                          <td>
+                            <p class="m-0">{{kpi?.karta.name}}</p>
+                            <p class="user-name-iocn">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                class="bi bi-person-circle" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                                <path fill-rule="evenodd"
+                                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                              </svg>
+                              {{kpi?.karta.user.fullName}}
+                            </p>
+                          </td>
+                          <td>{{kpi?.name}}</td>
+                          <td>
+                            <span>{{kpi?.target[0].value}}</span>
+                            <span class="">{{kpi?.target[0].frequency | slice:0:2}}.</span>
+                          </td>
+                          <td> <span contenteditable="true" style="cursor:pointer; display: block;"
+                              (blur)="onEditAcheivedValue($event.target, kpi)">{{kpi?.achieved_value}}</span></td>
+                          <td>{{kpi?.updatedAt | date}}</td>
+                          <td>{{kpi?.due_date | date}}</td>
+                          <td>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                              class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                              <path
+                                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                              <path fill-rule="evenodd"
+                                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                            </svg>
+                            <span class=""> {{kpi?.days_left}} Days Left</span>
+                          </td>
+                          <td>
+                            <!-- <div class="progress custom-bar">
+                              <div class="progress-bar" role="progressbar" [style.width]="kpi?.percentage"
+                                [ngStyle]="{'background-color':kpi?.barColor}" [attr.aria-valuenow]="59"
+                                aria-valuemin="0" aria-valuemax="100">
+                                {{kpi?.target[0].percentage || 0 }}%
+                              </div>
+                            </div> -->
+                            <div class="container">
+                              <div class="progress">
+                                <div class="progress-bar"  aria-valuemin="0" aria-valuemax="100"
+                                  role="progressbar" [ngStyle]="{'background-color':kpi?.barColor}"
+                                  [style.width]="kpi?.percentage">
+
+                                  {{kpi?.target[0].percentage > 100 ? '' : kpi?.target[0].percentage }}
+                                </div>
+
+
+                                <div class="progress-bar-info" role="progressbar" style="width:5%">
+                                  <!-- {{kpi?.target[0].percentage > 100 ? kpi?.target[0].percentage : 'red' }} -->
+                                </div>
+                                <div class="progress-bar"  aria-valuemin="0" aria-valuemax="100"
+                                role="progressbar" [ngStyle]="{'background-color': kpi?.barColor}"
+                                [style.width]="kpi?.abovePercentage">
+
+                                {{kpi?.target[0].percentage > 100 ? kpi?.target[0].percentage : '' }}
+                              </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                              class="bi bi-share" viewBox="0 0 16 16" data-toggle="modal" data-target="#staticBackdrop"
+                              style="cursor: pointer;" (click)="onShareClick(kpi._id)">
+                              <path
+                                d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
+                            </svg>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane p-3 active" id="tabs-2" role="tabpanel">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="KPI-custom-table">
+                    <table class="table">
+                      <thead class="border-thead">
+                        <tr>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span>Karta </span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="kartaDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="kartaDropdownMenuButton">
+                                    <div class="main">
+                                      <form class="form-group form-inline">
+                                        <input class="form-control mr-2 ml-2" id="searchInput" type="search"
+                                          placeholder="Search" aria-label="Search">
+                                        <span class="fa fa-search form-control-icon"></span>
+                                      </form>
                                     </div>
-                                    <div class="row pb-2">
+                                    <div class="row pb-2" *ngFor="let user of users">
                                       <div class="col-6">
-                                        <h6 class="pl-2 m-0 pt-1">Yearly</h6>
+                                        <h6 class="pl-2 m-0 pt-1">{{user.fullName}}</h6>
                                       </div>
                                       <div class="col-6 text-right">
                                         <div class="form-check custom-box mr-2">
@@ -191,35 +429,137 @@
                               </span>
                             </div>
                           </th>
+                          <th scope="col">KPI</th>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span>Target </span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
+                                    <div *ngFor="let targets of targetTypesList;">
+                                      <div class="row pb-2">
+                                        <div class="col-6">
+                                          <h6 class="pl-2 m-0 pt-1">{{targets.name}}</h6>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                          <div class="form-check custom-box mr-2">
+                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                              [(ngModel)]="targets.selected"
+                                              (change)="onTargetSelect($event, targets.value)">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
+                          </th>
                           <th scope="col">Actual</th>
-                          <th scope="col">Last Edited
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-funnel" viewBox="0 0 16 16">
-                              <path
-                                d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                            </svg>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span class="text-nowrap">Last Edited </span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dateDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu select-last-edit" aria-labelledby="dateDropdownMenuButton">
+                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
+                                      style="display:flex;">
+                                      <input class="form-control" id="form-control-last-date"
+                                        placeholder="Daterangepicker" [(ngModel)]="lastEditSelectedDates"
+                                        bsDaterangepicker (ngModelChange)="onDateChange($event)" [maxDate]="maxDate">
+                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
+                                        (click)="resetDates()">Clear</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
                           </th>
-                          <th scope="col">Date Required
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-funnel" viewBox="0 0 16 16">
-                              <path
-                                d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                            </svg>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span class="text-nowrap">Due Date</span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu select-date-required"
+                                    aria-labelledby="dateDropdownMenuButton">
+                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
+                                      style="display:flex;">
+                                      <input class="form-control" id="form-control-date-required"
+                                        placeholder="Daterangepicker" [(ngModel)]="dueDateRequiredSelectedDates"
+                                        bsDaterangepicker (ngModelChange)="onDueDateChange($event)"
+                                        [bsConfig]="{ showClearButton: true }">
+                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
+                                        (click)="resetDates()">Clear</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
                           </th>
-                          <th scope="col">Days Left</th>
-                          <th scope="col">Completion
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-funnel" viewBox="0 0 16 16">
-                              <path
-                                d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                            </svg>
+                          <th scope="col" class="text-nowrap">Days Left</th>
+                          <th scope="col">
+                            <div class="d-flex">
+                              <span>Completion </span>
+                              <span>
+                                <div class="dropdown filter-option">
+                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                      class="bi bi-funnel" viewBox="0 0 16 16">
+                                      <path
+                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
+                                    </svg>
+                                  </button>
+                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
+                                    <div *ngFor="let percent of percentageList;">
+                                      <div class="row pb-2">
+                                        <div class="col-6">
+                                          <h6 class="pl-2 m-0 pt-1">{{percent.name}}</h6>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                          <div class="form-check custom-box mr-2">
+                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                              [(ngModel)]="percent.selected"
+                                              (change)="onPercentSelect($event, percent.value)">
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </span>
+                            </div>
                           </th>
                         </tr>
                       </thead>
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis">
                           <td>
-                            <p class="m-0">Sales</p>
+                            <p class="m-0">{{kpi?.karta.name}}</p>
                             <p class="user-name-iocn">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -227,17 +567,17 @@
                                 <path fill-rule="evenodd"
                                   d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                               </svg>
-                              Pender
+                              {{kpi?.karta.user.fullName}}
                             </p>
                           </td>
                           <td>{{kpi?.name}}</td>
                           <td>
                             <span>{{kpi?.target[0].value}}</span>
-                            <span class="">an.</span>
+                            <span class="">{{kpi?.target[0].frequency | slice:0:2}}.</span>
                           </td>
-                          <td>{{kpi?.achieved_value}}</td>
-                          <td>12 Mar 2022</td>
-                          <td>30 Mar 2022</td>
+                          <td><span>{{kpi?.achieved_value}}</span></td>
+                          <td>{{kpi?.updatedAt | date}}</td>
+                          <td>{{kpi?.due_date | date}}</td>
                           <td>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                               class="bi bi-arrow-repeat" viewBox="0 0 16 16">
@@ -246,144 +586,88 @@
                               <path fill-rule="evenodd"
                                 d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
                             </svg>
-                            <span class="">3 Days Left</span>
-
+                            <span class=""> {{kpi?.days_left}} Days Left</span>
                           </td>
                           <td>
-                            <div class="progress custom-bar">
-                              <!-- style="width: 35%;"  -->
+                            <!-- <div class="progress custom-bar">
                               <div class="progress-bar" role="progressbar" [style.width]="kpi?.percentage"
                                 [ngStyle]="{'background-color':kpi?.barColor}" [attr.aria-valuenow]="59"
                                 aria-valuemin="0" aria-valuemax="100">
-                                {{kpi?.percentage}}
+                                {{kpi?.target[0].percentage || 0 }}%
+                              </div>
+                            </div> -->
+                            <div class="container">
+                              <div class="progress">
+                                <div class="progress-bar" style="width:70%" aria-valuemin="0" aria-valuemax="100"
+                                  role="progressbar" [ngStyle]="{'background-color':kpi?.barColor}"
+                                  [style.width]="kpi?.percentage">
+                                  {{kpi?.target[0].percentage || 0 }}%
+                                </div>
+                                <div class="progress-bar-info" role="progressbar" style="width:5%">
+                                  <!-- {{kpi?.target[0].percentage > 100 ? kpi?.target[0].percentage : 'red' }} -->
+                                </div>
+                                <div class="progress-bar progress-bar-success" role="progressbar" style="width:25%">
+                                  {{kpi?.target[0].percentage > 100 ? kpi?.target[0].percentage : '' }}
+                                </div>
                               </div>
                             </div>
                           </td>
-                          <td>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-share" viewBox="0 0 16 16">
-                              <path
-                                d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
-                            </svg>
-                          </td>
+
                         </tr>
-
-                      </tbody>
-                      <tbody class="thead-dark-custom border-0">
-                        <tr>
-                          <td>
-                            <p class="m-0">Sales</p>
-                            <p class="user-name-iocn">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                class="bi bi-person-circle" viewBox="0 0 16 16">
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                                <path fill-rule="evenodd"
-                                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-                              </svg>
-                              Pender
-                            </p>
-                          </td>
-                          <td>Sales call PM</td>
-                          <td>
-                            <span>400</span>
-                            <span class="">an.</span>
-                          </td>
-                          <td>150</td>
-                          <td>12 Mar 2022</td>
-                          <td>30 Mar 2022</td>
-                          <td>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-                              <path
-                                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
-                              <path fill-rule="evenodd"
-                                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
-                            </svg>
-                            <span class="">3 Days Left</span>
-
-                          </td>
-                          <td>
-                            <div class="progress custom-bar">
-                              <div class="progress-bar custom-bar-inner" role="progressbar" style="width: 30%;"
-                                aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">25%</div>
-                            </div>
-                          </td>
-                          <td>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-share" viewBox="0 0 16 16">
-                              <path
-                                d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
-                            </svg>
-                          </td>
-                        </tr>
-
-                      </tbody>
-                      <tbody class="border-0">
-                        <tr>
-                          <td>
-                            <p class="m-0">Sales</p>
-                            <p class="user-name-iocn">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                class="bi bi-person-circle" viewBox="0 0 16 16">
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                                <path fill-rule="evenodd"
-                                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-                              </svg>
-                              Pender
-                            </p>
-                          </td>
-                          <td>Sales call PM</td>
-                          <td>
-                            <span>400</span>
-                            <span class="">an.</span>
-                          </td>
-                          <td>150</td>
-                          <td>12 Mar 2022</td>
-                          <td>30 Mar 2022</td>
-                          <td>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-                              <path
-                                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
-                              <path fill-rule="evenodd"
-                                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
-                            </svg>
-                            <span class="">3 Days Left</span>
-
-                          </td>
-                          <td>
-                            <div class="progress custom-bar">
-                              <div class="progress-bar custom-bar-inner" role="progressbar" style="width: 30%;"
-                                aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">25%</div>
-                            </div>
-                          </td>
-                          <td>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-share" viewBox="0 0 16 16">
-                              <path
-                                d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
-                            </svg>
-                          </td>
-                        </tr>
-
                       </tbody>
                     </table>
-
-
                   </div>
                 </div>
               </div>
             </div>
-            <div class="tab-pane" id="tabs-2" role="tabpanel">
-            uhduhud
-            </div>
-
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
 
+<!-- share-link-model -->
 
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4">
+      <div class="modal-header">
+        <h5 class="modal-title pt-4" id="staticBackdropLabel">Share Link</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="share-link-model mt-3">
+          <div class="form-group">
+            <label>Revenue Karta</label>
+            <div class="row">
+              <div class="col-lg-12">
+                <ng-multiselect-dropdown [(ngModel)]="selectedUsers" [placeholder]="'Select Users'"
+                  [settings]="dropdownSettings" [data]="users" (onSelect)="onItemSelect($event)"
+                  (onDeSelect)="onItemDeSelect($event)" #idDrp>
+                </ng-multiselect-dropdown>
+              </div>
+            </div>
+          </div>
+          <div class="">
+            <button type="submit" class="send-btn" style="cursor: pointer;"
+              [disabled]="selectedSharedUsers.length > 0 ? false : true" (click)="onSubmitSharedData()">SEND</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 text-left">
+          <div class="shared-with">
+            <span>Shared with:</span>
+            <span class="ml-3"><a href="#"><img src="../../../assets/img/link-.svg"></a></span>
+            <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
