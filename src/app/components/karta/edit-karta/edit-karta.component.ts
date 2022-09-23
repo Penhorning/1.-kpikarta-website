@@ -78,7 +78,7 @@ export class EditKartaComponent implements OnInit {
   kpiType: string = "measure";
   showKPICalculation: boolean = false;
   target: any = [
-    { frequency: "monthly", value: 0, percentage: 0 }
+    { frequency: "weekly", value: 0, percentage: 0 }
   ]
   // Contributors
   disabled = false;
@@ -181,6 +181,7 @@ export class EditKartaComponent implements OnInit {
     this.updateNode('target', this.target);
   }
   updateAchievedValue(ach_val: number) {
+    console.log("target", this.target)
     this.target.forEach((element: any) => {
       let percentage= (ach_val/element.value) * 100;
       return element.percentage = Math.round(percentage);
