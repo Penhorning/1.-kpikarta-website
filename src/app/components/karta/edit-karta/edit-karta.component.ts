@@ -38,8 +38,13 @@ export class EditKartaComponent implements OnInit {
       // addNodeRight: (d: any) => {
       //   this.addNodeRight(d);
       // },
-      updateDrag: (d: any) => {
-        console.log("updated nodes ", d)
+      updateDraggedNode: (d: any) => {
+        this.currentNode = d;
+        let data = {
+          parentId: d.parent.id,
+          phaseId: d.phaseId
+        }
+        this.updateNode("updateDraggedNode", data);
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -230,7 +235,7 @@ export class EditKartaComponent implements OnInit {
           { frequency: "monthly", value: 0, percentage: 0 }
         ]
       }
-      this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
+      if (this.currentNode.due_date) this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
     }
   }
 
@@ -391,7 +396,7 @@ export class EditKartaComponent implements OnInit {
   updateNode(key: string, value: any, addTarget?: string) {
     let data;
     if (key === "alignment") this.selectedAlignment = value;
-    if (key === "achieved_value") data = value;
+    if (key === "achieved_value" || key === "updateDraggedNode") data = value;
     else data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {

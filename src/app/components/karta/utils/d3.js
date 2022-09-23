@@ -109,15 +109,16 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // Drag end
     function endDrag() {
+        // if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
         d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
         d3.select(domNode).attr('class', 'node');
         // now restore the mouseover event or we won't be able to drag a 2nd time
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
-        updateTempConnector();
+        // updateTempConnector();
         if (draggingNode !== null) {
             update(root);
-            options.events.updateDrag(draggingNode);
+            options.events.updateDraggedNode(draggingNode);
             // centerNode(draggingNode);
             draggingNode = null;
         }
@@ -140,6 +141,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 domNode = this;
                 initiateDrag(d, domNode);
             }
+            // console.log(selectedNode)
+            // if (selectedNode != draggingNode && selectedNode !== null) {
+            //     console.log('if')
+            //     $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'blue');
+            // }
+            // d3.select(domNode).select('.ghostCircle').attr('pointer-events', 'none');
+            // d3.select(selectedNode).select('.ghostCircle').attr('class', 'ghostCircle show');
 
             // get coords of mouseEvent relative to svg container to allow for panning
             // relCoords = d3.mouse($('svg').get(0));
@@ -173,7 +181,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // d.y0 += d3.event.dy;
             // var node = d3.select(this);
             // node.attr("transform", "translate(" + d.y0 + "," + d.x0 + ")");
-            updateTempConnector();
+            // updateTempConnector();
         }).on("dragend", function (d) {
             if (d == root) {
                 return;
@@ -192,11 +200,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 }
                 return ++depth;
             }
-            let draggindDepth = getDepth(draggingNode);
-            let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
-            console.log(draggindDepth, selectedDepth);
             if (selectedNode && draggingNode) {
-                if ((draggindDepth + selectedDepth) > 6) {
+                let draggindDepth = getDepth(draggingNode);
+                let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+
+                if ((draggindDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId)) {
                     alert("You cannot drag this node becuase it's leaf nodes exceeding the kpi node.")
                 } else {
                     // now remove the element from the parent, and insert it into the new elements children
@@ -223,11 +231,19 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     var overCircle = function (d) {
         selectedNode = d;
-        updateTempConnector();
+        if (selectedNode != draggingNode && selectedNode !== null && draggingNode !== null) {
+            let colorCode = "#FF2E2E";
+            let phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
+            if (phase.name !== "KPI" && phase.name !== "Target") colorCode = "#90EE90";
+            $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
+        }
+        // updateTempConnector();
     };
     var outCircle = function (d) {
+        if (selectedNode != draggingNode && selectedNode !== null)
+            $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
-        updateTempConnector();
+        // updateTempConnector();
     };
 
     // Find max depth of subphases
@@ -291,8 +307,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr('class', 'ghostCircle')
             .attr("width", 93)
             .attr("height", 60)
-            .attr("opacity", 0.2) // change this to zero to hide the target area
-            .style("background", "red")
+            // .attr("opacity", 0.2) // change this to zero to hide the target area
+            // .style("background", "red")
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
                 overCircle(node);
@@ -373,11 +389,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 }
             }];
         }
-        var link = d3.selectAll(".templink").data(data);
-
+        console.log("selected", selectedNode);
+        console.log("dragging ", draggingNode);
+        // var connectorPointer = `M ${selectedNode.x0},${selectedNode.y0} h 10`;
+        var link = svg.selectAll(".templink").data(data);
         link.enter().append("path")
             .attr("class", "templink")
             .attr("d", d3.svg.diagonal())
+            
             .attr('pointer-events', 'none');
 
         link.attr("d", d3.svg.diagonal());
