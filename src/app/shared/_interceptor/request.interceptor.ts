@@ -27,8 +27,6 @@ export class RequestInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.log("Request error: ", error);
-        
         if (
           error.status === 401 && (error.error.error.message === "Authorization Required"
           || error.error.error.message === "could not find a valid user" || error.error.error.message === "could not find accessToken")

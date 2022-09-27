@@ -14,13 +14,13 @@ export class MyKpiComponent implements OnInit {
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
-  userId: any;
+  nodeId: any;
   pageIndex: number = 0;
   pageSize: number = 10;
   length: number = 0;
   lastEditSelectedDates: any;
   dateRequiredSelectedDates: any;
-  dueDateRequiredSelectedDates: any;
+  dueDateSelectedDates: any;
   startDate: any = "";
   endDate: any = "";
   startDueDate: any = "";
@@ -30,7 +30,11 @@ export class MyKpiComponent implements OnInit {
   inProgress: any;
   search_text: string = "";
   maxDate: Date;
-  kpiTypes: string = 'assigned'
+  kpiType: string = 'assigned'
+  selectedSortBy: any;
+  isHidden: boolean = false;
+  isEditIconHidden: boolean = false;
+  searchText = "";
 
   dropdownSettings: any = {};
   selectedSharedUsers: any = [];
@@ -61,21 +65,23 @@ export class MyKpiComponent implements OnInit {
     { name: '31 to 50%', value: { "min": 31, "max": 50 }, selected: false },
     { name: '51 to 70%', value: { "min": 51, "max": 70 }, selected: false },
     { name: '71 to 100%', value: { "min": 71, "max": 100 }, selected: false },
-    { name: '101 to Above', value: { "min": 101, "max": 1000 }, selected: false }
+    { name: '101 to Above', value: { "min": 101, "max": 999999999 }, selected: false }
   ];
+
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService) { this.maxDate = new Date(); }
 
   ngOnInit(): void {
     this.getColorSettings();
     this.getAllUser();
-    this.getKpiStatus();
+    this.getKpiStats();
+    this.getCreators();
 
     // Ng Multi Select Dropdown properties
     this.dropdownSettings = {
       enableCheckAll: false,
       singleSelection: false,
       idField: '_id',
-      textField: 'nameWithMail',
+      textField: 'fullName',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
@@ -103,7 +109,7 @@ export class MyKpiComponent implements OnInit {
       startUpdatedDate: this.startDate,
       endUpdatedDate: this.endDate,
       targetTypes: this.selectedTargetType,
-      kpiType: this.kpiTypes,
+      kpiType: this.kpiType,
       sortBy: this.sortBy,
       percentage: this.selectedPercentage,
       startDueDate: this.startDueDate,
@@ -111,47 +117,37 @@ export class MyKpiComponent implements OnInit {
     }
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        // console.log("response", response.karta_nodes[0].data);
+        if (response.kpi_nodes[0].data.length > 0) {
+          response.kpi_nodes[0].data.forEach((element: any) => {
 
-        if (response.karta_nodes[0].data.length > 0) {
-          response.karta_nodes[0].data.forEach((element: any) => {
- 
-            console.log(" extra percentage element",element);
-            
             // Days left setting code 
             let due_date = moment(element.due_date);
             let current_date = moment(new Date());
             element.days_left = due_date.diff(current_date, 'days');
 
             // Percentage calculation code
-            element.percentage = `${element.target[0].percentage.toFixed()}%`;
-            const color_per_calc = element.target[0].percentage.toFixed()
-            if(element.target[0].percentage > 100){
-              element.abovePercentage = `${element.target[0].percentage.toFixed() - 100}%`;
-              console.log(" element.abovePercentage",element.abovePercentage);
-            }
+            element.percentage = `${element.target[0].percentage.toFixed()}`;
 
-            // Color for bar setting code
-            if (this.colorSettings.settings) {
-              let colorSetting = this.colorSettings.settings.filter((item: any) => color_per_calc >= item.min && color_per_calc <= item.max);
-              element.barColor = colorSetting ? colorSetting[0]?.color : 'black';
-            
-              //  element.abovePercentageColor =  colorSetting.map((e:any) => {
-              //      if(e.max >= 100){
-              //       console.log(" element.colorSetting",e.color);
-              //      return e.color;
-              //     }
-              //   }
-              //     )
-            }
           });
-          this.kpis = response.karta_nodes[0].data;
+          this.kpis = response.kpi_nodes[0].data;
         } else {
           this.kpis = [];
         }
       }
     )
   }
+
+
+  // Get color for each node percentage
+  getNodePercentageColor(percentage: number) {
+    percentage = +percentage;
+   if(percentage <= 100) {
+    let colorSetting = this.colorSettings.settings.filter((item: any) => 
+    percentage >= item.min && percentage <= item.max);
+    return colorSetting ? colorSetting[0]?.color : 'black';
+   } else return this.colorSettings.settings[this.colorSettings.settings.length - 1]?.color || 'black';
+  }
+
 
   // Get all users 
   getAllUser() {
@@ -205,7 +201,7 @@ export class MyKpiComponent implements OnInit {
   resetDates() {
     this.lastEditSelectedDates = "";
     this.dateRequiredSelectedDates = "";
-    this.dueDateRequiredSelectedDates = "";
+    this.dueDateSelectedDates = "";
     this.startDate = "";
     this.endDate = "";
     this.startDueDate = "",
@@ -216,26 +212,34 @@ export class MyKpiComponent implements OnInit {
 
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
-    this.selectedSharedUsers.push()
-    this.selectedSharedUsers.push({ userId: item._id });
+    this.selectedUsers.push({ userId: item._id });
   }
 
   onItemDeSelect(item: any) {
-    this.selectedSharedUsers = this.selectedSharedUsers.filter((el: any) => el.userId !== item._id);
+    this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
   }
 
   // Shared kpi
   onShareClick(event: any) {
-    this.userId = event;
+    this.selectedUsers = event.sharedTo;
+    
+    this.users.forEach((user: any) => {
+      this.selectedUsers.forEach((item: any) => {
+        if (item.userId === user._id) this.selectedSharedUsers.push(user._id);
+        
+      })
+    });
+    this.nodeId = event._id;
   }
 
   // Submit shareed data
   onSubmitSharedData() {
-    let data = { ['sharedTo']: this.selectedSharedUsers }
-    this._myKpiService.updateNode(this.userId, data).subscribe(
-      (response: any) => { });
-    this.selectedSharedUsers = [];
-    this.selectedUsers = [];
+    let data = { 'sharedTo': this.selectedUsers }
+    this._myKpiService.updateNode(this.nodeId, data).subscribe(
+      (response: any) => { 
+        if(response) this._commonService.successToaster("Your have shared user successfully");
+        
+      });
     this.getMyKPIsList();
   }
 
@@ -246,25 +250,24 @@ export class MyKpiComponent implements OnInit {
 
     // Edit acheived Percentage calculation 
     this.target.forEach((element: any) => {
-      let percentage = (ach_val.innerHTML / element.value) * 100;
+      let percentage = ( +ach_val / element.value) * 100;
       return element.percentage = Math.round(percentage);
     });
     let data = {
-      'achieved_value': ach_val.innerHTML,
+      'achieved_value': +ach_val,
       'target': this.target
     }
+    this.isHidden = false;
     this._myKpiService.updateNode(nodeId, data).subscribe(() => { });
     this.getMyKPIsList();
   }
-
+  
+  editActualValue(){
+    this.isHidden = true;
+  }
   // Sort by
-  onSortBy(e: any, item: any) {
+  onSortBy( item: any) {
     this.sortBy = item;
-    if (e.target.checked) { this.selectedPercentage.push(item) }
-    else {
-      const indexId = this.selectedPercentage.indexOf(item)
-      this.selectedPercentage.splice(indexId, 1);
-    }
     this.getMyKPIsList()
   }
 
@@ -289,20 +292,25 @@ export class MyKpiComponent implements OnInit {
   }
 
   onTabSwitch(e: string) {
-    this.kpiTypes = e;
+    this.kpiType = e;
     this.getMyKPIsList()
   }
 
-  getKpiStatus() {
-    this._myKpiService.getKpiStatus({ userId: this._commonService.getUserId() }).subscribe(
+  getKpiStats() {
+    this._myKpiService.getKpiStats({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
-        console.log("getKpiStatus", response.karta_nodes);
-        if(response.karta_nodes){
-          this.all = response.karta_nodes.All;
-          this.completed = response.karta_nodes.Completed;
-          this.inProgress = response.karta_nodes.InProgress;
+        if (response.kpi_stats) {
+          this.all = response.kpi_stats.All;
+          this.completed = response.kpi_stats.Completed;
+          this.inProgress = response.kpi_stats.InProgress;
         }
       }
+    );
+  }
+
+  getCreators(){
+    this._myKpiService.getCreators({ userId: this._commonService.getUserId() }).subscribe(
+      (response: any) => { }
     );
   }
 }

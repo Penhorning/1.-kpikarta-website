@@ -10,7 +10,6 @@ export class MyKpiService {
 
   /*============================== API FUNCTIONS STARTS ==============================*/
   getMyKPIs(data: any) {
-    // return this._httpService.GET(`/karta_nodes?filter[include]=karta_detail&[where][contributors.userId]=${userId}`);
     return this._httpService.POST('/karta_nodes/kpis', data);
   }
   getColorSettingByUser(data: any) {
@@ -22,8 +21,11 @@ export class MyKpiService {
   updateNode(nodeId: string, data: any) {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
   }
-  getKpiStatus(nodeId: any){
+  getKpiStats(nodeId: any) {
     return this._httpService.POST('/karta_nodes/kpiStats', nodeId);
+  }
+  getCreators(data: any) {
+    return this._httpService.POST('/karta_nodes/kpiCreators', data);
   }
 }
 
