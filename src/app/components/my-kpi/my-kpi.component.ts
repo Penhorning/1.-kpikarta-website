@@ -14,6 +14,7 @@ export class MyKpiComponent implements OnInit {
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
+  creators: any = [];
   nodeId: any;
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -157,6 +158,7 @@ export class MyKpiComponent implements OnInit {
           item.nameWithMail = item.fullName + ' - [' + item.email + ']';
         })
         this.users = response.users[0].data;
+        console.log("user", this.users)
       }
     );
   }
@@ -310,7 +312,10 @@ export class MyKpiComponent implements OnInit {
 
   getCreators(){
     this._myKpiService.getCreators({ userId: this._commonService.getUserId() }).subscribe(
-      (response: any) => { }
+      (response: any) => { 
+        this.creators = response.creators;
+        console.log("Creator", this.creators)
+       }
     );
   }
 }
