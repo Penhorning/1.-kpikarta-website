@@ -135,6 +135,7 @@ a.nav-link-cus {
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 300px;
+    left: 35px !important;
 }
 
 
@@ -148,7 +149,7 @@ a.nav-link-cus {
 
 .karta-filter .fa-search {
     position: absolute;
-    top: 25px;
+    top: 32px;
     right: 30px;
 }
 
@@ -156,19 +157,25 @@ a.nav-link-cus {
 
 .karta-filter h6 {
     font-size: 15px;
-    color: #555;
+    color: #333;
     font-weight: normal;
     text-transform: capitalize;
-    width: 110px;
+    width: 125px;
     line-height: 25px;
 }
 
+.sort-drop {
+    float: right;
+}
 .sort-drop select {
     border: none;
-    text-align: center;
-    padding-left: 30px;
-    padding-right: 30px;
+    text-align: center !important;
+    padding-left: 15px;
+    padding-right: 15px;
     color:#333;
+}
+.sort-drop select:focus-visible {
+    border: none !important;
 }
 
 .sort-drop select:focus-visible {
@@ -187,4 +194,17 @@ a.nav-link-cus {
 
 .shara-link{
     overflow-y: hidden !important;
+}
+
+.karta-filter .main {
+    margin-bottom: 12px;
+    margin-top: 12px;
+}
+.karta-filter{
+    font-size: 15px;
+    color: #333;
+    font-weight: 400;
+    text-transform: capitalize;
+    width: 125px;
+    line-height: 25px;
 }

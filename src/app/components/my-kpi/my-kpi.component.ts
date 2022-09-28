@@ -36,6 +36,10 @@ export class MyKpiComponent implements OnInit {
   isHidden: boolean = false;
   isEditIconHidden: boolean = false;
   searchText = "";
+  kpiFilter = [];
+  sharedKartaName = [];
+  sharedKpiName = [];
+  rowClicked: any;
 
   dropdownSettings: any = {};
   selectedSharedUsers: any = [];
@@ -128,7 +132,6 @@ export class MyKpiComponent implements OnInit {
 
             // Percentage calculation code
             element.percentage = `${element.target[0].percentage.toFixed()}`;
-
           });
           this.kpis = response.kpi_nodes[0].data;
         } else {
@@ -158,7 +161,6 @@ export class MyKpiComponent implements OnInit {
           item.nameWithMail = item.fullName + ' - [' + item.email + ']';
         })
         this.users = response.users[0].data;
-        console.log("user", this.users)
       }
     );
   }
@@ -214,23 +216,32 @@ export class MyKpiComponent implements OnInit {
 
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
-    this.selectedUsers.push({ userId: item._id });
+    console.log("onItemSelect", item);
+
+    this.selectedUsers.push({ id: item._id });
   }
 
   onItemDeSelect(item: any) {
-    this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
+    this.selectedUsers = this.selectedUsers.filter((el: any) => el.id !== item._id);
   }
 
   // Shared kpi
   onShareClick(event: any) {
     this.selectedUsers = event.sharedTo;
-    
+    console.log("event.sharedTo", event.name);
+    this.sharedKartaName = event.karta.name;
+    this.sharedKpiName = event.name;
+
+
     this.users.forEach((user: any) => {
       this.selectedUsers.forEach((item: any) => {
-        if (item.userId === user._id) this.selectedSharedUsers.push(user._id);
-        
+        if (item.userId === user._id){
+          this.selectedSharedUsers.push(user);
+        } 
       })
     });
+    console.log("selectedUsers", this.selectedUsers);
+    console.log("selectedSharedUsers", this.selectedSharedUsers);
     this.nodeId = event._id;
   }
 
@@ -240,11 +251,17 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.updateNode(this.nodeId, data).subscribe(
       (response: any) => { 
         if(response) this._commonService.successToaster("Your have shared user successfully");
-        
       });
     this.getMyKPIsList();
   }
 
+  editActualValue(i: number){
+    console.log("index",i)
+    if(this.rowClicked === i) this.rowClicked = -1;
+    else this.rowClicked = i;
+    // this.isHidden = !this.isHidden;
+  }
+  
   // Edit acheived value
   onEditAcheivedValue(ach_val: any, target_val: any) {
     let nodeId = target_val._id;
@@ -264,9 +281,6 @@ export class MyKpiComponent implements OnInit {
     this.getMyKPIsList();
   }
   
-  editActualValue(){
-    this.isHidden = true;
-  }
   // Sort by
   onSortBy( item: any) {
     this.sortBy = item;
@@ -309,12 +323,17 @@ export class MyKpiComponent implements OnInit {
       }
     );
   }
+  // On click kpi filter
+  onKpiSelect(event: any){
+    this.kpiFilter = event;
+  console.log("event", this.kpiFilter)
+  }
 
+  // Get creators
   getCreators(){
     this._myKpiService.getCreators({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => { 
         this.creators = response.creators;
-        console.log("Creator", this.creators)
        }
     );
   }
