@@ -122,7 +122,8 @@ export class MyKpiComponent implements OnInit {
     }
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        if (response.kpi_nodes[0].data.length > 0) {
+        console.log("data", response)
+        if (response.kpi_nodes[0]?.data.length > 0) {
           response.kpi_nodes[0].data.forEach((element: any) => {
 
             // Days left setting code 
@@ -131,7 +132,7 @@ export class MyKpiComponent implements OnInit {
             element.days_left = due_date.diff(current_date, 'days');
 
             // Percentage calculation code
-            element.percentage = `${element.target[0].percentage.toFixed()}`;
+            element.percentage = element.target[0].percentage;
           });
           this.kpis = response.kpi_nodes[0].data;
         } else {
@@ -243,6 +244,7 @@ export class MyKpiComponent implements OnInit {
     console.log("selectedUsers", this.selectedUsers);
     console.log("selectedSharedUsers", this.selectedSharedUsers);
     this.nodeId = event._id;
+
   }
 
   // Submit shareed data
@@ -261,7 +263,7 @@ export class MyKpiComponent implements OnInit {
     else this.rowClicked = i;
     // this.isHidden = !this.isHidden;
   }
-  
+
   // Edit acheived value
   onEditAcheivedValue(ach_val: any, target_val: any) {
     let nodeId = target_val._id;
