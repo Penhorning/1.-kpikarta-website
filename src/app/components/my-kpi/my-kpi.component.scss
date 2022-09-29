@@ -219,14 +219,31 @@ a.nav-link-cus {
 //     text-align: center;
 // }
 
+// .editacval span {
+//     text-align: center;
+// }
+// .editacval {
+//     max-width: 50px;
+// }
+
+// .editacval input {
+//     border: 1px solid #ccc;
+//     text-align: center;
+// }
+
+.editacval svg {
+    margin-top: -30px;
+    margin-left: -9px;
+}
+.editacval input {
+    // padding: 5px;
+    border: 1px solid #e4e4e4;
+    text-align: center;
+    width: 50px;
+}
 .editacval span {
     text-align: center;
-}
-.editacval {
-    max-width: 50px;
-}
-
-.editacval input {
-    border: 1px solid #ccc;
-    text-align: center;
+    // padding: 5px;
+    width: 50px;
+    float: left;
 }

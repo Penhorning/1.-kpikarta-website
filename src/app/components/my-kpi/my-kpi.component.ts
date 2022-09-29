@@ -36,9 +36,9 @@ export class MyKpiComponent implements OnInit {
   isHidden: boolean = false;
   isEditIconHidden: boolean = false;
   searchText = "";
-  kpiFilter = [];
-  sharedKartaName = [];
-  sharedKpiName = [];
+  kartaCreatorIds: any = [];
+  sharedKartaName: any = [];
+  sharedKpiName: any = [];
   rowClicked: any;
 
   dropdownSettings: any = {};
@@ -91,6 +91,7 @@ export class MyKpiComponent implements OnInit {
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
     };
+
   }
 
   // Get color settings
@@ -118,7 +119,8 @@ export class MyKpiComponent implements OnInit {
       sortBy: this.sortBy,
       percentage: this.selectedPercentage,
       startDueDate: this.startDueDate,
-      endDueDate: this.endDueDate
+      endDueDate: this.endDueDate,
+      kartaCreatorIds: this.kartaCreatorIds
     }
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
@@ -146,11 +148,11 @@ export class MyKpiComponent implements OnInit {
   // Get color for each node percentage
   getNodePercentageColor(percentage: number) {
     percentage = +percentage;
-   if(percentage <= 100) {
-    let colorSetting = this.colorSettings.settings.filter((item: any) => 
-    percentage >= item.min && percentage <= item.max);
-    return colorSetting ? colorSetting[0]?.color : 'black';
-   } else return this.colorSettings.settings[this.colorSettings.settings.length - 1]?.color || 'black';
+    if (percentage <= 100) {
+      let colorSetting = this.colorSettings.settings.filter((item: any) =>
+        percentage >= item.min && percentage <= item.max);
+      return colorSetting ? colorSetting[0]?.color : 'black';
+    } else return this.colorSettings.settings[this.colorSettings.settings.length - 1]?.color || 'black';
   }
 
 
@@ -218,7 +220,6 @@ export class MyKpiComponent implements OnInit {
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
     console.log("onItemSelect", item);
-
     this.selectedUsers.push({ id: item._id });
   }
 
@@ -228,40 +229,47 @@ export class MyKpiComponent implements OnInit {
 
   // Shared kpi
   onShareClick(event: any) {
+    this.selectedUsers = [];
     this.selectedUsers = event.sharedTo;
-    console.log("event.sharedTo", event.name);
+    console.log("event.sharedTo", event);
     this.sharedKartaName = event.karta.name;
     this.sharedKpiName = event.name;
 
-
     this.users.forEach((user: any) => {
       this.selectedUsers.forEach((item: any) => {
-        if (item.userId === user._id){
+        if (item.userId === user._id) {
           this.selectedSharedUsers.push(user);
-        } 
+        }
       })
     });
+
+    // this.selectedUsers.forEach((element: any) => {
+    //   let user = this.users.find((e: any) => e._id == element.userId);
+    //   if(user){
+    //     this.selectedSharedUsers.push(user);
+    //   }
+    // });
+
     console.log("selectedUsers", this.selectedUsers);
     console.log("selectedSharedUsers", this.selectedSharedUsers);
     this.nodeId = event._id;
-
+    // this.getMyKPIsList();
   }
 
   // Submit shareed data
   onSubmitSharedData() {
     let data = { 'sharedTo': this.selectedUsers }
     this._myKpiService.updateNode(this.nodeId, data).subscribe(
-      (response: any) => { 
-        if(response) this._commonService.successToaster("Your have shared user successfully");
+      (response: any) => {
+        if (response) this._commonService.successToaster("Your have shared user successfully");
       });
     this.getMyKPIsList();
   }
 
-  editActualValue(i: number){
-    console.log("index",i)
-    if(this.rowClicked === i) this.rowClicked = -1;
+  editActualValue(i: number) {
+    console.log("index", i)
+    if (this.rowClicked === i) this.rowClicked = -1;
     else this.rowClicked = i;
-    // this.isHidden = !this.isHidden;
   }
 
   // Edit acheived value
@@ -271,7 +279,7 @@ export class MyKpiComponent implements OnInit {
 
     // Edit acheived Percentage calculation 
     this.target.forEach((element: any) => {
-      let percentage = ( +ach_val / element.value) * 100;
+      let percentage = (+ach_val / element.value) * 100;
       return element.percentage = Math.round(percentage);
     });
     let data = {
@@ -282,9 +290,9 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.updateNode(nodeId, data).subscribe(() => { });
     this.getMyKPIsList();
   }
-  
+
   // Sort by
-  onSortBy( item: any) {
+  onSortBy(item: any) {
     this.sortBy = item;
     this.getMyKPIsList()
   }
@@ -309,11 +317,13 @@ export class MyKpiComponent implements OnInit {
     this.getMyKPIsList()
   }
 
+  // Tab switching
   onTabSwitch(e: string) {
     this.kpiType = e;
     this.getMyKPIsList()
   }
 
+  // Get kpi stats
   getKpiStats() {
     this._myKpiService.getKpiStats({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
@@ -325,18 +335,24 @@ export class MyKpiComponent implements OnInit {
       }
     );
   }
+
   // On click kpi filter
-  onKpiSelect(event: any){
-    this.kpiFilter = event;
-  console.log("event", this.kpiFilter)
+  onKpiSelect(event: any, kartaCreatorIds: string) {
+    if (event.target.checked) { this.kartaCreatorIds.push(kartaCreatorIds) }
+    else {
+      const indexId = this.kartaCreatorIds.indexOf(kartaCreatorIds)
+      this.kartaCreatorIds.splice(indexId, 1);
+    }
+    console.log("kartaCreatorIds", this.kartaCreatorIds)
+    // this.getMyKPIsList()
   }
 
   // Get creators
-  getCreators(){
+  getCreators() {
     this._myKpiService.getCreators({ userId: this._commonService.getUserId() }).subscribe(
-      (response: any) => { 
+      (response: any) => {
         this.creators = response.creators;
-       }
+      }
     );
   }
 }
