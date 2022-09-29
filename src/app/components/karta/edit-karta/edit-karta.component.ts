@@ -182,14 +182,13 @@ export class EditKartaComponent implements OnInit {
     this.target.splice(index, 1);
     this.updateNode('target', this.target);
   }
-  updateAchievedValue(ach_val: number) {
-    console.log("target", this.target)
+  updateAchievedValue(e: any) {
     this.target.forEach((element: any) => {
-      let percentage= (ach_val/element.value) * 100;
+      let percentage= (e.target.value/element.value) * 100;
       return element.percentage = Math.round(percentage);
     });
     let data = {
-      'achieved_value': ach_val,
+      'achieved_value': e.target.value,
       'target': this.target
     }
     this.updateNode('achieved_value', data);
@@ -216,15 +215,12 @@ export class EditKartaComponent implements OnInit {
     // Populating contributors
     if (param.hasOwnProperty("contributors")) {
       this.contributorUsers = param.contributors;
+      this.selectedContributorUsers = [];
       this.users.forEach((user: any) => {
         param.contributors.forEach((item: any) => {
           if (item.userId === user._id) this.selectedContributorUsers.push(user);
         })
       });
-    console.log("this.selectedContributorUsers", this.selectedContributorUsers);
-    console.log("this.users", this.users);
-
-
     }
     // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");
@@ -249,6 +245,7 @@ export class EditKartaComponent implements OnInit {
   calculatePercentage(params: any, percentage: number = 0) {
     let total_percentage: number[] = [];
     
+    if (!params.hasOwnProperty("children")) params.children = [];
     params.children.forEach((element: any) => {
       if (element.hasOwnProperty("achieved_value")) {
         let targetValue = 0;
@@ -343,9 +340,9 @@ export class EditKartaComponent implements OnInit {
   // Add node
   addNode(param: any, name?: string) {
     let weightage = 100;
-    if (param.children.length > 0) {
-      weightage = weightage
-    }
+    // if (param.children.length > 0) {
+    //   weightage = weightage
+    // }
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     let data: any = {
       name: name ? name : "Child",
@@ -420,8 +417,8 @@ export class EditKartaComponent implements OnInit {
   updateNode(key: string, value: any, addTarget?: string) {
     let data;
     if (key === "alignment") this.selectedAlignment = value;
-    if (key === "achieved_value" || key === "updateDraggedNode") data = value;
-    if (key === "kpi_calc_period") this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+    else if (key === "achieved_value" || key === "updateDraggedNode") data = value;
+    else if (key === "kpi_calc_period") this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
     else data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
