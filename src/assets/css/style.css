@@ -2638,10 +2638,14 @@ span.year-text {
   padding: 10px 0 0 0;
 }
 
+.search-bar .form-control {
+  margin-top: 12px !important;
+}
+
 .form-group.search-filed svg {
   position: absolute;
   right: 25px;
-  top: 15px;
+  top: 22px;
 }
 
 .form-group.search-filed input {

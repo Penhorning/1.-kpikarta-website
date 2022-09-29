@@ -133,8 +133,6 @@ export class MyProfileComponent implements OnInit {
         this.profileImage.oldImage = response.profilePic;
         if (response.profilePic) {
           this.profileImage.fileImageUrl = `${this._commonService.MEDIA_URL}/user/${response.profilePic}`;
-          console.log("this.profileImage.fileImageUrl",this.profileImage.fileImageUrl);
-          
         } else this.profileImage.fileImageUrl = "assets/img/avatar.png";
 
         this.profileForm.controls["email"].disable();
@@ -168,8 +166,6 @@ export class MyProfileComponent implements OnInit {
   getCompanyProfile() {
     this._profileService.getCompanyByUser(this.user.id).subscribe(
       (response: any) => {
-        console.log("logo",response);
-        
         this.company = response;
         this.companyForm.patchValue({
           name: this.company.name,
@@ -236,8 +232,6 @@ export class MyProfileComponent implements OnInit {
     formData.append('photo', blob);
     this._profileService.uploadFile(formData, this.cropperModel.type).subscribe(
       (response: any) => {
-        console.log("response",response);
-        
       if (this.cropperModel.type == "company") {
         this.companyLogo.newImage = response.result.files.photo[0].name;
         this.companyLogo.fileUploading = false;
@@ -277,7 +271,6 @@ export class MyProfileComponent implements OnInit {
           this.profileForm.value.mobile = this.profileForm.getRawValue().mobile;
   
           let userId = this._commonService.getUserId();
-          console.log("FileForm",this.profileForm.value);
           
           this._profileService.updateProfile(this.profileForm.value, userId).subscribe(
             (response: any) => {
@@ -316,8 +309,6 @@ export class MyProfileComponent implements OnInit {
           }
 
           this.companySubmitFlag = true;
-     console.log("this.companyForm.value",this.companyForm.value);
-     
           this._profileService.updateCompany(this.companyForm.value, this.company.id).subscribe(
             (response: any) => {
               if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);

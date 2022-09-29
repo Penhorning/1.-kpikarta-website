@@ -221,6 +221,10 @@ export class EditKartaComponent implements OnInit {
           if (item.userId === user._id) this.selectedContributorUsers.push(user);
         })
       });
+    console.log("this.selectedContributorUsers", this.selectedContributorUsers);
+    console.log("this.users", this.users);
+
+
     }
     // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");

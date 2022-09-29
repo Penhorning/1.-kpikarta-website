@@ -11,10 +11,12 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { DatepickerModule, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { FilterPipe } from './filter.pipe';
 
 @NgModule({
   declarations: [
-    MyKpiComponent
+    MyKpiComponent,
+    FilterPipe
   ],
   imports: [
     CommonModule,
@@ -23,7 +25,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     NgxSliderModule,
     BsDatepickerModule.forRoot(),
     DatepickerModule.forRoot(),
-    NgMultiSelectDropDownModule.forRoot() 
+    NgMultiSelectDropDownModule.forRoot()
   ]
 })
 export class MyKpiModule { }
