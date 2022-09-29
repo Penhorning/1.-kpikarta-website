@@ -4,6 +4,7 @@ import { CommonService } from '@app/shared/_services/common.service';
 import { SettingService } from '@app/components/settings/service/setting.service';
 import { Options } from '@angular-slider/ngx-slider';
 
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -14,8 +15,7 @@ export class SettingsComponent implements OnInit {
 // Color variables
   colorSubmitFlag: boolean = false;
   colorSettings: any;
-  defaultColor: string = "#F85C5C";
-  defaultColor2: string = "#F85C5C";
+  selectedColor2: string = "#F85C5C";
   minValue: number = 0;
   maxValue: number = 100;
   options: Options = {
@@ -44,7 +44,7 @@ export class SettingsComponent implements OnInit {
 
   // Color slider form
   colorForm = this.fb.group({
-    color: [this.defaultColor, Validators.required],
+    color: ["000000", Validators.required],
     min: [this.minValue, Validators.required],
     max: [this.maxValue, Validators.required]
   });
@@ -78,9 +78,6 @@ export class SettingsComponent implements OnInit {
   }
   removeColor(index: number) {
     this.colorSettings.settings.splice(index, 1);
-  }
-  onColorChange(colorCode: string) {
-    this.colorForm.patchValue({ color: colorCode });
   }
   onColorChange2(colorCode: string, index: number) {
     this.colorSettings.settings[index].color = colorCode;

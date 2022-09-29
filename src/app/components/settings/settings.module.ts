@@ -8,8 +8,6 @@ import { SettingsComponent } from './settings.component';
 import { SharedModule } from '@app/shared/_modules/shared.module';
 // Third party module
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { ColorPickerModule } from 'ngx-color-picker';
-
 
 
 @NgModule({
@@ -20,8 +18,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
     CommonModule,
     SettingsRoutingModule,
     SharedModule,
-    NgxSliderModule,
-    ColorPickerModule
+    NgxSliderModule
   ]
 })
 export class SettingsModule { }

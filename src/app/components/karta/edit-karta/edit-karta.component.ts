@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from "../utils/d3.js";
+import * as moment from 'moment';
 
 declare const $: any;
 
@@ -77,6 +78,7 @@ export class EditKartaComponent implements OnInit {
   // Kpi Type
   kpiType: string = "measure";
   showKPICalculation: boolean = false;
+  kpiCalculationPeriod = "month-to-date";
   target: any = [
     { frequency: "weekly", value: 0, percentage: 0 }
   ]
@@ -199,7 +201,6 @@ export class EditKartaComponent implements OnInit {
       return item.id === phaseId;
     });
   }
-
   // Update node properties
   updateNodeProperties(param: any) {
     this.currentNode = param;
@@ -246,7 +247,21 @@ export class EditKartaComponent implements OnInit {
     
     params.children.forEach((element: any) => {
       if (element.hasOwnProperty("achieved_value")) {
-        let current_percentage= (element.achieved_value/element.target[0].value) * 100;
+        let targetValue = 0;
+        if (this.kpiCalculationPeriod === "month-to-date") {
+          const totalDays = moment().daysInMonth();
+          const todayDay = moment().date();
+          targetValue = element.target.find((item: any) => item.frequency === "monthly").value;
+          targetValue = todayDay * (targetValue / totalDays);
+        } else if (this.kpiCalculationPeriod === "year-to-date") {
+          const currentYear = moment().year();
+          const totalDays = moment([currentYear]).isLeapYear() ? 366 : 365;
+          const todayDay = moment().date(); 
+          targetValue = element.target.find((item: any) => item.frequency === "annually").value;
+          targetValue = todayDay * (targetValue / totalDays);
+        }
+
+        let current_percentage= (element.achieved_value/targetValue) * 100;
         element.percentage = Math.round(current_percentage);
       } else {
         let returnedPercentage = this.calculatePercentage(element, percentage);
@@ -323,6 +338,10 @@ export class EditKartaComponent implements OnInit {
 
   // Add node
   addNode(param: any, name?: string) {
+    let weightage = 100;
+    if (param.children.length > 0) {
+      weightage = weightage
+    }
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     let data: any = {
       name: name ? name : "Child",
@@ -398,6 +417,7 @@ export class EditKartaComponent implements OnInit {
     let data;
     if (key === "alignment") this.selectedAlignment = value;
     if (key === "achieved_value" || key === "updateDraggedNode") data = value;
+    if (key === "kpi_calc_period") this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
     else data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
@@ -467,7 +487,7 @@ export class EditKartaComponent implements OnInit {
       text_color: "#000000",
       phaseId: phaseId.substring(9),
       kartaId: this.kartaId,
-      weightage: 0
+      weightage: 100
     }
     this._kartaService.addNode(data).subscribe(
       (response: any) => {

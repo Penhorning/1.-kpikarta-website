@@ -11,6 +11,8 @@ import { KartaService } from '../karta/service/karta.service';
 export class DashboardComponent implements OnInit {
 
   kartas: any = [];
+  users: any = [];
+  sharingKarta: any;
 
   constructor(
     private _commonService: CommonService,
@@ -22,10 +24,12 @@ export class DashboardComponent implements OnInit {
     this.getKartas();
   }
 
+  // Navigate to create karta
   navigateToKarta () {
     this.router.navigate(['/karta/create-karta']);
   }
 
+  // Get all kartas
   getKartas() {
     this._kartaService.getKartas(this._commonService.getUserId()).subscribe(
       (response: any) => {
@@ -34,7 +38,34 @@ export class DashboardComponent implements OnInit {
     );
   }
 
+  // Update karta
+  updateKarta(type: string, id: string, index: number) {
+    this._kartaService.updateKarta(id, {type}).subscribe(
+      (response: any) => {
+        this.kartas[index].type = type;
+      }
+    );
+  }
+
+  // Delete karta
   deleteKarta(id: string) {
+    const result = confirm("Are you sure you want to delete this karta?");
+    if (result) {
+      this._kartaService.deleteKarta(id).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Karta deleted successfully");
+          this.getKartas();
+        }
+      );
+    }
+  }
+
+  // On share karta
+  onShare(param: any) {
+    this.sharingKarta = param;
+  }
+  // Share karta
+  shareKarta(id: string) {
     const result = confirm("Are you sure you want to delete this karta?");
     if (result) {
       this._kartaService.deleteKarta(id).subscribe(

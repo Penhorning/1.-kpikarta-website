@@ -52,12 +52,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
+    // Define the zoom function for the zoomable tree
+    function zoom() {
+        svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+    var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x + 45, d.y + 30]; });
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
+        .call(zoomListener)
         .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
 
@@ -109,7 +117,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // Drag end
     function endDrag() {
-        // if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
+        if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
         d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
         d3.select(domNode).attr('class', 'node');
@@ -232,9 +240,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var overCircle = function (d) {
         selectedNode = d;
         if (selectedNode != draggingNode && selectedNode !== null && draggingNode !== null) {
-            let colorCode = "#FF2E2E";
+            let colorCode = "#ff1744";
             let phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
-            if (phase.name !== "KPI" && phase.name !== "Target") colorCode = "#90EE90";
+            if (phase.name !== "KPI" && phase.name !== "Target") colorCode = "#76ff03";
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
         }
         // updateTempConnector();

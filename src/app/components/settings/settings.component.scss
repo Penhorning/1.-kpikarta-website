@@ -2,6 +2,28 @@
     cursor: pointer;
 }
 
+#colorPicker {
+    border: 0;
+    background-color: transparent;
+    height: 32px;
+    width: 30px;
+}
+
+#colorPicker2 {
+    z-index: -1;
+    width: 0;
+    display: block;
+    margin-top: -37px;
+    visibility: hidden;
+}
+
+.above100 label {
+    cursor: pointer;
+}
+.above100 label img {
+    height: 30px;
+}
+
 ::ng-deep {
     .ngx-slider .ngx-slider-pointer, .ngx-slider .ngx-slider-selection {
         background-color: #345DBB !important;

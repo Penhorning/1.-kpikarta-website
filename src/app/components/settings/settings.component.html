@@ -30,12 +30,9 @@
                           <div class="row">
                             <div class="col-lg-6">
                               <div class="color-range">
-                                <p>Color Range
-                                  <span class="color-range-box"
-                                    [(colorPicker)]="defaultColor"
-                                    [style.background]="defaultColor"
-                                    (colorPickerChange)="onColorChange($event)">
-                                  </span>
+                                <p class="d-flex justify-content-between">
+                                  <span class="align-self-center">Color Range</span>
+                                  <input type="color" id="colorPicker" formControlName="color" style="cursor: pointer;">
                                 </p>
                               </div>
                             </div>
@@ -78,11 +75,11 @@
                           </div>
                           <div class="col-lg-6 text-right">
                             <div class="float-right d-flex">
-                              <!-- <div class="color-box-two" [ngStyle]="{'background-color': setting.color}" [style.background]="defaultColor"></div> -->
                               <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
-                                <div class="color-box-two" [ngStyle]="{'background-color': setting.color}" [style.background]="defaultColor2"></div>
-                                <div class="plus-minus" [(colorPicker)]="defaultColor2" (colorPickerChange)="onColorChange2($event, i)" style="cursor: pointer;">
-                                  <img src="assets/img/edit.png" style="height: 30px;">
+                                <div class="color-box-two" [ngStyle]="{'background-color': setting.color}" [style.background]="selectedColor2"></div>
+                                <div class="plus-minus above100">
+                                  <label for="colorPicker2"><img src="assets/img/edit.png"></label>
+                                  <input type="color" id="colorPicker2" value="#000000" [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
                                 </div>
                               </ng-container>
                               <ng-template #not100Color>
