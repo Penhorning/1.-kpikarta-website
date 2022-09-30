@@ -14,6 +14,10 @@ export class DashboardComponent implements OnInit {
   users: any = [];
   sharingKarta: any;
 
+  selectedUsers: any = [];
+  loading = false;
+  emails: any = [];
+
   constructor(
     private _commonService: CommonService,
     private _kartaService: KartaService,
@@ -22,10 +26,11 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getKartas();
+    this.getAllUser();
   }
 
   // Navigate to create karta
-  navigateToKarta () {
+  navigateToKarta() {
     this.router.navigate(['/karta/create-karta']);
   }
 
@@ -40,7 +45,7 @@ export class DashboardComponent implements OnInit {
 
   // Update karta
   updateKarta(type: string, id: string, index: number) {
-    this._kartaService.updateKarta(id, {type}).subscribe(
+    this._kartaService.updateKarta(id, { type }).subscribe(
       (response: any) => {
         this.kartas[index].type = type;
       }
@@ -64,6 +69,7 @@ export class DashboardComponent implements OnInit {
   onShare(param: any) {
     this.sharingKarta = param;
   }
+
   // Share karta
   shareKarta(id: string) {
     const result = confirm("Are you sure you want to delete this karta?");
@@ -75,6 +81,45 @@ export class DashboardComponent implements OnInit {
         }
       );
     }
+  }
+
+  // Get all users 
+  getAllUser() {
+    this._kartaService.getAllUsers().subscribe(
+      (response: any) => {
+        this.users = response.users[0].data;
+      }
+    );
+  }
+
+  // Add new email and share
+  addTagPromise(e: string) {
+    return new Promise((resolve) => {
+      this.loading = true;
+
+      // Callback function
+      setTimeout(() => {
+        resolve({ email: e });
+        this.loading = false;
+      }, 1000);
+    })
+  }
+
+  // Submit shared data
+  onSubmitSharedData() {
+    this.selectedUsers.forEach((element: any) => {
+      this.emails.push(element.email)
+    });
+    let data = {
+      kartaId: this.sharingKarta.id,
+      emails: this.emails
+    }
+        console.log("data", data)
+    // this._kartaService.sharedEmails(data).subscribe(
+    //   (response: any) => {
+    //   }
+    // );
+
   }
 
 }

@@ -23,6 +23,8 @@
     "@angular/platform-browser": "~12.0.4",
     "@angular/platform-browser-dynamic": "~12.0.4",
     "@angular/router": "~12.0.4",
+    "@ng-select/ng-option-highlight": "^0.0.7",
+    "@ng-select/ng-select": "^7.0.0",
     "bootstrap": "^4.5.3",
     "google-libphonenumber": "^3.2.29",
     "intl-tel-input": "^17.0.3",

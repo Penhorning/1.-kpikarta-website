@@ -51,6 +51,9 @@ export class KartaService {
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
   }
+  sharedEmails(data: any) {
+    return this._httpService.POST('/karta/share', data);
+  }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }

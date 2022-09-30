@@ -131,8 +131,7 @@ export class MyKpiComponent implements OnInit {
             // Days left setting code 
             let due_date = moment(element.due_date);
             let current_date = moment(new Date());
-            element.days_left = due_date.diff(current_date, 'days');
-
+            element.days_left = due_date.diff(current_date, 'days') + 1;
             // Percentage calculation code
             element.percentage = element.target[0].percentage;
           });
