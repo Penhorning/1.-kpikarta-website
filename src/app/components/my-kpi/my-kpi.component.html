@@ -670,11 +670,11 @@
           <div class="shared-with" style="display:flex;">
             <span>Shared with:</span>
             <!-- <span class="ml-3"><a href="#"><img src="../../../assets/img/link-.svg"></a></span> -->
-            <ng-container *ngIf="selectedUsers && selectedUsers.length > 0">
+            <ng-container *ngIf="sharingKarta?.sharedTo && sharingKarta?.sharedTo.length > 0">
               <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
               <span class="ml-2">
                 <div class="user-counter">
-                  <p>+{{ selectedUsers ? selectedUsers.length - 1 : 0 }}</p>
+                  <p>+{{ sharingKarta.sharedTo ? sharingKarta.sharedTo.length - 1 : 0 }}</p>
                 </div>
               </span>
             </ng-container>

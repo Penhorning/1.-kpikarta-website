@@ -221,6 +221,7 @@ export class MyKpiComponent implements OnInit {
   // Shared kpi
   onShareClick(param: any) {
     this.sharingKarta = param;
+    console.log("this.sharingKarta", this.sharingKarta.sharedTo)
     if (param.sharedTo) {
       this.selectedUsers = param.sharedTo;
     } else {
@@ -251,7 +252,7 @@ export class MyKpiComponent implements OnInit {
     }
     this._myKpiService.shareNode(data).subscribe(
       (response: any) => {
-        if (response) this._commonService.successToaster("Your have shared user successfully");
+        if (response) this._commonService.successToaster("Your have shared successfully");
         this.getMyKPIsList();
       });
   }
