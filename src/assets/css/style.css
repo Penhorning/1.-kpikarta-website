@@ -1950,10 +1950,10 @@ button.Apply-btn.karta-edit {
   border-left: 1px solid #e1e1e1;
   padding: 15px;
   /* height: 900px; */
-  width: 32%;
-  left: -260px;
+  width: 20%;
+  right: 0;
   z-index: 995;
-  transition: left 0.2s ease-in-out;
+  transition: right 0.2s ease-in-out;
   height: 100%;
   position: fixed;
   overflow-y: scroll;
