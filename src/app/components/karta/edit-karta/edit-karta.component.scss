@@ -1,12 +1,24 @@
+.sidebar_collapsible_btn {
+    z-index: 999;
+    top: 50%;
+    position: fixed;
+    left: 100px;
+    transition: left 0.2s ease-in-out;
+}
+
+.sidebar_collapsible_btn.show {
+    left: 358px;
+}
+
 .karta-name p {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
 
-.phase_column {
-    width: 23%;
-}
+// .phase_column {
+//     width: 23%;
+// }
 
 .phase_column ul {
     width: 100%;

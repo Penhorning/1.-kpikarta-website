@@ -99,6 +99,7 @@ export class EditKartaComponent implements OnInit {
     const that = this;
     $('#sidebarCollapse').on('click', function () {
       $('#sidebar-two').toggleClass('active');
+      $('.sidebar_collapsible_btn').toggleClass('show');
       that.setKartaDimension();
     });
     // Hide sidebar when click outside
@@ -112,13 +113,6 @@ export class EditKartaComponent implements OnInit {
     this.getColorSettings();
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get("id") || "";
-    // Ng Multi Select Dropdown properties
-    this.dropdownSettings = {
-      enableCheckAll: false,
-      idField: '_id',
-      textField: 'fullName',
-      allowSearchFilter: true
-    };
     // Get users
     this.getAllUser();
   }
@@ -141,15 +135,7 @@ export class EditKartaComponent implements OnInit {
     $('#karta-svg svg').attr("height", height);
   }
 
-  // Ng Multi Select Dropdown
-  onItemSelect(item: any) {
-    this.contributorUsers.push({ userId: item._id });
-    this.updateNode('contributors', this.contributorUsers);
-  }
-  onItemDeSelect(item: any) {
-    this.contributorUsers = this.contributorUsers.filter((el: any) => el.userId !== item._id);
-    this.updateNode('contributors', this.contributorUsers);
-  }
+  // Get all users
   getAllUser() {
     this._kartaService.getAllUsers().subscribe(
       (response: any) => {
@@ -213,15 +199,15 @@ export class EditKartaComponent implements OnInit {
     this.showKPICalculation = false;
 
     // Populating contributors
-    if (param.hasOwnProperty("contributors")) {
-      this.contributorUsers = param.contributors;
-      this.selectedContributorUsers = [];
-      this.users.forEach((user: any) => {
-        param.contributors.forEach((item: any) => {
-          if (item.userId === user._id) this.selectedContributorUsers.push(user);
-        })
-      });
-    }
+    // if (param.hasOwnProperty("contributors")) {
+    //   this.contributorUsers = param.contributors;
+    //   this.selectedContributorUsers = [];
+    //   this.users.forEach((user: any) => {
+    //     param.contributors.forEach((item: any) => {
+    //       if (item.userId === user._id) this.selectedContributorUsers.push(user);
+    //     })
+    //   });
+    // }
     // Show properties right sidebar
     $('#rightSidebar').addClass("d-block");
     $('body').addClass("rightSidebarOpened");
