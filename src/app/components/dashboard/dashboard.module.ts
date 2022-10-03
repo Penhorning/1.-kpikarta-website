@@ -8,8 +8,6 @@ import { DashboardComponent } from './dashboard.component';
 import { SharedModule } from '@app/shared/_modules/shared.module';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
-import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-
 
 @NgModule({
   declarations: [
@@ -20,8 +18,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     DashboardRoutingModule,
     SharedModule,
     NgSelectModule,
-    NgOptionHighlightModule,
-    NgMultiSelectDropDownModule.forRoot()
+    NgOptionHighlightModule
   ]
 })
 export class DashboardModule { }

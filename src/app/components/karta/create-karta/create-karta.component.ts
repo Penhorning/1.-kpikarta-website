@@ -16,6 +16,7 @@ export class CreateKartaComponent implements OnInit {
 
   kartaForm = this.fb.group({
     name: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+    type: ['private']
   });
   get form() { return this.kartaForm.controls; }
 
