@@ -42,6 +42,7 @@ export class MyKpiComponent implements OnInit {
   dropdownSettings: any = {};
   selectedSharedUsers: any = [];
   selectedUsers: any = [];
+  isDisabled: boolean = false;
   // Target filter
   target: any = [
     { frequency: "", value: 0, percentage: 0 }
@@ -90,6 +91,7 @@ export class MyKpiComponent implements OnInit {
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
+      disabled: this.isDisabled
     }
   }
 
@@ -208,43 +210,53 @@ export class MyKpiComponent implements OnInit {
 
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
-    console.log("onItemSelect", item);
-    this.selectedUsers.push({ id: item._id });
+    this.selectedUsers.push({ userId: item._id });
+    console.log("this.selectedUsers", this.selectedUsers)
   }
 
   onItemDeSelect(item: any) {
-    this.selectedUsers = this.selectedUsers.filter((el: any) => el.id !== item._id);
+    this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
   }
 
   // Shared kpi
   onShareClick(param: any) {
     this.sharingKarta = param;
-    this.selectedUsers = param.sharedTo;
+    if (param.sharedTo) {
+      this.selectedUsers = param.sharedTo;
+    } else {
+      this.selectedUsers = new Array()
+      this.users.forEach((user: any) => {
+        delete user.isDisabled;
+      });
+    }
     this.selectedSharedUsers = [];
     if (this.selectedUsers && this.selectedUsers.length > 0) {
       this.users.forEach((user: any) => {
+        delete user.isDisabled;
         this.selectedUsers.forEach((item: any) => {
           if (item.userId === user._id) {
+            user.isDisabled = !this.isDisabled;
             this.selectedSharedUsers.push(user);
           }
         })
       });
-     }
-    //  this.getMyKPIsList();
+    }
   }
 
   // Submit shareed data
   onSubmitSharedData() {
-    let data = { 'sharedTo': this.selectedUsers }
-    this._myKpiService.updateNode(this.sharingKarta._id, data).subscribe(
+    let data = {
+      nodeId: this.sharingKarta._id,
+      userIds: this.selectedUsers
+    }
+    this._myKpiService.shareNode(data).subscribe(
       (response: any) => {
         if (response) this._commonService.successToaster("Your have shared user successfully");
+        this.getMyKPIsList();
       });
-    this.getMyKPIsList();
   }
 
   editActualValue(i: number) {
-    console.log("index", i)
     if (this.rowClicked === i) this.rowClicked = -1;
     else this.rowClicked = i;
   }

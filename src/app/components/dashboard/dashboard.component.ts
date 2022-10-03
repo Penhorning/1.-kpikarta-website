@@ -96,7 +96,6 @@ export class DashboardComponent implements OnInit {
   addTagPromise(e: string) {
     return new Promise((resolve) => {
       this.loading = true;
-
       // Callback function
       setTimeout(() => {
         resolve({ email: e });
@@ -111,14 +110,17 @@ export class DashboardComponent implements OnInit {
       this.emails.push(element.email)
     });
     let data = {
-      kartaId: this.sharingKarta.id,
+      karta: this.sharingKarta,
       emails: this.emails
     }
-        console.log("data", data)
-    // this._kartaService.sharedEmails(data).subscribe(
-    //   (response: any) => {
-    //   }
-    // );
+    console.log("data", data)
+    this.selectedUsers = [];
+    this.emails = [];
+    this._kartaService.sharedEmails(data).subscribe(
+      (response: any) => {
+        if (response) this._commonService.successToaster("Your have shared user successfully");
+      }
+    );
 
   }
 
