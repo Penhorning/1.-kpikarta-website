@@ -3,7 +3,7 @@ import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
 
-
+declare const $: any;
 @Component({
   selector: 'app-my-kpi',
   templateUrl: './my-kpi.component.html',
@@ -39,10 +39,12 @@ export class MyKpiComponent implements OnInit {
   rowClicked: any;
   // Share KPI
   sharingKarta: any;
+  sharingKartaCount: any = 0;
   dropdownSettings: any = {};
   selectedSharedUsers: any = [];
   selectedUsers: any = [];
   isDisabled: boolean = false;
+  sharedSubmitFlag: boolean = false;
   // Target filter
   target: any = [
     { frequency: "", value: 0, percentage: 0 }
@@ -127,6 +129,8 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
           this.kpis = response.kpi_nodes[0].data;
+        } else {
+          this.kpis = [];
         }
       }
     )
@@ -211,7 +215,6 @@ export class MyKpiComponent implements OnInit {
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
     this.selectedUsers.push({ userId: item._id });
-    console.log("this.selectedUsers", this.selectedUsers)
   }
 
   onItemDeSelect(item: any) {
@@ -221,11 +224,12 @@ export class MyKpiComponent implements OnInit {
   // Shared kpi
   onShareClick(param: any) {
     this.sharingKarta = param;
-    console.log("this.sharingKarta", this.sharingKarta.sharedTo)
     if (param.sharedTo) {
+      this.sharingKartaCount = param.sharedTo.length;
       this.selectedUsers = param.sharedTo;
     } else {
       this.selectedUsers = new Array()
+      this.sharingKartaCount = 0;
       this.users.forEach((user: any) => {
         delete user.isDisabled;
       });
@@ -250,11 +254,15 @@ export class MyKpiComponent implements OnInit {
       nodeId: this.sharingKarta._id,
       userIds: this.selectedUsers
     }
+   this.sharedSubmitFlag = true;
     this._myKpiService.shareNode(data).subscribe(
       (response: any) => {
         if (response) this._commonService.successToaster("Your have shared successfully");
+        $('#staticBackdrop').modal('hide');
         this.getMyKPIsList();
-      });
+      },
+      (error: any) => { }
+    ).add(() => this.sharedSubmitFlag = false );
   }
 
   editActualValue(i: number) {

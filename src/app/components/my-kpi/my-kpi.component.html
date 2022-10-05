@@ -559,7 +559,7 @@
                           <td>{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0].value }}</span>
-                            <span class="">{{ kpi?.target[0].frequency | slice:0:2 }}.</span>
+                            <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
                           </td>
                           <td><span>{{ kpi?.achieved_value }}</span></td>
                           <td>{{ kpi?.updatedAt | date }}</td>
@@ -609,12 +609,14 @@
                               </div>
                             </ng-template>
                           </td>
-                          <td> <div class="col-lg-12" *ngIf="sharingKarta && selectedSharedUsers">
-                            <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
-                              [settings]="dropdownSettings" [data]="users" (onSelect)="onItemSelect($event)" 
-                              (onDeSelect)="onItemDeSelect($event)">
-                            </ng-multiselect-dropdown>
-                          </div></td>
+                          <td>
+                            <div class="col-lg-12" *ngIf="sharingKarta && selectedSharedUsers">
+                              <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
+                                [settings]="dropdownSettings" [data]="users" (onSelect)="onItemSelect($event)"
+                                (onDeSelect)="onItemDeSelect($event)">
+                              </ng-multiselect-dropdown>
+                            </div>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -650,19 +652,22 @@
             <div class="row">
               <div class="col-lg-12" *ngIf="sharingKarta">
                 <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
-                  [settings]="dropdownSettings" [data]="users" (onSelect)="onItemSelect($event)" 
+                  [settings]="dropdownSettings" [data]="users" (onSelect)="onItemSelect($event)"
                   (onDeSelect)="onItemDeSelect($event)">
                 </ng-multiselect-dropdown>
               </div>
             </div>
           </div>
-          <div class="">
-            <div style="border-color: unset;" data-dismiss="modal" aria-label="Close">
+            <div style="border-color: unset;" data-dismiss="" aria-label="">
               <span aria-hidden="true"><button type="button" class="send-btn" style="cursor: pointer;"
-                  [disabled]="selectedSharedUsers.length > 0 ? false : true"
-                  (click)="onSubmitSharedData()">SEND</button></span>
+                  [disabled]="selectedSharedUsers && selectedSharedUsers.length > 0 ? false : true"
+                  (click)="onSubmitSharedData()">
+                  <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                  <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
+                </button></span>
             </div>
-          </div>
         </div>
       </div>
       <div class="row">
@@ -670,11 +675,11 @@
           <div class="shared-with" style="display:flex;">
             <span>Shared with:</span>
             <!-- <span class="ml-3"><a href="#"><img src="../../../assets/img/link-.svg"></a></span> -->
-            <ng-container *ngIf="sharingKarta?.sharedTo && sharingKarta?.sharedTo.length > 0">
+            <ng-container *ngIf="sharingKartaCount">
               <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-              <span class="ml-2">
+              <span class="ml-2" *ngIf="sharingKartaCount > 1">
                 <div class="user-counter">
-                  <p>+{{ sharingKarta.sharedTo ? sharingKarta.sharedTo.length - 1 : 0 }}</p>
+                    <p>+{{ sharingKartaCount - 1 }}</p>
                 </div>
               </span>
             </ng-container>

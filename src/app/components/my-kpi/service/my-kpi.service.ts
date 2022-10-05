@@ -30,8 +30,5 @@ export class MyKpiService {
   shareNode(data: any) {
     return this._httpService.POST('/karta_nodes/share', data);
   }
-  getNotifications(userId: string) {
-  return this._httpService.GET(`/notification?filter[where][userId]=${userId}&filter[order]=createdAt Desc`);
-}
 }
 
