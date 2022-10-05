@@ -105,7 +105,7 @@ export class EditKartaComponent implements OnInit {
     // Hide sidebar when click outside
     $(document).on('click', function (event: any) {
       if (!$(event.target).closest('#rightSidebar').length && event.target.id !== "delete_btn") {
-        $('#rightSidebar').removeClass("d-block");
+        $('#rightSidebar').removeClass("open");
       }
       that.setKartaDimension();
     });
@@ -209,7 +209,7 @@ export class EditKartaComponent implements OnInit {
     //   });
     // }
     // Show properties right sidebar
-    $('#rightSidebar').addClass("d-block");
+    $('#rightSidebar').addClass("open");
     $('body').addClass("rightSidebarOpened");
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
@@ -325,9 +325,11 @@ export class EditKartaComponent implements OnInit {
 
   // Add node
   addNode(param: any, name?: string) {
-    let weightage = 100;
+    // let weightage = 100;
     // if (param.hasOwnProperty("children") && param.children.length > 0) {
-    //   weightage = weightage
+    //   param.children.forEach((item: any) => {
+    //     item.weightage
+    //   });
     // }
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     let data: any = {

@@ -46,7 +46,7 @@ export class KartaService {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
   }
   removeNode(nodeId: string) {
-    return this._httpService.DELETE('/karta_nodes/', nodeId);
+    return this._httpService.POST('/karta_nodes/delete', {nodeId});
   }
   getAllUsers() {
     return this._httpService.POST('/users/get-all');

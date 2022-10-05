@@ -1946,15 +1946,16 @@ button.Apply-btn.karta-edit {
 
 .right-side-bar {
   background-color: #fff;
-  float: right;
+  /* float: right; */
   border-left: 1px solid #e1e1e1;
   padding: 15px;
   /* height: 900px; */
+  top: 72px;
   width: 20%;
-  right: 0;
+  right: -100%;
   z-index: 995;
   transition: right 0.2s ease-in-out;
-  height: 100%;
+  height: calc(100% - 75px);
   position: fixed;
   overflow-y: scroll;
 }

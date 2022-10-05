@@ -65,7 +65,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width", width)
         .attr("height", height)
-        .call(zoomListener)
+        // .call(zoomListener)
         .append("g")
         .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
