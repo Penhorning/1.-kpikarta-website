@@ -10,15 +10,15 @@
     left: 358px;
 }
 
+.right-side-bar.open {
+    right: 0;
+}
+
 .karta-name p {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
 }
-
-// .phase_column {
-//     width: 23%;
-// }
 
 .phase_column ul {
     width: 100%;
@@ -26,6 +26,7 @@
 
 .karta_column {
     width: 77%;
+    flex: 1 1 auto;
 }
 
 .karta_dummy_lines {

@@ -100,12 +100,12 @@ export class EditKartaComponent implements OnInit {
     $('#sidebarCollapse').on('click', function () {
       $('#sidebar-two').toggleClass('active');
       $('.sidebar_collapsible_btn').toggleClass('show');
-      that.setKartaDimension();
+      // that.setKartaDimension();
     });
     // Hide sidebar when click outside
     $(document).on('click', function (event: any) {
       if (!$(event.target).closest('#rightSidebar').length && event.target.id !== "delete_btn") {
-        $('#rightSidebar').removeClass("d-block");
+        $('#rightSidebar').removeClass("open");
       }
       that.setKartaDimension();
     });
@@ -209,7 +209,7 @@ export class EditKartaComponent implements OnInit {
     //   });
     // }
     // Show properties right sidebar
-    $('#rightSidebar').addClass("d-block");
+    $('#rightSidebar').addClass("open");
     $('body').addClass("rightSidebarOpened");
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
@@ -325,9 +325,11 @@ export class EditKartaComponent implements OnInit {
 
   // Add node
   addNode(param: any, name?: string) {
-    let weightage = 100;
-    // if (param.children.length > 0) {
-    //   weightage = weightage
+    // let weightage = 100;
+    // if (param.hasOwnProperty("children") && param.children.length > 0) {
+    //   param.children.forEach((item: any) => {
+    //     item.weightage
+    //   });
     // }
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     let data: any = {
@@ -446,6 +448,8 @@ export class EditKartaComponent implements OnInit {
 
   onDragOver(ev: any) {
     ev.preventDefault();
+    $('#sidebar-two').removeClass('active');
+    $('.sidebar_collapsible_btn').removeClass('show');
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.add("selectedPhase");
   }
@@ -478,7 +482,7 @@ export class EditKartaComponent implements OnInit {
     }
     this._kartaService.addNode(data).subscribe(
       (response: any) => {
-        $('#sidebar-two').addClass('active');
+        // $('#sidebar-two').addClass('active');
         this.getKartaInfo();
         this.showSVG = true;
         let data = {

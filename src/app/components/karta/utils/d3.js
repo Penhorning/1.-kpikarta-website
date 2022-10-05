@@ -54,6 +54,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     // Define the zoom function for the zoomable tree
     function zoom() {
+        svg.selectAll('.karta_divider').remove();
         svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
@@ -64,8 +65,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width", width)
         .attr("height", height)
+        // .call(zoomListener)
         .append("g")
-        .call(zoomListener)
         .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
 
