@@ -60,6 +60,9 @@ export class CommonService {
   getUserId() {
     return JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}").userId;
   }
+  getEmailId() {
+    return JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}").email;
+  }
   updateUserNameInSession(updatedName: string) {
     let session = JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}");
     session.name = updatedName;
