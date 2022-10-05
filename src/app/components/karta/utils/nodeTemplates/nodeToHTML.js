@@ -12,7 +12,7 @@ module.exports = (node, source) => {
       <div id="nodeItem" nodeid=${node.id} class="node-text node-body">
         <p class="py-1" id="nodeItem" style="font-family:${node.font_style};text-align:${node.alignment};color:${node.text_color}">
           <span id="nodeItem" class="d-block" title="${node.name}">${node.name || ''}</span>
-          <span class="font-weight-bold nodePercentage" style="background: ${node.weightage > 0 ? '#8a8282' : '#ff1744'}">${node.percentage || 0}%</span>
+          <span class="font-weight-bold nodePercentage">${node.percentage || 0}%</span>
         </p>
       </div>
     </div>`;
@@ -36,7 +36,7 @@ module.exports = (node, source) => {
       <div id="nodeItem" nodeid=${node.id} class="node-text node-body">
         <p class="py-1" id="nodeItem" style="font-family:${node.font_style};text-align:${node.alignment};color:${node.text_color}">
           <span id="nodeItem" class="d-block" title="${node.name}">${node.name || ''}</span>
-          <span class="font-weight-bold nodePercentage" style="background: ${node.weightage > 0 ? '#8a8282' : '#ff1744'}">${node.percentage || 0}%</span>
+          <span class="font-weight-bold nodePercentage">${node.percentage || 0}%</span>
         </p>
       </div>
     </div>`;

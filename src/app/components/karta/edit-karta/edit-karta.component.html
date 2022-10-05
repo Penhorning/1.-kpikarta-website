@@ -527,7 +527,8 @@
             <div class="col-lg-12">
               <div class="search-sugg mt-3">
                 <input type="number" class="form-control" [(ngModel)]="currentNodeWeight"
-                  (blur)="updateNode('weightage', currentNodeWeight)">
+                  (blur)="changeWeightage()" [ngClass]="{ 'is-invalid': currentNodeWeight < 1 }">
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 1">Please enter weightage!</div>
               </div>
             </div>
           </div>
@@ -588,19 +589,19 @@
           <div class="col-lg-7">
             <div>
               <span>
-                <a style="cursor: pointer;" (click)="updateNode('alignment', 'left')">
+                <a style="cursor: pointer;" (click)="changeAlignment('left')">
                   <img src="assets/img/left-align.svg" class="img-fluid mr-2 font_alignment_img"
                     [ngClass]="{'selected_alignment': selectedAlignment === 'left'}">
                 </a>
               </span>
               <span>
-                <a style="cursor: pointer;" (click)="updateNode('alignment', 'center')">
+                <a style="cursor: pointer;" (click)="changeAlignment('center')">
                   <img src="assets/img/center-align.svg" class="img-fluid font_alignment_img"
                     [ngClass]="{'selected_alignment': selectedAlignment === 'center'}">
                 </a>
               </span>
               <span>
-                <a style="cursor: pointer;" (click)="updateNode('alignment', 'right')">
+                <a style="cursor: pointer;" (click)="changeAlignment('right')">
                   <img src="assets/img/right-align.svg" class="img-fluid ml-2 font_alignment_img"
                     [ngClass]="{'selected_alignment': selectedAlignment === 'right'}">
                 </a>
@@ -680,7 +681,7 @@
                 <div class="form-group">
                   <label style="font-weight: 500;">Achieved Value</label>
                   <input type="number" class="form-control" [value]="currentNode?.achieved_value"
-                    (blur)="updateAchievedValue($event)">
+                    (blur)="changeAchievedValue($event)">
                 </div>
               </div>
             </div>
@@ -690,7 +691,7 @@
                 <div class="selct-option-side-r">
                   <label>KPI Calculation Periods</label>
                   <select class="form-control" [value]="currentNode.kpi_calc_period" [(ngModel)]="kpiCalculationPeriod"
-                    (change)="updateNode('kpi_calc_period', $any($event.target).value)">
+                    (change)="changeKPIPeriods($event)">
                     <option value="month-to-date">Month to date</option>
                     <option value="year-to-date">Year to date</option>
                     <option value="month-over-month">Month over month</option>
