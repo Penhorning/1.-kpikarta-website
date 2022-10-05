@@ -54,6 +54,9 @@ export class KartaService {
   sharedEmails(data: any) {
     return this._httpService.POST('/karta/share', data);
   }
+  getSharedKarta(data: any) {
+    return this._httpService.POST('/karta/sharedKartas', data);
+  }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }
