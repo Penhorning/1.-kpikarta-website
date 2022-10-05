@@ -100,7 +100,7 @@ export class EditKartaComponent implements OnInit {
     $('#sidebarCollapse').on('click', function () {
       $('#sidebar-two').toggleClass('active');
       $('.sidebar_collapsible_btn').toggleClass('show');
-      that.setKartaDimension();
+      // that.setKartaDimension();
     });
     // Hide sidebar when click outside
     $(document).on('click', function (event: any) {
@@ -326,7 +326,7 @@ export class EditKartaComponent implements OnInit {
   // Add node
   addNode(param: any, name?: string) {
     let weightage = 100;
-    // if (param.children.length > 0) {
+    // if (param.hasOwnProperty("children") && param.children.length > 0) {
     //   weightage = weightage
     // }
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
@@ -446,6 +446,8 @@ export class EditKartaComponent implements OnInit {
 
   onDragOver(ev: any) {
     ev.preventDefault();
+    $('#sidebar-two').removeClass('active');
+    $('.sidebar_collapsible_btn').removeClass('show');
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.add("selectedPhase");
   }
@@ -478,7 +480,7 @@ export class EditKartaComponent implements OnInit {
     }
     this._kartaService.addNode(data).subscribe(
       (response: any) => {
-        $('#sidebar-two').addClass('active');
+        // $('#sidebar-two').addClass('active');
         this.getKartaInfo();
         this.showSVG = true;
         let data = {
