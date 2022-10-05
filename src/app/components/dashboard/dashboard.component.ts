@@ -15,6 +15,7 @@ export class DashboardComponent implements OnInit {
   users: any = [];
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
+  sharedKartas: any = [];
 
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
@@ -30,6 +31,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.getKartas();
     this.getAllUser();
+    this.getSharedKarta();
   }
 
   // Navigate to create karta
@@ -45,6 +47,26 @@ export class DashboardComponent implements OnInit {
           this.kartas = response;
         } else {
           this.kartas = [];
+        }
+      }
+    );
+  }
+
+  getSharedKarta(){
+ let data = {
+  page : 1,
+  limit: 10,
+  email: this._commonService.getEmailId()
+ }
+ console.log("data", data)
+    this._kartaService.getSharedKarta(data).subscribe(
+      (response: any) => {
+        if(response){
+     this.sharedKartas = response.kartas[0].data;
+     console.log("sharedKartas", this.sharedKartas)
+
+        } else {
+          this.sharedKartas = [];
         }
       }
     );

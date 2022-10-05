@@ -148,7 +148,7 @@ export class MyKpiComponent implements OnInit {
 
   // Calculate days based on due date
   calculateDueDays(due_date: string) {
-    return moment(due_date).diff(moment(), 'days');
+    return moment(due_date).diff(moment(), 'days') + 1;
   }
 
   // Get all users 
@@ -321,6 +321,7 @@ export class MyKpiComponent implements OnInit {
   // Tab switching
   onTabSwitch(e: string) {
     this.kpiType = e;
+    this.pageIndex = 0;
     this.getMyKPIsList()
   }
 
@@ -352,6 +353,13 @@ export class MyKpiComponent implements OnInit {
         this.creators = response.creators;
       }
     );
+  }
+
+  // View more
+  viewMore(){
+    this.pageIndex++;
+    this.pageSize = this.pageSize;
+    this.getMyKPIsList();
   }
 
 }
