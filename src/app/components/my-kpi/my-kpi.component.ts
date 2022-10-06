@@ -11,10 +11,13 @@ declare const $: any;
 })
 export class MyKpiComponent implements OnInit {
 
+  sortDir = 1;
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
   creators: any = [];
+  loadingKarta: boolean = true;
+  loader: any = this._commonService.loader;
   // Pagination
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -129,11 +132,12 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
           this.kpis = response.kpi_nodes[0].data;
+          console.log("kpi", this.kpis)
         } else {
           this.kpis = [];
         }
       }
-    )
+    ).add(() => this.loadingKarta = false);
   }
 
   // Get color for each node percentage
@@ -160,7 +164,7 @@ export class MyKpiComponent implements OnInit {
         })
         this.users = response.users[0].data;
       }
-    );
+    ).add(() => this.loadingKarta = false);
   }
 
   // Search
@@ -254,7 +258,7 @@ export class MyKpiComponent implements OnInit {
       nodeId: this.sharingKarta._id,
       userIds: this.selectedUsers
     }
-   this.sharedSubmitFlag = true;
+    this.sharedSubmitFlag = true;
     this._myKpiService.shareNode(data).subscribe(
       (response: any) => {
         if (response) this._commonService.successToaster("Your have shared successfully");
@@ -262,7 +266,7 @@ export class MyKpiComponent implements OnInit {
         this.getMyKPIsList();
       },
       (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false );
+    ).add(() => this.sharedSubmitFlag = false);
   }
 
   editActualValue(i: number) {
@@ -352,14 +356,41 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         this.creators = response.creators;
       }
-    );
+    ).add(() => this.loadingKarta = false);
   }
 
   // View more
-  viewMore(){
+  viewMore() {
     this.pageIndex++;
     this.pageSize = this.pageSize;
     this.getMyKPIsList();
+  }
+
+  // Sort 
+  onSortClick(event: any, col: any) {
+    console.log("col", col)
+    let target = event.currentTarget,
+      classList = target.classList;
+    if (classList.contains('fa-chevron-up')) {
+      classList.remove('fa-chevron-up');
+      classList.add('fa-chevron-down');
+      this.sortDir = -1;
+    } else {
+      classList.add('fa-chevron-up');
+      classList.remove('fa-chevron-down');
+      this.sortDir = 1;
+    }
+    this.sortArr(col);
+  }
+
+  sortArr(colName: any) {
+    this.kpis.sort((a: any, b: any) => {
+      console.log("a b", a, b);
+      debugger
+      a = a[colName].toLowerCase();
+      b = b[colName].toLowerCase();
+      return a.localeCompare(b) * this.sortDir;
+    });
   }
 
 }
