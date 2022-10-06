@@ -33,7 +33,7 @@
                                         <div class="col-8">
                                             <div class="own d-flex">
                                                 <img src="assets/img/own-icon.svg">
-                                                <p>{{karta?.owner?.fullName}}</p>
+                                                <p>{{karta?.user?.fullName}}</p>
                                             </div>
                                         </div>
                                         <div class="col-4 text-right">
@@ -62,7 +62,7 @@
                                                     <a class="dropdown-item" href="#"><img src="assets/img/used.svg"
                                                             class="mr-2"> Used <span> (5)</span></a>
                                                     <a class="dropdown-item Delete" href="javascript:void(0);"
-                                                        (click)="deleteKarta(karta.id)">
+                                                        (click)="deleteSharedKarta(karta._id)">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                             fill="currentColor" class="bi bi-trash3-fill mr-2"
                                                             viewBox="0 0 16 16">
@@ -103,9 +103,9 @@
                                                 </a>
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                     <a class="dropdown-item" href="javascript:void(0);"
-                                                        (click)="updateKarta('private', karta?.id, i)">Private</a>
+                                                        (click)="updateKarta('private', karta?._id, i)">Private</a>
                                                     <a class="dropdown-item" href="javascript:void(0);"
-                                                        (click)="updateKarta('public', karta?.id, i)">Public</a>
+                                                        (click)="updateKarta('public', karta?._id, i)">Public</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -274,15 +274,6 @@
                                                     </div>
                                                 </ng-container>
                                             </div>
-
-                                            <!-- <ng-container *ngIf="sharingKartaCount">
-                                                <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-                                                <span class="ml-2" *ngIf="sharingKartaCount > 1">
-                                                  <div class="user-counter">
-                                                      <p>+{{ sharingKartaCount - 1 }}</p>
-                                                  </div>
-                                                </span>
-                                              </ng-container> -->
                                         </div>
                                     </div>
                                 </div>

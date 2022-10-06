@@ -75,7 +75,6 @@
         </div>
       </div>
     </div>
-
     <div class="row mt-4">
       <div class="col-lg-12">
         <div class="KPI-dash-tab">
@@ -368,6 +367,9 @@
                       </tbody>
                     </table>
                     <div style="text-align: center;">
+                      <ng-container *ngIf="loadingKarta">
+                        <div class="p-5" [innerHtml]="loader"></div>
+                      </ng-container>
                       <p style="cursor: pointer; color: #007bff;" (click)="viewMore()">View More..</p>
                     </div>
                   </div>
@@ -616,6 +618,9 @@
                       </tbody>
                     </table>
                     <div style="text-align: center;">
+                      <ng-container *ngIf="loadingKarta">
+                        <div class="p-5" [innerHtml]="loader"></div>
+                      </ng-container>
                       <p style="cursor: pointer; color: #007bff;" (click)="viewMore()">View More..</p>
                     </div>
                   </div>
@@ -687,3 +692,5 @@
     </div>
   </div>
 </div>
+
+

@@ -39,6 +39,9 @@ export class KartaService {
   deleteKarta(id: string) {
     return this._httpService.DELETE('/karta/', id);
   }
+  deleteSharedKarta(id: any) {
+    return this._httpService.POST('/karta/delete-shared-karta', id);
+  }
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);
   }

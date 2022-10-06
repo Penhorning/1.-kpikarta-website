@@ -45,6 +45,8 @@ export class DashboardComponent implements OnInit {
       (response: any) => {
         if (response) {
           this.kartas = response;
+     console.log("this.kartas", this.kartas)
+
         } else {
           this.kartas = [];
         }
@@ -93,6 +95,19 @@ export class DashboardComponent implements OnInit {
       );
     }
   }
+
+    // Delete shared karta
+    deleteSharedKarta(_id: any) {
+      const result = confirm("Are you sure you want to delete this shared karta?");
+      if (result) {
+        this._kartaService.deleteSharedKarta({kartaId:_id}).subscribe(
+          (response: any) => {
+            this._commonService.successToaster("Karta deleted successfully");
+            this.getSharedKarta();
+          }
+        );
+      }
+    }
 
   // On share karta
   onShare(param: any) {

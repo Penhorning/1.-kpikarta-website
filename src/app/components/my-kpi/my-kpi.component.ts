@@ -15,6 +15,8 @@ export class MyKpiComponent implements OnInit {
   colorSettings: any = [];
   users: any = [];
   creators: any = [];
+  loadingKarta: boolean = true;
+  loader: any = this._commonService.loader;
   // Pagination
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -133,7 +135,7 @@ export class MyKpiComponent implements OnInit {
           this.kpis = [];
         }
       }
-    )
+    ).add(() => this.loadingKarta = false);
   }
 
   // Get color for each node percentage
@@ -160,7 +162,7 @@ export class MyKpiComponent implements OnInit {
         })
         this.users = response.users[0].data;
       }
-    );
+    ).add(() => this.loadingKarta = false);
   }
 
   // Search
@@ -352,7 +354,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         this.creators = response.creators;
       }
-    );
+    ).add(() => this.loadingKarta = false);
   }
 
   // View more
