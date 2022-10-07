@@ -59,13 +59,22 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
     var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+    // Reset the zoom, when click on reset button
+    $(document).on('click', '#reset_zoom_btn', function () {
+        let transformArray = d3.select("g").attr("transform").split(')');
+        if (transformArray.length > 2) {
+            console.log("set")
+            d3.select("g").attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
+            buildKartaDivider();
+        }
+    });
 
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x + 45, d.y + 30]; });
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width", width)
         .attr("height", height)
-        // .call(zoomListener)
+        .call(zoomListener)
         .append("g")
         .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
@@ -453,12 +462,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     //     (dividers.length - 1).remove();
     // }
 
-    $(document).on('click', '#sidebarCollapse', function () {
-        width2 = $(".karta_column").width();
-        d3.select('#karta-svg svg')
-            .attr("width", width2);
-        buildKartaDivider();
-    });
+    // $(document).on('click', '#sidebarCollapse', function () {
+    //     width2 = $(".karta_column").width();
+    //     d3.select('#karta-svg svg')
+    //         .attr("width", width2);
+    //     buildKartaDivider();
+    // });
 
     // Update node properties
     function updateNode(d) {
