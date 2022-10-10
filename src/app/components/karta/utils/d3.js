@@ -52,6 +52,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
+    // Get depth of nested child
+    function getDepth(node) {
+        let depth = 0;
+        if (node.children) {
+            node.children.forEach(function (d) {
+                let tmpDepth = getDepth(d);
+                if (tmpDepth > depth) {
+                    depth = tmpDepth
+                }
+            });
+        }
+        return ++depth;
+    }
+
     // Define the zoom function for the zoomable tree
     function zoom() {
         svg.selectAll('.karta_divider').remove();
@@ -206,23 +220,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             }
             domNode = this;
             
-            function getDepth(node) {
-                let depth = 0;
-                if (node.children) {
-                    node.children.forEach(function (d) {
-                        let tmpDepth = getDepth(d);
-                        if (tmpDepth > depth) {
-                            depth = tmpDepth
-                        }
-                    });
-                }
-                return ++depth;
-            }
             if (selectedNode && draggingNode) {
-                let draggindDepth = getDepth(draggingNode);
+                let draggingDepth = getDepth(draggingNode);
                 let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
 
-                if ((draggindDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId)) {
+                if ((draggingDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId)) {
                     alert("You cannot drag this node becuase it's leaf nodes exceeding the kpi node.")
                 } else {
                     // now remove the element from the parent, and insert it into the new elements children
@@ -250,9 +252,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var overCircle = function (d) {
         selectedNode = d;
         if (selectedNode != draggingNode && selectedNode !== null && draggingNode !== null) {
-            let colorCode = "#ff1744";
+            let colorCode = "#ff1744";  // Green color
             let phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
-            if (phase.name !== "KPI" && phase.name !== "Target") colorCode = "#76ff03";
+            // Getting depth
+            let draggingDepth = getDepth(draggingNode);
+            let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+            if (phase.name !== "KPI" && phase.name !== "Target" && !((draggingDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId))) {
+                colorCode = "#76ff03"; // Red color
+            }
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
         }
         // updateTempConnector();

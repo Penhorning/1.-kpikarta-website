@@ -60,6 +60,9 @@ export class KartaService {
   getSharedKarta(data: any) {
     return this._httpService.POST('/karta/shared-kartas', data);
   }
+  copyKarta(data: any) {
+    return this._httpService.POST('/karta/copy-shared-karta', data);
+  }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }
