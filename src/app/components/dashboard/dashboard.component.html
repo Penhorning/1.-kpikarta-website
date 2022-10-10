@@ -173,7 +173,7 @@
                                         <div class="col-8">
                                             <div class="own d-flex">
                                                 <img src="assets/img/own-icon.svg">
-                                                <p>{{karta?.owner?.fullName}}</p>
+                                                <p>{{karta?.user?.fullName}}</p>
                                             </div>
                                         </div>
                                         <div class="col-4 text-right">
@@ -218,7 +218,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 text-center">
                                             <div class="edit-btn-img">
-                                                <a [routerLink]="['/karta/edit-karta', karta.id]">
+                                                <a [routerLink]="['/karta/edit-karta', karta._id]">
                                                     <img src="assets/img/edit--icon-blue.svg" class="">
                                                 </a>
                                             </div>

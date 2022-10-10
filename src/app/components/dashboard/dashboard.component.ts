@@ -41,35 +41,31 @@ export class DashboardComponent implements OnInit {
 
   // Get all kartas
   getKartas() {
-    this._kartaService.getKartas(this._commonService.getUserId()).subscribe(
+    let data = {
+      page : 1,
+      limit: 10,
+      userId: this._commonService.getUserId()
+    }
+    this._kartaService.getKartas(data).subscribe(
       (response: any) => {
         if (response) {
-          this.kartas = response;
-     console.log("this.kartas", this.kartas)
-
-        } else {
-          this.kartas = [];
-        }
+          this.kartas = response.kartas[0].data;
+        } else this.kartas = [];
       }
     );
   }
 
   getSharedKarta(){
- let data = {
-  page : 1,
-  limit: 10,
-  email: this._commonService.getEmailId()
- }
- console.log("data", data)
+    let data = {
+      page : 1,
+      limit: 10,
+      email: this._commonService.getEmailId()
+    }
     this._kartaService.getSharedKarta(data).subscribe(
       (response: any) => {
-        if(response){
-     this.sharedKartas = response.kartas[0].data;
-     console.log("sharedKartas", this.sharedKartas)
-
-        } else {
-          this.sharedKartas = [];
-        }
+        if (response) {
+          this.sharedKartas = response.kartas[0].data;
+        } else this.sharedKartas = [];
       }
     );
   }
