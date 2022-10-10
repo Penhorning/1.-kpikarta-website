@@ -159,12 +159,11 @@ export class MyKpiComponent implements OnInit {
   getAllUser() {
     this._myKpiService.getAllUsers().subscribe(
       (response: any) => {
-        response.users[0].data.filter((item: any) => {
-          item.nameWithMail = item.fullName + ' - [' + item.email + ']';
+        this.users = response.users[0].data.filter((x:any) => {
+          return x.email != this._commonService.getEmailId();
         })
-        this.users = response.users[0].data;
       }
-    ).add(() => this.loadingKarta = false);
+    );
   }
 
   // Search
@@ -356,7 +355,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         this.creators = response.creators;
       }
-    ).add(() => this.loadingKarta = false);
+    );
   }
 
   // View more
@@ -368,9 +367,9 @@ export class MyKpiComponent implements OnInit {
 
   // Sort 
   onSortClick(event: any, col: any) {
-    console.log("col", col)
     let target = event.currentTarget,
-      classList = target.classList;
+    classList = target.classList;
+    console.log("event", classList)
     if (classList.contains('fa-chevron-up')) {
       classList.remove('fa-chevron-up');
       classList.add('fa-chevron-down');
@@ -385,8 +384,6 @@ export class MyKpiComponent implements OnInit {
 
   sortArr(colName: any) {
     this.kpis.sort((a: any, b: any) => {
-      console.log("a b", a, b);
-      debugger
       a = a[colName].toLowerCase();
       b = b[colName].toLowerCase();
       return a.localeCompare(b) * this.sortDir;
