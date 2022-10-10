@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '@app/shared/_services/common.service';
 import { NotificationService } from './service/notification.service';
-
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-notifications',
@@ -17,15 +17,21 @@ export class NotificationsComponent implements OnInit {
     this.getAllNotifications();
   }
 
-    // Get all notifications
-    getAllNotifications() {
-      this._notification.getNotifications(this._commonService.getUserId()).subscribe(
-        (response: any) => {
-          if(response){
-            this.notifications = response;
-            console.log("response",  this.notifications)
-         }
+  // Get all notifications
+  getAllNotifications() {
+    this._notification.getNotifications(this._commonService.getUserId()).subscribe(
+      (response: any) => {
+        if (response) {
+
+          this.notifications = response;
+          this.notifications.forEach((element: any) => {
+            var now = new Date();;
+            var then = element.createdAt;
+            var diff = moment.duration(moment(then).diff(moment(now)));
+           });
+        
         }
-      );
-    }
+      }
+    );
+  }
 }
