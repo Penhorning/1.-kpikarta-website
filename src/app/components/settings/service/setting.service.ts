@@ -20,20 +20,11 @@ export class SettingService {
     return this._httpService.PATCH(`/color_settings/${settingId}`, data);
   }
 
-  generateMFAQRCode() {
-    return this._httpService.PUT('/users/generateMFAQRCode');
+  check2FAConfig() {
+    return this._httpService.POST('/users/check2FAConfig');
   }
-  enableMFA(data: any) {
-    return this._httpService.PUT('/users/enableMFA', data);
-  }
-  resetMFAConfig() {
-    return this._httpService.PUT('/users/resetMFA');
-  }
-  checkMFAConfig() {
-    return this._httpService.POST('/users/checkMFAConfig');
-  }
-  toggleMFA(data: any) {
-    return this._httpService.PUT('/users/toggleMFA', data);
+  toggle2FA(data: any) {
+    return this._httpService.PUT('/users/toggle2FA', data);
   }
 
   changePassword(data: any) {

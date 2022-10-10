@@ -49,14 +49,10 @@ export class LoginComponent implements OnInit {
         email: this.route.snapshot.queryParamMap.get("email") || "",
         profilePic: this.route.snapshot.queryParamMap.get("profilePic") || "",
         companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || "",
-        mfaEnabled: this.route.snapshot.queryParamMap.get("mfaEnabled") || "false",
-        mfaVerified: this.route.snapshot.queryParamMap.get("mfaVerified") || "false",
+        twoFactorEnabled: this.route.snapshot.queryParamMap.get("twoFactorEnabled") || "false",
         mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false"
       }
-      if (sessionData.mfaEnabled == "true" && sessionData.mfaVerified == "true") {
-        this._signupService.setSignUpSession(sessionData);
-        this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa', 'mobile': sessionData.mobileVerified }});
-      } else if (sessionData.mobileVerified == "true") {
+      if (sessionData.mobileVerified == "true" && sessionData.twoFactorEnabled == "true") {
         this._signupService.setSignUpSession(sessionData);
         this.router.navigate(['/two-step-verification']);
       } else {
@@ -75,13 +71,12 @@ export class LoginComponent implements OnInit {
 
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobileVerified, currentPlan, mfaEnabled, mfaVerified } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, currentPlan, twoFactorEnabled } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
               email,
-              stage: 1,
-              mobileVerified
+              stage: 1
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
@@ -105,24 +100,17 @@ export class LoginComponent implements OnInit {
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({email: this.loginForm.value.email});
             }
-            if (mfaEnabled && mfaVerified) {
-              this._signupService.setSignUpSession(sessionData);
-              this.router.navigate(['/two-step-verification'], { queryParams: { 'auth': 'mfa', 'mobile': mobileVerified ? mobileVerified : false }});
-            }
-            else if (mobileVerified) {
+            if (mobile && twoFactorEnabled && mobileVerified) {
               this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/two-step-verification']);
-            }
-            else {
+            } else {
               this._commonService.setSession(sessionData);
               this.router.navigate(['/dashboard']);
             }
           }
         },
-        (error: any) => {
-          this.submitFlag = false;
-        }
-      );
+        (error: any) => { }
+      ).add(() => this.submitFlag = false );
     }
   }
 

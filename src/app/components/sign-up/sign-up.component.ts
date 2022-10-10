@@ -30,10 +30,10 @@ export class SignUpComponent implements OnInit {
 	preferredCountries: CountryISO[] = [CountryISO.Canada, CountryISO.UnitedStates, CountryISO.India];
 
   signupForm = this.fb.group({
-    fullName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
-    email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]],
+    fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
+    email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
     mobile: [{}, Validators.required],
-    companyName: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+    companyName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
   });
   get form() { return this.signupForm.controls; }
 
@@ -58,7 +58,8 @@ export class SignUpComponent implements OnInit {
       this.signupForm.controls["fullName"].disable();
       this.signupForm.controls["email"].disable();
     } else {
-      this.signupForm.addControl("password", this.fb.control('', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]));
+      this.signupForm.addControl("password", this.fb.control('', [Validators.required, Validators.pattern(this._commonService.formValidation.password)]));
+      this.signupForm.addControl("confirmPassword", this.fb.control('', [Validators.required, Validators.pattern(this._commonService.formValidation.password)]));
     }
     
   }
@@ -70,30 +71,33 @@ export class SignUpComponent implements OnInit {
 
     if (this.signupForm.valid) {
 
-      this.submitFlag = true;
-
       if (!this.user.userId) {
-        this._signupService.signup(this.signupForm.value).subscribe(
-          (response: any) => {
-            let { token, email } = response;
-            let sessionData = {
-              token: token.id,
-              email,
-              stage: 1,
-              emailVerified: false,
-              mobileVerified: false
+        if (this.signupForm.value.password !== this.signupForm.value.confirmPassword) {
+          this._commonService.errorToaster("Password and Confirm Password are not matching");
+        }
+        else {
+          this.submitFlag = true;
+          this._signupService.signup(this.signupForm.value).subscribe(
+            (response: any) => {
+              let { token, email } = response;
+              let sessionData = {
+                token: token.id,
+                email,
+                stage: 1,
+                emailVerified: false
+              }
+              this._signupService.setSignUpSession(sessionData);
+              this.router.navigate(['/sign-up/verification']);
+            },
+            (error: any) => {
+              if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+                this._commonService.errorToaster("Email is already registered, please try with a different one");
+              }
             }
-            this._signupService.setSignUpSession(sessionData);
-            this.router.navigate(['/sign-up/verification']);
-          },
-          (error: any) => {
-            this.submitFlag = false;
-            if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-              this._commonService.errorToaster("Email is already registered, please try with a different one");
-            }
-          }
-        );
+          ).add(() => this.submitFlag = false );
+        }
       } else {
+        this.submitFlag = true;
         this.signupForm.value.fullName = this.signupForm.getRawValue().fullName;
         this.signupForm.value.email = this.signupForm.getRawValue().email;
         this.signupForm.value.type = "social_user";
@@ -108,10 +112,8 @@ export class SignUpComponent implements OnInit {
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/subscription-plan']);
           },
-          (error: any) => {
-            this.submitFlag = false;
-          }
-        );
+          (error: any) => { }
+        ).add(() => this.submitFlag = false );
       }
     }
   }
