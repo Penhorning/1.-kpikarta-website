@@ -34,10 +34,10 @@ export class KartaService {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
   getKartas(userId: string) {
-    return this._httpService.GET(`/karta?filter[include]=owner&filter[limit]=3&filter[where][userId]=${userId}&filter[order]=createdAt Desc`);
+    return this._httpService.GET(`/karta?filter[include]=owner&filter[limit]=3&filter[where][userId]=${userId}&filter[where][is_deleted]=false&filter[order]=createdAt Desc`);
   }
   deleteKarta(data: any) {
-    return this._httpService.POST('/karta/delete', {kartaId:data});
+    return this._httpService.POST('/karta/delete', data);
   }
   deleteSharedKarta(id: any) {
     return this._httpService.POST('/karta/delete-shared-karta', id);
@@ -59,6 +59,9 @@ export class KartaService {
   }
   getSharedKarta(data: any) {
     return this._httpService.POST('/karta/sharedKartas', data);
+  }
+  copyKarta(data: any){
+    return this._httpService.POST('/karta/copy-shared-karta', data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
 

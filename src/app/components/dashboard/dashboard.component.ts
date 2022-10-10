@@ -117,23 +117,45 @@ export class DashboardComponent implements OnInit {
 
   // Submit shared data
   shareKarta() {
+    let flag = false;
     this.selectedUsers.forEach((element: any) => {
-      this.emails.push(element.email)
+      if(element.email != this._commonService.getEmailId()){
+       this.emails.push(element.email);
+     }else{
+       flag = true;
+     }
     });
-    let data = {
-      karta: this.sharingKarta,
-      emails: this.emails
+    if(!flag){
+      let data = {
+        karta: this.sharingKarta,
+        emails: this.emails
+      }
+      this.sharedSubmitFlag = true;
+      this._kartaService.sharedEmails(data).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Your have shared karta successfully");
+          $('#shareLinkModal').modal('hide');
+          this.getKartas();
+          this.getSharedKarta();
+        },
+        (error: any) => { }
+      ).add(() => this.sharedSubmitFlag = false);
+    }else{
+      let data = {
+        karta: this.sharingKarta,
+        emails: this.emails
+      }
+      this.sharedSubmitFlag = true;
+      this._kartaService.sharedEmails(data).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Your have shared karta successfully");
+          $('#shareLinkModal').modal('hide');
+          this.getKartas();
+          this.getSharedKarta();
+        },
+        (error: any) => { }
+      ).add(() => this.sharedSubmitFlag = false);
     }
-    this.sharedSubmitFlag = true;
-    this._kartaService.sharedEmails(data).subscribe(
-      (response: any) => {
-        this._commonService.successToaster("Your have shared karta successfully");
-        $('#shareLinkModal').modal('hide');
-        this.getKartas();
-        this.getSharedKarta();
-      },
-      (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false);
   }
 
   // Get all users 
@@ -141,7 +163,9 @@ export class DashboardComponent implements OnInit {
     this._kartaService.getAllUsers().subscribe(
       (response: any) => {
         if (response) {
-          this.users = response.users[0].data;
+          this.users = response.users[0].data.filter((x:any) => {
+            return x.email != this._commonService.getEmailId();
+          })
         } else {
           this.users = [];
         }
@@ -161,4 +185,17 @@ export class DashboardComponent implements OnInit {
     })
   }
 
+
+  // Copy karta
+  copyKarta(e: string){
+    const result = confirm("Are you sure you want to create copy of this karta?");
+    if (result) {
+      this._kartaService.copyKarta({kartaId:e}).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Karta copy created successfully.");
+          this.getKartas();
+        }
+      );
+    }
+  }
 }

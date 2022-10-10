@@ -709,14 +709,7 @@
             </div>
             <div class="row">
               <div class="col-lg-12">
-                <!-- <select class="form-control" value="" [(ngModel)]="currentNode.contributorId" (change)="updateNode('contributorId', $any($event.target).value)">
-                  <option value="undefined" disabled>Select</option>
-                  <option *ngFor="let user of users" [value]="user._id">{{ user.fullName }} ({{ user.email }})</option>
-                </select> -->
-                <!-- <ng-select [items]="users"  placeholder ="Select users" (change)="updateNode('contributorId', $any($event.target).value)"
-                [multiple]="false" bindLabel="email" [(ngModel)]="selectedUsers" >
-            </ng-select> -->
-            <ng-select  [(ngModel)]="currentNode.contributorId" (change)="updateNode('contributorId',$event )">
+            <ng-select  [(ngModel)]="currentNode.contributorId" placeholder="Select users" (change)="updateNode('contributorId',$event )">
               <ng-option *ngFor="let user of users" [value]="user._id">{{ user.fullName }} ({{ user.email }})</ng-option>
            </ng-select>
               </div>

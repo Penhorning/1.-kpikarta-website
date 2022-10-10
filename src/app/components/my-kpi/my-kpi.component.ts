@@ -159,12 +159,11 @@ export class MyKpiComponent implements OnInit {
   getAllUser() {
     this._myKpiService.getAllUsers().subscribe(
       (response: any) => {
-        response.users[0].data.filter((item: any) => {
-          item.nameWithMail = item.fullName + ' - [' + item.email + ']';
+        this.users = response.users[0].data.filter((x:any) => {
+          return x.email != this._commonService.getEmailId();
         })
-        this.users = response.users[0].data;
       }
-    ).add(() => this.loadingKarta = false);
+    );
   }
 
   // Search
@@ -356,7 +355,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         this.creators = response.creators;
       }
-    ).add(() => this.loadingKarta = false);
+    );
   }
 
   // View more

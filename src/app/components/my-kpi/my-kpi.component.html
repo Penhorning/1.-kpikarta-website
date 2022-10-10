@@ -400,11 +400,11 @@
                         </tr>
                       </tbody>
                     </table>
-                    <div style="text-align: center;">
+                    <div class="text-center">
                       <ng-container *ngIf="loadingKarta">
                         <div class="p-5" [innerHtml]="loader"></div>
                       </ng-container>
-                      <p style="cursor: pointer; color: #007bff;" (click)="viewMore()">View More..</p>
+                      <p style="cursor: pointer; color: #007bff;" *ngIf="!loadingKarta" (click)="viewMore()">View More..</p>
                     </div>
                   </div>
                 </div>
@@ -651,11 +651,11 @@
                         </tr>
                       </tbody>
                     </table>
-                    <div style="text-align: center;">
+                    <div class="text-center">
                       <ng-container *ngIf="loadingKarta">
                         <div class="p-5" [innerHtml]="loader"></div>
                       </ng-container>
-                      <p style="cursor: pointer; color: #007bff;" (click)="viewMore()">View More..</p>
+                      <p style="cursor: pointer; color: #007bff;" *ngIf="!loadingKarta" (click)="viewMore()">View More..</p>
                     </div>
                   </div>
                 </div>
