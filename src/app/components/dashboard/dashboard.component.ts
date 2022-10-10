@@ -84,7 +84,7 @@ export class DashboardComponent implements OnInit {
   deleteKarta(id: string) {
     const result = confirm("Are you sure you want to delete this karta?");
     if (result) {
-      this._kartaService.deleteKarta(id).subscribe(
+      this._kartaService.deleteKarta({kartaId: id}).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta deleted successfully");
           this.getKartas();
