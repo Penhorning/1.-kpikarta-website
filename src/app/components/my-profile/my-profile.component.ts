@@ -4,6 +4,7 @@ import { CommonService } from '@app/shared/_services/common.service';
 import { ProfileService } from './service/profile.service';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { ActivatedRoute } from '@angular/router';
 
 declare const $: any;
 
@@ -92,12 +93,17 @@ export class MyProfileComponent implements OnInit {
   });
   get phoneForm() { return this.phoneNumberForm.controls; }
 
-  constructor(private fb: FormBuilder, private _profileService: ProfileService, public _commonService: CommonService) { }
+  constructor(private fb: FormBuilder, private _profileService: ProfileService, public _commonService: CommonService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.getUserProfile();
     this.getDepartments();
     this.getEmployeesRanges();
+
+    this.route.fragment.subscribe(f => {
+      const element = document.querySelector("#" + f)
+      if (element) element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    })
   }
 
   setRegion() {

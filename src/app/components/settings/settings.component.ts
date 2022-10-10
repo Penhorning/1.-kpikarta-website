@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SettingService } from '@app/components/settings/service/setting.service';
 import { Options } from '@angular-slider/ngx-slider';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -23,24 +24,12 @@ export class SettingsComponent implements OnInit {
     ceil: 100
   };
 
-// MFA variables  
-  qr = {
-    code: "",
+// 2FA variables  
+  _2fa = {
     isChecking: false,
-    isGenerating: false,
-    isResetting: false,
-    isMFASetup: false,
-    isMFAEnabled: false,
-    isAvailable: false,
-    submitted: false,
-    submitFlag: false
+    isSetup: false,
+    isEnabled: false
   }
-
-  // QR code form
-  authenticatorForm = this.fb.group({
-    code: ['', [Validators.required]]
-  });
-  get authenticatorControls() { return this.authenticatorForm.controls };
 
   // Color slider form
   colorForm = this.fb.group({
@@ -62,7 +51,7 @@ export class SettingsComponent implements OnInit {
 
   get form() { return this.passwordForm.controls };
 
-  constructor(private fb: FormBuilder, private _settingService: SettingService, private _commonService: CommonService) { }
+  constructor(private fb: FormBuilder, private _settingService: SettingService, private _commonService: CommonService, private router: Router) { }
 
   ngOnInit(): void {
     this.getColorSettings();
@@ -144,73 +133,35 @@ export class SettingsComponent implements OnInit {
 
 
 
-// MFA functions
-  checkMFAConfig() {
-    this.qr.isChecking = true;
-    this._settingService.checkMFAConfig().subscribe(
+// 2FA functions
+  check2FAConfig() {
+    this._2fa.isChecking = true;
+    this._settingService.check2FAConfig().subscribe(
       (response: any) => {
-        this.qr.isMFAEnabled = response.mfa.enabled;
-        if (response.mfa.secret && response.mfa.qrCode && response.mfa.verified) {
-          this.qr.isMFASetup = true;
+        this._2fa.isEnabled = response.data._2faEnabled;
+        if (response.data.mobile && response.data.mobileVerified) {
+          this._2fa.isSetup = true;
         }
       },
       (error: any) => { }
-    ).add(() => this.qr.isChecking = false );
+    ).add(() => this._2fa.isChecking = false );
   }
 
-  generateQRCode() {
-    if (!this.qr.isMFASetup) {
-      this.qr.isGenerating = true;
-      this._settingService.generateMFAQRCode().subscribe(
+  toggle2FA(e: any) {
+    if (this._2fa.isSetup) {
+      this._settingService.toggle2FA({type: e.target.checked}).subscribe(
         (response: any) => {
-          this.qr.code = response.qrcode;
-          this.qr.isAvailable = true;
-        },
-        (error: any) => { }
-      ).add(() => this.qr.isGenerating = false );
-    }
-  }
-
-  onAuthenticationSubmit() {
-    this.qr.submitted = true;
-
-    if (this.authenticatorForm.valid) {
-      this.qr.submitFlag = true;
-      this._settingService.enableMFA(this.authenticatorForm.value).subscribe(
-        (response: any) => {
-          this._commonService.successToaster("MFA setup successfully");
-          this.qr.isMFAEnabled = this.qr.isMFASetup = true;
-          this.qr.isAvailable = false;
-        },
-        (error: any) => { }
-      ).add(() => this.qr.submitFlag = false );
-    }
-  }
-
-  resetMFA() {
-    const result = confirm("Are you sure you want to reset your MFA?");
-    if (result && this.qr.isMFASetup) {
-      this.qr.isResetting = true;
-      this._settingService.resetMFAConfig().subscribe(
-        (response: any) => {
-          this.qr.isMFAEnabled = this.qr.isMFASetup = false;
-          this._commonService.successToaster("Your MFA resetted successfully");
-        },
-        (error: any) => { }
-      ).add(() => this.qr.isResetting = false );
-    }
-  }
-
-  toggleMFA(e: any) {
-    if (this.qr.isMFASetup) {
-      this._settingService.toggleMFA({type: e.target.checked}).subscribe(
-        (response: any) => {
-          if (response.type === true) this._commonService.successToaster("Your MFA enabled successfully");
-          else if (response.type === false) this._commonService.successToaster("Your MFA disabled successfully");
+          if (response.type === true) this._commonService.successToaster("Your 2FA enabled successfully");
+          else if (response.type === false) this._commonService.successToaster("Your 2FA disabled successfully");
         },
         (error: any) => { }
       );
     }
+  }
+
+  navigateToProfile() {
+    this.router.navigate(['/my-profile'], { fragment: 'phoneNumber' });
+    this._commonService.warningToaster("Please verify your mobile number first!");
   }
 
 

@@ -87,7 +87,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" id="phoneNumber">
                                         <div class="form-group">
                                             <label class="w-100" for="mobile">Mobile Number</label>
                                             <div class="d-flex">
@@ -103,14 +103,14 @@
                                                 [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
                                                 </ngx-intl-tel-input>
                                                 <ng-container *ngIf="numberType == 'Change'">
-                                                    <img src="assets/img/check_circle.png" class="text-center ml-2 verified_icon" title="Verified" alt="" />
-                                                    <img src="assets/img/edit.png" class="text-center ml-1 phone_edit_icon" title="Edit" alt="" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal"/>
+                                                    <img src="assets/img/check_circle.png" class="align-self-center text-center ml-2 verified_icon" title="Verified" alt="" />
+                                                    <img src="assets/img/edit.png" class="align-self-center text-center ml-1 phone_edit_icon" title="Edit" alt="" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal"/>
                                                 </ng-container>
                                                 <ng-container *ngIf="numberType == 'Verify'">
                                                     <!-- <button type="button" class="btn btn-outline-danger ml-2 mt-0" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
                                                       Verify
                                                     </button> -->
-                                                    <img src="assets/img/images.png" class="align-self-center text-center ml-1 phone_edit_icon" title="Unverified" alt="" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal"/>
+                                                    <img src="assets/img/images.png" class="align-self-center text-center ml-1 phone_edit_icon" title="Verify mobile number" alt="" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal"/>
                                                 </ng-container>
                                             </div>
                                         </div>

@@ -15,12 +15,6 @@ export class SignupService {
   getSignUpSession() {
     return JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
   }
-  updateSignUpVerificationSession(type: string) {
-    let session = JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
-    if (type == "mobile") session.mobileVerified = true;
-    else if (type == "email") session.emailVerified = true;
-    window.sessionStorage.setItem("kpi-karta-signup-session", JSON.stringify(session));
-  }
   updateSignUpSession(stageNumber: number) {
     let session = JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
     session.stage = stageNumber;
@@ -47,9 +41,6 @@ export class SignupService {
   }
   sendMobileCode() {
     return this._httpService.POST(`/users/send-mobile-code?access_token=${this.getSignUpSession().token}`, "");
-  }
-  verifyMFACode(data: any) {
-    return this._httpService.PUT(`/users/verifyMFAToken?access_token=${this.getSignUpSession().token}`, data);
   }
   verifyMobile(data: any) {
     return this._httpService.POST(`/users/verify-mobile?access_token=${this.getSignUpSession().token}`, data);

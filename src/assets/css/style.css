@@ -1355,6 +1355,7 @@ li.nav-item-cus {
 a.nav-link-cus {
   font-size: 19px;
   font-weight: 500;
+  padding: 0.5rem 2.4rem;
 }
 
 a.nav-link-cus:hover {
@@ -1377,7 +1378,7 @@ a.nav-link-cus:hover {
 }
 
 .my_suggestions ul li.nav-item-cus {
-  width: 12%;
+  width: auto;
   text-align: center;
 }
 

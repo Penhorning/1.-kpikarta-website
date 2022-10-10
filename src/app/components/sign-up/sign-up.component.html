@@ -44,6 +44,18 @@
                                 </div>
                             </div>
 
+                            <div class="form-group" *ngIf="!user.userId">
+                                <label for="confirmPassword">Confirm Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control form-control1" id="confirmPassword" formControlName="confirmPassword" [maxlength]="50"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
+                                <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors" class="invalid-feedback">
+                                    <div *ngIf="form.confirmPassword.errors.required">Confirm password is required!</div>
+                                    <div *ngIf="form.confirmPassword.errors.pattern">Password should contain at least 1 number,
+                                        1 lowercase, 1 uppercase, 1 special character and must include at least 8 digits.
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="w-100" for="mobile">Mobile Number <span class="text-danger">*</span></label>
                                 <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"

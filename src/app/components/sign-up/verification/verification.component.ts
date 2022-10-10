@@ -20,19 +20,6 @@ export class VerificationComponent implements OnInit {
   });
   get form() { return this.verificationForm.controls; }
 
-  mobileSubmitted: boolean = false;
-  mobileSubmitFlag: boolean = false;
-  mobileVerificationFlag: boolean = false;
-
-  mobileVerificationForm = this.fb.group({
-    code: ['', Validators.pattern(/^[0-9]*$/)]
-  });
-  get mobileForm() { return this.mobileVerificationForm.controls; }
-
-  emailVerified: boolean = false;
-  mobileVerified: boolean = false;
-  mobileVerifiedFlag: boolean = false;
-
   constructor(
     private fb: FormBuilder,
     private _commonService: CommonService,
@@ -41,16 +28,6 @@ export class VerificationComponent implements OnInit {
   ) {
     // Preventing back button in browser
     window.onpopstate = function (e: any) { window.history.forward(); }
-
-    // Check verification
-    if (this._signupService.getSignUpSession().mobileVerified) {
-      this.mobileVerified = this.mobileVerifiedFlag = this._signupService.getSignUpSession().mobileVerified;
-      this.mobileVerificationForm.controls["code"].disable();
-    }
-    if (this._signupService.getSignUpSession().emailVerified) {
-      this.emailVerified = this.mobileVerifiedFlag = this._signupService.getSignUpSession().emailVerified;
-      this.verificationForm.controls["code"].disable();
-    }
   }
 
   ngOnInit(): void {
@@ -67,10 +44,9 @@ export class VerificationComponent implements OnInit {
 
       this._signupService.verification(this.verificationForm.value).subscribe(
         (response: any) => {
-          this.emailVerified = true;
           this._commonService.successToaster("Email is verified successfully");
-          this.verificationForm.controls["code"].disable();
-          this._signupService.updateSignUpVerificationSession('email');
+          this._signupService.updateSignUpSession(2);
+          this.router.navigate(['/subscription-plan']);
         },
         (error: any) => { }
       ).add(() => this.submitFlag = false);
@@ -85,43 +61,6 @@ export class VerificationComponent implements OnInit {
       },
       (error: any) => { }
     ).add(() => this.verificationFlag = false);
-  }
-
-  onMobileSubmit() {
-
-    this.mobileSubmitted = true;
-
-    if (this.mobileVerificationForm.valid && this.mobileVerificationForm.value.code) {
-
-      this.mobileSubmitFlag = true;
-
-      this._signupService.verifyMobile(this.mobileVerificationForm.value).subscribe(
-        (response: any) => {
-          this.mobileVerified = true;
-          this._commonService.successToaster("Mobile Number is verified successfully");
-          this.mobileVerificationForm.controls["code"].disable();
-          this._signupService.updateSignUpVerificationSession('mobile');
-        },
-        (error: any) => { }
-      ).add(() => this.mobileSubmitFlag = false);
-    }
-  }
-
-resendMobileCode() {
-    this.mobileVerificationFlag = true;
-    this._signupService.sendMobileCode().subscribe(
-      (response: any) => {
-        this._commonService.successToaster("Verification code resend successfully");
-      },
-      (error: any) => { }
-    ).add(() => this.mobileVerificationFlag = false);
-  }
-
-  goToNext() {
-    if (this.emailVerified) {
-      this.router.navigate(['/subscription-plan']);
-      this._signupService.updateSignUpSession(2);
-    }
   }
 
 }
