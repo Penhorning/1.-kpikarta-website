@@ -37,10 +37,7 @@ export class KartaService {
     return this._httpService.GET(`/karta?filter[include]=owner&filter[limit]=3&filter[where][userId]=${userId}&filter[order]=createdAt Desc`);
   }
   deleteKarta(id: string) {
-    return this._httpService.DELETE('/karta/', id);
-  }
-  deleteSharedKarta(id: any) {
-    return this._httpService.POST('/karta/delete-shared-karta', id);
+    return this._httpService.POST('/karta/delete', id);
   }
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);

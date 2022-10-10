@@ -368,9 +368,9 @@ export class MyKpiComponent implements OnInit {
 
   // Sort 
   onSortClick(event: any, col: any) {
-    console.log("col", col)
     let target = event.currentTarget,
-      classList = target.classList;
+    classList = target.classList;
+    console.log("event", classList)
     if (classList.contains('fa-chevron-up')) {
       classList.remove('fa-chevron-up');
       classList.add('fa-chevron-down');
@@ -385,8 +385,6 @@ export class MyKpiComponent implements OnInit {
 
   sortArr(colName: any) {
     this.kpis.sort((a: any, b: any) => {
-      console.log("a b", a, b);
-      debugger
       a = a[colName].toLowerCase();
       b = b[colName].toLowerCase();
       return a.localeCompare(b) * this.sortDir;

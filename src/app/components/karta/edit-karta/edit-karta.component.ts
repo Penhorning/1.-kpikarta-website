@@ -86,6 +86,7 @@ export class EditKartaComponent implements OnInit {
   ShowFilter = false;
   limitSelection = false;
   users: any = [];
+  selectedUsers: any;
   dropdownSettings: any = {};
   contributorUsers: any = [];
   selectedContributorUsers: any = [];
@@ -261,7 +262,7 @@ export class EditKartaComponent implements OnInit {
     let total_percentage: number[] = [];
     
     if (!params.hasOwnProperty("children")) params.children = [];
-    params.children.forEach((element: any) => {
+    params?.children?.forEach((element: any) => {
       if (element.hasOwnProperty("achieved_value")) {
         let targetValue = 0;
         if (this.kpiCalculationPeriod === "month-to-date") {
@@ -424,7 +425,7 @@ export class EditKartaComponent implements OnInit {
   // }
 
   // Update node
-  updateNode(key: string, value: any, addTarget?: string) {
+  updateNode(key: string, value: any, addTarget?: any) {
     let data;
     if (key === "achieved_value" || key === "updateDraggedNode") data = value;
     else data = { [key]: value }
