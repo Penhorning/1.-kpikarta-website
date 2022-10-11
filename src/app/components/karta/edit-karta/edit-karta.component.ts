@@ -26,6 +26,7 @@ export class EditKartaComponent implements OnInit {
   loadingKarta: boolean = true;
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
+  isRtNodDrgFrmSide: boolean = false;
 
   // D3 karta events
   D3SVG: any = {
@@ -101,10 +102,8 @@ export class EditKartaComponent implements OnInit {
       that.togggleLeftSidebar();
     });
     // Close right sidebar when click outside
-    $(document).on('click', function (event: any) {
-      if (!$(event.target).closest('#rightSidebar').length && event.target.id !== "delete_btn") {
-        that.closeRightSidebar();
-      }
+    $(document).on('click', '.right_sidebar_overlay', function (event: any) {
+      that.closeRightSidebar();
     });
     // Get color settings
     this.getColorSettings();
@@ -126,12 +125,12 @@ export class EditKartaComponent implements OnInit {
   }
   // CLOSE RIGHT SIDEBAR
   closeRightSidebar() {
-    $('#rightSidebar').removeClass("open");
+    $('#rightSidebar, .right_sidebar_overlay').removeClass("open");
     $('body').removeClass("rightSidebarOpened");
   }
   // OPEN RIGHT SIDEBAR
   openRightSidebar() {
-    $('#rightSidebar').addClass("open");
+    $('#rightSidebar, .right_sidebar_overlay').addClass("open");
     $('#rightSidebar').scrollTop(0);
     $('body').addClass("rightSidebarOpened");
   }
@@ -475,13 +474,13 @@ export class EditKartaComponent implements OnInit {
   }
   onDragLeave(ev: any) {
     ev.preventDefault();
+    this.isRtNodDrgFrmSide = false;
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.remove("selectedPhase");
   }
 
   onDragStart(ev: any) {
-    // console.log(ev)
-    // ev.dataTransfer.setData("text", ev.target.id);
+    this.isRtNodDrgFrmSide = true;
   }
 
   onDrop(ev: any, type?: string) {
@@ -504,6 +503,7 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.getKartaInfo();
         this.showSVG = true;
+        this.isRtNodDrgFrmSide = false;
         this.updateNodeProperties(response);
       }
     );

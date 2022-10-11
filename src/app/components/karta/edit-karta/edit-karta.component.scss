@@ -1,3 +1,16 @@
+.right_sidebar_overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 994;
+    display: none;
+}
+.right_sidebar_overlay.open {
+    display: block;
+}
+
 .sidebar_collapsible_btn {
     z-index: 999;
     top: 50%;

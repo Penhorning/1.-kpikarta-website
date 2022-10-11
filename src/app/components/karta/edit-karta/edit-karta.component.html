@@ -455,7 +455,7 @@
                   <div class="align-items-center border d-block d-flex justify-content-end karta_dummy_lines pr-3" *ngIf="phase.name !== 'Target'"
                     [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)"
                     (dragleave)="onDragLeave($event)" (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" (click)="addRoteNode($event)"><i class="fa fa-plus-circle"></i> Node</button>
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgFrmSide" (click)="addRoteNode($event)"><i class="fa fa-plus-circle"></i> Node</button>
                   </div>
                   <div class="d-block border karta_dummy_lines" *ngIf="phase.name === 'Target'" [id]="phase?.id">
                   </div>
@@ -482,7 +482,7 @@
 
                 </div>
                 <div class="col-lg-3">
-                  <img src="assets/img/Add-Layer.svg" class="img-fluid" id="reset_zoom_btn">
+                  <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" style="cursor: pointer;" id="reset_zoom_btn">
                 </div>
               </div>
             </div>
@@ -493,6 +493,7 @@
 
 
 
+      <div class="right_sidebar_overlay"></div>
       <div class="right-side-bar" id="rightSidebar">
         <!-- <div class="test">
           <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle">

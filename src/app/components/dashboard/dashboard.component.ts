@@ -55,7 +55,7 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  getSharedKarta(){
+  getSharedKarta() {
     let data = {
       page : 1,
       limit: 10,
