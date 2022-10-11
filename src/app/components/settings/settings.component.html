@@ -11,7 +11,7 @@
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab"
                 href="#tabs-1" role="tab">Settings</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2"
-                role="tab" (click)="checkMFAConfig()">Multi Factor Authentication</a> </li>
+                role="tab" (click)="check2FAConfig()">Two Factor Authentication</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3"
                 role="tab">Change Password</a> </li>
           </ul>
@@ -105,67 +105,32 @@
 
             <!-- Multi factor authentication -->
             <div class="tab-pane" id="tabs-2" role="tabpanel">
-              <ng-container *ngIf="!qr.isChecking; else loading">
-                <div class="factor-cl" *ngIf="!qr.isAvailable">
+              <ng-container *ngIf="!_2fa.isChecking; else loading">
+                <div class="factor-cl" *ngIf="!_2fa.isSetup">
                   <div class="row">
                     <div class="col-8 align-self-center pt-1">
-                      <h5>{{qr.isMFASetup ? 'Reset Authentication' : 'Setup Authenticator App'}}</h5>
+                      <h5>Setup Two Factor Authentication</h5>
                     </div>
                     <div class="col-4 text-right">
                       <div class="">
                         <div class="form-check custom-box">
-                          <!-- <input type="checkbox" class="form-check-input" id="generateCheck" [checked]="qr.isMFASetup"
-                            [disabled]="qr.isGenerating || qr.isResetting" (change)="generateQRCode($event)"> -->
-                          <button class="btn btn-outline-dark my-0" *ngIf="!qr.isMFASetup" (click)="generateQRCode()" [disabled]="qr.isGenerating">Set Up</button>
-                          <button class="btn btn-danger my-0"*ngIf="qr.isMFASetup" (click)="resetMFA()" [disabled]="qr.isResetting">Reset</button>
+                          <button class="btn btn-outline-dark my-0" (click)="navigateToProfile()">Set Up</button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div class="factor-cl" *ngIf="qr.isAvailable">
-                  <h1 class="font-weight-normal mb-4">Scan the QR code</h1>
-                  <p>
-                    Use the authenticator app to scan the QR code. This will connect the Authenticator app with you
-                    account.
-                    <br>
-                    After you scan the QR code, Enter the code below:
-                  </p>
-                  <img [src]="qr.code" alt="">
-                  <div>
-                    <form [formGroup]="authenticatorForm" (ngSubmit)="onAuthenticationSubmit()">
-                      <div class="form-group">
-                        <label class="font-weight-bold mb-0" for="code">Enter the 6-digit code you see in your
-                          authenticator app</label>
-                        <input type="text" class="form-control font-weight-normal" id="code"
-                          placeholder="Authentication code" formControlName="code" [maxlength]="6"
-                          [ngClass]="{ 'is-invalid': (qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors }">
-                        <div
-                          *ngIf="(qr.submitted || authenticatorControls.code.touched) && authenticatorControls.code.errors"
-                          class="invalid-feedback">
-                          <div *ngIf="authenticatorControls.code.errors.required">Code is required!</div>
-                        </div>
-                      </div>
-                      <button class="btn btn-light btn_default max-270 mt-5" [disabled]="qr.submitFlag">
-                        <div class="spinner-border text-light align-top" role="status" *ngIf="qr.submitFlag">
-                          <span class="sr-only">Loading...</span>
-                        </div>
-                        <ng-container *ngIf="!qr.submitFlag">Confirm</ng-container>
-                      </button>
-                    </form>
                   </div>
                 </div>
                 <div class="factor-cl border-0">
                   <div class="row">
                     <div class="col-8">
-                      <h5>Enable/Disable Multi Factor Authentication</h5>
+                      <h5>Enable/Disable Two Factor Authentication</h5>
                     </div>
                     <div class="col-4 text-right">
                       <div class="toggle-tab">
                         <label class="switch" for="checkbox">
-                          <input type="checkbox" id="checkbox" [checked]="qr.isMFAEnabled" [disabled]="!qr.isMFASetup"
-                            (change)="toggleMFA($event)" />
-                          <div class="slider round" [ngStyle]="{'cursor': qr.isMFASetup ? 'pointer' : 'default'}"></div>
+                          <input type="checkbox" id="checkbox" [checked]="_2fa.isEnabled" [disabled]="!_2fa.isSetup"
+                            (change)="toggle2FA($event)" />
+                          <div class="slider round" [ngStyle]="{'cursor': _2fa.isSetup ? 'pointer' : 'default'}"></div>
                         </label>
                       </div>
                     </div>

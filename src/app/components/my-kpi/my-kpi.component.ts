@@ -11,10 +11,25 @@ declare const $: any;
 })
 export class MyKpiComponent implements OnInit {
 
+  sortDir = 1;
+  sortOrder: string = 'asc';
+  arrow_icon: boolean = true; 
+  arrow_icon_name: boolean = true; 
+  arrow_icon_fullName: boolean = true; 
+  arrow_icon_kpi: boolean = true; 
+  arrow_icon_actual: boolean = true; 
+  arrow_icon_lastedit: boolean = true; 
+  arrow_icon_duedate: boolean = true; 
+  arrow_icon_daysleft: boolean = true; 
+  arrow_icon_completion: boolean = true; 
+
+
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
   creators: any = [];
+  loadingKarta: boolean = true;
+  loader: any = this._commonService.loader;
   // Pagination
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -72,6 +87,17 @@ export class MyKpiComponent implements OnInit {
     { name: '51 to 70%', value: { "min": 51, "max": 70 }, selected: false },
     { name: '71 to 100%', value: { "min": 71, "max": 100 }, selected: false },
     { name: '101 to Above', value: { "min": 101, "max": 999999999 }, selected: false }
+  ];
+
+ headerList = [
+    { name: 'Karta', sort: '' },
+    { name: 'KPI', sort: '' },
+    { name: 'Target', sort: '' },
+    { name: 'Actual', sort: '' },
+    { name: 'Last Edited', sort: '' },
+    { name: 'Due Date', sort: '' },
+    { name: 'Days Left', sort: '' },
+    { name: 'Completion', sort: '' }
   ];
 
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService) {
@@ -133,7 +159,7 @@ export class MyKpiComponent implements OnInit {
           this.kpis = [];
         }
       }
-    )
+    ).add(() => this.loadingKarta = false);
   }
 
   // Get color for each node percentage
@@ -155,10 +181,9 @@ export class MyKpiComponent implements OnInit {
   getAllUser() {
     this._myKpiService.getAllUsers().subscribe(
       (response: any) => {
-        response.users[0].data.filter((item: any) => {
-          item.nameWithMail = item.fullName + ' - [' + item.email + ']';
+        this.users = response.users[0].data.filter((x: any) => {
+          return x.email != this._commonService.getEmailId();
         })
-        this.users = response.users[0].data;
       }
     );
   }
@@ -254,7 +279,7 @@ export class MyKpiComponent implements OnInit {
       nodeId: this.sharingKarta._id,
       userIds: this.selectedUsers
     }
-   this.sharedSubmitFlag = true;
+    this.sharedSubmitFlag = true;
     this._myKpiService.shareNode(data).subscribe(
       (response: any) => {
         if (response) this._commonService.successToaster("Your have shared successfully");
@@ -262,7 +287,7 @@ export class MyKpiComponent implements OnInit {
         this.getMyKPIsList();
       },
       (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false );
+    ).add(() => this.sharedSubmitFlag = false);
   }
 
   editActualValue(i: number) {
@@ -356,10 +381,61 @@ export class MyKpiComponent implements OnInit {
   }
 
   // View more
-  viewMore(){
+  viewMore() {
     this.pageIndex++;
     this.pageSize = this.pageSize;
     this.getMyKPIsList();
+  }
+
+  // Sort 
+  onSortClick(col: any, index: number) {
+    if (this.arrow_icon) {
+      this.sortDir = -1;
+    } else {
+      this.sortDir = 1;
+    }
+    this.sortArr(col, index);
+  }
+
+  sortArr(colName: any, index: number) {
+    this.arrow_icon = !this.arrow_icon;
+    this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
+    this.kpis.sort((a: any, b: any) => {
+      if (colName == 'percentage') {
+        a = a['target'][0][colName]
+        b = b['target'][0][colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else if (colName == 'fullName') {
+        a = a['karta']['user'][colName].toLowerCase();
+        b = b['karta']['user'][colName].toLowerCase();
+        return a.localeCompare(b) * this.sortDir;
+      } else if (colName == 'achieved_value') {
+        a = a[colName]
+        b = b[colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else if (colName == 'value') {
+        a = a['target'][0][colName]
+        b = b['target'][0][colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else {
+        a = a[colName].toLowerCase();
+        b = b[colName].toLowerCase();
+        return a.localeCompare(b) * this.sortDir;
+      }
+    });
+    if (colName == 'percentage' || 'achieved_value' || 'value') this.sortOrder == 'asc' ? this.sortOrder = 'dsc' : this.sortOrder = 'asc';
   }
 
 }

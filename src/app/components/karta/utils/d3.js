@@ -52,6 +52,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
+    // Get depth of nested child
+    function getDepth(node) {
+        let depth = 0;
+        if (node.children) {
+            node.children.forEach(function (d) {
+                let tmpDepth = getDepth(d);
+                if (tmpDepth > depth) {
+                    depth = tmpDepth
+                }
+            });
+        }
+        return ++depth;
+    }
+
     // Define the zoom function for the zoomable tree
     function zoom() {
         svg.selectAll('.karta_divider').remove();
@@ -59,6 +73,15 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
     var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+    // Reset the zoom, when click on reset button
+    $(document).on('click', '#reset_zoom_btn', function () {
+        let transformArray = d3.select("g").attr("transform").split(')');
+        if (transformArray.length > 2) {
+            console.log("set")
+            d3.select("g").attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
+            buildKartaDivider();
+        }
+    });
 
     var diagonal = d3.svg.diagonal()
         .projection(function (d) { return [d.x + 45, d.y + 30]; });
@@ -197,23 +220,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             }
             domNode = this;
             
-            function getDepth(node) {
-                let depth = 0;
-                if (node.children) {
-                    node.children.forEach(function (d) {
-                        let tmpDepth = getDepth(d);
-                        if (tmpDepth > depth) {
-                            depth = tmpDepth
-                        }
-                    });
-                }
-                return ++depth;
-            }
             if (selectedNode && draggingNode) {
-                let draggindDepth = getDepth(draggingNode);
+                let draggingDepth = getDepth(draggingNode);
                 let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
 
-                if ((draggindDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId)) {
+                if ((draggingDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId)) {
                     alert("You cannot drag this node becuase it's leaf nodes exceeding the kpi node.")
                 } else {
                     // now remove the element from the parent, and insert it into the new elements children
@@ -241,9 +252,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var overCircle = function (d) {
         selectedNode = d;
         if (selectedNode != draggingNode && selectedNode !== null && draggingNode !== null) {
-            let colorCode = "#ff1744";
+            let colorCode = "#ff1744";  // Green color
             let phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
-            if (phase.name !== "KPI" && phase.name !== "Target") colorCode = "#76ff03";
+            // Getting depth
+            let draggingDepth = getDepth(draggingNode);
+            let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+            if (phase.name !== "KPI" && phase.name !== "Target" && !((draggingDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId))) {
+                colorCode = "#76ff03"; // Red color
+            }
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
         }
         // updateTempConnector();
@@ -453,12 +469,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     //     (dividers.length - 1).remove();
     // }
 
-    $(document).on('click', '#sidebarCollapse', function () {
-        width2 = $(".karta_column").width();
-        d3.select('#karta-svg svg')
-            .attr("width", width2);
-        buildKartaDivider();
-    });
+    // $(document).on('click', '#sidebarCollapse', function () {
+    //     width2 = $(".karta_column").width();
+    //     d3.select('#karta-svg svg')
+    //         .attr("width", width2);
+    //     buildKartaDivider();
+    // });
 
     // Update node properties
     function updateNode(d) {

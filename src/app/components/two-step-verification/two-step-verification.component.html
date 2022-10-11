@@ -12,50 +12,28 @@
                         <h2 class="text-white text-center pb-2">2-Step Verification</h2>
                         <p class="text-white text-center mb-5">This extra step shows it's really you trying to sign in.</p>
 
-                        <!-- Google authenticator verification -->
-                        <ng-container *ngIf="authType == 'mfa' && !twoFactorFlag">
-                            <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
-                                <div class="form-group">
-                                    <label for="code">Enter a verification code from the <strong>Authenticator</strong> app</label>
-                                    <input type="text" class="form-control form-control1" id="code" formControlName="code"
-                                    [maxlength]="6" [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
-                                    <div *ngIf="(submitted || form.code.touched) && form.code.errors" class="invalid-feedback">
-                                        <div *ngIf="form.code.errors.required">Verification code is required!</div>
-                                        <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>
-                                    </div>
-                                    <ng-container *ngIf="mobileType === 'true'">
-                                        <label for="phone" class="mt-2 w-100">
-                                            <a href="javascript:void(0);" class="text-white send-otp" (click)="showTwoFactor()">Try to another way for sign in</a>
-                                        </label>
-                                    </ng-container>
+                        <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
+                            <div class="form-group">
+                                <label for="code">Enter a verification code sent on your <strong>mobile number</strong></label>
+                                <input type="text" class="form-control form-control1" id="code" formControlName="code"
+                                [maxlength]="6" [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
+                                <div *ngIf="(submitted || form.code.touched) && form.code.errors" class="invalid-feedback">
+                                    <div *ngIf="form.code.errors.required">Verification code is required!</div>
+                                    <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>
                                 </div>
-                                <button class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">SUBMIT</button>
-                            </form>
-                        </ng-container>
+                                <a href="javascript:void(0);" (click)="resendCode()" class="text-white send-otp" *ngIf="!verificationFlag">Resend Code</a>
+                                <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">SUBMIT</button>
+                        </form>
 
-                        <!-- Two factor verification -->
-                        <ng-container *ngIf="authType !== 'mfa' || twoFactorFlag">
-                            <form [formGroup]="mobileVerificationForm" (ngSubmit)="onMobileSubmit()">
-                                <div class="form-group">
-                                    <label for="code">Enter a verification code sent on your <strong>mobile number</strong></label>
-                                    <input type="text" class="form-control form-control1" id="code" formControlName="code"
-                                    [maxlength]="6" [ngClass]="{ 'is-invalid': (mobileSubmitted || mobileForm.code.touched) && mobileForm.code.errors }">
-                                    <div *ngIf="(mobileSubmitted || mobileForm.code.touched) && mobileForm.code.errors" class="invalid-feedback">
-                                        <div *ngIf="mobileForm.code.errors.required">Verification code is required!</div>
-                                        <div *ngIf="mobileForm.code.errors.pattern">Verification code is not valid!</div>
-                                    </div>
-                                    <a href="javascript:void(0);" (click)="resendMobileCode()" class="text-white send-otp" *ngIf="!mobileVerificationFlag">Resend Code</a>
-                                    <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="mobileVerificationFlag">
-                                        <span class="sr-only">Loading...</span>
-                                    </div>
-                                </div>
-                                <button class="btn btn-light btn_default mb-3 mt-2" [disabled]="mobileSubmitFlag">SUBMIT</button>
-                            </form>
-                        </ng-container>
                         <div class="text-white text-center">
                             <p class="text-white">Back To <a [routerLink]="['/login']" class="text-white"><strong>Login</strong></a></p>
                         </div>
                         <app-footer></app-footer>
+                        
                     </div>
                 </div>
             </div>

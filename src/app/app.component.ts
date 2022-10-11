@@ -5,6 +5,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
 
+declare const $: any;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,14 +15,22 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private routeSub: Subscription = new Subscription();
 
-  constructor( 
+  constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
-    private activatedRoute: ActivatedRoute, 
+    private activatedRoute: ActivatedRoute,
     private title: Title
-  ) { }
+  ) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        $('body').removeAttr("style");
+        $('body').removeClass();
+        $('.modal-backdrop').remove();
+      }
+    })
+  }
 
-  ngOnInit () {
+  ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       // Update title for every page
       this.setTitle();
@@ -34,13 +43,13 @@ export class AppComponent implements OnInit, OnDestroy {
       map(() => this.activatedRoute),
       map((router) => {
         while (router.firstChild) router = router.firstChild;
-          return router;
+        return router;
       }),
       filter((route) => route.outlet === 'primary'),
       mergeMap((route) => route.data)).subscribe(
         (event) => {
           this.title.setTitle(event['title']);
-      });
+        });
   }
 
   ngOnDestroy() {

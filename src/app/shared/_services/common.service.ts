@@ -30,6 +30,12 @@ export class CommonService {
     </div>
   `;
 
+  formValidation: any  = {
+    blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
+    email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+    password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  }
+
   // Datepicker config
   maxDate: any = moment();
   alwaysShowCalendars: boolean = true;
@@ -116,6 +122,10 @@ export class CommonService {
   toasterErrorStatus = true;
   successToaster(message: any) {
     this.toastr.success(message);
+  }
+
+  warningToaster(message: any) {
+    this.toastr.warning(message);
   }
 
   errorToaster(message: any) {

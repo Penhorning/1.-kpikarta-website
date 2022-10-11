@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="page-heading">
-                    <h4>Notification</h4>
+                    <h4>Notifications</h4>
                 </div>
             </div>
         </div>
@@ -14,12 +14,12 @@
                 <div class="notification-box mt-3">
                     <div class="row">
                         <div class="col-lg-9">
-                            <h6>{{notification.title}}</h6>
-                            <p>50 Minutes ago</p>
+                            <h6>{{ notification?.title }}</h6>
+                            <p>{{ moment(notification?.createdAt).fromNow() }}</p>
                         </div>
                         <div class="col-lg-3 text-right">
                             <div class="date-time pt-3">
-                                <p>Feb 22, 2022</p>
+                                <p>{{ notification?.createdAt | date }}</p>
                             </div>
                         </div>
                     </div>

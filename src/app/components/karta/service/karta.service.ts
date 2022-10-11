@@ -33,11 +33,14 @@ export class KartaService {
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
-  getKartas(userId: string) {
-    return this._httpService.GET(`/karta?filter[include]=owner&filter[limit]=3&filter[where][userId]=${userId}&filter[order]=createdAt Desc`);
+  getKartas(data: any) {
+    return this._httpService.POST('/karta/get-kartas', data);
   }
-  deleteKarta(id: string) {
-    return this._httpService.DELETE('/karta/', id);
+  deleteKarta(data: any) {
+    return this._httpService.POST('/karta/delete', data);
+  }
+  deleteSharedKarta(id: any) {
+    return this._httpService.POST('/karta/delete-shared-karta', id);
   }
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);
@@ -46,7 +49,7 @@ export class KartaService {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
   }
   removeNode(nodeId: string) {
-    return this._httpService.DELETE('/karta_nodes/', nodeId);
+    return this._httpService.POST('/karta_nodes/delete', {nodeId});
   }
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
@@ -55,7 +58,10 @@ export class KartaService {
     return this._httpService.POST('/karta/share', data);
   }
   getSharedKarta(data: any) {
-    return this._httpService.POST('/karta/sharedKartas', data);
+    return this._httpService.POST('/karta/shared-kartas', data);
+  }
+  copyKarta(data: any) {
+    return this._httpService.POST('/karta/copy-shared-karta', data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
