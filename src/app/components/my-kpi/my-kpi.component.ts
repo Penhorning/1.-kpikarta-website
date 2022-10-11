@@ -13,6 +13,8 @@ export class MyKpiComponent implements OnInit {
 
   sortDir = 1;
   sortOrder: string = 'asc';
+  arrow_icon: boolean = true; 
+  arrow_icon_name: boolean = true; 
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
@@ -367,23 +369,17 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Sort 
-  onSortClick(event: any, col: any) {
-    let target = event.currentTarget,
-      classList = target.classList;
-    console.log("event", classList)
-    if (classList.contains('fa-chevron-up')) {
-      classList.remove('fa-chevron-up');
-      classList.add('fa-chevron-down');
+  onSortClick(col: any) {
+    if (this.arrow_icon) {
       this.sortDir = -1;
     } else {
-      classList.add('fa-chevron-up');
-      classList.remove('fa-chevron-down');
       this.sortDir = 1;
     }
     this.sortArr(col);
   }
 
   sortArr(colName: any) {
+    this.arrow_icon = !this.arrow_icon;
     this.kpis.sort((a: any, b: any) => {
       if (colName == 'percentage') {
         a = a['target'][0][colName]
