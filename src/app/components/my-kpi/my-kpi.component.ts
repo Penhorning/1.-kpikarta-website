@@ -12,6 +12,7 @@ declare const $: any;
 export class MyKpiComponent implements OnInit {
 
   sortDir = 1;
+  sortOrder: string = 'asc';
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
@@ -159,7 +160,7 @@ export class MyKpiComponent implements OnInit {
   getAllUser() {
     this._myKpiService.getAllUsers().subscribe(
       (response: any) => {
-        this.users = response.users[0].data.filter((x:any) => {
+        this.users = response.users[0].data.filter((x: any) => {
           return x.email != this._commonService.getEmailId();
         })
       }
@@ -368,7 +369,7 @@ export class MyKpiComponent implements OnInit {
   // Sort 
   onSortClick(event: any, col: any) {
     let target = event.currentTarget,
-    classList = target.classList;
+      classList = target.classList;
     console.log("event", classList)
     if (classList.contains('fa-chevron-up')) {
       classList.remove('fa-chevron-up');
@@ -384,10 +385,41 @@ export class MyKpiComponent implements OnInit {
 
   sortArr(colName: any) {
     this.kpis.sort((a: any, b: any) => {
-      a = a[colName].toLowerCase();
-      b = b[colName].toLowerCase();
-      return a.localeCompare(b) * this.sortDir;
+      if (colName == 'percentage') {
+        a = a['target'][0][colName]
+        b = b['target'][0][colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else if (colName == 'fullName') {
+        a = a['karta']['user'][colName].toLowerCase();
+        b = b['karta']['user'][colName].toLowerCase();
+        return a.localeCompare(b) * this.sortDir;
+      } else if (colName == 'achieved_value') {
+        a = a[colName]
+        b = b[colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else if (colName == 'value') {
+        a = a['target'][0][colName]
+        b = b['target'][0][colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else {
+        a = a[colName].toLowerCase();
+        b = b[colName].toLowerCase();
+        return a.localeCompare(b) * this.sortDir;
+      }
     });
+    if (colName == 'percentage' || 'achieved_value' || 'value') this.sortOrder == 'asc' ? this.sortOrder = 'dsc' : this.sortOrder = 'asc';
   }
 
 }
