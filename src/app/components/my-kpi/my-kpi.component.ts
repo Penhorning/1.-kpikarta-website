@@ -13,6 +13,17 @@ export class MyKpiComponent implements OnInit {
 
   sortDir = 1;
   sortOrder: string = 'asc';
+  arrow_icon: boolean = true; 
+  arrow_icon_name: boolean = true; 
+  arrow_icon_fullName: boolean = true; 
+  arrow_icon_kpi: boolean = true; 
+  arrow_icon_actual: boolean = true; 
+  arrow_icon_lastedit: boolean = true; 
+  arrow_icon_duedate: boolean = true; 
+  arrow_icon_daysleft: boolean = true; 
+  arrow_icon_completion: boolean = true; 
+
+
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
@@ -78,6 +89,17 @@ export class MyKpiComponent implements OnInit {
     { name: '101 to Above', value: { "min": 101, "max": 999999999 }, selected: false }
   ];
 
+ headerList = [
+    { name: 'Karta', sort: '' },
+    { name: 'KPI', sort: '' },
+    { name: 'Target', sort: '' },
+    { name: 'Actual', sort: '' },
+    { name: 'Last Edited', sort: '' },
+    { name: 'Due Date', sort: '' },
+    { name: 'Days Left', sort: '' },
+    { name: 'Completion', sort: '' }
+  ];
+
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService) {
     this.maxDate = new Date();
   }
@@ -133,7 +155,6 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
           this.kpis = response.kpi_nodes[0].data;
-          console.log("kpi", this.kpis)
         } else {
           this.kpis = [];
         }
@@ -367,23 +388,18 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Sort 
-  onSortClick(event: any, col: any) {
-    let target = event.currentTarget,
-      classList = target.classList;
-    console.log("event", classList)
-    if (classList.contains('fa-chevron-up')) {
-      classList.remove('fa-chevron-up');
-      classList.add('fa-chevron-down');
+  onSortClick(col: any, index: number) {
+    if (this.arrow_icon) {
       this.sortDir = -1;
     } else {
-      classList.add('fa-chevron-up');
-      classList.remove('fa-chevron-down');
       this.sortDir = 1;
     }
-    this.sortArr(col);
+    this.sortArr(col, index);
   }
 
-  sortArr(colName: any) {
+  sortArr(colName: any, index: number) {
+    this.arrow_icon = !this.arrow_icon;
+    this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
     this.kpis.sort((a: any, b: any) => {
       if (colName == 'percentage') {
         a = a['target'][0][colName]
