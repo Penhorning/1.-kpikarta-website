@@ -8,7 +8,7 @@ export class NotificationService {
 
   constructor(private _httpService: HttpService) { }
 
-  getNotifications(userId: string) {
-    return this._httpService.GET(`/notifications?filter[where][userId]=${userId}&filter[order]=createdAt Desc`);
+  getNotifications(data: any) {
+    return this._httpService.POST('/notifications/get-notifications', data);
   }
 }

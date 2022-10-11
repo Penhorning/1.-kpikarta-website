@@ -11,7 +11,9 @@ import * as moment from 'moment';
 export class NotificationsComponent implements OnInit {
 
   notifications: any = [];
-  constructor(private _commonService: CommonService, private _notification: NotificationService) { }
+  moment: any = moment;
+
+  constructor(private _commonService: CommonService, private _notificationService: NotificationService) { }
 
   ngOnInit(): void {
     this.getAllNotifications();
@@ -19,18 +21,14 @@ export class NotificationsComponent implements OnInit {
 
   // Get all notifications
   getAllNotifications() {
-    this._notification.getNotifications(this._commonService.getUserId()).subscribe(
+    let data = {
+      page : 1,
+      limit: 10,
+      userId: this._commonService.getUserId()
+    }
+    this._notificationService.getNotifications(data).subscribe(
       (response: any) => {
-        if (response) {
-
-          this.notifications = response;
-          this.notifications.forEach((element: any) => {
-            var now = new Date();;
-            var then = element.createdAt;
-            var diff = moment.duration(moment(then).diff(moment(now)));
-           });
-        
-        }
+        this.notifications = response.notifications[0].data;
       }
     );
   }
