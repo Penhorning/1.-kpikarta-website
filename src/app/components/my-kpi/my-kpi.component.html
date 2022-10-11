@@ -990,14 +990,16 @@
             </div>
           </div>
           <div style="border-color: unset;" data-dismiss="" aria-label="">
-            <span aria-hidden="true"><button type="button" class="send-btn" style="cursor: pointer;"
-                [disabled]="selectedSharedUsers && selectedSharedUsers.length > 0 ? false : true"
+            <span aria-hidden="true">
+              <button type="button" class="send-btn"
+                [disabled]="selectedUsers.length < 1  || sharedSubmitFlag"
                 (click)="onSubmitSharedData()">
                 <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                   <span class="sr-only">Loading...</span>
                 </div>
                 <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
-              </button></span>
+              </button>
+            </span>
           </div>
         </div>
       </div>

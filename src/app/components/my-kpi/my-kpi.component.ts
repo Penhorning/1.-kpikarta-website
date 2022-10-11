@@ -151,6 +151,7 @@ export class MyKpiComponent implements OnInit {
       endDueDate: this.endDueDate,
       kartaCreatorIds: this.kartaCreatorIds
     }
+    this.kpis = [];
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
@@ -181,9 +182,7 @@ export class MyKpiComponent implements OnInit {
   getAllUser() {
     this._myKpiService.getAllUsers().subscribe(
       (response: any) => {
-        this.users = response.users[0].data.filter((x: any) => {
-          return x.email != this._commonService.getEmailId();
-        })
+        this.users = response.users[0].data.filter((el: any) => el.email !== this._commonService.getEmailId()).map((item: any) => { return { "_id": item._id, "fullName": `${item.fullName} (${item.email})` } });
       }
     );
   }
@@ -251,19 +250,19 @@ export class MyKpiComponent implements OnInit {
     this.sharingKarta = param;
     if (param.sharedTo) {
       this.sharingKartaCount = param.sharedTo.length;
-      this.selectedUsers = param.sharedTo;
+      // this.selectedUsers = param.sharedTo;
     } else {
-      this.selectedUsers = new Array()
+      // this.selectedUsers = new Array()
       this.sharingKartaCount = 0;
       this.users.forEach((user: any) => {
         delete user.isDisabled;
       });
     }
     this.selectedSharedUsers = [];
-    if (this.selectedUsers && this.selectedUsers.length > 0) {
+    if (param.sharedTo && param.sharedTo.length > 0) {
       this.users.forEach((user: any) => {
         delete user.isDisabled;
-        this.selectedUsers.forEach((item: any) => {
+        param.sharedTo.forEach((item: any) => {
           if (item.userId === user._id) {
             user.isDisabled = !this.isDisabled;
             this.selectedSharedUsers.push(user);
@@ -284,6 +283,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response) this._commonService.successToaster("Your have shared successfully");
         $('#staticBackdrop').modal('hide');
+        this.sharingKarta = null;
         this.getMyKPIsList();
       },
       (error: any) => { }
@@ -347,7 +347,7 @@ export class MyKpiComponent implements OnInit {
   onTabSwitch(e: string) {
     this.kpiType = e;
     this.pageIndex = 0;
-    this.getMyKPIsList()
+    this.getMyKPIsList();
   }
 
   // Get kpi stats
