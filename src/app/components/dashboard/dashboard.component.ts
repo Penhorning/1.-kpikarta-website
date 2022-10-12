@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
   getKartas() {
     let data = {
       page : 1,
-      limit: 10,
+      limit: 3,
       userId: this._commonService.getUserId()
     }
     this._kartaService.getKartas(data).subscribe(
@@ -55,10 +55,10 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  getSharedKarta(){
+  getSharedKarta() {
     let data = {
       page : 1,
-      limit: 10,
+      limit: 6,
       email: this._commonService.getEmailId()
     }
     this._kartaService.getSharedKarta(data).subscribe(

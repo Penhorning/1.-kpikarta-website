@@ -12,6 +12,18 @@ declare const $: any;
 export class MyKpiComponent implements OnInit {
 
   sortDir = 1;
+  sortOrder: string = 'asc';
+  arrow_icon: boolean = true; 
+  arrow_icon_name: boolean = true; 
+  arrow_icon_fullName: boolean = true; 
+  arrow_icon_kpi: boolean = true; 
+  arrow_icon_actual: boolean = true; 
+  arrow_icon_lastedit: boolean = true; 
+  arrow_icon_duedate: boolean = true; 
+  arrow_icon_daysleft: boolean = true; 
+  arrow_icon_completion: boolean = true; 
+
+
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
@@ -77,6 +89,17 @@ export class MyKpiComponent implements OnInit {
     { name: '101 to Above', value: { "min": 101, "max": 999999999 }, selected: false }
   ];
 
+ headerList = [
+    { name: 'Karta', sort: '' },
+    { name: 'KPI', sort: '' },
+    { name: 'Target', sort: '' },
+    { name: 'Actual', sort: '' },
+    { name: 'Last Edited', sort: '' },
+    { name: 'Due Date', sort: '' },
+    { name: 'Days Left', sort: '' },
+    { name: 'Completion', sort: '' }
+  ];
+
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService) {
     this.maxDate = new Date();
   }
@@ -128,11 +151,11 @@ export class MyKpiComponent implements OnInit {
       endDueDate: this.endDueDate,
       kartaCreatorIds: this.kartaCreatorIds
     }
+    this.kpis = [];
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
           this.kpis = response.kpi_nodes[0].data;
-          console.log("kpi", this.kpis)
         } else {
           this.kpis = [];
         }
@@ -159,9 +182,7 @@ export class MyKpiComponent implements OnInit {
   getAllUser() {
     this._myKpiService.getAllUsers().subscribe(
       (response: any) => {
-        this.users = response.users[0].data.filter((x:any) => {
-          return x.email != this._commonService.getEmailId();
-        })
+        this.users = response.users[0].data.filter((el: any) => el.email !== this._commonService.getEmailId()).map((item: any) => { return { "_id": item._id, "fullName": `${item.fullName} (${item.email})` } });
       }
     );
   }
@@ -229,19 +250,19 @@ export class MyKpiComponent implements OnInit {
     this.sharingKarta = param;
     if (param.sharedTo) {
       this.sharingKartaCount = param.sharedTo.length;
-      this.selectedUsers = param.sharedTo;
+      // this.selectedUsers = param.sharedTo;
     } else {
-      this.selectedUsers = new Array()
+      // this.selectedUsers = new Array()
       this.sharingKartaCount = 0;
       this.users.forEach((user: any) => {
         delete user.isDisabled;
       });
     }
     this.selectedSharedUsers = [];
-    if (this.selectedUsers && this.selectedUsers.length > 0) {
+    if (param.sharedTo && param.sharedTo.length > 0) {
       this.users.forEach((user: any) => {
         delete user.isDisabled;
-        this.selectedUsers.forEach((item: any) => {
+        param.sharedTo.forEach((item: any) => {
           if (item.userId === user._id) {
             user.isDisabled = !this.isDisabled;
             this.selectedSharedUsers.push(user);
@@ -262,6 +283,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response) this._commonService.successToaster("Your have shared successfully");
         $('#staticBackdrop').modal('hide');
+        this.sharingKarta = null;
         this.getMyKPIsList();
       },
       (error: any) => { }
@@ -325,7 +347,7 @@ export class MyKpiComponent implements OnInit {
   onTabSwitch(e: string) {
     this.kpiType = e;
     this.pageIndex = 0;
-    this.getMyKPIsList()
+    this.getMyKPIsList();
   }
 
   // Get kpi stats
@@ -366,28 +388,54 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Sort 
-  onSortClick(event: any, col: any) {
-    let target = event.currentTarget,
-    classList = target.classList;
-    console.log("event", classList)
-    if (classList.contains('fa-chevron-up')) {
-      classList.remove('fa-chevron-up');
-      classList.add('fa-chevron-down');
+  onSortClick(col: any, index: number) {
+    if (this.arrow_icon) {
       this.sortDir = -1;
     } else {
-      classList.add('fa-chevron-up');
-      classList.remove('fa-chevron-down');
       this.sortDir = 1;
     }
-    this.sortArr(col);
+    this.sortArr(col, index);
   }
 
-  sortArr(colName: any) {
+  sortArr(colName: any, index: number) {
+    this.arrow_icon = !this.arrow_icon;
+    this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
     this.kpis.sort((a: any, b: any) => {
-      a = a[colName].toLowerCase();
-      b = b[colName].toLowerCase();
-      return a.localeCompare(b) * this.sortDir;
+      if (colName == 'percentage') {
+        a = a['target'][0][colName]
+        b = b['target'][0][colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else if (colName == 'fullName') {
+        a = a['karta']['user'][colName].toLowerCase();
+        b = b['karta']['user'][colName].toLowerCase();
+        return a.localeCompare(b) * this.sortDir;
+      } else if (colName == 'achieved_value') {
+        a = a[colName]
+        b = b[colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else if (colName == 'value') {
+        a = a['target'][0][colName]
+        b = b['target'][0][colName]
+        if (this.sortOrder == 'asc') {
+          return a - b;
+        } else {
+          return b - a;
+        }
+      } else {
+        a = a[colName].toLowerCase();
+        b = b[colName].toLowerCase();
+        return a.localeCompare(b) * this.sortDir;
+      }
     });
+    if (colName == 'percentage' || 'achieved_value' || 'value') this.sortOrder == 'asc' ? this.sortOrder = 'dsc' : this.sortOrder = 'asc';
   }
 
 }
