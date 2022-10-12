@@ -17,6 +17,7 @@ export class KartasComponent implements OnInit {
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
+  search_text: any;
   // Share var
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
@@ -53,7 +54,8 @@ export class KartasComponent implements OnInit {
     let data = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
-      userId: this._commonService.getUserId()
+      userId: this._commonService.getUserId(),
+      searchQuery: this.search_text
     }
     this._kartasService.getKartas(data).subscribe(
       (response: any) => {
@@ -68,7 +70,8 @@ export class KartasComponent implements OnInit {
     let data = {
       page: this.sharedPageIndex + 1,
       limit: this.sharePageSize,
-      email: this._commonService.getEmailId()
+      email: this._commonService.getEmailId(),
+      searchQuery: this.search_text
     }
     this._kartasService.getSharedKarta(data).subscribe(
       (response: any) => {
@@ -158,7 +161,6 @@ export class KartasComponent implements OnInit {
     })
   }
 
-
   // Copy karta
   copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
@@ -211,12 +213,30 @@ export class KartasComponent implements OnInit {
   // Tab switch assign
   onTabSwitchAssign() {
     this.pageIndex = 0;
+    this.search_text = "";
+    this.kartas = [];
     this.getKartas();
   }
 
   // Tab switch shared
   onTabSwitchShared() {
     this.sharedPageIndex = 0;
+    this.search_text = "";
+    this.sharedKartas = [];
+    this.getSharedKarta();
+  }
+
+  search(){
+    if (this.search_text) {
+      this.pageIndex = 0;
+      this.getKartas();
+      this.getSharedKarta();
+    }
+  }
+
+  clearSearch() {
+    this.search_text = "";
+    this.getKartas();
     this.getSharedKarta();
   }
 
