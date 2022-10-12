@@ -55,10 +55,13 @@ export class EditKartaComponent implements OnInit {
         this.removeNode(d);
       },
       linkColor: (d: any) => {
-        let node_percentage = parseInt((d.target).weightage);
-        if (this.colorSettings.settings) {
+        let node_percentage = parseInt((d.target).percentage) || 0;
+        if (node_percentage > 100) {
+          let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
+          return colorSetting[0]?.color || 'black';
+        } else if (this.colorSettings.settings) {
           let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
-          return colorSetting[0]?.color ? colorSetting[0]?.color : 'black';
+          return colorSetting[0]?.color || 'black';
         } else return 'black';
       },
       linkWidth: (d: any) => {
@@ -101,6 +104,7 @@ export class EditKartaComponent implements OnInit {
     $('#sidebarCollapse').on('click', function () {
       that.togggleLeftSidebar();
     });
+    $("#karta-svg svg g g").css("pointer-events", "none", "cursor", "default");
     // Close right sidebar when click outside
     $(document).on('click', '.right_sidebar_overlay', function (event: any) {
       that.closeRightSidebar();
@@ -254,7 +258,14 @@ export class EditKartaComponent implements OnInit {
       'target': this.target
     }
     this.updateNode('achieved_value', data);
+    this.chartValue.id = this.currentNode.id;
+    this.chartValue.value = e.target.value;
+    this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
   }
+  chartValue = {
+    id: "",
+    value: 0
+  };
 
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
@@ -276,7 +287,7 @@ export class EditKartaComponent implements OnInit {
           targetValue = element.target.find((item: any) => item.frequency === "annually").value;
           targetValue = todayDay * (targetValue / totalDays);
         }
-
+        if (element.id === this.chartValue.id) element.achieved_value = this.chartValue.value;
         let current_percentage= (element.achieved_value/targetValue) * 100;
         element.percentage = Math.round(current_percentage);
       } else {

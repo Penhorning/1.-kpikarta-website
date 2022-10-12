@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { NotificationsComponent } from './notifications.component';
 
 const routes: Routes = [
-  { path: '', component: NotificationsComponent, data: { title: "Notification page" }}
+  { path: '', component: NotificationsComponent, data: { title: "Notification - KPI Karta" }}
 ];
 
 @NgModule({
