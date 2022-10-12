@@ -637,13 +637,54 @@
             </div>
           </div>
 
-          <!-- Measure div -->
-          <div *ngIf="kpiType === 'measure' ">
-            <div class="selct-option-side-r mt-2">
+          <!-- Common Values -->
+          <div class="common">
+            <!-- Start Date -->
+            <div class="row mt-3">
+              <div class="col-lg-6">
+                <div class="selct-option-side-r">
+                  <label>Start Date</label>
+                  <input type="date" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="selct-option-side-r">
+                  <label>Days to Calculate</label>
+                  <select class="form-control ">
+                    <option>Business Days</option>
+                    <option>Lorem Ipsum</option>
+                    <option>Lorem Ipsum</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Fiscal Year -->
+            <div class="row mt-3">
+              <div class="col-lg-12">
+                <h5>Fiscal year</h5>
+                <div class="row mt-3">
+                  <div class="col-lg-6">
+                    <div class="selct-option-side-r">
+                      <label>Start Date</label>
+                      <input type="date" name="start_date" max="3000-12-31" min="1000-01-01" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="selct-option-side-r">
+                      <label>End Date</label>
+                      <input type="date" name="end_date" max="3000-12-31" min="1000-01-01" class="form-control">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Measure Due Date (Not Common) -->
+            <div *ngIf="kpiType === 'measure' " class="selct-option-side-r mt-2">
               <label>Due Date</label>
               <input type="date" class="form-control" [value]="currentNode.due_date"
                 (change)="updateNode('due_date', $any($event.target).value)">
             </div>
+            <!-- Target Value -->
             <ng-container *ngFor="let t of target; let i = index">
               <div class="row mt-3">
                 <div class="col-lg-5 pr-0">
@@ -674,8 +715,7 @@
                 </div>
               </div>
             </ng-container>
-
-
+            <!-- Achieved Value -->
             <div class="row mt-3">
               <div class="col-lg-12">
                 <div class="form-group">
@@ -686,6 +726,7 @@
               </div>
             </div>
             <hr>
+            <!-- KPI Calculation Periods -->
             <div class="row mt-3">
               <div class="col-lg-12">
                 <div class="selct-option-side-r">
@@ -702,6 +743,7 @@
               </div>
             </div>
             <hr>
+            <!-- Contributor -->
             <div class="row mt-3">
               <div class="col-lg-6">
                 <h5>Contributor</h5>
@@ -709,97 +751,15 @@
             </div>
             <div class="row">
               <div class="col-lg-12">
-            <ng-select  [(ngModel)]="currentNode.contributorId" placeholder="Select users" (change)="updateNode('contributorId',$event )">
-              <ng-option *ngFor="let user of users" [value]="user._id">{{ user.fullName }} ({{ user.email }})</ng-option>
-           </ng-select>
+                <ng-select  [(ngModel)]="currentNode.contributorId" placeholder="Select users" (change)="updateNode('contributorId',$event )">
+                  <ng-option *ngFor="let user of users" [value]="user._id">{{ user.fullName }} ({{ user.email }})</ng-option>
+                </ng-select>
               </div>
             </div>
           </div>
-          <!--   Metrics div -->
+          <!-- Metrics div -->
           <div *ngIf="kpiType === 'metrics' ">
-            <div class="row mt-3">
-              <div class="col-lg-6">
-                <div class="selct-option-side-r">
-                  <label>Start Date</label>
-                  <input type="date" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="selct-option-side-r">
-                  <label>Days to Calculate</label>
-                  <select class="form-control ">
-                    <option>Business Days</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-lg-12">
-                <h5>Fiscal year</h5>
-                <div class="row mt-3">
-                  <div class="col-lg-6">
-                    <div class="selct-option-side-r">
-                      <label>Start Date</label>
-                      <input type="date" name="start_date" max="3000-12-31" min="1000-01-01" class="form-control">
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="selct-option-side-r">
-                      <label>End Date</label>
-                      <input type="date" name="end_date" max="3000-12-31" min="1000-01-01" class="form-control">
-                    </div>
-                  </div>
-                </div>
-                
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-lg-5">
-                <div class="selct-option-side-r">
-                  <label>Target Value</label>
-                  <select class="form-control ">
-                    <option>Business Days</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-lg-5">
-                <div class="custom-input-side-r">
-                  <div class="form-group ">
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-2">
-                <div class="add-btn-side-r">
-                  <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
-                </div>
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-lg-12">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="">
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="selct-option-side-r">
-                  <label>KPI Calculation Periods</label>
-                  <select class="form-control ">
-                    <option>Month to Date</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <hr>
+            <!-- Formula div -->
             <div class="row mt-3">
               <div class="col-lg-8">
                 <h5>Formula</h5>
@@ -852,6 +812,7 @@
               </div>
             </div>
             <hr>
+            <!-- Person to Notify -->
             <div class="row">
               <div class="col-lg-12">
                 <div class="selct-option-side-r">
@@ -864,6 +825,7 @@
                 </div>
               </div>
             </div>
+            <!-- Alerts div -->
             <div class="row mt-3">
               <div class="col-lg-12">
                 <h5>Alerts</h5>
@@ -892,6 +854,7 @@
               </div>
             </div>
             <hr>
+            <!-- Viewer Access -->
             <div class="row mt-3">
               <div class="col-lg-6">
                 <h5>Viewer Access</h5>
