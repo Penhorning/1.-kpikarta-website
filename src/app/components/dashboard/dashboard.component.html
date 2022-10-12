@@ -459,7 +459,7 @@
                     <div style="border-color: unset;" data-dismiss="" aria-label="">
                         <span aria-hidden="true">
                             <button type="button" class="send-btn" (click)="shareKarta()"
-                                [disabled]="selectedUsers.length < 1  || sharedSubmitFlag">
+                                [disabled]="selectedUsers?.length < 1  || sharedSubmitFlag">
                                 <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                                     <span class="sr-only">Loading...</span>
                                 </div>

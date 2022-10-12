@@ -440,7 +440,7 @@
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis; let i = index;">
                           <td>
-                            <p class="m-0">{{ kpi?.karta.name }}</p>
+                            <p class="m-0">{{ kpi?.karta?.name }}</p>
                             <p class="user-name-iocn">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -448,12 +448,12 @@
                                 <path fill-rule="evenodd"
                                   d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
                               </svg>
-                              {{ kpi?.karta.user.fullName }}
+                              {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
                           <td>{{ kpi?.name }}</td>
                           <td>
-                            <span>{{ kpi?.target[0].value }}</span>
+                            <span>{{ kpi?.target[0]?.value }}</span>
                             <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
                           </td>
                           <td>
@@ -533,7 +533,7 @@
                       <ng-container *ngIf="loadingKarta">
                         <div class="p-5" [innerHtml]="loader"></div>
                       </ng-container>
-                      <p style="cursor: pointer; color: #007bff;" *ngIf="!loadingKarta && kpis.length > 9"
+                      <p style="cursor: pointer; color: #007bff;" *ngIf="!loadingKarta && kpis.length > 9 && viewMore_hide"
                         (click)="viewMore()">View More..</p>
                     </div>
                   </div>
@@ -948,7 +948,7 @@
                       <ng-container *ngIf="loadingKarta">
                         <div class="p-5" [innerHtml]="loader"></div>
                       </ng-container>
-                      <p style="cursor: pointer; color: #007bff;" *ngIf="!loadingKarta  && kpis.length > 9"
+                      <p style="cursor: pointer; color: #007bff;" *ngIf="!loadingKarta  && kpis.length > 9 && viewMore_hide"
                         (click)="viewMore()">View More..</p>
                     </div>
                   </div>
