@@ -23,6 +23,7 @@ const routes: Routes = [
   { path: 'karta', canActivateChild: [AuthGuard], loadChildren: () => import('./components/karta/karta.module').then(m => m.KartaModule) },
   { path: 'my-kpi', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-kpi/my-kpi.module').then(m => m.MyKpiModule) },
   { path: 'notifications', canActivateChild: [AuthGuard], loadChildren: () => import('./components/notifications/notifications.module').then(m => m.NotificationsModule) },
+  { path: 'kartas', canActivateChild: [AuthGuard], loadChildren: () => import('./components/kartas/kartas.module').then(m => m.KartasModule) },
   { path: '**', loadChildren: () => import('./components/page-not-found/page-not-found.module').then(m => m.PageNotFoundModule) },
 
 ];

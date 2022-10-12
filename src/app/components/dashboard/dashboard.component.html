@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-lg-6 text-right">
                             <div class="view-all-text">
-                                <a href="javascript:void(0);">View All</a>
+                                <a [routerLink]="['/kartas']" fragment="tabs-2">View All</a>
                             </div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
                         </div>
                         <div class="col-lg-6 text-right">
                             <div class="view-all-text">
-                                <a href="javascript:void(0);">View All</a>
+                                <a [routerLink]="['/kartas']">View All</a>
                             </div>
                         </div>
                     </div>
@@ -459,7 +459,7 @@
                     <div style="border-color: unset;" data-dismiss="" aria-label="">
                         <span aria-hidden="true">
                             <button type="button" class="send-btn" (click)="shareKarta()"
-                                [disabled]="selectedUsers.length < 1  || sharedSubmitFlag">
+                                [disabled]="selectedUsers?.length < 1  || sharedSubmitFlag">
                                 <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                                     <span class="sr-only">Loading...</span>
                                 </div>

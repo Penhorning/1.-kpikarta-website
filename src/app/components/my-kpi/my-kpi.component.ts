@@ -11,17 +11,6 @@ declare const $: any;
 })
 export class MyKpiComponent implements OnInit {
 
-  sortDir = 1;
-  sortOrder: string = 'asc';
-  arrow_icon: boolean = true; 
-  arrow_icon_name: boolean = true; 
-  arrow_icon_fullName: boolean = true; 
-  arrow_icon_kpi: boolean = true; 
-  arrow_icon_actual: boolean = true; 
-  arrow_icon_lastedit: boolean = true; 
-  arrow_icon_duedate: boolean = true; 
-  arrow_icon_daysleft: boolean = true; 
-  arrow_icon_completion: boolean = true; 
 
 
   kpis: any = [];
@@ -34,6 +23,7 @@ export class MyKpiComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   length: number = 0;
+  viewMore_hide: boolean = true;
   lastEditSelectedDates: any;
   dateRequiredSelectedDates: any;
   dueDateSelectedDates: any;
@@ -89,6 +79,7 @@ export class MyKpiComponent implements OnInit {
     { name: '101 to Above', value: { "min": 101, "max": 999999999 }, selected: false }
   ];
 
+  // Header list
  headerList = [
     { name: 'Karta', sort: '' },
     { name: 'KPI', sort: '' },
@@ -100,6 +91,11 @@ export class MyKpiComponent implements OnInit {
     { name: 'Completion', sort: '' }
   ];
 
+  // Sort var
+  sortDir = 1;
+  sortOrder: string = 'asc';
+  arrow_icon: boolean = true;
+  
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService) {
     this.maxDate = new Date();
   }
@@ -382,9 +378,20 @@ export class MyKpiComponent implements OnInit {
 
   // View more
   viewMore() {
-    this.pageIndex++;
-    this.pageSize = this.pageSize;
-    this.getMyKPIsList();
+    this.pageIndex++
+    let data = {
+      page: this.pageIndex + 1,
+      limit: this.pageSize,
+      userId: this._commonService.getUserId(),
+      kpiType: this.kpiType
+    }
+    this._myKpiService.getMyKPIs(data).subscribe(
+      (response: any) => {
+        if (response) {this.kpis.push(...response.kpi_nodes[0].data);
+          if(response.kpi_nodes[0].metadata[0].total == this.kpis.length) this.viewMore_hide = !this.viewMore_hide;
+        }
+      }
+    ).add(() => this.loadingKarta = false);
   }
 
   // Sort 
