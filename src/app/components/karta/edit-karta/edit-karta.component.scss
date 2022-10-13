@@ -78,6 +78,20 @@
     -webkit-appearance: auto !important;
 }
 
+.formula-value {
+    border: none;
+    background-color: transparent;
+    font-weight: 600;
+}
+
+.add-icon:hover {
+    cursor: pointer;
+}
+
+.remove-icon:hover {
+    cursor: pointer;
+}
+
 ::ng-deep .dropdown-list ul {
     width: auto !important;
 }

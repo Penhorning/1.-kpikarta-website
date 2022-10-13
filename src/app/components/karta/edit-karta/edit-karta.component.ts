@@ -4,6 +4,7 @@ import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from "../utils/d3.js";
 import * as moment from 'moment';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 declare const $: any;
 
@@ -27,6 +28,7 @@ export class EditKartaComponent implements OnInit {
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
   isRtNodDrgFrmSide: boolean = false;
+  formulaGroup: FormGroup|any = [];
 
   // D3 karta events
   D3SVG: any = {
@@ -91,12 +93,25 @@ export class EditKartaComponent implements OnInit {
   dropdownSettings: any = {};
   contributorUsers: any = [];
   selectedContributorUsers: any = [];
+  formulagroupDefaultValues: any = {};
+  timer: any  = null;
 
 
-  constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute) { }
+  constructor(private _kartaService: KartaService, private _commonService: CommonService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     const that = this;
+    // Formula Fields
+    this.formulaGroup = this.fb.group({
+      calculatedValue: [200],
+      fields: this.fb.array([])
+    });
+
+    // Creating 2 Formula Fields by Default
+    for(let i = 0; i < 2; i++){
+      this.addFormulaGroup();
+    }
+
     // Toggle Left Sidebar
     $('#sidebarCollapse').on('click', function () {
       that.togggleLeftSidebar();
@@ -112,6 +127,86 @@ export class EditKartaComponent implements OnInit {
     // Get users
     this.getAllUser();
   }
+
+  // ---------FormArray Functions defined Below----------
+  //Adding a New FormulaField Group
+  addFormulaGroup(){
+    const fieldForm = this.fb.group({
+      fieldsName: [`Field${this.fields.length + 1}`],
+      fieldsValue: [0],
+    });
+    this.fields.push(fieldForm);
+  }
+
+  //Deleting a particular FormulaField Group
+  deleteFormulaGroup(fieldIndex: number) {
+    this.fields.removeAt(fieldIndex);
+    console.log(this.formulaGroup.controls["fields"]['controls'][0], 'check');
+    let newArr = [];
+    for(let i = 0; i < this.fields.length; i++){
+      newArr.push({
+        ...this.formulaGroup.controls["fields"]['controls'][i],
+        fieldsName: `Field${i + 1}`
+      })
+    }
+    this.formulaGroup.patchValue({
+      fields: newArr
+    });
+  }
+
+  // Enable/Disable Readonly value of Formula Fields
+  editFieldStatus(id: number, value: boolean) {
+    $('#fd'+id).attr('readonly', value);
+  }
+
+  // Check Field Value for ReadOnly
+  checkFieldStatus(id: any){
+    let element: any = document.getElementById(id);
+    return element.readOnly;
+  }
+
+  // Getting the FormArray values
+  get fields() {
+    return this.formulaGroup.controls["fields"] as FormArray;
+  };
+  
+  // Saving Field Values temporarily in an object until the tick option is not clicked
+  saveFieldValuesTemporarily(id: number, event: any){
+    this.formulagroupDefaultValues[id] = event.target.value;
+  }
+
+  // Set Temporary Field Value to FormArray
+  setFieldValues(id: number){
+    this.formulaGroup.controls["fields"]['controls'][id].patchValue({
+      fieldsName: this.formulagroupDefaultValues[id]
+    });
+    delete this.formulagroupDefaultValues[id];
+    this.editFieldStatus(id, true);
+  } 
+
+  // Remove Temporary Field Value
+  removeFieldValues(id: number){
+    let value = this.formulaGroup.controls['fields'].controls[id].controls['fieldsName'].value;
+    let element: any = document.getElementById('fd'+id);
+    element.value = value;
+    delete this.formulagroupDefaultValues[id];
+    this.editFieldStatus(id, true);
+  }
+
+  // Formula Fields Calculation
+  calculateFormula(event: any){
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    this.timer = setTimeout(() => {
+      let value = event.target.value.split(" ");
+      var total = 0;
+      value = value.replace(/\s/g, '').match(/[+\-]?([0-9\.\s]+)/g) || [];
+      while(value.length) total += parseFloat(value.shift());
+    }, 2000);
+  }
+  // ---------FormArray Functions defined Above----------
 
   // TOGGLE LEFT SIDEBAR
   togggleLeftSidebar() {
