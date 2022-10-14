@@ -103,7 +103,7 @@ export class EditKartaComponent implements OnInit {
     const that = this;
     // Formula Fields
     this.formulaGroup = this.fb.group({
-      calculatedValue: [200],
+      calculatedValue: [0],
       fields: this.fb.array([])
     });
 
@@ -156,13 +156,17 @@ export class EditKartaComponent implements OnInit {
 
   // Enable/Disable Readonly value of Formula Fields
   editFieldStatus(id: number, value: boolean) {
-    $('#fd'+id).attr('readonly', value);
+    $('#fd'+id).attr('contenteditable', value);
+    return;
   }
 
   // Check Field Value for ReadOnly
   checkFieldStatus(id: any){
-    let element: any = document.getElementById(id);
-    return element.readOnly;
+    let element: any = document.getElementById(id); 
+    if(element){
+      return JSON.parse(element.contentEditable);
+    }
+    return false;
   }
 
   // Getting the FormArray values
@@ -172,7 +176,7 @@ export class EditKartaComponent implements OnInit {
   
   // Saving Field Values temporarily in an object until the tick option is not clicked
   saveFieldValuesTemporarily(id: number, event: any){
-    this.formulagroupDefaultValues[id] = event.target.value;
+    this.formulagroupDefaultValues[id] = event.target.innerText;
   }
 
   // Set Temporary Field Value to FormArray
@@ -181,16 +185,17 @@ export class EditKartaComponent implements OnInit {
       fieldsName: this.formulagroupDefaultValues[id]
     });
     delete this.formulagroupDefaultValues[id];
-    this.editFieldStatus(id, true);
+    this.editFieldStatus(id, false);
   } 
 
   // Remove Temporary Field Value
   removeFieldValues(id: number){
     let value = this.formulaGroup.controls['fields'].controls[id].controls['fieldsName'].value;
     let element: any = document.getElementById('fd'+id);
-    element.value = value;
+    element.innerText = value;
+    element.innerHTML = value;
     delete this.formulagroupDefaultValues[id];
-    this.editFieldStatus(id, true);
+    this.editFieldStatus(id, false);
   }
 
   // Formula Fields Calculation
@@ -200,11 +205,45 @@ export class EditKartaComponent implements OnInit {
       this.timer = null;
     }
     this.timer = setTimeout(() => {
-      let value = event.target.value.split(" ");
-      var total = 0;
-      value = value.replace(/\s/g, '').match(/[+\-]?([0-9\.\s]+)/g) || [];
-      while(value.length) total += parseFloat(value.shift());
-    }, 2000);
+      let tempObj: any = {};
+      let mathOperators: any = ['+', '-', '/', '*', '%', '(', ')'];
+      let value = event.target.value.trim().split(" ");
+      
+      var total: any = 0;
+      let checkFrag = false;
+
+      this.fields.controls.forEach((x: any) => {
+        tempObj[x['controls']['fieldsName'].value] = x['controls']['fieldsValue'].value
+      });
+      
+      let newValue = value.map((y: any) => {
+        if(tempObj[y]){
+          return tempObj[y];
+        }
+        else if(mathOperators.includes(y)) {
+          return " " + y + " ";
+        }
+        else {
+          checkFrag = true;
+          return y;
+        }
+      }).join(" ");
+
+      if(checkFrag){
+        this._commonService.errorToaster('Please type correct formula');
+        this.formulaGroup.patchValue({
+          calculatedValue: 0
+        });
+        return;
+      }
+      else {
+        total = eval(newValue);
+        this.formulaGroup.patchValue({
+          calculatedValue: total
+        });
+        return;
+      }
+    }, 3000);
   }
   // ---------FormArray Functions defined Above----------
 
