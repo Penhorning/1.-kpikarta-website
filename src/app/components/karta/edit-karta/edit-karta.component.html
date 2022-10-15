@@ -773,21 +773,22 @@
                 </div>
               </div>
               <div formArrayName="fields">
-                <div *ngFor="let fieldForm of fields.controls; let i = index">
+                <div class="mb-2" *ngFor="let fieldForm of fields.controls; let i = index">
                   <div class="row" [formGroupName]="i">
                     <div class="col-lg-8">
                       <div class="form-group ">
-                        <input type="text" class="form-control mb-2" [value]="formulaGroup.controls['fields'].controls[i].controls['fieldsName'].value" [id]="'fd'+i" (change)="saveFieldValuesTemporarily(i, $event)" [readonly]="true" />
-                        <input type="text" class="form-control" placeholder="" formControlName="fieldsValue" />
+                        <!-- <input type="text" class="form-control mb-2" [value]="formulaGroup.controls['fields'].controls[i].controls['fieldName'].value" [id]="'fd'+i" (change)="saveFieldValuesTemporarily(i, $event)" [readonly]="true" /> -->
+                        <label contenteditable="false" [id]="'fd'+i" [class]="checkFieldStatus('fd'+i) ? 'mb-2 border' : 'mb-2'" (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
+                        <input type="text" class="form-control" placeholder="" formControlName="fieldValue" />
                       </div>
                     </div>
                     <div class="col-lg-4 d-flex flex-column justify-content-center align-items-center">
-                      <a class="mb-3" (click)="editFieldStatus(i, false)" [hidden]="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg" class="img-fluid edit-btn-r"></a>
-                      <div class="mb-2" [hidden]="checkFieldStatus('fd'+i)">
+                      <a class="mb-2" (click)="editFieldStatus(i, true)" *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg" class="img-fluid edit-btn-r"></a>
+                      <div class="mb-1" *ngIf="checkFieldStatus('fd'+i)">
                         <a (click)="setFieldValues(i)"><img src="assets/img/check_icon.png" class="img-fluid mr-3"></a>
                         <a (click)="removeFieldValues(i)"><img src="assets/img/icons8-remove-30.png" class="img-fluid"></a>
                       </div>
-                      <div class="custom-add-minus mt-1">
+                      <div class="custom-add-minus">
                         <a class="add-icon" *ngIf="fields.length == i+1" (click)="addFormulaGroup()"><img src="assets/img/plus-field-side-r.svg" class="img-fluid mr-3"></a>
                         <a class="remove-icon" *ngIf="fields.length > 1" (click)="deleteFormulaGroup(i)"><img src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>
                       </div>
@@ -798,7 +799,7 @@
               <div class="row mt-3">
                 <div class="col-lg-12">
                   <img src="assets/img/tick-mark-side-r.svg" class="img-fluid tick-custom">
-                  <input type="text" class="form-control" placeholder="" (change)="calculateFormula($event)" />
+                  <input type="text" class="form-control" formControlName="formula" (blur)="calculateFormula($event)" />
                 </div>
               </div>
               <div class="row mt-3">
