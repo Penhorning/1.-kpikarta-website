@@ -81,7 +81,8 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #karta-svg {
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
     resize: both;
 }
 

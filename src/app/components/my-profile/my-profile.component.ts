@@ -103,7 +103,7 @@ export class MyProfileComponent implements OnInit {
     this.route.fragment.subscribe(f => {
       const element = document.querySelector("#" + f)
       if (element) element.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    })
+    });
   }
 
   setRegion() {
@@ -246,6 +246,7 @@ export class MyProfileComponent implements OnInit {
         this.profileImage.fileUploading = false;
       }
       $('#cropperModal').modal('hide');
+      this.croppedImage = "";
       },
       (error: any) => {}
     );
@@ -286,6 +287,7 @@ export class MyProfileComponent implements OnInit {
               if (this.profileImage.newImage) this._commonService.updateUserImageInSession(this.profileImage.newImage);
               this._commonService.successToaster("Profile updated successfully");
               this.profileImage.oldImage = response.profilePic;
+              this.resetPictureModal();
             },
             (error: any) => { }
           ).add(() => this.submitFlag = false );
@@ -320,12 +322,19 @@ export class MyProfileComponent implements OnInit {
               if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
               this._commonService.successToaster("Company details updated successfully");
               this.companyLogo.oldImage = response.logo;
+              this.resetPictureModal();
             },
             (error: any) => { }
           ).add(() => this.companySubmitFlag = false );
         }
       }
     }
+  }
+
+  resetPictureModal() {
+    this.profileImage.newImage = "";
+    this.companyLogo.newImage = "";
+    this.croppedImage = "";
   }
 
   resetModal(mobileNumber: any) {

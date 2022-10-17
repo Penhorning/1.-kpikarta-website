@@ -9,12 +9,12 @@ var getSVGSize = (tree, level = 0) => {
     var children = (tree.children || tree._children || []);
     width2 = $(".karta_column").width();
     if (!level) {
-        levelDepth = [children.length * 170 || width2];
+        levelDepth = [children.length * 100 || width2];
     } else {
         if (!levelDepth[level]) {
-            levelDepth[level] = children.length * 170
+            levelDepth[level] = children.length * 100
         } else {
-            levelDepth[level] += children.length * 170
+            levelDepth[level] += children.length * 100
         }
     }
     if ((level + 1) * 65 > levelHeight) {
@@ -49,6 +49,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     //   .size([height, width])
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
+    options.exportAsImage = exportAsImage;
+    options.exportAsPDF = exportAsPDF;
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
@@ -70,6 +72,24 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     function zoom() {
         svg.selectAll('.karta_divider').remove();
         svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    //     var pos = d3.mouse(this);
+    // var scale = d3.event.scale;
+
+    // var trans = d3.transform(svg.attr("transform"));
+    // var tpos = trans.translate;
+    // var tscale = trans.scale;
+    // var tx = tpos[0];
+    // var ty = tpos[1];
+    // var mx = pos[0] - width/2;
+    // var my = pos[1] - height/2;
+
+    // var dx =  (mx - tx)/tscale[0];
+    // var dy =  (my - ty)/tscale[1];
+    // var dx2 = (mx - dx)/scale - dx;
+    // var dy2 = (my - dy)/scale - dy;
+
+    // var tform = "translate(" + dx + "," + dy + ")scale(" + scale + ")translate(" + dx2 + "," + dy2 + ")"
+    // svg.attr("transform", tform);
     }
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
     var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
@@ -77,7 +97,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     $(document).on('click', '#reset_zoom_btn', function () {
         let transformArray = d3.select("g").attr("transform").split(')');
         if (transformArray.length > 2) {
-            console.log("set")
             d3.select("g").attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
             buildKartaDivider();
         }
@@ -219,7 +238,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 return;
             }
             domNode = this;
-            
+
             if (selectedNode && draggingNode) {
                 let draggingDepth = getDepth(draggingNode);
                 let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
@@ -366,6 +385,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 }
                 return d.target.id;
             })
+            .attr("stroke", options.events.linkColor)
+            .attr("stroke-width", options.events.linkWidth)
         // Enter the links.
         link.enter().insert("path", "g")
             .attr("class", "link")
@@ -414,14 +435,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 }
             }];
         }
-        console.log("selected", selectedNode);
-        console.log("dragging ", draggingNode);
         // var connectorPointer = `M ${selectedNode.x0},${selectedNode.y0} h 10`;
         var link = svg.selectAll(".templink").data(data);
         link.enter().append("path")
             .attr("class", "templink")
             .attr("d", d3.svg.diagonal())
-            
+
             .attr('pointer-events', 'none');
 
         link.attr("d", d3.svg.diagonal());
@@ -450,7 +469,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 .attr("class", "karta_divider")
                 .attr('stroke', 'lightgrey')
                 .attr('stroke-width', '1px')
-                .attr('d', pathGenerator([[-width2, (index + 1) * 65], [width2, (1 + index) * 65]]));
+                .attr('d', pathGenerator([[-100000, (index + 1) * 65], [100000, (1 + index) * 65]]));
         });
     }
 
@@ -493,7 +512,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         $(`.node-text[nodeid=${d.id}] p`).css('color', d.text_color);
         $(`.node-text[nodeid=${d.id}] p`).css('font-family', d.font_style);
         $(`.node-text[nodeid=${d.id}] p`).css('text-align', d.alignment);
+        update(d.parent);
+        if (d.hasOwnProperty("children") && d.children.length > 0) {
+            d.children.forEach(item => {
+                updateNode(item);
+            });
+        }
     }
+
     // Update newly added node
     function updateNewNode(parent, d) {
         parent.children = parent.children || []
@@ -502,6 +528,49 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         update(parent);
         update(root);
     }
+
+    // Export as image
+    function exportAsImage() {
+        saveSvgAsPng($("#karta-svg svg")[0], "plot.png", { scale: 2, backgroundColor: "#FFFFFF" });
+    }
+    // Export as pdf
+    function exportAsPDF() {
+        svgToPdfExample($("#karta-svg svg")[0]);
+    }
+
+    const svgToPdfExample = (svg) => {
+        const doc = new window.PDFDocument();
+        const chunks = [];
+        const stream = doc.pipe({
+            // writable stream implementation
+            write: (chunk) => chunks.push(chunk),
+            end: () => {
+                const pdfBlob = new Blob(chunks, {
+                    type: "application/octet-stream",
+                });
+                var blobUrl = URL.createObjectURL(pdfBlob);
+                //window.open(`${blobUrl}?customfilename.pdf`);
+
+                /* custom file name download */
+                const a = document.createElement("a");
+                document.body.appendChild(a);
+                a.style = "display: none";
+                a.href = blobUrl;
+                a.download = "test.pdf"; // <---- 👈 file name
+                a.click();
+                window.URL.revokeObjectURL(blobUrl);
+            },
+            // readable streaaam stub iplementation
+            on: (event, action) => { },
+            once: (...args) => { },
+            emit: (...args) => { },
+        });
+
+        window.SVGtoPDF(doc, svg, 100, 0);
+
+        doc.end();
+    };
+
 
     var events = {
         addNode: (d) => {

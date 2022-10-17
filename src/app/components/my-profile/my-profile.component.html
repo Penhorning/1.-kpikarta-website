@@ -339,7 +339,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-capitalize" id="passwordModalLabel">Upload {{cropperModel.type}} logo</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetPictureModal()">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -371,11 +371,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-light btn_default max-270" (click)="uploadFile()" [disabled]="!croppedImage || companyLogo.fileUploading">
-                    <div class="spinner-border text-light align-top" role="status" *ngIf="companyLogo.fileUploading">
+                <button class="btn btn-light btn_default max-270" (click)="uploadFile()" [disabled]="!croppedImage || companyLogo.fileUploading || profileImage.fileUploading">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="companyLogo.fileUploading || profileImage.fileUploading">
                       <span class="sr-only">Loading...</span>
                     </div>
-                    <ng-container *ngIf="!companyLogo.fileUploading">Upload</ng-container>
+                    <ng-container *ngIf="!companyLogo.fileUploading && !profileImage.fileUploading">Upload</ng-container>
                   </button>
             </div>
         </div>

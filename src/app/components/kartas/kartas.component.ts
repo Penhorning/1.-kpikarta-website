@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartasService } from './service/kartas.service';
 
 declare const $: any;
+
+
 @Component({
   selector: 'app-kartas',
   templateUrl: './kartas.component.html',
@@ -35,12 +37,16 @@ export class KartasComponent implements OnInit {
   viewMoreShared_hide: boolean = true;
 
 
-  constructor(private _kartasService: KartasService, private _commonService: CommonService, private router: Router) { }
+  constructor(private _kartasService: KartasService, private _commonService: CommonService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.getKartas();
     this.getAllUser();
     this.getSharedKarta();
+
+    this.route.fragment.subscribe(f => {
+      if (f === "tabs-2") $("#shared_tab").click();
+    });
   }
 
   // Navigate to create karta
