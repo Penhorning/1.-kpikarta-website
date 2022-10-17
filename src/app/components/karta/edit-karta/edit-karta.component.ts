@@ -5,6 +5,7 @@ import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as moment from 'moment';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ExportToCsv } from 'export-to-csv';
 
 declare const $: any;
 
@@ -96,12 +97,36 @@ export class EditKartaComponent implements OnInit {
   formulagroupDefaultValues: any = {};
   timer: any = null;
 
+  data = [
+    {
+      name: 'Test 1',
+      age: 13,
+      average: 8.2,
+      approved: true,
+      description: "using 'Content here, content here' "
+    },
+    {
+      name: 'Test 2',
+      age: 11,
+      average: 8.2,
+      approved: true,
+      description: "using 'Content here, content here' "
+    },
+    {
+      name: 'Test 4',
+      age: 10,
+      average: 8.2,
+      approved: true,
+      description: "using 'Content here, content here' "
+    },
+  ];
+
   constructor(
     private _kartaService: KartaService,
     private _commonService: CommonService,
     private route: ActivatedRoute,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const that = this;
@@ -212,7 +237,6 @@ export class EditKartaComponent implements OnInit {
 
       let total: any = 0;
       let checkFrag = false;
-
       this.fields.controls.forEach((x: any) => {
         tempObj[x['controls']['fieldName'].value] =
           x['controls']['fieldValue'].value;
@@ -249,7 +273,6 @@ export class EditKartaComponent implements OnInit {
         };
         delete request['calculatedValue'];
         request['calculated_value'] = this.formulaGroup.value.calculatedValue;
-
         this._kartaService
           .updateNode(this.currentNode.id, { node_type: request })
           .subscribe(
@@ -361,7 +384,7 @@ export class EditKartaComponent implements OnInit {
     if (param.node_type) {
       const arr = this.formulaGroup.get('fields') as FormArray;
       arr.clear();
-      for(let i of param.node_type.fields){
+      for (let i of param.node_type.fields) {
         arr.push(new FormGroup({
           fieldName: new FormControl(i.fieldName),
           fieldValue: new FormControl(i.fieldValue)
@@ -516,7 +539,7 @@ export class EditKartaComponent implements OnInit {
 
   // Get suggestion by phaseId
   getSuggestionByPhaseId(param: any) {
-    if(!this.currentNode.node_type){
+    if (!this.currentNode.node_type) {
       // Creating 2 Formula Fields by Default
       for (let i = 0; i < 2; i++) {
         this.addFormulaGroup();
@@ -531,7 +554,7 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.suggestion = response;
       },
-      (error: any) => {}
+      (error: any) => { }
     );
   }
 
@@ -707,5 +730,22 @@ export class EditKartaComponent implements OnInit {
       .subscribe((response: any) => {
         this.karta = response;
       });
+  }
+
+  // downloadCsv
+  downloadCsv(){
+    const options = { 
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true, 
+      showTitle: true,
+      title: 'Charge Report',
+      useTextFile: false,
+      useBom: true,
+      headers: ['Name', 'Age', 'Average', 'Approved','Description']
+  };
+   const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(this.data);
   }
 }

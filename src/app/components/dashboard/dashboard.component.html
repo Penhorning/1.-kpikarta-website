@@ -447,8 +447,14 @@
                         <label>{{sharingKarta?.name}}</label>
                         <div class="row">
                             <div class="col-lg-12">
-                                <ng-select [items]="users" [addTag]="addTagPromise" placeholder="Select users"
-                                    [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers">
+                                <ng-select [items]="users"
+                                 [addTag]="addTagPromise"
+                                  placeholder="Select users"
+                                 [loading]="loading"
+                                  [multiple]="true"
+                                   bindLabel="email"
+                                    [(ngModel)]="selectedUsers"
+                                    >
                                     <ng-template ng-tag-tmp let-search="searchTerm">
                                         <b>Add new email</b>: {{search}}
                                     </ng-template>

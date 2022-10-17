@@ -152,12 +152,15 @@ export class KartasComponent implements OnInit {
   // Add new email and share
   addTagPromise(e: string) {
     return new Promise((resolve) => {
-      this.loading = true;
-      // Callback function
-      setTimeout(() => {
-        resolve({ email: e });
-        this.loading = false;
-      }, 1000);
+     this.loading = true;
+      var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (e.match(mailformat)) {
+        // Callback function
+        setTimeout(() => {
+          resolve({ email: e });
+          this.loading = false;
+        });
+      } this.loading = false;
     })
   }
 
