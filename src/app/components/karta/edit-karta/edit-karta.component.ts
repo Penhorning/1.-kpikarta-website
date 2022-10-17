@@ -233,8 +233,9 @@ export class EditKartaComponent implements OnInit {
     }
     this.timer = setTimeout(() => {
       let tempObj: any = {};
-      let mathOperators: any = ['+', '-', '/', '*', '%', '(', ')'];
-      let value = event.target.value.trim().split(' ');
+      let originalValue = event.target.value.trim();
+      let newValue = "";
+      let value = event.target.value.trim().split(/[,.+\-\/% *)(\/\\s]/);
 
       let total: any = 0;
       let checkFrag = false;
@@ -243,18 +244,16 @@ export class EditKartaComponent implements OnInit {
           x['controls']['fieldValue'].value;
       });
 
-      let newValue = value
-        .map((y: any) => {
-          if (tempObj[y]) {
-            return tempObj[y];
-          } else if (mathOperators.includes(y)) {
-            return ' ' + y + ' ';
-          } else {
-            checkFrag = true;
-            return y;
+      value.forEach((y: any) => {
+        if(y){
+          if(tempObj[y]){
+            newValue = newValue ? newValue.replace(y, tempObj[y]) : originalValue.replace(y, tempObj[y]);
           }
-        })
-        .join(' ');
+          else {
+            checkFrag = true;
+          }
+        }
+      });
 
       if (checkFrag) {
         this._commonService.errorToaster('Please type correct formula');
