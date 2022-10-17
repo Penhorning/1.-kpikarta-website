@@ -4,7 +4,13 @@ import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as moment from 'moment';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 declare const $: any;
 
@@ -95,6 +101,7 @@ export class EditKartaComponent implements OnInit {
   selectedContributorUsers: any = [];
   formulagroupDefaultValues: any = {};
   timer: any = null;
+  formulaFieldSuggestions: any = [];
 
   constructor(
     private _kartaService: KartaService,
@@ -145,7 +152,9 @@ export class EditKartaComponent implements OnInit {
     for (let i = 0; i < this.fields.length; i++) {
       newArr.push({
         ...this.formulaGroup.controls['fields']['controls'][i],
-        fieldName: this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : `Field${i + 1}`,
+        fieldName: this.currentNode.node_type
+          ? this.currentNode.node_type.fields[i].fieldName
+          : `Field${i + 1}`,
       });
     }
     this.formulaGroup.patchValue({
@@ -205,69 +214,149 @@ export class EditKartaComponent implements OnInit {
       clearTimeout(this.timer);
       this.timer = null;
     }
-    this.timer = setTimeout(() => {
-      let tempObj: any = {};
-      let originalValue = event.target.value.trim();
-      let newValue = "";
-      let value = event.target.value.trim().split(/[,.+\-\/% *)(\/\\s]/);
+    this.timer =
+      this.formulaFieldSuggestions.length == 0 &&
+      setTimeout(() => {
+        let tempObj: any = {};
+        let originalValue = event.target.value.trim();
+        let newValue = '';
+        let value = event.target.value.trim().split(/[,.+\-\/% *)(\/\\s]/);
 
-      let total: any = 0;
-      let checkFrag = false;
+        let total: any = 0;
+        let checkFrag = false;
 
-      this.fields.controls.forEach((x: any) => {
-        tempObj[x['controls']['fieldName'].value] =
-          x['controls']['fieldValue'].value;
-      });
-
-      value.forEach((y: any) => {
-        if(y){
-          if(tempObj[y]){
-            newValue = newValue ? newValue.replace(y, tempObj[y]) : originalValue.replace(y, tempObj[y]);
-          }
-          else {
-            checkFrag = true;
-          }
-        }
-      });
-
-      if (checkFrag) {
-        this._commonService.errorToaster('Please type correct formula');
-        this.formulaGroup.patchValue({
-          calculatedValue: 0,
-        });
-        return;
-      } else {
-        total = eval(newValue);
-        this.formulaGroup.patchValue({
-          calculatedValue: total
+        this.fields.controls.forEach((x: any) => {
+          tempObj[x['controls']['fieldName'].value] =
+            x['controls']['fieldValue'].value;
         });
 
-        let request = {
-          ...this.formulaGroup.value,
-          metrics: true,
-        };
-        delete request['calculatedValue'];
-        request['calculated_value'] = this.formulaGroup.value.calculatedValue;
-
-        this._kartaService
-          .updateNode(this.currentNode.id, { node_type: request })
-          .subscribe(
-            (x) => {
-              if (x) {
-                this.updateNodeProperties(x);
-                this._commonService.successToaster(
-                  'Node updated succesfully..!!'
-                );
-              }
-            },
-            (err) => {
-              console.log(err);
-              this._commonService.errorToaster('Something went wrong..!!');
+        value.forEach((y: any) => {
+          if (y) {
+            if (tempObj[y]) {
+              newValue = newValue
+                ? newValue.replace(y, tempObj[y])
+                : originalValue.replace(y, tempObj[y]);
+            } else {
+              checkFrag = true;
             }
-          );
+          }
+        });
+
+        if (this.formulaGroup.valid) {
+          if (checkFrag) {
+            this._commonService.errorToaster('Please type correct formula');
+            this.formulaGroup.patchValue({
+              calculatedValue: 0,
+            });
+            return;
+          } else {
+            total = eval(newValue);
+            this.formulaGroup.patchValue({
+              calculatedValue: total,
+            });
+
+            let request = {
+              ...this.formulaGroup.value,
+              metrics: true,
+            };
+            delete request['calculatedValue'];
+            request['calculated_value'] =
+              this.formulaGroup.value.calculatedValue;
+
+            this._kartaService
+              .updateNode(this.currentNode.id, { node_type: request })
+              .subscribe(
+                (x) => {
+                  if (x) {
+                    this.updateNodeProperties(x);
+                    this._commonService.successToaster(
+                      'Node updated succesfully..!!'
+                    );
+                  }
+                },
+                (err) => {
+                  console.log(err);
+                  this._commonService.errorToaster('Something went wrong..!!');
+                }
+              );
+            return;
+          }
+        } else {
+          this.formulaGroup.markAllAsTouched();
+        }
+      }, 2000);
+  }
+
+  //Show Dropdown suggestions for Formula Fields
+  filterFieldSuggestions(event: any) {
+    let value = event.target.value;
+    let mathOperators = ['+', '-', '/', '*', '(', ')', ' ', '%'];
+    let findLastIndex = null;
+
+    for (let i = value.length; i > 0; i--) {
+      if (mathOperators.includes(value[i])) {
+        findLastIndex = value.indexOf(value[i]);
+        break;
+      }
+    }
+
+    if (!value) {
+      this.formulaFieldSuggestions = [];
+      return;
+    }
+
+    if (findLastIndex) {
+      let replaceValue = value.slice(findLastIndex + 1, value.length);
+      if (replaceValue) {
+        let data = this.formulaGroup.value.fields.filter((x: any) => {
+          return x.fieldName.toLocaleLowerCase().includes(replaceValue);
+        });
+        return (this.formulaFieldSuggestions = data);
+      } else {
+        this.formulaFieldSuggestions = [];
         return;
       }
-    }, 2000);
+    } else {
+      let data = this.formulaGroup.value.fields.filter((x: any) => {
+        return x.fieldName.toLocaleLowerCase().includes(value);
+      });
+      return (this.formulaFieldSuggestions = data);
+    }
+  }
+
+  // Concatenate Value on click of Dropdown values with Input Value
+  concatenateFieldValue(data: any) {
+    let addValue = data.fieldName;
+    let inputValue: any = document.getElementById('formula-field');
+    let mathOperators = ['+', '-', '/', '*', '(', ')', ' ', '%'];
+    let findLastIndex = null;
+
+    for (let i = inputValue.value.length; i > 0; i--) {
+      if (mathOperators.includes(inputValue.value[i])) {
+        findLastIndex = inputValue.value.indexOf(inputValue.value[i]);
+        break;
+      }
+    }
+
+    if (findLastIndex) {
+      let concatValue = inputValue.value.slice(0, findLastIndex + 1);
+      let finalString = concatValue + addValue;
+      inputValue.value = finalString;
+      this.formulaGroup.patchValue({
+        formula: finalString,
+      });
+      this.formulaFieldSuggestions = [];
+      inputValue.focus();
+      return;
+    } else {
+      inputValue.value = addValue;
+      this.formulaGroup.patchValue({
+        formula: addValue,
+      });
+      this.formulaFieldSuggestions = [];
+      inputValue.focus();
+      return;
+    }
   }
   // ---------FormArray Functions defined Above----------
 
@@ -360,11 +449,13 @@ export class EditKartaComponent implements OnInit {
     if (param.node_type) {
       const arr = this.formulaGroup.get('fields') as FormArray;
       arr.clear();
-      for(let i of param.node_type.fields){
-        arr.push(new FormGroup({
-          fieldName: new FormControl(i.fieldName),
-          fieldValue: new FormControl(i.fieldValue)
-        }));
+      for (let i of param.node_type.fields) {
+        arr.push(
+          new FormGroup({
+            fieldName: new FormControl(i.fieldName),
+            fieldValue: new FormControl(i.fieldValue),
+          })
+        );
       }
       this.formulaGroup.patchValue({
         calculatedValue: param.node_type.calculated_value,
@@ -515,7 +606,7 @@ export class EditKartaComponent implements OnInit {
 
   // Get suggestion by phaseId
   getSuggestionByPhaseId(param: any) {
-    if(!this.currentNode.node_type){
+    if (!this.currentNode.node_type) {
       // Creating 2 Formula Fields by Default
       for (let i = 0; i < 2; i++) {
         this.addFormulaGroup();
