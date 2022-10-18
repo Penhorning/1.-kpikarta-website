@@ -260,11 +260,18 @@ export class EditKartaComponent implements OnInit {
               metrics: true,
             };
             delete request['calculatedValue'];
-            request['calculated_value'] =
-              this.formulaGroup.value.calculatedValue;
 
+            let newTarget = this.target.map((obj: any) => {
+              let percentage = (total / obj.value) * 100;
+              return {
+                ...obj,
+                percentage: Math.round(percentage),
+                value: obj.value
+              }
+            });
+            
             this._kartaService
-              .updateNode(this.currentNode.id, { node_type: request })
+              .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
               .subscribe(
                 (x) => {
                   if (x) {
@@ -413,10 +420,10 @@ export class EditKartaComponent implements OnInit {
       this.target[index].frequency = e.target.value;
       this.updateNode('target', this.target);
     } else {
-      let percentage = (this.currentNode.achieved_value / e.target.value) * 100;
-      this.target[index].percentage = Math.round(percentage);
-      this.target[index].value = parseInt(e.target.value);
-      this.updateNode('target', this.target, 'yes');
+        let percentage = (this.currentNode.achieved_value / e.target.value) * 100;
+        this.target[index].percentage = Math.round(percentage);
+        this.target[index].value = parseInt(e.target.value);
+        this.updateNode('target', this.target, 'yes');
     }
   }
   addMoreTarget() {
