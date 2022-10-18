@@ -336,7 +336,7 @@ export class EditKartaComponent implements OnInit {
     let addValue = data.fieldName.trim();
     let inputValue: any = document.getElementById('formula-field');
     let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
-    let findLastIndex = null;
+    let findLastIndex = -1;
 
     for (let i = inputValue.value.length; i > 0; i--) {
       if (mathOperators.includes(inputValue.value[i])) {
@@ -465,7 +465,7 @@ export class EditKartaComponent implements OnInit {
         );
       }
       this.formulaGroup.patchValue({
-        calculatedValue: param.node_type.calculated_value,
+        calculatedValue: param.achieved_value,
         formula: param.node_type.formula,
       });
     }
