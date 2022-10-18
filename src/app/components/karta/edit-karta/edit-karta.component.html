@@ -246,10 +246,10 @@
                 <a href="#"><img src="assets/img/download-icon.svg"></a>
                 <div class="dropdown show">
                   <a class=" dropdown-toggle three-dots" href="#" role="button" id="dropdownMenuLink"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="export()">
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="downloadCsv()">
                     <img src="assets/img/export.svg">
                   </a>
-                  <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
+                  <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink"  (click)="export()">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
 
                     <a class="dropdown-item" href="#"><img src="assets/img/csv.svg" class="mr-2"> Export to CSV</a>

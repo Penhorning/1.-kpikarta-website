@@ -21,6 +21,7 @@ export class EditKartaComponent implements OnInit {
   currentPhase: any;
   phaseId: string = '';
   phases: any = [];
+  kartaData: any = [];
   // subPhases: any = [];
   colorSettings: any = [];
   suggestion: any;
@@ -785,18 +786,32 @@ export class EditKartaComponent implements OnInit {
 
   // downloadCsv
   downloadCsv(){
+
+    this.kartaData.push(this.karta)
+    console.log("this.karta", this.kartaData)
+    console.log("this.data", this.data)
+
+    // {
+    //   name: 'Test 1',
+    //   age: 13,
+    //   average: 8.2,
+    //   approved: true,
+    //   description: "using 'Content here, content here' "
+    // },
     const options = { 
       fieldSeparator: ',',
       quoteStrings: '"',
       decimalSeparator: '.',
       showLabels: true, 
       showTitle: true,
-      title: 'Charge Report',
+      title: 'Karta Report',
       useTextFile: false,
       useBom: true,
-      headers: ['Name', 'Age', 'Average', 'Approved','Description']
+      headers: ['name','type', 'status']
   };
    const csvExporter = new ExportToCsv(options);
-    csvExporter.generateCsv(this.data);
+    csvExporter.generateCsv(this.kartaData);
   }
 }
+
+

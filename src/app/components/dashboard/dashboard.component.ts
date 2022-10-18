@@ -117,22 +117,29 @@ export class DashboardComponent implements OnInit {
   // Submit shared data
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
-      if (element.email !== this._commonService.getEmailId()) this.emails.push(element.email);
+      if (element.email == this._commonService.getEmailId()) {
+        alert("You can not share karta to your self.");
+        if (element.email !== this._commonService.getEmailId()) { }
+      } else {
+        this.emails.push(element.email);
+      }
     });
-    let data = {
-      karta: this.sharingKarta,
-      emails: this.emails
+    if (this.emails.length > 0) {
+      let data = {
+        karta: this.sharingKarta,
+        emails: this.emails
+      }
+      this.sharedSubmitFlag = true;
+      this._kartaService.sharedEmails(data).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Your have shared karta successfully");
+          $('#shareLinkModal').modal('hide');
+          this.getKartas();
+          this.getSharedKarta();
+        },
+        (error: any) => { }
+      ).add(() => this.sharedSubmitFlag = false);
     }
-    this.sharedSubmitFlag = true;
-    this._kartaService.sharedEmails(data).subscribe(
-      (response: any) => {
-        this._commonService.successToaster("Your have shared karta successfully");
-        $('#shareLinkModal').modal('hide');
-        this.getKartas();
-        this.getSharedKarta();
-      },
-      (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false);
   }
 
   // Get all users 
@@ -161,7 +168,7 @@ export class DashboardComponent implements OnInit {
           resolve({ email: e });
           this.loading = false;
         });
-      } this.loading = false; 
+      } this.loading = false;
     })
   }
 
