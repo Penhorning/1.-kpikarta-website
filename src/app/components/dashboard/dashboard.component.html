@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-lg-6 text-right">
                             <div class="view-all-text">
-                                <a href="#">View All</a>
+                                <a href="javascript:void(0);">View All</a>
                             </div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                                                     </a> -->
                                                     <!-- <a class="dropdown-item" style="cursor: pointer;" (click)="copyKarta(karta.id)"><img
                                                             src="assets/img/copy.svg" class="mr-3"> Copy</a> -->
-                                                    <a class="dropdown-item" href="#"><img src="assets/img/used.svg"
+                                                    <a class="dropdown-item" href="javascript:void(0);"><img src="assets/img/used.svg"
                                                             class="mr-2"> Used <span> (5)</span></a>
 
                                                 </div>
@@ -70,7 +70,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 text-center">
                                             <div class="edit-btn-img">
-                                                <a [routerLink]="['/karta/edit-karta', karta._id]">
+                                                <a href="javascript:void(0);" style="cursor: default;">
                                                     <img src="assets/img/edit--icon-blue.svg" class="">
                                                 </a>
                                             </div>
@@ -87,10 +87,9 @@
                                     <hr>
                                     <div class="row">
                                         <div class="col-lg-6 text-left">
-                                            <!-- <div class="dropdown show">
-                                                <a class=" dropdown-toggle three-dots change-acc text-body" href="#"
-                                                    role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
+                                            <div class="dropdown show">
+                                                <a class=" dropdown-toggle three-dots change-acc text-body" href="javascript:void(0);"
+                                                    role="button" style="cursor: default;">
                                                     Change access <img src="assets/img/down-arrow.svg" class="ml-2">
                                                 </a>
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -99,7 +98,7 @@
                                                     <a class="dropdown-item" href="javascript:void(0);"
                                                         (click)="updateKarta('public', karta?._id, i)">Public</a>
                                                 </div>
-                                            </div> -->
+                                            </div>
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="private d-flex">
@@ -153,7 +152,7 @@
                         </div>
                         <div class="col-lg-6 text-right">
                             <div class="view-all-text">
-                                <a href="#">View All</a>
+                                <a href="javascript:void(0);">View All</a>
                             </div>
                         </div>
                     </div>
@@ -187,22 +186,21 @@
                                                             viewBox="0 0 16 16">
                                                             <path
                                                                 d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
-                                                        </svg>
-                                                        Share
-                                                    </a>
-                                                    <a class="dropdown-item" style="cursor: pointer;"  (click)="copyKarta(karta.id)"><img
+                                                        </svg> Share</a>
+                                                    <a class="dropdown-item" style="cursor: pointer;"  (click)="copyKarta(karta._id)"><img
                                                             src="assets/img/copy.svg" class="mr-3"> Copy</a>
+                                                    <a class="dropdown-item" style="cursor: pointer;" (click)="changeEditStatus(i, true)"><img
+                                                        src="assets/img/rename.png" class="mr-3 karta-icon-rename">Rename</a>
                                                     <a class="dropdown-item" href="#"><img src="assets/img/used.svg"
                                                             class="mr-2"> Used <span> (5)</span></a>
                                                     <a class="dropdown-item Delete" href="javascript:void(0);"
-                                                        (click)="deleteKarta(karta.id)">
+                                                        (click)="deleteKarta(karta._id)">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                             fill="currentColor" class="bi bi-trash3-fill mr-2"
                                                             viewBox="0 0 16 16">
                                                             <path
                                                                 d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z" />
-                                                        </svg>
-                                                        Delete</a>
+                                                        </svg> Delete</a>
                                                 </div>
                                             </div>
 
@@ -220,7 +218,10 @@
                                     <div class="row">
                                         <div class="col-lg-12 text-center">
                                             <div class="mt-3">
-                                                <h5>{{karta?.name}}</h5>
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <h5 [id]="'kt'+i" [ngClass]="checkEditStatus(i) != false ? 'border': ''" contenteditable="false">{{karta?.name}}</h5>
+                                                    <img class="ml-2 img-fluid-tick" (click)="renameKarta(karta._id, i)" *ngIf="checkEditStatus(i) != false" src="assets/img/check_icon.png" />
+                                                </div>
                                                 <p>{{karta?.createdAt | date:'mediumDate'}}</p>
                                             </div>
                                         </div>
@@ -236,9 +237,9 @@
                                                 </a>
                                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                     <a class="dropdown-item" href="javascript:void(0);"
-                                                        (click)="updateKarta('private', karta?.id, i)">Private</a>
+                                                        (click)="updateKarta('private', karta?._id, i)">Private</a>
                                                     <a class="dropdown-item" href="javascript:void(0);"
-                                                        (click)="updateKarta('public', karta?.id, i)">Public</a>
+                                                        (click)="updateKarta('public', karta?._id, i)">Public</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -337,7 +338,7 @@
                                     </div>
                                     <div class="col-lg-4 col-6 text-right">
                                         <div class="view-all-text">
-                                            <a href="#">View All</a>
+                                            <a href="javascript:void(0);">View All</a>
                                         </div>
                                     </div>
                                 </div>

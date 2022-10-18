@@ -49,10 +49,10 @@ export class LoginComponent implements OnInit {
         email: this.route.snapshot.queryParamMap.get("email") || "",
         profilePic: this.route.snapshot.queryParamMap.get("profilePic") || "",
         companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || "",
-        twoFactorEnabled: this.route.snapshot.queryParamMap.get("twoFactorEnabled") || "false",
+        _2faEnabled: this.route.snapshot.queryParamMap.get("_2faEnabled") || "false",
         mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false"
       }
-      if (sessionData.mobileVerified == "true" && sessionData.twoFactorEnabled == "true") {
+      if (sessionData.mobileVerified == "true" && sessionData._2faEnabled == "true") {
         this._signupService.setSignUpSession(sessionData);
         this.router.navigate(['/two-step-verification']);
       } else {
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
 
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, currentPlan, twoFactorEnabled } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, currentPlan, _2faEnabled } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -98,9 +98,9 @@ export class LoginComponent implements OnInit {
               companyLogo: response.companyLogo
             }
             if (this.loginForm.value.rememberMe) {
-              this._commonService.setRememberMeSession({email: this.loginForm.value.email});
+              this._commonService.setRememberMeSession({ email: this.loginForm.value.email });
             }
-            if (mobile && twoFactorEnabled && mobileVerified) {
+            if (mobile && _2faEnabled && mobileVerified) {
               this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/two-step-verification']);
             } else {
