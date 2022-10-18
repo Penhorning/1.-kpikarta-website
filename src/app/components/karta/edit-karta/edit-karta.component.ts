@@ -22,7 +22,7 @@ declare const $: any;
 export class EditKartaComponent implements OnInit {
   kartaId: string = '';
   karta: any;
-  currentNode: any;
+  currentNode: any = {};
   currentPhase: any;
   phaseId: string = '';
   phases: any = [];
@@ -115,7 +115,7 @@ export class EditKartaComponent implements OnInit {
     // Formula Fields
     this.formulaGroup = this.fb.group({
       calculatedValue: [0],
-      fields: this.fb.array([]),
+      fields: this.fb.array(this.addFormulaGroupByDefault()),
       formula: ['', Validators.required],
     });
 
@@ -136,12 +136,26 @@ export class EditKartaComponent implements OnInit {
   }
 
   // ---------FormArray Functions defined Below----------
+  //Adding 2 default FormulaField Group
+  addFormulaGroupByDefault(): any[] {
+    let newArr = [];
+    if(!this.currentNode.node_type){
+      for(let i = 0; i < 2; i++){
+        newArr.push(this.fb.group({
+          fieldName: [`Field${i + 1}`],
+          fieldValue: [0],
+        }))
+      }
+    }
+    return newArr;
+  }
+
   //Adding a New FormulaField Group
   addFormulaGroup() {
-    const fieldForm = this.fb.group({
+    let fieldForm = this.fb.group({
       fieldName: [`Field${this.fields.length + 1}`],
       fieldValue: [0],
-    });
+    })
     this.fields.push(fieldForm);
   }
 
@@ -613,12 +627,6 @@ export class EditKartaComponent implements OnInit {
 
   // Get suggestion by phaseId
   getSuggestionByPhaseId(param: any) {
-    if (!this.currentNode.node_type) {
-      // Creating 2 Formula Fields by Default
-      for (let i = 0; i < 2; i++) {
-        this.addFormulaGroup();
-      }
-    }
     let phase = this.phases[this.phaseIndex(param.phaseId)];
     let data = {
       userId: this._commonService.getUserId(),
@@ -660,6 +668,12 @@ export class EditKartaComponent implements OnInit {
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
       data.kpi_calc_period = 'month-to-date';
+      if (!this.currentNode.node_type) {
+        // Creating 2 Formula Fields by Default
+        for (let i = 0; i < 2; i++) {
+          this.addFormulaGroup();
+        }
+      }
     }
     this._kartaService.addNode(data).subscribe((response: any) => {
       this.D3SVG.updateNewNode(param, response);
