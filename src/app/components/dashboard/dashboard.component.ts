@@ -7,10 +7,9 @@ declare const $: any;
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
-
   kartas: any = [];
   users: any = [];
   sharingKarta: any;
@@ -26,7 +25,7 @@ export class DashboardComponent implements OnInit {
     private _commonService: CommonService,
     private _kartaService: KartaService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.getKartas();
@@ -44,51 +43,44 @@ export class DashboardComponent implements OnInit {
     let data = {
       page: 1,
       limit: 3,
-      userId: this._commonService.getUserId()
-    }
-    this._kartaService.getKartas(data).subscribe(
-      (response: any) => {
-        if (response) {
-          this.kartas = response.kartas[0].data;
-        } else this.kartas = [];
-      }
-    );
+      userId: this._commonService.getUserId(),
+    };
+    this._kartaService.getKartas(data).subscribe((response: any) => {
+      if (response) {
+        this.kartas = response.kartas[0].data;
+      } else this.kartas = [];
+    });
   }
 
   getSharedKarta() {
     let data = {
       page: 1,
       limit: 6,
-      email: this._commonService.getEmailId()
-    }
-    this._kartaService.getSharedKarta(data).subscribe(
-      (response: any) => {
-        if (response) {
-          this.sharedKartas = response.kartas[0].data;
-        } else this.sharedKartas = [];
-      }
-    );
+      email: this._commonService.getEmailId(),
+    };
+    this._kartaService.getSharedKarta(data).subscribe((response: any) => {
+      if (response) {
+        this.sharedKartas = response.kartas[0].data;
+      } else this.sharedKartas = [];
+    });
   }
 
   // Update karta
   updateKarta(type: string, id: string, index: number) {
-    this._kartaService.updateKarta(id, { type }).subscribe(
-      (response: any) => {
-        this.kartas[index].type = type;
-      }
-    );
+    this._kartaService.updateKarta(id, { type }).subscribe((response: any) => {
+      this.kartas[index].type = type;
+    });
   }
 
   // Delete karta
   deleteKarta(id: string) {
-    const result = confirm("Are you sure you want to delete this karta?");
+    const result = confirm('Are you sure you want to delete this karta?');
     if (result) {
       this._kartaService.deleteKarta({ kartaId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta deleted successfully");
           this.getKartas();
-        }
-      );
+        });
     }
   }
 
@@ -142,19 +134,17 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Get all users 
+  // Get all users
   getAllUser() {
-    this._kartaService.getAllUsers().subscribe(
-      (response: any) => {
-        if (response) {
-          this.users = response.users[0].data.filter((x: any) => {
-            return x.email != this._commonService.getEmailId();
-          })
-        } else {
-          this.users = [];
-        }
+    this._kartaService.getAllUsers().subscribe((response: any) => {
+      if (response) {
+        this.users = response.users[0].data.filter((x: any) => {
+          return x.email != this._commonService.getEmailId();
+        });
+      } else {
+        this.users = [];
       }
-    );
+    });
   }
 
   // Add new email and share
@@ -172,17 +162,47 @@ export class DashboardComponent implements OnInit {
     })
   }
 
-
   // Copy karta
   copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
-      this._kartaService.copyKarta({ kartaId: id }).subscribe(
-        (response: any) => {
-          this._commonService.successToaster("Karta copy created successfully.");
+      this._kartaService
+        .copyKarta({ kartaId: id })
+        .subscribe((response: any) => {
+          this._commonService.successToaster(
+            'Karta copy created successfully.'
+          );
           this.getKartas();
-        }
-      );
+        });
     }
+  }
+
+  changeEditStatus(id: number, value: boolean) {
+    $('#kt' + id).attr('contenteditable', value);
+    return;
+  }
+
+  checkEditStatus(id: number) {
+    let value = $('#kt' + id).attr('contenteditable');
+    return JSON.parse(value);
+  }
+
+  renameKarta(id: string, index: number) {
+    let value = document.getElementById('kt' + index)?.innerHTML;
+    this._kartaService.updateKarta(id, { name: value }).subscribe(
+      (x) => {
+        if (x) {
+          $('#kt' + index).attr('contenteditable', false);
+          this.ngOnInit();
+          this._commonService.successToaster(
+            'Karta name updated uccessfully..!!'
+          );
+        }
+      },
+      (err) => {
+        console.log(err);
+        this._commonService.errorToaster('Error while updating name..!!');
+      }
+    );
   }
 }
