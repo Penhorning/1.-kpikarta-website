@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 
 declare const $: any;
 @Component({
@@ -11,14 +12,14 @@ declare const $: any;
 })
 export class MyKpiComponent implements OnInit {
 
-
-
+  karta: any = [];
   kpis: any = [];
   colorSettings: any = [];
   users: any = [];
   creators: any = [];
   loadingKarta: boolean = true;
   loader: any = this._commonService.loader;
+  currentNode: any;
   // Pagination
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -80,7 +81,7 @@ export class MyKpiComponent implements OnInit {
   ];
 
   // Header list
- headerList = [
+  headerList = [
     { name: 'Karta', sort: '' },
     { name: 'KPI', sort: '' },
     { name: 'Target', sort: '' },
@@ -95,8 +96,22 @@ export class MyKpiComponent implements OnInit {
   sortDir = 1;
   sortOrder: string = 'asc';
   arrow_icon: boolean = true;
-  
-  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService) {
+
+  measuer: any;
+  currentNodeWeight: number = 0;
+  metricsData: any = [];
+
+  submitted: boolean = false;
+  metricsSubmitFlag: boolean = false;
+  index: any;
+  form = this.fb.group({
+    fields: this.fb.array([]),
+    measure: ['data'],
+    calculatedValue: [0],
+    formula: ['']
+  });
+
+  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,) {
     this.maxDate = new Date();
   }
 
@@ -117,7 +132,86 @@ export class MyKpiComponent implements OnInit {
       allowSearchFilter: true,
       disabled: this.isDisabled
     }
+    this.addMetricsData();
   }
+
+  // Formula of metrics starts
+  get fields() {
+    return this.form.controls["fields"] as FormArray;
+  }
+
+  addMetricsData() {
+    if (this.metricsData?.fields) {
+      this.metricsData?.fields.forEach((element: any) => {
+        const metricsForm = this.fb.group({
+          fieldValue: [element?.fieldValue, Validators.required],
+          fieldName: [element?.fieldName]
+        });
+        this.fields.push(metricsForm);
+      });
+    } else {
+      this.fields.removeAt(0);
+    }
+  }
+
+  // On Submit edit pop up
+  onSubmit() {
+    if (!this.fields.valid) {
+      this.form.markAllAsTouched();
+      this.submitted = true;
+      return;
+    }
+
+    let tempObj: any = {};
+    let mathOperators: any = ['+', '-', '/', '*', '%', '(', ')'];
+    let value = this.metricsData.formula.trim().split(' ');
+
+    let total: any = 0;
+    let checkFrag = false;
+
+    this.fields.controls.forEach((x: any) => {
+      tempObj[x['controls']['fieldName'].value] = x['controls']['fieldValue'].value;
+    });
+
+    let newValue = value.map((y: any) => {
+      if (tempObj[y]) {
+        return tempObj[y];
+      } else if (mathOperators.includes(y)) {
+        return ' ' + y + ' ';
+      } else {
+        checkFrag = true;
+        return y;
+      }
+    }).join(' ');
+
+    if (checkFrag) {
+      this._commonService.errorToaster('Please type correct formula');
+      this.form.patchValue({ calculatedValue: 0 }); return;
+    } else {
+      total = eval(newValue);
+      this.form.patchValue({ calculatedValue: total });
+
+      let request = {
+        ...this.form.value,
+        metrics: true
+      };
+      delete request['calculatedValue'];
+      request['calculated_value'] = this.form.value.calculatedValue;
+      this.metricsSubmitFlag = true;
+
+      this._myKpiService.updateNode(this.currentNode, { node_type: request }).subscribe(
+        (response) => { if (response) { this._commonService.successToaster('Actual value updated succesfully..!!'); } },
+        (err) => { console.log(err); this._commonService.errorToaster('Something went wrong..!!'); }
+      ).add(() => this.metricsSubmitFlag = false);
+      return;
+    }
+  }
+
+  returnError(i: any) {
+    return (this.form.get('fields') as FormArray).controls[i].get('fieldValue')?.errors ? true : false;
+  }
+  // Formula of metrics ends
+
 
   // Get color settings
   getColorSettings() {
@@ -268,7 +362,7 @@ export class MyKpiComponent implements OnInit {
     }
   }
 
-  // Submit shareed data
+  // Submit shared data
   onSubmitSharedData() {
     let data = {
       nodeId: this.sharingKarta._id,
@@ -286,32 +380,42 @@ export class MyKpiComponent implements OnInit {
     ).add(() => this.sharedSubmitFlag = false);
   }
 
-  editActualValue(i: number) {
-    if (this.rowClicked === i) this.rowClicked = -1;
-    else this.rowClicked = i;
+  // On click geting data of acheived value
+  editActualValue(e: any) {
+    this.metricsData = e.node_type;
+    this.currentNode = e._id;
+    this.form.reset();
+    this.fields.clear();
+    if (e.node_type) {
+      this.form.patchValue({
+        calculatedValue: e.node_type.calculated_value,
+        formula: e.node_type.formula,
+      });
+    }
+    this.addMetricsData();
   }
 
   // Edit acheived value
-  onEditAcheivedValue(ach_val: any, target_val: any) {
-    let nodeId = target_val._id;
-    this.target = target_val.target;
+  // onEditAcheivedValue(ach_val: any, target_val: any) {
+  //   let nodeId = target_val._id;
+  //   this.target = target_val.target;
 
-    // Edit acheived Percentage calculation 
-    this.target.forEach((element: any) => {
-      let percentage = (+ach_val / element.value) * 100;
-      return element.percentage = Math.round(percentage);
-    });
-    let data = {
-      'achieved_value': +ach_val,
-      'target': this.target
-    }
-    this.isHidden = false;
-    this._myKpiService.updateNode(nodeId, data).subscribe(
-      (response: any) => {
-        this.getMyKPIsList();
-      }
-    );
-  }
+  //   // Edit acheived Percentage calculation 
+  //   this.target.forEach((element: any) => {
+  //     let percentage = (+ach_val / element.value) * 100;
+  //     return element.percentage = Math.round(percentage);
+  //   });
+  //   let data = {
+  //     'achieved_value': +ach_val,
+  //     'target': this.target
+  //   }
+  //   this.isHidden = false;
+  //   this._myKpiService.updateNode(nodeId, data).subscribe(
+  //     (response: any) => {
+  //       this.getMyKPIsList();
+  //     }
+  //   );
+  // }
 
   // Sort by
   onSortBy(item: any) {
@@ -376,7 +480,7 @@ export class MyKpiComponent implements OnInit {
     );
   }
 
-  // View more
+  // View more button
   viewMore() {
     this.pageIndex++
     let data = {
@@ -387,14 +491,14 @@ export class MyKpiComponent implements OnInit {
     }
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        if (response) {this.kpis.push(...response.kpi_nodes[0].data);
-          if(response.kpi_nodes[0].metadata[0].total == this.kpis.length) this.viewMore_hide = !this.viewMore_hide;
+        if (response) {
+          this.kpis.push(...response.kpi_nodes[0].data);
+          if (response.kpi_nodes[0].metadata[0].total == this.kpis.length) this.viewMore_hide = !this.viewMore_hide;
         }
-      }
-    ).add(() => this.loadingKarta = false);
+      }).add(() => this.loadingKarta = false);
   }
 
-  // Sort 
+  // Sort function starts
   onSortClick(col: any, index: number) {
     if (this.arrow_icon) {
       this.sortDir = -1;
@@ -444,5 +548,8 @@ export class MyKpiComponent implements OnInit {
     });
     if (colName == 'percentage' || 'achieved_value' || 'value') this.sortOrder == 'asc' ? this.sortOrder = 'dsc' : this.sortOrder = 'asc';
   }
+  // End of sort function
+
+
 
 }

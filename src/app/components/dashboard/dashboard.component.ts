@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit {
 
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
-  loading = false;
+  loading: boolean = false;
   emails: any = [];
 
   constructor(
@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit {
   // Get all kartas
   getKartas() {
     let data = {
-      page : 1,
+      page: 1,
       limit: 3,
       userId: this._commonService.getUserId()
     }
@@ -57,7 +57,7 @@ export class DashboardComponent implements OnInit {
 
   getSharedKarta() {
     let data = {
-      page : 1,
+      page: 1,
       limit: 6,
       email: this._commonService.getEmailId()
     }
@@ -83,7 +83,7 @@ export class DashboardComponent implements OnInit {
   deleteKarta(id: string) {
     const result = confirm("Are you sure you want to delete this karta?");
     if (result) {
-      this._kartaService.deleteKarta({kartaId: id}).subscribe(
+      this._kartaService.deleteKarta({ kartaId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta deleted successfully");
           this.getKartas();
@@ -154,17 +154,20 @@ export class DashboardComponent implements OnInit {
   addTagPromise(e: string) {
     return new Promise((resolve) => {
       this.loading = true;
-      // Callback function
-      setTimeout(() => {
-        resolve({ email: e });
-        this.loading = false;
-      }, 1000);
+      var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (e.match(mailformat)) {
+        // Callback function
+        setTimeout(() => {
+          resolve({ email: e });
+          this.loading = false;
+        });
+      } this.loading = false; 
     })
   }
 
 
   // Copy karta
-  copyKarta (id: string) {
+  copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
       this._kartaService.copyKarta({ kartaId: id }).subscribe(
