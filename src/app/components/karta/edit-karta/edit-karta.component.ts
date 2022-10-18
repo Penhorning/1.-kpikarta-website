@@ -289,11 +289,11 @@ export class EditKartaComponent implements OnInit {
 
   //Show Dropdown suggestions for Formula Fields
   filterFieldSuggestions(event: any) {
-    let value = event.target.value;
-    let mathOperators = ['+', '-', '/', '*', '(', ')', ' ', '%'];
+    let value = event.target.value.trim();
+    let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
     let findLastIndex = null;
 
-    for (let i = value.length; i > 0; i--) {
+    for (let i = value.length - 1; i >= 0; i--) {
       if (mathOperators.includes(value[i])) {
         findLastIndex = value.indexOf(value[i]);
         break;
@@ -304,12 +304,12 @@ export class EditKartaComponent implements OnInit {
       this.formulaFieldSuggestions = [];
       return;
     }
-
-    if (findLastIndex) {
-      let replaceValue = value.slice(findLastIndex + 1, value.length);
+    
+    if (findLastIndex != -1) {
+      let replaceValue = value.slice(findLastIndex + 1, value.length).trim();
       if (replaceValue) {
         let data = this.formulaGroup.value.fields.filter((x: any) => {
-          return x.fieldName.toLocaleLowerCase().includes(replaceValue);
+          return x.fieldName.toLocaleLowerCase().includes(replaceValue.trim());
         });
         return (this.formulaFieldSuggestions = data);
       } else {
@@ -318,7 +318,7 @@ export class EditKartaComponent implements OnInit {
       }
     } else {
       let data = this.formulaGroup.value.fields.filter((x: any) => {
-        return x.fieldName.toLocaleLowerCase().includes(value);
+        return x.fieldName.toLocaleLowerCase().includes(value.trim());
       });
       return (this.formulaFieldSuggestions = data);
     }
@@ -326,9 +326,9 @@ export class EditKartaComponent implements OnInit {
 
   // Concatenate Value on click of Dropdown values with Input Value
   concatenateFieldValue(data: any) {
-    let addValue = data.fieldName;
+    let addValue = data.fieldName.trim();
     let inputValue: any = document.getElementById('formula-field');
-    let mathOperators = ['+', '-', '/', '*', '(', ')', ' ', '%'];
+    let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
     let findLastIndex = null;
 
     for (let i = inputValue.value.length; i > 0; i--) {
@@ -338,8 +338,8 @@ export class EditKartaComponent implements OnInit {
       }
     }
 
-    if (findLastIndex) {
-      let concatValue = inputValue.value.slice(0, findLastIndex + 1);
+    if (findLastIndex != -1) {
+      let concatValue = inputValue.value.slice(0, findLastIndex + 1).trim();
       let finalString = concatValue + addValue;
       inputValue.value = finalString;
       this.formulaGroup.patchValue({
