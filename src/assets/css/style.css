@@ -2007,7 +2007,7 @@ select.form-control.custom-select-karta-mode {
   padding: 18px 8px 0 118px;
   /* position: fixed; */
   z-index: 9999;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .karta-edit-contnet {

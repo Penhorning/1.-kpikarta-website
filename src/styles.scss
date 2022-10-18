@@ -38,6 +38,12 @@ input[type=number]::-webkit-outer-spin-button {
     appearance: none; 
 }
 
+.short_text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 
 
 // D3 Styles
@@ -62,12 +68,6 @@ input[type=number]::-webkit-outer-spin-button {
 .node-text p {
     line-height: normal;
     font-size: 12px !important;
-}
-
-.node-text p span.d-block {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
 }
 
 .link {

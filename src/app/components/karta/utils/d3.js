@@ -530,12 +530,19 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
 
     // Export as image
-    function exportAsImage() {
-        saveSvgAsPng($("#karta-svg svg")[0], "plot.png", { scale: 2, backgroundColor: "#FFFFFF" });
+    function exportAsImage(name) {
+        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF" });
     }
     // Export as pdf
-    function exportAsPDF() {
-        svgToPdfExample($("#karta-svg svg")[0]);
+    function exportAsPDF(name) {
+        window.jsPDF = window.jspdf.jsPDF;
+        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF" }).then(uri => {
+            let imageBase64 = uri.split(',')[1];
+            let svgWidth = $("#karta-svg svg").width();
+            let doc = new jsPDF('l', 'px', [svgWidth, 768]);
+            doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, 768);
+            doc.save(`${name}.pdf`);
+        });
     }
 
     const svgToPdfExample = (svg) => {

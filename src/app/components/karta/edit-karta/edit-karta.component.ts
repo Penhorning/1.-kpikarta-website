@@ -147,9 +147,10 @@ export class EditKartaComponent implements OnInit {
     $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
   }
 
-  // EXPORT CHART
-  export() {
-    this.D3SVG.exportAsImage();
+  // EXPORT KARTA
+  exportKarta(type: string) {
+    if (type === 'image') this.D3SVG.exportAsImage(this.karta.name);
+    else if (type === 'pdf') this.D3SVG.exportAsPDF(this.karta.name);
   }
 
   // Set karta's div width
@@ -187,19 +188,17 @@ export class EditKartaComponent implements OnInit {
 
   // Measure calculation section
   setTarget(type: string, e: any, index: any) {
-    setTimeout(() => {
-      if (type === 'frequency') {
-        this.target[index].frequency = e.target.value;
-        this.updateNode('target', this.target);
-      }
-      else {
-        let percentage= (this.currentNode.achieved_value/e.target.value) * 100;
-        this.target[index].percentage = Math.round(percentage);
-        this.target[index].value = parseInt(e.target.value);
-        this.updateNode('target', this.target);
-        
-      }
-    }, 1000);
+    if (type === 'frequency') {
+      this.target[index].frequency = e.target.value;
+      this.updateNode('target', this.target);
+    }
+    else {
+      let percentage= (this.currentNode.achieved_value/e.target.value) * 100;
+      this.target[index].percentage = Math.round(percentage);
+      this.target[index].value = parseInt(e.target.value);
+      this.updateNode('target', this.target);
+      
+    }
   }
   addMoreTarget() {
     this.target.push({

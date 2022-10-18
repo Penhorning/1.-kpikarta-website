@@ -40,7 +40,7 @@ export class RequestInterceptor implements HttpInterceptor {
           this._commonService.errorToaster(error.error.error.message ? error.error.error.message : error.statusText);
         } else if (error.status >= 500 && error.status <= 505) {
           this._commonService.errorToaster('Error, Something went wrong');
-        } else this._commonService.errorToaster('Error, Something went wrong');
+        }
         return throwError(error);
       })
     );

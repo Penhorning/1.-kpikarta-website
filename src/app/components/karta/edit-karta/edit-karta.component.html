@@ -212,7 +212,7 @@
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
-                <p [title]="karta?.name">{{karta?.name}}</p>
+                <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
               </div>
             </div>
             <div class="col-lg-3 pl-0">
@@ -246,16 +246,20 @@
                 <a href="#"><img src="assets/img/download-icon.svg"></a>
                 <div class="dropdown show">
                   <a class=" dropdown-toggle three-dots" href="#" role="button" id="dropdownMenuLink"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" (click)="export()">
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="assets/img/export.svg">
                   </a>
                   <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-
-                    <a class="dropdown-item" href="#"><img src="assets/img/csv.svg" class="mr-2"> Export to CSV</a>
-                    <a class="dropdown-item" href="#"><img src="assets/img/pdf.svg" class="mr-2"> Export to PDF</a>
-                    <a class="dropdown-item" href="#"><img src="assets/img/img.svg" class="mr-2"> Export to Image</a>
-
+                    <a class="dropdown-item" href="javascript:void(0);">
+                      <img src="assets/img/csv.svg" class="mr-2"> Export to CSV
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('pdf')">
+                      <img src="assets/img/pdf.svg" class="mr-2"> Export to PDF
+                    </a>
+                    <a class="dropdown-item border-0" href="javascript:void(0);" (click)="exportKarta('image')">
+                      <img src="assets/img/img.svg" class="mr-2"> Export to Image
+                    </a>
                   </div>
                 </div>
 
