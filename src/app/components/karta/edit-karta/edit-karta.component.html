@@ -249,7 +249,7 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="assets/img/export.svg">
                   </a>
-                  <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
+                  <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink"  (click)="export()">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
                     <a class="dropdown-item" href="javascript:void(0);">
                       <img src="assets/img/csv.svg" class="mr-2"> Export to CSV
@@ -721,7 +721,7 @@
               </div>
             </ng-container>
             <!-- Achieved Value -->
-            <div class="row mt-3">
+            <div class="row mt-3" *ngIf="kpiType === 'measure' ">
               <div class="col-lg-12">
                 <div class="form-group">
                   <label style="font-weight: 500;">Achieved Value</label>
@@ -801,9 +801,18 @@
                 </div>
               </div>
               <div class="row mt-3">
-                <div class="col-lg-12">
-                  <img src="assets/img/tick-mark-side-r.svg" class="img-fluid tick-custom">
-                  <input type="text" class="form-control" formControlName="formula" (blur)="calculateFormula($event)" />
+                <div class="col-lg-12 row">
+                  <div class="col-lg-10">
+                    <input type="text" class="form-control" id="formula-field" formControlName="formula" (input)="filterFieldSuggestions($event)" (blur)="calculateFormula($event)" [ngClass]="{ 'is-invalid': formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched) }" />
+                    <div class="invalid-feedback d-block" *ngIf="formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)">Please enter formula!</div>
+
+                    <p class="d-flex flex-column" *ngIf="formulaFieldSuggestions.length > 0">
+                      <span class="field-options border py-1 pl-2" *ngFor="let field of formulaFieldSuggestions" (click)="concatenateFieldValue(field)">{{field ? field?.fieldName : ''}}</span>
+                    </p>
+                  </div>
+                  <div class="col-lg-2" *ngIf="formulaGroup.get('calculatedValue').value > 0">
+                    <img src="assets/img/tick-mark-side-r.svg" class="img-fluid tick-custom">
+                  </div>
                 </div>
               </div>
               <div class="row mt-3">

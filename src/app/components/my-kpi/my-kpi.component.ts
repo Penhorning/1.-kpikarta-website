@@ -3,6 +3,7 @@ import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 declare const $: any;
 @Component({
@@ -32,6 +33,7 @@ export class MyKpiComponent implements OnInit {
   endDate: any = "";
   startDueDate: any = "";
   endDueDate: any = "";
+  statusType: any = "";
   // KPI statistics
   stats: any;
   search_text: string = "";
@@ -79,7 +81,6 @@ export class MyKpiComponent implements OnInit {
     { name: '71 to 100%', value: { "min": 71, "max": 100 }, selected: false },
     { name: '101 to Above', value: { "min": 101, "max": 999999999 }, selected: false }
   ];
-
   // Header list
   headerList = [
     { name: 'Karta', sort: '' },
@@ -91,27 +92,31 @@ export class MyKpiComponent implements OnInit {
     { name: 'Days Left', sort: '' },
     { name: 'Completion', sort: '' }
   ];
-
   // Sort var
   sortDir = 1;
   sortOrder: string = 'asc';
   arrow_icon: boolean = true;
-
-  measuer: any;
   currentNodeWeight: number = 0;
+  // Achieved value pop up value
   metricsData: any = [];
-
   submitted: boolean = false;
+  submittedMeasure: boolean = false;
+  measureSubmitFlag: boolean = false;
   metricsSubmitFlag: boolean = false;
+  measureFlag = false;
+  kartaName: any;
   index: any;
-  form = this.fb.group({
+  metricsForm = this.fb.group({
     fields: this.fb.array([]),
-    measure: ['data'],
-    calculatedValue: [0],
-    formula: ['']
+    formula: [''],
+    calculatedValue: [0]
   });
 
-  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,) {
+  measureForm = this.fb.group({
+    measure: [0,Validators.pattern('^[0-9]*$')]
+  });
+
+  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,private route: ActivatedRoute) {
     this.maxDate = new Date();
   }
 
@@ -137,17 +142,20 @@ export class MyKpiComponent implements OnInit {
 
   // Formula of metrics starts
   get fields() {
-    return this.form.controls["fields"] as FormArray;
+    return this.metricsForm.controls["fields"] as FormArray;
   }
+  get form() { return this.measureForm.controls }
 
   addMetricsData() {
     if (this.metricsData?.fields) {
       this.metricsData?.fields.forEach((element: any) => {
         const metricsForm = this.fb.group({
-          fieldValue: [element?.fieldValue, Validators.required],
+          fieldValue: [element?.fieldValue, Validators.pattern('^[0-9]*$')],
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);
+        console.log("form.metricsForm",this.fields.controls);
+        
       });
     } else {
       this.fields.removeAt(0);
@@ -155,17 +163,18 @@ export class MyKpiComponent implements OnInit {
   }
 
   // On Submit edit pop up
-  onSubmit() {
-    if (!this.fields.valid) {
-      this.form.markAllAsTouched();
+  onMetricsSubmit() {
+    if (!this.metricsForm.valid) {
+      this.metricsForm.markAllAsTouched();
       this.submitted = true;
       return;
     }
 
     let tempObj: any = {};
-    let mathOperators: any = ['+', '-', '/', '*', '%', '(', ')'];
-    let value = this.metricsData.formula.trim().split(' ');
-
+    let originalValue = this.metricsForm.value.formula.trim();
+    let newValue = '';
+    let value = this.metricsForm.value.formula.trim().split(/[,.+\-\/% *)(\/\\s]/);
+    
     let total: any = 0;
     let checkFrag = false;
 
@@ -173,45 +182,84 @@ export class MyKpiComponent implements OnInit {
       tempObj[x['controls']['fieldName'].value] = x['controls']['fieldValue'].value;
     });
 
-    let newValue = value.map((y: any) => {
-      if (tempObj[y]) {
-        return tempObj[y];
-      } else if (mathOperators.includes(y)) {
-        return ' ' + y + ' ';
-      } else {
-        checkFrag = true;
-        return y;
+    value.forEach((y: any) => {
+      if (y) {
+        if (tempObj[y]) {
+          newValue = newValue
+            ? newValue.replace(y, tempObj[y])
+            : originalValue.replace(y, tempObj[y]);
+        } else {
+          checkFrag = true;
+        }
       }
-    }).join(' ');
+    });
 
     if (checkFrag) {
       this._commonService.errorToaster('Please type correct formula');
-      this.form.patchValue({ calculatedValue: 0 }); return;
+      this.metricsForm.patchValue({ calculatedValue: 0 }); return;
     } else {
       total = eval(newValue);
-      this.form.patchValue({ calculatedValue: total });
+      this.metricsForm.patchValue({ calculatedValue: total });
 
       let request = {
-        ...this.form.value,
+        ...this.metricsForm.value,
         metrics: true
       };
       delete request['calculatedValue'];
-      request['calculated_value'] = this.form.value.calculatedValue;
+      this.target.forEach((element: any) => {
+        let percentage = (+this.metricsForm.value.calculatedValue / element.value) * 100;
+        return element.percentage = Math.round(percentage);
+      });
       this.metricsSubmitFlag = true;
-
-      this._myKpiService.updateNode(this.currentNode, { node_type: request }).subscribe(
-        (response) => { if (response) { this._commonService.successToaster('Actual value updated succesfully..!!'); } },
-        (err) => { console.log(err); this._commonService.errorToaster('Something went wrong..!!'); }
+      this._myKpiService.updateNode(this.currentNode, { node_type: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
+        (response) => {
+          if (response) { this._commonService.successToaster('Actual value updated succesfully..!!'); }
+        $('#editActualValueModal').modal('hide');
+          this.getMyKPIsList();
+        },
+        (err) => {
+          console.log(err); this._commonService.errorToaster('Something went wrong..!!');
+        }
       ).add(() => this.metricsSubmitFlag = false);
       return;
     }
   }
 
-  returnError(i: any) {
-    return (this.form.get('fields') as FormArray).controls[i].get('fieldValue')?.errors ? true : false;
+
+  onMeasureSubmit(){
+    if (!this.measureForm.valid) {
+      this.measureForm.markAllAsTouched();
+      this.submittedMeasure = true;
+      return;
+    }
+
+    this.target.forEach((element: any) => {
+      let percentage = (+this.measureForm.value.name / element.value) * 100;
+      return element.percentage = Math.round(percentage);
+    });
+
+    this.measureSubmitFlag = true;
+    this._myKpiService.updateNode(this.currentNode, { achieved_value: +this.measureForm.value.name, target: this.target }).subscribe(
+      (response) => {
+        if (response) { this._commonService.successToaster('Actual value updated succesfully..!!'); }
+        $('#editActualValueModal').modal('hide');
+        this.getMyKPIsList();
+      },
+      (err) => {
+        console.log(err); this._commonService.errorToaster('Something went wrong..!!');
+      }
+    ).add(() => this.measureSubmitFlag = false);
+    return;
   }
   // Formula of metrics ends
 
+  // Custom error handeling
+  returnMetricsError(i: any) {
+    return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.hasError('pattern');
+  }
+  returnError(i: any) {
+    return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.errors ? true : false;
+  }
 
   // Get color settings
   getColorSettings() {
@@ -239,7 +287,8 @@ export class MyKpiComponent implements OnInit {
       percentage: this.selectedPercentage,
       startDueDate: this.startDueDate,
       endDueDate: this.endDueDate,
-      kartaCreatorIds: this.kartaCreatorIds
+      kartaCreatorIds: this.kartaCreatorIds,
+      statusType: this.statusType
     }
     this.kpis = [];
     this._myKpiService.getMyKPIs(data).subscribe(
@@ -382,40 +431,29 @@ export class MyKpiComponent implements OnInit {
 
   // On click geting data of acheived value
   editActualValue(e: any) {
+    this.measureFlag = false; 
     this.metricsData = e.node_type;
     this.currentNode = e._id;
-    this.form.reset();
+    this.kartaName =  e.karta.name;
+    this.target = e.target
+    this.metricsForm.reset();
+    this.measureForm.reset();
     this.fields.clear();
-    if (e.node_type) {
-      this.form.patchValue({
-        calculatedValue: e.node_type.calculated_value,
-        formula: e.node_type.formula,
+    if (e?.node_type?.metrics) {
+      this.measureFlag = !this.measureFlag;
+      this.metricsForm.patchValue({
+        calculatedValue: e.node_type.calculated_value ? e.node_type.calculated_value : 0 ,
+        achieved_value: e.achieved_value ? e.achieved_value : 0,
+        formula: e.node_type.formula ? e.node_type.formula : ''
+      });
+    } else {
+      this.measureFlag = this.measureFlag;
+      this.measureForm.patchValue({
+        measure : e.achieved_value
       });
     }
     this.addMetricsData();
   }
-
-  // Edit acheived value
-  // onEditAcheivedValue(ach_val: any, target_val: any) {
-  //   let nodeId = target_val._id;
-  //   this.target = target_val.target;
-
-  //   // Edit acheived Percentage calculation 
-  //   this.target.forEach((element: any) => {
-  //     let percentage = (+ach_val / element.value) * 100;
-  //     return element.percentage = Math.round(percentage);
-  //   });
-  //   let data = {
-  //     'achieved_value': +ach_val,
-  //     'target': this.target
-  //   }
-  //   this.isHidden = false;
-  //   this._myKpiService.updateNode(nodeId, data).subscribe(
-  //     (response: any) => {
-  //       this.getMyKPIsList();
-  //     }
-  //   );
-  // }
 
   // Sort by
   onSortBy(item: any) {
@@ -487,7 +525,8 @@ export class MyKpiComponent implements OnInit {
       page: this.pageIndex + 1,
       limit: this.pageSize,
       userId: this._commonService.getUserId(),
-      kpiType: this.kpiType
+      kpiType: this.kpiType,
+      statusType: this.statusType
     }
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
@@ -550,6 +589,13 @@ export class MyKpiComponent implements OnInit {
   }
   // End of sort function
 
-
-
+  // Stats filter
+  filterByStatus(status: string) {
+    this.kpiType = 'assigned'
+    this.pageIndex = 0;
+    this.statusType = status
+    this.getMyKPIsList();
+    $('#assigned_tab').trigger('click')
+  }
+  
 }
