@@ -313,20 +313,22 @@ export class EditKartaComponent implements OnInit {
     let value = event.target.value.trim();
     let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
     let findLastIndex = null;
-
+    
     for (let i = value.length - 1; i >= 0; i--) {
       if (mathOperators.includes(value[i])) {
-        findLastIndex = value.indexOf(value[i]);
+        findLastIndex = value.lastIndexOf(value[i]);
         break;
       }
     }
+
+    console.log(findLastIndex, 'check');
 
     if (!value) {
       this.formulaFieldSuggestions = [];
       return;
     }
     
-    if (findLastIndex != -1) {
+    if (findLastIndex != -1 || findLastIndex) {
       let replaceValue = value.slice(findLastIndex + 1, value.length).trim();
       if (replaceValue) {
         let data = this.formulaGroup.value.fields.filter((x: any) => {
@@ -354,7 +356,7 @@ export class EditKartaComponent implements OnInit {
 
     for (let i = inputValue.value.length; i > 0; i--) {
       if (mathOperators.includes(inputValue.value[i])) {
-        findLastIndex = inputValue.value.indexOf(inputValue.value[i]);
+        findLastIndex = inputValue.value.lastIndexOf(inputValue.value[i]);
         break;
       }
     }
