@@ -1,3 +1,4 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
@@ -245,6 +246,7 @@ export class EditKartaComponent implements OnInit {
 
   // Formula Fields Calculation
   calculateFormula(event: any) {
+    debugger
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
@@ -888,20 +890,34 @@ export class EditKartaComponent implements OnInit {
       });
   }
 
+  calc(element: any){
+    delete element.depth,
+    delete element.is_deleted,
+    delete element.id,
+    delete element.oldy,
+    delete element.parent,
+    delete element.x,
+    delete element.x0,
+    delete element.y0,
+    delete element.yupdated,
+    delete element.y,
+    delete element.node_type
+    delete element.kartaId
+  if(element?.children){
+    element.children.forEach((element:any, index:number) => {
+      this.kartaData.push(element)
+     delete this.kartaData[this.kartaData.length - 1].children
+      this.calc(element)
+    });
+  }
+  }
   // downloadCsv
   downloadCsv(){
+    this.kartaData.push(this.karta.node)
+    this.calc(this.karta.node)
+    console.log("thisKartaData",this.kartaData);
 
-    this.kartaData.push(this.karta)
-    console.log("this.karta", this.kartaData)
-    console.log("this.data", this.data)
 
-    // {
-    //   name: 'Test 1',
-    //   age: 13,
-    //   average: 8.2,
-    //   approved: true,
-    //   description: "using 'Content here, content here' "
-    // },
     const options = { 
       fieldSeparator: ',',
       quoteStrings: '"',
@@ -911,11 +927,12 @@ export class EditKartaComponent implements OnInit {
       title: 'Karta Report',
       useTextFile: false,
       useBom: true,
-      headers: ['name','type', 'status']
+      headers: ['Name','Assigned Date', 'Font_style', 'Alignment','Text_color',
+      'KartaDetailId','CreatedAt','UpdatedAt','PhaseId','Children','Percentage' ]
   };
    const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.kartaData);
-  }
+   }
 }
 
 

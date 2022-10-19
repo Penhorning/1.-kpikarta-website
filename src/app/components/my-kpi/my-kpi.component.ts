@@ -104,6 +104,7 @@ export class MyKpiComponent implements OnInit {
   measureSubmitFlag: boolean = false;
   metricsSubmitFlag: boolean = false;
   measureFlag = false;
+  kartaName: any;
   index: any;
   metricsForm = this.fb.group({
     fields: this.fb.array([]),
@@ -112,7 +113,7 @@ export class MyKpiComponent implements OnInit {
   });
 
   measureForm = this.fb.group({
-    name: [0,Validators.required]
+    measure: [0,Validators.pattern('^[0-9]*$')]
   });
 
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,private route: ActivatedRoute) {
@@ -149,10 +150,12 @@ export class MyKpiComponent implements OnInit {
     if (this.metricsData?.fields) {
       this.metricsData?.fields.forEach((element: any) => {
         const metricsForm = this.fb.group({
-          fieldValue: [element?.fieldValue, Validators.required],
+          fieldValue: [element?.fieldValue, Validators.pattern('^[0-9]*$')],
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);
+        console.log("form.metricsForm",this.fields.controls);
+        
       });
     } else {
       this.fields.removeAt(0);
@@ -168,9 +171,10 @@ export class MyKpiComponent implements OnInit {
     }
 
     let tempObj: any = {};
-    let mathOperators: any = ['+', '-', '/', '*', '%', '(', ')'];
-    let value = this.metricsData.formula.trim().split(' ');
-
+    let originalValue = this.metricsForm.value.formula.trim();
+    let newValue = '';
+    let value = this.metricsForm.value.formula.trim().split(/[,.+\-\/% *)(\/\\s]/);
+    
     let total: any = 0;
     let checkFrag = false;
 
@@ -178,16 +182,17 @@ export class MyKpiComponent implements OnInit {
       tempObj[x['controls']['fieldName'].value] = x['controls']['fieldValue'].value;
     });
 
-    let newValue = value.map((y: any) => {
-      if (tempObj[y]) {
-        return tempObj[y];
-      } else if (mathOperators.includes(y)) {
-        return ' ' + y + ' ';
-      } else {
-        checkFrag = true;
-        return y;
+    value.forEach((y: any) => {
+      if (y) {
+        if (tempObj[y]) {
+          newValue = newValue
+            ? newValue.replace(y, tempObj[y])
+            : originalValue.replace(y, tempObj[y]);
+        } else {
+          checkFrag = true;
+        }
       }
-    }).join(' ');
+    });
 
     if (checkFrag) {
       this._commonService.errorToaster('Please type correct formula');
@@ -249,6 +254,9 @@ export class MyKpiComponent implements OnInit {
   // Formula of metrics ends
 
   // Custom error handeling
+  returnMetricsError(i: any) {
+    return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.hasError('pattern');
+  }
   returnError(i: any) {
     return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.errors ? true : false;
   }
@@ -426,6 +434,7 @@ export class MyKpiComponent implements OnInit {
     this.measureFlag = false; 
     this.metricsData = e.node_type;
     this.currentNode = e._id;
+    this.kartaName =  e.karta.name;
     this.target = e.target
     this.metricsForm.reset();
     this.measureForm.reset();
@@ -440,7 +449,7 @@ export class MyKpiComponent implements OnInit {
     } else {
       this.measureFlag = this.measureFlag;
       this.measureForm.patchValue({
-        name : e.achieved_value
+        measure : e.achieved_value
       });
     }
     this.addMetricsData();
