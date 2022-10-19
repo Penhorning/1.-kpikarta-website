@@ -1,16 +1,12 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as moment from 'moment';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ExportToCsv } from 'export-to-csv';
 
 declare const $: any;
 
@@ -62,22 +58,23 @@ export class EditKartaComponent implements OnInit {
         this.removeNode(d);
       },
       linkColor: (d: any) => {
-        let node_percentage = parseInt(d.target.weightage);
-        if (this.colorSettings.settings) {
-          let colorSetting = this.colorSettings.settings.filter(
-            (item: any) =>
-              node_percentage >= item.min && node_percentage <= item.max
-          );
-          return colorSetting[0]?.color ? colorSetting[0]?.color : 'black';
+        let node_percentage = parseInt((d.target).percentage) || 0;
+        if (node_percentage > 100) {
+          let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
+          return colorSetting[0]?.color || 'black';
+        } else if (this.colorSettings.settings) {
+          let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
+          return colorSetting[0]?.color || 'black';
         } else return 'black';
       },
       linkWidth: (d: any) => {
         let weightage = parseInt(d.target.weightage);
         weightage = weightage <= 0 ? 10 : weightage;
-        return weightage / 10;
-      },
-    },
-  };
+        return (weightage / 10) / 2;
+      }
+    }
+  }
+  
   /* Node properties */
   currentNodeName: string = '';
   currentNodeWeight: number = 0;
@@ -108,7 +105,7 @@ export class EditKartaComponent implements OnInit {
     private _commonService: CommonService,
     private route: ActivatedRoute,
     private fb: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const that = this;
@@ -224,6 +221,7 @@ export class EditKartaComponent implements OnInit {
 
   // Formula Fields Calculation
   calculateFormula(event: any) {
+    debugger
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
@@ -405,6 +403,22 @@ export class EditKartaComponent implements OnInit {
     $('body').addClass('rightSidebarOpened');
   }
 
+  // DISABLE CHART FUNCTIONS
+  disableChart() {
+    $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
+  }
+  // ENABLE CHART FUNCTIONS
+  enableChart() {
+    $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+  }
+
+  // EXPORT KARTA
+  exportKarta(type: string) {
+    if (type === 'image') this.D3SVG.exportAsImage(this.karta.name);
+    else if (type === 'pdf') this.D3SVG.exportAsPDF(this.karta.name);
+    else if (type == 'csv') this.exportAsCSV(this.karta);
+  }
+
   // Set karta's div width
   setKartaDimension() {
     let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
@@ -423,6 +437,12 @@ export class EditKartaComponent implements OnInit {
     $('#karta-svg svg').attr('height', height);
   }
 
+  // Change chart mode
+  changeMode(e: any) {
+    if (e.target.value === "enable") this.enableChart();
+    else this.disableChart();
+  }
+
   // Get all users
   getAllUser() {
     this._kartaService.getAllUsers().subscribe((response: any) => {
@@ -435,11 +455,13 @@ export class EditKartaComponent implements OnInit {
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
       this.updateNode('target', this.target);
-    } else {
-        let percentage = (this.currentNode.achieved_value / e.target.value) * 100;
-        this.target[index].percentage = Math.round(percentage);
-        this.target[index].value = parseInt(e.target.value);
-        this.updateNode('target', this.target, 'yes');
+    }
+    else {
+      let percentage= (this.currentNode.achieved_value/e.target.value) * 100;
+      this.target[index].percentage = Math.round(percentage);
+      this.target[index].value = parseInt(e.target.value);
+      this.updateNode('target', this.target);
+      
     }
   }
   addMoreTarget() {
@@ -507,10 +529,16 @@ export class EditKartaComponent implements OnInit {
     }
   }
 
+  // Change node name
+  changeNodeName() {
+    if (this.currentNodeName !== "") {
+      this.updateNode('name', this.currentNodeName);
+    }
+  }
   // Change weightage
   changeWeightage() {
-    if (this.currentNodeWeight > 100)
-      this._commonService.errorToaster('Weightage cannot be greator than 100!');
+    if (this.currentNodeWeight < 0) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
+    else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weightage cannot be greator than 100!");
     else {
       let sum = this.currentNode.parent.children
         .filter((item: any) => item.id !== this.currentNode.id)
@@ -519,10 +547,8 @@ export class EditKartaComponent implements OnInit {
           0
         );
       if (sum + this.currentNodeWeight > 100) {
-        this._commonService.errorToaster(
-          'Your aggregate weightage of all the nodes cannot be greator than 100!'
-        );
-      } else this.updateNode('weightage', this.currentNodeWeight);
+        this._commonService.errorToaster("Your aggregate weightage of all the nodes cannot be greator than 100!");
+      } else this.updateNode('weightage', this.currentNodeWeight, "yes");
     }
   }
   // Change alignment
@@ -539,10 +565,12 @@ export class EditKartaComponent implements OnInit {
   }
   // Change achieved value
   changeAchievedValue(e: any) {
+    // Calculate new percentage
     this.target.forEach((element: any) => {
       let percentage = (e.target.value / element.value) * 100;
       return (element.percentage = Math.round(percentage));
     });
+    // Submit updated achieved value
     let data = {
       achieved_value: e.target.value,
       target: this.target,
@@ -553,19 +581,23 @@ export class EditKartaComponent implements OnInit {
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
     let total_percentage: number[] = [];
-
-    if (!params.hasOwnProperty('children')) params.children = [];
+    // Set blank array for children, if not available
+    if (!params.hasOwnProperty("children")) params.children = [];
     params?.children?.forEach((element: any) => {
-      if (element.hasOwnProperty('achieved_value')) {
+      // Check if current element is a kpi node or not
+      if (element.hasOwnProperty("achieved_value")) {
         let targetValue = 0;
-        if (this.kpiCalculationPeriod === 'month-to-date') {
+        // Set target value according to month to date
+        if (this.kpiCalculationPeriod === "month-to-date") {
           const totalDays = moment().daysInMonth();
           const todayDay = moment().date();
           targetValue = element.target.find(
             (item: any) => item.frequency === 'monthly'
           ).value;
           targetValue = todayDay * (targetValue / totalDays);
-        } else if (this.kpiCalculationPeriod === 'year-to-date') {
+        }
+        // Set target value according to year to date
+        else if (this.kpiCalculationPeriod === "year-to-date") {
           const currentYear = moment().year();
           const totalDays = moment([currentYear]).isLeapYear() ? 366 : 365;
           const todayDay = moment().date();
@@ -574,9 +606,12 @@ export class EditKartaComponent implements OnInit {
           ).value;
           targetValue = todayDay * (targetValue / totalDays);
         }
-
-        let current_percentage = (element.achieved_value / targetValue) * 100;
+        let current_percentage= (element.achieved_value/targetValue) * 100;
         element.percentage = Math.round(current_percentage);
+        // Set percentage for target nodes, if exists
+        if (element.hasOwnProperty("children") && element.children.length > 0) {
+          element.children[0].percentage = Math.round(current_percentage);
+        }
       } else {
         let returnedPercentage = this.calculatePercentage(element, percentage);
         element.percentage = Math.round(returnedPercentage);
@@ -638,7 +673,7 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.suggestion = response;
       },
-      (error: any) => {}
+      (error: any) => { }
     );
   }
 
@@ -653,19 +688,19 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Add node
-  addNode(param: any, name?: string) {
+  addNode(param: any, name: string = "Child", weightage: number = 0) {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     let data: any = {
-      name: name ? name : 'Child',
-      font_style: 'sans-serif',
-      alignment: 'center',
-      text_color: '#000000',
+      name: name,
+      font_style: "sans-serif",
+      alignment: "center",
+      text_color: "#000000",
       kartaDetailId: this.kartaId,
       phaseId: phase.id,
       parentId: param.id,
-      weightage: 0,
-    };
-    if (phase.name === 'KPI') {
+      weightage: weightage
+    }
+    if (phase.name === "KPI") {
       data.due_date = new Date();
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
@@ -727,8 +762,19 @@ export class EditKartaComponent implements OnInit {
   //   this.D3SVG.buildOneKartaDivider();
   // }
 
+  // Update new percentage
+  updateNewPercentage() {
+    this._kartaService.getKarta(this.kartaId).subscribe(
+      (response: any) => {
+        this.karta = response;
+        this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+        this.D3SVG.updateNode(this.karta.node);
+      }
+    );
+  }
+
   // Update node
-  updateNode(key: string, value: any, addTarget?: any) {
+  updateNode(key: string, value: any, addTarget: string = "") {
     let data;
     if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
     else data = { [key]: value };
@@ -738,11 +784,14 @@ export class EditKartaComponent implements OnInit {
         this.currentNode[key] =
           key === 'achieved_value' ? value.achieved_value : value;
         this.D3SVG.updateNode(this.currentNode);
-        if (addTarget === 'yes' && !this.currentNode.children) {
-          this.addNode(this.currentNode, `${value[0].value} per target`);
+        if (addTarget === "yes" && !this.currentNode.children && this.currentNode.hasOwnProperty("achieved_value")) {
+          this.addNode(this.currentNode, "Target", 100);
         }
-        // if (key === "weightage") this.D3SVG.events.linkWidth(this.currentNode);
-      });
+        if (key === "achieved_value" || key === "target" || key === "weightage") {
+          this.updateNewPercentage();
+        }
+      }
+    );
   }
 
   // Remove node from karta
@@ -821,4 +870,57 @@ export class EditKartaComponent implements OnInit {
         this.karta = response;
       });
   }
+
+  // Export karta to CSV
+  csvKartaData: any = [
+    {
+      name: "",
+      weightage: "",
+      font_style: "",
+      alignment: "",
+      text_color: "",
+      kartaName: "",
+      assigned_date: "",
+      createdAt: "",
+      phaseId: "",
+      phaseName: "",
+      percentage: ""
+    }
+  ];
+
+  pushCSVData(data: any) {
+    if (!data.hasOwnProperty("parentId")) {
+      data.kartaName = this.karta.name;
+      data.phaseName = this.phases[this.phaseIndex(data.phaseId)].name;
+      this.csvKartaData.push(data);
+    }
+    if(data.hasOwnProperty("children") && data.children.length > 0) {
+      data.children.forEach((element: any) => {
+        element.kartaName = this.karta.name;
+        element.phaseName = this.phases[this.phaseIndex(element.phaseId)].name;
+        this.csvKartaData.push(element);
+        this.pushCSVData(element);
+      });
+    }
+  }
+  exportAsCSV(param: any) {
+    this.pushCSVData(param.node);
+    const options = { 
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      useTextFile: false,
+      filename: this.karta.name,
+      useBom: true,
+      headers: ['Name', 'Weightage', 'Font_style', 'Alignment','Text_color',
+      'Karta Name', 'Assigned Date', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage',
+    'Target Value', 'Achieved Value']
+  };
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(this.csvKartaData);
+  }
+
 }
+
+

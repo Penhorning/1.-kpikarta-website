@@ -212,7 +212,7 @@
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
-                <p [title]="karta?.name">{{karta?.name}}</p>
+                <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
               </div>
             </div>
             <div class="col-lg-3 pl-0">
@@ -234,9 +234,9 @@
           <div class="row">
             <div class="col-lg-4">
               <div class="select-karta-name">
-                <select class="form-control custom-select-karta-mode">
-                  <option>Editor Mode</option>
-                  <option>Editor Mode Two</option>
+                <select class="form-control custom-select-karta-mode" (change)="changeMode($event)">
+                  <option value="enable">Editor Mode</option>
+                  <option value="disable">Viewer Mode</option>
                 </select>
               </div>
             </div>
@@ -251,11 +251,15 @@
                   </a>
                   <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-
-                    <a class="dropdown-item" href="#"><img src="assets/img/csv.svg" class="mr-2"> Export to CSV</a>
-                    <a class="dropdown-item" href="#"><img src="assets/img/pdf.svg" class="mr-2"> Export to PDF</a>
-                    <a class="dropdown-item" href="#"><img src="assets/img/img.svg" class="mr-2"> Export to Image</a>
-
+                    <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('csv')">
+                      <img src="assets/img/csv.svg" class="mr-2"> Export to CSV
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('pdf')">
+                      <img src="assets/img/pdf.svg" class="mr-2"> Export to PDF
+                    </a>
+                    <a class="dropdown-item border-0" href="javascript:void(0);" (click)="exportKarta('image')">
+                      <img src="assets/img/img.svg" class="mr-2"> Export to Image
+                    </a>
                   </div>
                 </div>
 
@@ -511,7 +515,7 @@
           <div class="col-lg-12">
             <div class="search-sugg mt-3">
               <input type="text" class="form-control" [(ngModel)]="currentNodeName"
-                (blur)="updateNode('name', currentNodeName)">
+                (blur)="changeNodeName()">
             </div>
           </div>
         </div>
@@ -528,8 +532,8 @@
             <div class="col-lg-12">
               <div class="search-sugg mt-3">
                 <input type="number" class="form-control" [(ngModel)]="currentNodeWeight"
-                  (blur)="changeWeightage()" [ngClass]="{ 'is-invalid': currentNodeWeight < 1 }">
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 1">Please enter weightage!</div>
+                  (blur)="changeWeightage()" [ngClass]="{ 'is-invalid': currentNodeWeight < 0 }">
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0">Please enter weightage!</div>
               </div>
             </div>
           </div>
@@ -701,7 +705,7 @@
                 </div>
                 <div class="col-lg-4 px-2">
                   <div class="custom-input-side-r">
-                    <input type="number" class="form-control" [value]="t.value" (blur)="setTarget('value', $event, i)">
+                    <input type="number" class="form-control" [value]="t.value" (input)="setTarget('value', $event, i)">
                   </div>
                 </div>
                 <div class="col-lg-3 d-flex px-2">

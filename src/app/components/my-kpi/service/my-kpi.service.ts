@@ -30,5 +30,8 @@ export class MyKpiService {
   shareNode(data: any) {
     return this._httpService.POST('/karta_nodes/share', data);
   }
+  getKarta(kartaId: string) {
+    return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
+  }
 }
 
