@@ -22,7 +22,6 @@ export class EditKartaComponent implements OnInit {
   currentPhase: any;
   phaseId: string = '';
   phases: any = [];
-  kartaData: any = [];
   // subPhases: any = [];
   colorSettings: any = [];
   suggestion: any;
@@ -100,30 +99,6 @@ export class EditKartaComponent implements OnInit {
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
-
-  data = [
-    {
-      name: 'Test 1',
-      age: 13,
-      average: 8.2,
-      approved: true,
-      description: "using 'Content here, content here' "
-    },
-    {
-      name: 'Test 2',
-      age: 11,
-      average: 8.2,
-      approved: true,
-      description: "using 'Content here, content here' "
-    },
-    {
-      name: 'Test 4',
-      age: 10,
-      average: 8.2,
-      approved: true,
-      description: "using 'Content here, content here' "
-    },
-  ];
 
   constructor(
     private _kartaService: KartaService,
@@ -439,6 +414,7 @@ export class EditKartaComponent implements OnInit {
   exportKarta(type: string) {
     if (type === 'image') this.D3SVG.exportAsImage(this.karta.name);
     else if (type === 'pdf') this.D3SVG.exportAsPDF(this.karta.name);
+    else if (type == 'csv') this.exportAsCSV(this.karta);
   }
 
   // Set karta's div width
@@ -893,49 +869,56 @@ export class EditKartaComponent implements OnInit {
       });
   }
 
-  calc(element: any){
-    delete element.depth,
-    delete element.is_deleted,
-    delete element.id,
-    delete element.oldy,
-    delete element.parent,
-    delete element.x,
-    delete element.x0,
-    delete element.y0,
-    delete element.yupdated,
-    delete element.y,
-    delete element.node_type
-    delete element.kartaId
-  if(element?.children){
-    element.children.forEach((element:any, index:number) => {
-      this.kartaData.push(element)
-     delete this.kartaData[this.kartaData.length - 1].children
-      this.calc(element)
-    });
-  }
-  }
-  // downloadCsv
-  downloadCsv(){
-    this.kartaData.push(this.karta.node)
-    this.calc(this.karta.node)
-    console.log("thisKartaData",this.kartaData);
+  // Export karta to CSV
+  csvKartaData: any = [
+    {
+      name: "",
+      weightage: "",
+      font_style: "",
+      alignment: "",
+      text_color: "",
+      kartaName: "",
+      assigned_date: "",
+      createdAt: "",
+      phaseId: "",
+      phaseName: "",
+      percentage: ""
+    }
+  ];
 
-
+  pushCSVData(data: any) {
+    if (!data.hasOwnProperty("parentId")) {
+      data.kartaName = this.karta.name;
+      data.phaseName = this.phases[this.phaseIndex(data.phaseId)].name;
+      this.csvKartaData.push(data);
+    }
+    if(data.hasOwnProperty("children") && data.children.length > 0) {
+      data.children.forEach((element: any) => {
+        element.kartaName = this.karta.name;
+        element.phaseName = this.phases[this.phaseIndex(element.phaseId)].name;
+        this.csvKartaData.push(element);
+        this.pushCSVData(element);
+      });
+    }
+  }
+  exportAsCSV(param: any) {
+    this.pushCSVData(param.node);
     const options = { 
       fieldSeparator: ',',
       quoteStrings: '"',
       decimalSeparator: '.',
-      showLabels: true, 
-      showTitle: true,
-      title: 'Karta Report',
+      showLabels: true,
       useTextFile: false,
+      filename: this.karta.name,
       useBom: true,
-      headers: ['Name','Assigned Date', 'Font_style', 'Alignment','Text_color',
-      'KartaDetailId','CreatedAt','UpdatedAt','PhaseId','Children','Percentage' ]
+      headers: ['Name', 'Weightage', 'Font_style', 'Alignment','Text_color',
+      'Karta Name', 'Assigned Date', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage',
+    'Target Value', 'Achieved Value']
   };
-   const csvExporter = new ExportToCsv(options);
-    csvExporter.generateCsv(this.kartaData);
-   }
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(this.csvKartaData);
+  }
+
 }
 
 

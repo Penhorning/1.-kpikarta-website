@@ -72,24 +72,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     function zoom() {
         svg.selectAll('.karta_divider').remove();
         svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    //     var pos = d3.mouse(this);
-    // var scale = d3.event.scale;
-
-    // var trans = d3.transform(svg.attr("transform"));
-    // var tpos = trans.translate;
-    // var tscale = trans.scale;
-    // var tx = tpos[0];
-    // var ty = tpos[1];
-    // var mx = pos[0] - width/2;
-    // var my = pos[1] - height/2;
-
-    // var dx =  (mx - tx)/tscale[0];
-    // var dy =  (my - ty)/tscale[1];
-    // var dx2 = (mx - dx)/scale - dx;
-    // var dy2 = (my - dy)/scale - dy;
-
-    // var tform = "translate(" + dx + "," + dy + ")scale(" + scale + ")translate(" + dx2 + "," + dy2 + ")"
-    // svg.attr("transform", tform);
     }
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
     var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
@@ -111,7 +93,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         .append("g")
         .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
-
     // Setup lining
     buildKartaDivider();
 
@@ -544,39 +525,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             doc.save(`${name}.pdf`);
         });
     }
-
-    const svgToPdfExample = (svg) => {
-        const doc = new window.PDFDocument();
-        const chunks = [];
-        const stream = doc.pipe({
-            // writable stream implementation
-            write: (chunk) => chunks.push(chunk),
-            end: () => {
-                const pdfBlob = new Blob(chunks, {
-                    type: "application/octet-stream",
-                });
-                var blobUrl = URL.createObjectURL(pdfBlob);
-                //window.open(`${blobUrl}?customfilename.pdf`);
-
-                /* custom file name download */
-                const a = document.createElement("a");
-                document.body.appendChild(a);
-                a.style = "display: none";
-                a.href = blobUrl;
-                a.download = "test.pdf"; // <---- 👈 file name
-                a.click();
-                window.URL.revokeObjectURL(blobUrl);
-            },
-            // readable streaaam stub iplementation
-            on: (event, action) => { },
-            once: (...args) => { },
-            emit: (...args) => { },
-        });
-
-        window.SVGtoPDF(doc, svg, 100, 0);
-
-        doc.end();
-    };
 
 
     var events = {

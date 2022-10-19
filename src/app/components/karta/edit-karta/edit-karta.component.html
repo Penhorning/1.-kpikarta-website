@@ -249,9 +249,9 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="assets/img/export.svg">
                   </a>
-                  <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink"  (click)="export()">
+                  <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                    <a class="dropdown-item" href="javascript:void(0);">
+                    <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('csv')">
                       <img src="assets/img/csv.svg" class="mr-2"> Export to CSV
                     </a>
                     <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('pdf')">
