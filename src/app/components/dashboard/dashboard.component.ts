@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
 
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
-  loading = false;
+  loading: boolean = false;
   emails: any = [];
 
   constructor(
@@ -76,10 +76,9 @@ export class DashboardComponent implements OnInit {
   deleteKarta(id: string) {
     const result = confirm('Are you sure you want to delete this karta?');
     if (result) {
-      this._kartaService
-        .deleteKarta({ kartaId: id })
-        .subscribe((response: any) => {
-          this._commonService.successToaster('Karta deleted successfully');
+      this._kartaService.deleteKarta({ kartaId: id }).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Karta deleted successfully");
           this.getKartas();
         });
     }
@@ -100,6 +99,8 @@ export class DashboardComponent implements OnInit {
 
   // On share karta
   onShare(param: any) {
+    console.log("param 1", param);
+    
     this.selectedUsers = [];
     this.emails = [];
     this.sharingKarta = param;
@@ -110,28 +111,29 @@ export class DashboardComponent implements OnInit {
   // Submit shared data
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
-      if (element.email !== this._commonService.getEmailId())
+      if (element.email == this._commonService.getEmailId()) {
+        alert("You can not share karta to your self.");
+        if (element.email !== this._commonService.getEmailId()) { }
+      } else {
         this.emails.push(element.email);
+      }
     });
-    let data = {
-      karta: this.sharingKarta,
-      emails: this.emails,
-    };
-    this.sharedSubmitFlag = true;
-    this._kartaService
-      .sharedEmails(data)
-      .subscribe(
+    if (this.emails.length > 0) {
+      let data = {
+        karta: this.sharingKarta,
+        emails: this.emails
+      }
+      this.sharedSubmitFlag = true;
+      this._kartaService.sharedEmails(data).subscribe(
         (response: any) => {
-          this._commonService.successToaster(
-            'Your have shared karta successfully'
-          );
+          this._commonService.successToaster("Your have shared karta successfully");
           $('#shareLinkModal').modal('hide');
           this.getKartas();
           this.getSharedKarta();
         },
-        (error: any) => {}
-      )
-      .add(() => (this.sharedSubmitFlag = false));
+        (error: any) => { }
+      ).add(() => this.sharedSubmitFlag = false);
+    }
   }
 
   // Get all users
@@ -151,26 +153,24 @@ export class DashboardComponent implements OnInit {
   addTagPromise(e: string) {
     return new Promise((resolve) => {
       this.loading = true;
-      // Callback function
-      setTimeout(() => {
-        resolve({ email: e });
-        this.loading = false;
-      }, 1000);
-    });
+      var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (e.match(mailformat)) {
+        // Callback function
+        setTimeout(() => {
+          resolve({ email: e });
+          this.loading = false;
+        });
+      } this.loading = false;
+    })
   }
 
   // Copy karta
   copyKarta(id: string) {
-    const result = confirm(
-      'Are you sure you want to create a copy of this karta?'
-    );
+    const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
-      this._kartaService
-        .copyKarta({ kartaId: id })
-        .subscribe((response: any) => {
-          this._commonService.successToaster(
-            'Karta copy created successfully.'
-          );
+      this._kartaService.copyKarta({ kartaId: id }).subscribe(
+        (response: any) => {
+          this._commonService.successToaster('Karta copy created successfully.');
           this.getKartas();
         });
     }

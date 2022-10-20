@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-lg-6 text-right">
                             <div class="view-all-text">
-                                <a href="javascript:void(0);">View All</a>
+                                <a [routerLink]="['/kartas']" fragment="tabs-2">View All</a>
                             </div>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                                         <div class="col-8">
                                             <div class="own d-flex">
                                                 <img src="assets/img/own-icon.svg">
-                                                <p>{{karta?.user?.fullName}}</p>
+                                                <p class="short_text">{{karta?.user?.fullName}}</p>
                                             </div>
                                         </div>
                                         <div class="col-4 text-right">
@@ -70,7 +70,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 text-center">
                                             <div class="edit-btn-img">
-                                                <a href="javascript:void(0);" style="cursor: default;">
+                                                <a [routerLink]="['/karta/edit-karta', karta._id]">
                                                     <img src="assets/img/edit--icon-blue.svg" class="">
                                                 </a>
                                             </div>
@@ -79,7 +79,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 text-center">
                                             <div class="mt-3">
-                                                <h5>{{karta?.name}}</h5>
+                                                <h5 class="short_text">{{karta?.name}}</h5>
                                                 <p>{{karta?.createdAt | date:'mediumDate'}}</p>
                                             </div>
                                         </div>
@@ -152,7 +152,7 @@
                         </div>
                         <div class="col-lg-6 text-right">
                             <div class="view-all-text">
-                                <a href="javascript:void(0);">View All</a>
+                                <a [routerLink]="['/kartas']">View All</a>
                             </div>
                         </div>
                     </div>
@@ -165,7 +165,7 @@
                                         <div class="col-8">
                                             <div class="own d-flex">
                                                 <img src="assets/img/own-icon.svg">
-                                                <p>{{karta?.user?.fullName}}</p>
+                                                <p class="short_text">{{karta?.user?.fullName}}</p>
                                             </div>
                                         </div>
                                         <div class="col-4 text-right">
@@ -219,7 +219,7 @@
                                         <div class="col-lg-12 text-center">
                                             <div class="mt-3">
                                                 <div class="d-flex justify-content-center align-items-center">
-                                                    <h5 [id]="'kt'+i" [ngClass]="checkEditStatus(i) != false ? 'border': ''" contenteditable="false">{{karta?.name}}</h5>
+                                                    <h5 class="short_text" [id]="'kt'+i" [ngClass]="checkEditStatus(i) != false ? 'border': ''" contenteditable="false">{{karta?.name}}</h5>
                                                     <img class="ml-2 img-fluid-tick" (click)="renameKarta(karta._id, i)" *ngIf="checkEditStatus(i) != false" src="assets/img/check_icon.png" />
                                                 </div>
                                                 <p>{{karta?.createdAt | date:'mediumDate'}}</p>
@@ -449,8 +449,14 @@
                         <label>{{sharingKarta?.name}}</label>
                         <div class="row">
                             <div class="col-lg-12">
-                                <ng-select [items]="users" [addTag]="addTagPromise" placeholder="Select users"
-                                    [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers">
+                                <ng-select [items]="users"
+                                 [addTag]="addTagPromise"
+                                  placeholder="Select users"
+                                 [loading]="loading"
+                                  [multiple]="true"
+                                   bindLabel="email"
+                                    [(ngModel)]="selectedUsers"
+                                    >
                                     <ng-template ng-tag-tmp let-search="searchTerm">
                                         <b>Add new email</b>: {{search}}
                                     </ng-template>
@@ -461,7 +467,7 @@
                     <div style="border-color: unset;" data-dismiss="" aria-label="">
                         <span aria-hidden="true">
                             <button type="button" class="send-btn" (click)="shareKarta()"
-                                [disabled]="selectedUsers.length < 1  || sharedSubmitFlag">
+                                [disabled]="selectedUsers?.length < 1  || sharedSubmitFlag">
                                 <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                                     <span class="sr-only">Loading...</span>
                                 </div>

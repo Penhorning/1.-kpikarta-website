@@ -9,12 +9,12 @@ var getSVGSize = (tree, level = 0) => {
     var children = (tree.children || tree._children || []);
     width2 = $(".karta_column").width();
     if (!level) {
-        levelDepth = [children.length * 170 || width2];
+        levelDepth = [children.length * 100 || width2];
     } else {
         if (!levelDepth[level]) {
-            levelDepth[level] = children.length * 170
+            levelDepth[level] = children.length * 100
         } else {
-            levelDepth[level] += children.length * 170
+            levelDepth[level] += children.length * 100
         }
     }
     if ((level + 1) * 65 > levelHeight) {
@@ -49,6 +49,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     //   .size([height, width])
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
+    options.exportAsImage = exportAsImage;
+    options.exportAsPDF = exportAsPDF;
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
@@ -77,7 +79,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     $(document).on('click', '#reset_zoom_btn', function () {
         let transformArray = d3.select("g").attr("transform").split(')');
         if (transformArray.length > 2) {
-            console.log("set")
             d3.select("g").attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
             buildKartaDivider();
         }
@@ -92,7 +93,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         .append("g")
         .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
-
     // Setup lining
     buildKartaDivider();
 
@@ -219,7 +219,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 return;
             }
             domNode = this;
-            
+
             if (selectedNode && draggingNode) {
                 let draggingDepth = getDepth(draggingNode);
                 let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
@@ -366,6 +366,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 }
                 return d.target.id;
             })
+            .attr("stroke", options.events.linkColor)
+            .attr("stroke-width", options.events.linkWidth)
         // Enter the links.
         link.enter().insert("path", "g")
             .attr("class", "link")
@@ -414,14 +416,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 }
             }];
         }
-        console.log("selected", selectedNode);
-        console.log("dragging ", draggingNode);
         // var connectorPointer = `M ${selectedNode.x0},${selectedNode.y0} h 10`;
         var link = svg.selectAll(".templink").data(data);
         link.enter().append("path")
             .attr("class", "templink")
             .attr("d", d3.svg.diagonal())
-            
+
             .attr('pointer-events', 'none');
 
         link.attr("d", d3.svg.diagonal());
@@ -450,7 +450,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 .attr("class", "karta_divider")
                 .attr('stroke', 'lightgrey')
                 .attr('stroke-width', '1px')
-                .attr('d', pathGenerator([[-width2, (index + 1) * 65], [width2, (1 + index) * 65]]));
+                .attr('d', pathGenerator([[-100000, (index + 1) * 65], [100000, (1 + index) * 65]]));
         });
     }
 
@@ -493,7 +493,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         $(`.node-text[nodeid=${d.id}] p`).css('color', d.text_color);
         $(`.node-text[nodeid=${d.id}] p`).css('font-family', d.font_style);
         $(`.node-text[nodeid=${d.id}] p`).css('text-align', d.alignment);
+        update(d.parent);
+        if (d.hasOwnProperty("children") && d.children.length > 0) {
+            d.children.forEach(item => {
+                updateNode(item);
+            });
+        }
     }
+
     // Update newly added node
     function updateNewNode(parent, d) {
         parent.children = parent.children || []
@@ -502,6 +509,23 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         update(parent);
         update(root);
     }
+
+    // Export as image
+    function exportAsImage(name) {
+        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF" });
+    }
+    // Export as pdf
+    function exportAsPDF(name) {
+        window.jsPDF = window.jspdf.jsPDF;
+        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF" }).then(uri => {
+            let imageBase64 = uri.split(',')[1];
+            let svgWidth = $("#karta-svg svg").width();
+            let doc = new jsPDF('l', 'px', [svgWidth, 768]);
+            doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, 768);
+            doc.save(`${name}.pdf`);
+        });
+    }
+
 
     var events = {
         addNode: (d) => {
