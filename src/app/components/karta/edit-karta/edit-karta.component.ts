@@ -234,7 +234,6 @@ export class EditKartaComponent implements OnInit {
 
   // Formula Fields Calculation
   calculateFormula(event: any) {
-    debugger
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
@@ -977,7 +976,6 @@ export class EditKartaComponent implements OnInit {
 
     // Submit shared data
     shareKarta() {
-      debugger
       this.selectedSharedUsers.forEach((element: any) => {
         if (element.email == this._commonService.getEmailId()) {
           alert("You can not share karta to your self.");
