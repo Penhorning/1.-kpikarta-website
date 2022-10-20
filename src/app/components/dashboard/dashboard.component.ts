@@ -99,6 +99,8 @@ export class DashboardComponent implements OnInit {
 
   // On share karta
   onShare(param: any) {
+    console.log("param 1", param);
+    
     this.selectedUsers = [];
     this.emails = [];
     this.sharingKarta = param;
@@ -166,12 +168,9 @@ export class DashboardComponent implements OnInit {
   copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
-      this._kartaService
-        .copyKarta({ kartaId: id })
-        .subscribe((response: any) => {
-          this._commonService.successToaster(
-            'Karta copy created successfully.'
-          );
+      this._kartaService.copyKarta({ kartaId: id }).subscribe(
+        (response: any) => {
+          this._commonService.successToaster('Karta copy created successfully.');
           this.getKartas();
         });
     }
