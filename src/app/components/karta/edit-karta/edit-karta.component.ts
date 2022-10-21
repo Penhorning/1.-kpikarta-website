@@ -1,12 +1,11 @@
-import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as moment from 'moment';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExportToCsv } from 'export-to-csv';
 
 declare const $: any;
 
@@ -16,6 +15,7 @@ declare const $: any;
   styleUrls: ['./edit-karta.component.scss'],
 })
 export class EditKartaComponent implements OnInit {
+  
   kartaId: string = '';
   karta: any;
   currentNode: any = {};
@@ -96,9 +96,24 @@ export class EditKartaComponent implements OnInit {
   dropdownSettings: any = {};
   contributorUsers: any = [];
   selectedContributorUsers: any = [];
+  // Metric Formula
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
+
+  // Person notify
+  notifyType: string  = "";
+
+  // Share karta
+  sharedKartaStr: any = [];
+  kartas: any = [];
+  sharingKarta: any;
+  sharedSubmitFlag: boolean = false;
+  sharedKartas: any = [];
+  selectedSharedUsers: any = [];
+  sharingKartaCount: any = 0;
+  loading: boolean = false;
+  emails: any = [];
 
   constructor(
     private _kartaService: KartaService,
@@ -121,7 +136,7 @@ export class EditKartaComponent implements OnInit {
       that.togggleLeftSidebar();
     });
     // Close right sidebar when click outside
-    $(document).on('click', '.right_sidebar_overlay', function (event: any) {
+    $(document).on('click', '.right_sidebar_overlay', function () {
       that.closeRightSidebar();
     });
     // Get color settings
@@ -221,7 +236,6 @@ export class EditKartaComponent implements OnInit {
 
   // Formula Fields Calculation
   calculateFormula(event: any) {
-    debugger
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
@@ -527,6 +541,9 @@ export class EditKartaComponent implements OnInit {
           .toISOString()
           .substring(0, 10);
     }
+
+    if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
+    else if (this.currentNode.notifyUserId) this.notifyType = "specific";
   }
 
   // Change node name
@@ -576,6 +593,31 @@ export class EditKartaComponent implements OnInit {
       target: this.target,
     };
     this.updateNode('achieved_value', data);
+  }
+  // Change contributor
+  changeContributor(userId: string) {
+    this.updateNode('contributorId', userId);
+  }
+  // Set notify user
+  setNotifyUser() {
+    if (this.notifyType === "owner") {
+      this.updateNode('notifyUserId', this.currentNode.contributorId);
+      this.currentNode.notifyUserId = this.currentNode.contributorId;
+    } else this.currentNode.notifyUserId = undefined;
+  }
+  selectNotifyUser(userId: string) {
+    this.updateNode('notifyUserId', userId);
+    this.currentNode.notifyUserId = userId;
+  }
+  // Change alert type
+  changeAlertType(e: any) {
+    this.updateNode('alert_type', e.target.value);
+    this.currentNode.alert_type = e.target.value;
+  }
+  // Change alert frequency
+  changeAlertFrequency(e: any) {
+    this.updateNode('alert_frequency', e.target.value);
+    this.currentNode.alert_frequency = e.target.value;
   }
 
   // Calculate each node percentage
@@ -631,6 +673,8 @@ export class EditKartaComponent implements OnInit {
       .getKarta(this.kartaId)
       .subscribe((response: any) => {
         this.karta = response;
+        this.sharedKartaStr = response;
+        console.log("res", response)
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(
             this.calculatePercentage(this.karta.node)
@@ -704,6 +748,10 @@ export class EditKartaComponent implements OnInit {
       data.due_date = new Date();
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
+      data.threshold_value = 70;
+      data.is_achieved_modified = false;
+      data.alert_type = "";
+      data.alert_frequency = "";
       data.kpi_calc_period = 'month-to-date';
       if (!this.currentNode.node_type) {
         // Creating 2 Formula Fields by Default
@@ -864,11 +912,11 @@ export class EditKartaComponent implements OnInit {
     let data = {
       name: this.karta.name,
     };
-    this._kartaService
-      .updateKarta(this.karta.id, data)
-      .subscribe((response: any) => {
+    this._kartaService.updateKarta(this.karta.id, data).subscribe(
+      (response: any) => {
         this.karta = response;
-      });
+      }
+    );
   }
 
   // Export karta to CSV
@@ -880,7 +928,6 @@ export class EditKartaComponent implements OnInit {
       alignment: "",
       text_color: "",
       kartaName: "",
-      assigned_date: "",
       createdAt: "",
       phaseId: "",
       phaseName: "",
@@ -913,13 +960,83 @@ export class EditKartaComponent implements OnInit {
       useTextFile: false,
       filename: this.karta.name,
       useBom: true,
-      headers: ['Name', 'Weightage', 'Font_style', 'Alignment','Text_color',
-      'Karta Name', 'Assigned Date', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage',
-    'Target Value', 'Achieved Value']
-  };
+      headers: 
+        [ 'Node Name', 'Weightage', 'Font Style', 'Alignment','Text Color', 'Karta Name',
+         'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage' ]
+    };
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.csvKartaData);
   }
+
+    // Get all kartas
+    getKartas() {
+      let data = {
+        page: 1,
+        limit: 3,
+        userId: this._commonService.getUserId(),
+      };
+      this._kartaService.getKartas(data).subscribe((response: any) => {
+        if (response) {
+          this.kartas = response.kartas[0].data;
+        } else this.kartas = [];
+      });
+    }
+
+  onShare(param: any) {
+    console.log("param", param);
+    delete param.node
+    this.selectedSharedUsers = [];
+    this.emails = [];
+    this.sharingKarta = param;
+    if (param.sharedTo) this.sharingKartaCount = param.sharedTo.length;
+    else this.sharingKartaCount = 0;
+  }
+
+    // Add new email and share
+    addTagPromise(e: string) {
+      return new Promise((resolve) => {
+        this.loading = true;
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (e.match(mailformat)) {
+          // Callback function
+          setTimeout(() => {
+            resolve({ email: e });
+            this.loading = false;
+          });
+        } this.loading = false;
+      })
+    }
+
+    // Submit shared data
+    shareKarta() {
+      this.selectedSharedUsers.forEach((element: any) => {
+        if (element.email == this._commonService.getEmailId()) {
+          alert("You can not share karta to your self.");
+          if (element.email !== this._commonService.getEmailId()) { }
+        } else {
+          this.emails.push(element.email);
+        }
+      });
+      if (this.emails.length > 0) {
+        let data = {
+          karta: this.sharingKarta,
+          emails: this.emails
+        }
+        console.log("data log", data);
+        
+        this.sharedSubmitFlag = true;
+        this._kartaService.sharedEmails(data).subscribe(
+          (response: any) => {
+            this._commonService.successToaster("Your have shared karta successfully");
+            $('#shareLinkModal').modal('hide');
+            // this.getKartas();
+            // this.getSharedKarta();
+            this.getKartaInfo();
+          },
+          (error: any) => { console.log(error) }
+        ).add(() => this.sharedSubmitFlag = false);
+      }
+    }
 
 }
 

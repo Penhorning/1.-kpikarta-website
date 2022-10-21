@@ -242,7 +242,8 @@
             </div>
             <div class="col-lg-4 p-0">
               <div class="icon-karta">
-                <a href="#" data-toggle="modal" data-target="#staticBackdrop"><img src="assets/img/share-icon.svg"></a>
+                <a href="#" data-toggle="modal" data-target="#shareLinkModal" (click)="onShare(sharedKartaStr)"><img
+                    src="assets/img/share-icon.svg"></a>
                 <a href="#"><img src="assets/img/download-icon.svg"></a>
                 <div class="dropdown show">
                   <a class=" dropdown-toggle three-dots" href="#" role="button" id="dropdownMenuLink"
@@ -456,10 +457,12 @@
               <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
               <div *ngIf="!showSVG && !loadingKarta">
                 <ng-container *ngFor="let phase of phases; let i = index">
-                  <div class="align-items-center border d-block d-flex justify-content-end karta_dummy_lines pr-3" *ngIf="phase.name !== 'Target'"
-                    [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)" (dragover)="onDragOver($event)"
-                    (dragleave)="onDragLeave($event)" (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgFrmSide" (click)="addRoteNode($event)"><i class="fa fa-plus-circle"></i> Node</button>
+                  <div class="align-items-center border d-block d-flex justify-content-end karta_dummy_lines pr-3"
+                    *ngIf="phase.name !== 'Target'" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
+                    (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                    (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgFrmSide" (click)="addRoteNode($event)"><i
+                        class="fa fa-plus-circle"></i> Node</button>
                   </div>
                   <div class="d-block border karta_dummy_lines" *ngIf="phase.name === 'Target'" [id]="phase?.id">
                   </div>
@@ -486,7 +489,8 @@
 
                 </div>
                 <div class="col-lg-3">
-                  <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" style="cursor: pointer;" id="reset_zoom_btn">
+                  <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" style="cursor: pointer;"
+                    id="reset_zoom_btn">
                 </div>
               </div>
             </div>
@@ -514,8 +518,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="search-sugg mt-3">
-              <input type="text" class="form-control" [(ngModel)]="currentNodeName"
-                (blur)="changeNodeName()">
+              <input type="text" class="form-control" [(ngModel)]="currentNodeName" (blur)="changeNodeName()">
             </div>
           </div>
         </div>
@@ -531,8 +534,8 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="search-sugg mt-3">
-                <input type="number" class="form-control" [(ngModel)]="currentNodeWeight"
-                  (blur)="changeWeightage()" [ngClass]="{ 'is-invalid': currentNodeWeight < 0 }">
+                <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
+                  [ngClass]="{ 'is-invalid': currentNodeWeight < 0 }">
                 <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0">Please enter weightage!</div>
               </div>
             </div>
@@ -756,14 +759,16 @@
             </div>
             <div class="row">
               <div class="col-lg-12">
-                <ng-select  [(ngModel)]="currentNode.contributorId" placeholder="Select users" (change)="updateNode('contributorId',$event )">
-                  <ng-option *ngFor="let user of users" [value]="user._id">{{ user.fullName }} ({{ user.email }})</ng-option>
+                <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select users" (change)="changeContributor($event)">
+                  <ng-option *ngFor="let user of users" [value]="user._id">
+                    {{ user.fullName }} ({{ user.email }})
+                  </ng-option>
                 </ng-select>
               </div>
             </div>
           </div>
           <!-- Metrics div -->
-          <div *ngIf="kpiType === 'metrics' ">
+          <ng-container *ngIf="kpiType === 'metrics' ">
             <!-- Formula div -->
             <form [formGroup]="formulaGroup">
               <div class="row my-3">
@@ -782,19 +787,25 @@
                     <div class="col-lg-8">
                       <div class="form-group ">
                         <!-- <input type="text" class="form-control mb-2" [value]="formulaGroup.controls['fields'].controls[i].controls['fieldName'].value" [id]="'fd'+i" (change)="saveFieldValuesTemporarily(i, $event)" [readonly]="true" /> -->
-                        <label contenteditable="false" [id]="'fd'+i" [class]="checkFieldStatus('fd'+i) ? 'mb-2 border' : 'mb-2'" (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
+                        <label contenteditable="false" [id]="'fd'+i"
+                          [class]="checkFieldStatus('fd'+i) ? 'mb-2 border' : 'mb-2'"
+                          (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
                         <input type="text" class="form-control" placeholder="" formControlName="fieldValue" />
                       </div>
                     </div>
                     <div class="col-lg-4 d-flex flex-column justify-content-center align-items-center">
-                      <a class="mb-2" (click)="editFieldStatus(i, true)" *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg" class="img-fluid edit-btn-r"></a>
+                      <a class="mb-2" (click)="editFieldStatus(i, true)" *ngIf="!checkFieldStatus('fd'+i)"><img
+                          src="assets/img/edit-icon-side-r.svg" class="img-fluid edit-btn-r"></a>
                       <div class="mb-1" *ngIf="checkFieldStatus('fd'+i)">
                         <a (click)="setFieldValues(i)"><img src="assets/img/check_icon.png" class="img-fluid mr-3"></a>
-                        <a (click)="removeFieldValues(i)"><img src="assets/img/icons8-remove-30.png" class="img-fluid"></a>
+                        <a (click)="removeFieldValues(i)"><img src="assets/img/icons8-remove-30.png"
+                            class="img-fluid"></a>
                       </div>
                       <div class="custom-add-minus">
-                        <a class="add-icon" *ngIf="fields.length == i+1" (click)="addFormulaGroup()"><img src="assets/img/plus-field-side-r.svg" class="img-fluid mr-3"></a>
-                        <a class="remove-icon" *ngIf="fields.length > 1" (click)="deleteFormulaGroup(i)"><img src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>
+                        <a class="add-icon" *ngIf="fields.length == i+1" (click)="addFormulaGroup()"><img
+                            src="assets/img/plus-field-side-r.svg" class="img-fluid mr-3"></a>
+                        <a class="remove-icon" *ngIf="fields.length > 1" (click)="deleteFormulaGroup(i)"><img
+                            src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>
                       </div>
                     </div>
                   </div>
@@ -803,11 +814,16 @@
               <div class="row mt-3">
                 <div class="col-lg-12 row">
                   <div class="col-lg-10">
-                    <input type="text" class="form-control" id="formula-field" formControlName="formula" (input)="filterFieldSuggestions($event)" (blur)="calculateFormula($event)" [ngClass]="{ 'is-invalid': formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched) }" />
-                    <div class="invalid-feedback d-block" *ngIf="formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)">Please enter formula!</div>
+                    <input type="text" class="form-control" id="formula-field" formControlName="formula"
+                      (input)="filterFieldSuggestions($event)" (blur)="calculateFormula($event)"
+                      [ngClass]="{ 'is-invalid': formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched) }" />
+                    <div class="invalid-feedback d-block"
+                      *ngIf="formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)">
+                      Please enter formula!</div>
 
                     <p class="d-flex flex-column" *ngIf="formulaFieldSuggestions.length > 0">
-                      <span class="field-options border py-1 pl-2" *ngFor="let field of formulaFieldSuggestions" (click)="concatenateFieldValue(field)">{{field ? field?.fieldName : ''}}</span>
+                      <span class="field-options border py-1 pl-2" *ngFor="let field of formulaFieldSuggestions"
+                        (click)="concatenateFieldValue(field)">{{field ? field?.fieldName : ''}}</span>
                     </p>
                   </div>
                   <div class="col-lg-2" *ngIf="formulaGroup.get('calculatedValue').value > 0">
@@ -818,140 +834,134 @@
               <div class="row mt-3">
                 <div class="col-lg-12">
                   <!-- <h5>{{formulaGroup.calculatedValue}}</h5> -->
-                  <input class="formula-value" type="text" formControlName="calculatedValue" [disabled]="true" readonly />
+                  <input class="formula-value" type="text" formControlName="calculatedValue" [disabled]="true"
+                    readonly />
                 </div>
               </div>
             </form>
-            <hr>
-            <!-- Person to Notify -->
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="selct-option-side-r">
-                  <label>Person to notify</label>
-                  <select class="form-control ">
-                    <option>KPI Owner</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- Alerts div -->
-            <div class="row mt-3">
-              <div class="col-lg-12">
-                <h5>Alerts</h5>
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-lg-6">
-                <div class="selct-option-side-r">
-                  <label>Period</label>
-                  <select class="form-control ">
-                    <option>Weekly</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="selct-option-side-r">
-                  <label>Type</label>
-                  <select class="form-control ">
-                    <option>Notify at login</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <!-- Viewer Access -->
-            <div class="row mt-3">
-              <div class="col-lg-6">
-                <h5>Viewer Access</h5>
-              </div>
-              <div class="col-lg-6 text-right">
-                <a href="" class="add-side-r-custom">+ ADD</a>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="custom-tag mt-3">
-                  <input type="text" class="form-control p-4 w-100 border-0" data-role="tagsinput" />
-                </div>
+          </ng-container>
+          <hr>
+          <!-- Person to Notify -->
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="selct-option-side-r">
+                <label>Person to notify</label>
+                <select class="form-control" (change)="setNotifyUser()" [(ngModel)]="notifyType">
+                  <option value="" selected>Select</option>
+                  <option value="owner">KPI Owner</option>
+                  <option value="specific">Specific Person</option>
+                </select>
+                <ng-container *ngIf="notifyType === 'specific'">
+                  <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user" (change)="selectNotifyUser($event)">
+                    <ng-option *ngFor="let user of users" [value]="user._id">
+                      {{ user.fullName }} ({{ user.email }})
+                    </ng-option>
+                  </ng-select>
+                </ng-container>
               </div>
             </div>
           </div>
+          <hr>
+          <!-- Alerts div -->
+          <div class="row mt-3">
+            <div class="col-lg-12">
+              <h5>Alerts</h5>
+            </div>
+            <div class="col-lg-6">
+              <div class="selct-option-side-r">
+                <label>Period</label>
+                <select class="form-control" [(ngModel)]="currentNode.alert_frequency" (change)="changeAlertFrequency($event)">
+                  <option value="" selected>Select period</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="selct-option-side-r">
+                <label>Type {{currentNode.alert_type}}</label>
+                <select class="form-control" [(ngModel)]="currentNode.alert_type" (change)="changeAlertType($event)">
+                  <option value="" selected>Select type</option>
+                  <option value="notification">Notify at login</option>
+                  <option value="email">On email</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <!-- Viewer Access -->
+          <div class="row mt-3">
+            <div class="col-lg-6">
+              <h5>Viewer Access</h5>
+            </div>
+            <div class="col-lg-6 text-right">
+              <a href="" class="add-side-r-custom">+ ADD</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="custom-tag mt-3">
+                <input type="text" class="form-control p-4 w-100 border-0" data-role="tagsinput" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
-            aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content p-4">
-                <div class="modal-header">
-                  <h5 class="modal-title pt-4" id="staticBackdropLabel">Share Link</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <div class="share-link-model mt-3">
-                    <form>
-                      <div class="form-group">
-                        <label>Revenue Karta</label>
-                        <input type="text" class="form-control custom-input-share-link" placeholder="To:  Name, Email">
-                        <div class="pencil-icon">
-                          <a href=""><img src="assets/img/pencil.svg"></a>
-                        </div>
-                        <div class="dropdown share-to ">
-                          <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                            id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="true">
-                            <img src="assets/img/down-arrow.svg" width="15px">
-                          </button>
-                          <div class="dropdown-menu select-sec share-to-drop " aria-labelledby="dropdownMenuButton"
-                            x-placement="bottom-start"
-                            style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(351px, 50px, 0px);">
-                            <div class="fillter-inner-white-box share-to-drop-list">
-                              <div class="row pb-2">
-                                <div class="col-12">
-                                  <h6 class="pl-2 m-0 pt-1"><img src="assets/img/delete-karta.svg"> Edit Karta</h6>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="fillter-inner-white-box share-to-drop-list">
-                              <div class="row pb-2">
-                                <div class="col-12">
-                                  <h6 class="pl-2 m-0 pt-1"><img src="assets/img/view-karta.svg"> View Karta</h6>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="fillter-inner-white-box share-to-drop-list">
-                              <div class="row pb-2">
-                                <div class="col-12">
-                                  <h6 class="pl-2 m-0 pt-1"><img src="assets/img/delete-karta.svg"> Edit Value</h6>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group mt-4">
-                        <label>Message...</label>
-                        <textarea class="form-control custom-text-area" rows="2"></textarea>
-                      </div>
-                      <div class="">
-                        <button class="send-btn">SEND</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-12 text-left">
-                    <div class="shared-with">
-                      <span>Shared with:</span>
-                      <span class="ml-3"><a href="#"><img src="assets/img/link-.svg"></a></span>
-                      <span class="ml-2"><a href="#"><img src="assets/img/user-icon.svg"></a></span>
+      <!-- share-link-model -->
+      <div class="modal fade shara-link" id="shareLinkModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-4">
+            <div class="modal-header">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Link</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                (click)="selectedSharedUsers = undefined">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="share-link-model mt-3">
+                <div class="form-group">
+                  <label>{{sharingKarta?.name}}</label>
+                  <div class="row">
+                    <div class="col-lg-12">
+                      <ng-select [items]="users" [addTag]="addTagPromise" placeholder="Select users" [loading]="loading"
+                        [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers">
+                        <ng-template ng-tag-tmp let-search="searchTerm">
+                          <b>Add new email</b>: {{search}}
+                        </ng-template>
+                      </ng-select>
                     </div>
                   </div>
+                </div>
+                <div style="border-color: unset;" data-dismiss="" aria-label="">
+                  <span aria-hidden="true">
+                    <button type="button" class="send-btn" (click)="shareKarta()"
+                      [disabled]="selectedSharedUsers?.length < 1  || sharedSubmitFlag">
+                      <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
+                        <span class="sr-only">Loading...</span>
+                      </div>
+                      <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 text-left">
+                <div class="shared-with" style="display:flex;">
+                  <span>Shared with:</span>
+                  <ng-container *ngIf="sharingKartaCount">
+                    <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
+                    <span class="ml-2" *ngIf="sharingKartaCount > 1">
+                      <div class="user-counter">
+                        <p>+{{ sharingKartaCount - 1 }}</p>
+                      </div>
+                    </span>
+                  </ng-container>
                 </div>
               </div>
             </div>

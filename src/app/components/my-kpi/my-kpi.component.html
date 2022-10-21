@@ -1100,8 +1100,7 @@
         <div class="modal-body">
           <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()" class="achieved-val">
             <div formArrayName="fields">
-              <h5>Metrics</h5>
-              <label>{{kartaName}}</label>
+              <h5>{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
               <div class="share-link-model mt-3" *ngFor="let field of fields.controls; let i = index"
                 [formGroupName]="i">
                 <div class="form-group">
@@ -1110,10 +1109,10 @@
                       <div class="">
                         <label class="font-weight-bold">{{field.value.fieldName}}</label>
                         <input type="number" id="fieldValue" class="form-control" formControlName="fieldValue"
-                          [ngClass]="{ 'is-invalid': submitted && returnError(i) }" required />
-                        <div *ngIf="submitted && returnError(i)" class="invalid-feedback">
-                          <div *ngIf="returnError(i)">{{field.value.fieldName}} Value is required</div>
-                          <div *ngIf="returnMetricsError(i)"> Positive value is required</div>
+                          [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }" />
+                        <div *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors" class="invalid-feedback">
+                          <div *ngIf="field.get('fieldValue')?.hasError('required')">{{field.value.fieldName}} value is required!</div>
+                          <div *ngIf="field.get('fieldValue')?.hasError('pattern')">Positive value is required!</div>
 
                         </div>
                       </div>
@@ -1141,16 +1140,16 @@
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
           <div class="share-link-model mt-3">
           <div class="form-group">
-            <h5>Measure</h5>
+            <h5>{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
             <div class="row">
               <div class="col-lg-12">
                 <div class="">
-                  <label for="measure">{{kartaName}}</label>
-                  <input type="number" id="measure" class="form-control" formControlName="measure"
-                  [ngClass]="{ 'is-invalid': (submittedMeasure || form.measure.touched) && form.measure.errors }" required>
-                  <div *ngIf="(submittedMeasure || form.measure.touched) && form.measure.errors" class="invalid-feedback">
-                      <div *ngIf="(submittedMeasure || form.measure.touched) && form.measure.errors">Actual value is required!</div>
-                      <div *ngIf="form.measure.hasError('pattern')">Actual value is positive number.</div>
+                  <label for="actualValue" class="font-weight-bold">Actual Value</label>
+                  <input type="number" id="actualValue" class="form-control" formControlName="actualValue"
+                  [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }" required>
+                  <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors" class="invalid-feedback">
+                      <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors">Actual value is required!</div>
+                      <div *ngIf="form.actualValue.hasError('pattern')">Actual value should be a positive number!</div>
 
                       
                   </div>
