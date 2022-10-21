@@ -1,12 +1,11 @@
-import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as moment from 'moment';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExportToCsv } from 'export-to-csv';
 
 declare const $: any;
 
@@ -16,6 +15,7 @@ declare const $: any;
   styleUrls: ['./edit-karta.component.scss'],
 })
 export class EditKartaComponent implements OnInit {
+  
   kartaId: string = '';
   karta: any;
   currentNode: any = {};
@@ -121,7 +121,7 @@ export class EditKartaComponent implements OnInit {
       that.togggleLeftSidebar();
     });
     // Close right sidebar when click outside
-    $(document).on('click', '.right_sidebar_overlay', function (event: any) {
+    $(document).on('click', '.right_sidebar_overlay', function () {
       that.closeRightSidebar();
     });
     // Get color settings
@@ -862,11 +862,11 @@ export class EditKartaComponent implements OnInit {
     let data = {
       name: this.karta.name,
     };
-    this._kartaService
-      .updateKarta(this.karta.id, data)
-      .subscribe((response: any) => {
+    this._kartaService.updateKarta(this.karta.id, data).subscribe(
+      (response: any) => {
         this.karta = response;
-      });
+      }
+    );
   }
 
   // Export karta to CSV
@@ -878,7 +878,6 @@ export class EditKartaComponent implements OnInit {
       alignment: "",
       text_color: "",
       kartaName: "",
-      assigned_date: "",
       createdAt: "",
       phaseId: "",
       phaseName: "",
@@ -911,10 +910,10 @@ export class EditKartaComponent implements OnInit {
       useTextFile: false,
       filename: this.karta.name,
       useBom: true,
-      headers: ['Name', 'Weightage', 'Font_style', 'Alignment','Text_color',
-      'Karta Name', 'Assigned Date', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage',
-    'Target Value', 'Achieved Value']
-  };
+      headers: 
+        [ 'Node Name', 'Weightage', 'Font Style', 'Alignment','Text Color', 'Karta Name',
+         'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage' ]
+    };
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.csvKartaData);
   }

@@ -10,7 +10,7 @@
           <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab"
                 href="#tabs-1" role="tab">Settings</a> </li>
-            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2"
+            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 text-nowrap" data-toggle="tab" href="#tabs-2"
                 role="tab" (click)="check2FAConfig()">Two Factor Authentication</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3"
                 role="tab">Change Password</a> </li>
@@ -28,9 +28,9 @@
                       <form [formGroup]="colorForm" (ngSubmit)="onColorSubmit()">
                         <div class="color-box">
                           <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-8">
                               <div class="color-range">
-                                <p class="d-flex justify-content-between">
+                                <p class="d-flex">
                                   <span class="align-self-center">Color Range</span>
                                   <input type="color" id="colorPicker" formControlName="color" style="cursor: pointer;">
                                 </p>
