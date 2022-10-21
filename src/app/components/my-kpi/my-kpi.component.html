@@ -1109,10 +1109,10 @@
                       <div class="">
                         <label class="font-weight-bold">{{field.value.fieldName}}</label>
                         <input type="number" id="fieldValue" class="form-control" formControlName="fieldValue"
-                          [ngClass]="{ 'is-invalid': submitted && returnError(i) }" required />
-                        <div *ngIf="submitted && returnError(i)" class="invalid-feedback">
-                          <div *ngIf="returnError(i)">{{field.value.fieldName}} Value is required</div>
-                          <div *ngIf="returnMetricsError(i)"> Positive value is required</div>
+                          [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }" />
+                        <div *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors" class="invalid-feedback">
+                          <div *ngIf="field.get('fieldValue')?.hasError('required')">{{field.value.fieldName}} value is required!</div>
+                          <div *ngIf="field.get('fieldValue')?.hasError('pattern')">Positive value is required!</div>
 
                         </div>
                       </div>

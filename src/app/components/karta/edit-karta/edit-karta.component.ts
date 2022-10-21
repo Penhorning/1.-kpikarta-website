@@ -96,18 +96,20 @@ export class EditKartaComponent implements OnInit {
   dropdownSettings: any = {};
   contributorUsers: any = [];
   selectedContributorUsers: any = [];
+  // Metric Formula
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
 
+  // Person notify
+  notifyType: string  = "";
+
   // Share karta
   sharedKartaStr: any = [];
   kartas: any = [];
-  // users: any = [];
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
-
   selectedSharedUsers: any = [];
   sharingKartaCount: any = 0;
   loading: boolean = false;
@@ -539,6 +541,9 @@ export class EditKartaComponent implements OnInit {
           .toISOString()
           .substring(0, 10);
     }
+
+    if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
+    else if (this.currentNode.notifyUserId) this.notifyType = "specific";
   }
 
   // Change node name
@@ -588,6 +593,31 @@ export class EditKartaComponent implements OnInit {
       target: this.target,
     };
     this.updateNode('achieved_value', data);
+  }
+  // Change contributor
+  changeContributor(userId: string) {
+    this.updateNode('contributorId', userId);
+  }
+  // Set notify user
+  setNotifyUser() {
+    if (this.notifyType === "owner") {
+      this.updateNode('notifyUserId', this.currentNode.contributorId);
+      this.currentNode.notifyUserId = this.currentNode.contributorId;
+    } else this.currentNode.notifyUserId = undefined;
+  }
+  selectNotifyUser(userId: string) {
+    this.updateNode('notifyUserId', userId);
+    this.currentNode.notifyUserId = userId;
+  }
+  // Change alert type
+  changeAlertType(e: any) {
+    this.updateNode('alert_type', e.target.value);
+    this.currentNode.alert_type = e.target.value;
+  }
+  // Change alert frequency
+  changeAlertFrequency(e: any) {
+    this.updateNode('alert_frequency', e.target.value);
+    this.currentNode.alert_frequency = e.target.value;
   }
 
   // Calculate each node percentage
@@ -718,6 +748,10 @@ export class EditKartaComponent implements OnInit {
       data.due_date = new Date();
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
+      data.threshold_value = 70;
+      data.is_achieved_modified = false;
+      data.alert_type = "";
+      data.alert_frequency = "";
       data.kpi_calc_period = 'month-to-date';
       if (!this.currentNode.node_type) {
         // Creating 2 Formula Fields by Default

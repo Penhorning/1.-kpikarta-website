@@ -151,7 +151,7 @@ export class MyKpiComponent implements OnInit {
     if (this.metricsData?.fields) {
       this.metricsData?.fields.forEach((element: any) => {
         const metricsForm = this.fb.group({
-          fieldValue: [element?.fieldValue, Validators.pattern('^[0-9]*$')],
+          fieldValue: [element?.fieldValue, [Validators.required, Validators.pattern('^[0-9]*$')]],
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);
@@ -214,12 +214,12 @@ export class MyKpiComponent implements OnInit {
       this.metricsSubmitFlag = true;
       this._myKpiService.updateNode(this.currentNode, { node_type: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
         (response) => {
-          if (response) { this._commonService.successToaster('Actual value updated succesfully..!!'); }
+          if (response) { this._commonService.successToaster('Actual value updated succesfully!'); }
         $('#editActualValueModal').modal('hide');
           this.getMyKPIsList();
         },
         (err) => {
-          console.log(err); this._commonService.errorToaster('Something went wrong..!!');
+          console.log(err); this._commonService.errorToaster('Something went wrong!');
         }
       ).add(() => this.metricsSubmitFlag = false);
       return;
@@ -253,14 +253,6 @@ export class MyKpiComponent implements OnInit {
     return;
   }
   // Formula of metrics ends
-
-  // Custom error handeling
-  returnMetricsError(i: any) {
-    return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.hasError('pattern');
-  }
-  returnError(i: any) {
-    return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.errors ? true : false;
-  }
 
   // Get color settings
   getColorSettings() {
