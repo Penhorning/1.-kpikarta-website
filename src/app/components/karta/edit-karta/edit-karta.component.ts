@@ -100,6 +100,19 @@ export class EditKartaComponent implements OnInit {
   timer: any = null;
   formulaFieldSuggestions: any = [];
 
+  // Share karta
+  sharedKartaStr: any = [];
+  kartas: any = [];
+  // users: any = [];
+  sharingKarta: any;
+  sharedSubmitFlag: boolean = false;
+  sharedKartas: any = [];
+
+  selectedSharedUsers: any = [];
+  sharingKartaCount: any = 0;
+  loading: boolean = false;
+  emails: any = [];
+
   constructor(
     private _kartaService: KartaService,
     private _commonService: CommonService,
@@ -221,7 +234,6 @@ export class EditKartaComponent implements OnInit {
 
   // Formula Fields Calculation
   calculateFormula(event: any) {
-    debugger
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
@@ -311,20 +323,22 @@ export class EditKartaComponent implements OnInit {
     let value = event.target.value.trim();
     let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
     let findLastIndex = null;
-
+    
     for (let i = value.length - 1; i >= 0; i--) {
       if (mathOperators.includes(value[i])) {
-        findLastIndex = value.indexOf(value[i]);
+        findLastIndex = value.lastIndexOf(value[i]);
         break;
       }
     }
+
+    console.log(findLastIndex, 'check');
 
     if (!value) {
       this.formulaFieldSuggestions = [];
       return;
     }
     
-    if (findLastIndex != -1) {
+    if (findLastIndex != -1 || findLastIndex) {
       let replaceValue = value.slice(findLastIndex + 1, value.length).trim();
       if (replaceValue) {
         let data = this.formulaGroup.value.fields.filter((x: any) => {
@@ -352,7 +366,7 @@ export class EditKartaComponent implements OnInit {
 
     for (let i = inputValue.value.length; i > 0; i--) {
       if (mathOperators.includes(inputValue.value[i])) {
-        findLastIndex = inputValue.value.indexOf(inputValue.value[i]);
+        findLastIndex = inputValue.value.lastIndexOf(inputValue.value[i]);
         break;
       }
     }
@@ -629,6 +643,8 @@ export class EditKartaComponent implements OnInit {
       .getKarta(this.kartaId)
       .subscribe((response: any) => {
         this.karta = response;
+        this.sharedKartaStr = response;
+        console.log("res", response)
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(
             this.calculatePercentage(this.karta.node)
@@ -917,6 +933,76 @@ export class EditKartaComponent implements OnInit {
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.csvKartaData);
   }
+
+    // Get all kartas
+    getKartas() {
+      let data = {
+        page: 1,
+        limit: 3,
+        userId: this._commonService.getUserId(),
+      };
+      this._kartaService.getKartas(data).subscribe((response: any) => {
+        if (response) {
+          this.kartas = response.kartas[0].data;
+        } else this.kartas = [];
+      });
+    }
+
+  onShare(param: any) {
+    console.log("param", param);
+    delete param.node
+    this.selectedSharedUsers = [];
+    this.emails = [];
+    this.sharingKarta = param;
+    if (param.sharedTo) this.sharingKartaCount = param.sharedTo.length;
+    else this.sharingKartaCount = 0;
+  }
+
+    // Add new email and share
+    addTagPromise(e: string) {
+      return new Promise((resolve) => {
+        this.loading = true;
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (e.match(mailformat)) {
+          // Callback function
+          setTimeout(() => {
+            resolve({ email: e });
+            this.loading = false;
+          });
+        } this.loading = false;
+      })
+    }
+
+    // Submit shared data
+    shareKarta() {
+      this.selectedSharedUsers.forEach((element: any) => {
+        if (element.email == this._commonService.getEmailId()) {
+          alert("You can not share karta to your self.");
+          if (element.email !== this._commonService.getEmailId()) { }
+        } else {
+          this.emails.push(element.email);
+        }
+      });
+      if (this.emails.length > 0) {
+        let data = {
+          karta: this.sharingKarta,
+          emails: this.emails
+        }
+        console.log("data log", data);
+        
+        this.sharedSubmitFlag = true;
+        this._kartaService.sharedEmails(data).subscribe(
+          (response: any) => {
+            this._commonService.successToaster("Your have shared karta successfully");
+            $('#shareLinkModal').modal('hide');
+            // this.getKartas();
+            // this.getSharedKarta();
+            this.getKartaInfo();
+          },
+          (error: any) => { console.log(error) }
+        ).add(() => this.sharedSubmitFlag = false);
+      }
+    }
 
 }
 
