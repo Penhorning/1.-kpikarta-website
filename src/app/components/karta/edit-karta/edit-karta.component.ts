@@ -155,7 +155,7 @@ export class EditKartaComponent implements OnInit {
       for(let i = 0; i < 2; i++){
         newArr.push(this.fb.group({
           fieldName: [`Field${i + 1}`],
-          fieldValue: [0],
+          fieldValue: [0, Validators.min(1)],
         }))
       }
     }
@@ -166,7 +166,7 @@ export class EditKartaComponent implements OnInit {
   addFormulaGroup() {
     let fieldForm = this.fb.group({
       fieldName: [`Field${this.fields.length + 1}`],
-      fieldValue: [0],
+      fieldValue: [0, Validators.min(1)],
     })
     this.fields.push(fieldForm);
   }
@@ -178,9 +178,10 @@ export class EditKartaComponent implements OnInit {
     for (let i = 0; i < this.fields.length; i++) {
       newArr.push({
         ...this.formulaGroup.controls['fields']['controls'][i],
-        fieldName: this.currentNode.node_type
-          ? this.currentNode.node_type.fields[i].fieldName
-          : `Field${i + 1}`,
+        // fieldName: this.currentNode.node_type
+        //   ? this.currentNode.node_type.fields[i].fieldName
+        //   : `Field${i + 1}`,
+        fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
       });
     }
     this.formulaGroup.patchValue({
@@ -190,8 +191,17 @@ export class EditKartaComponent implements OnInit {
 
   // Enable/Disable Readonly value of Formula Fields
   editFieldStatus(id: number, value: boolean) {
+    let dom: any = document.getElementById('fd' + id);
+    dom.innerHTML = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
+    dom.innerText = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
+    this.formulagroupDefaultValues[id] = dom.innerText;
     $('#fd' + id).attr('contenteditable', value);
-    return;
+    $('#fd' + id).focus();
+  }
+
+  // Limiting length for Content Editable
+  setLimitForContentEditable(event: any) {
+    return event.target.innerText.length < 15;
   }
 
   // Check Field Value for ReadOnly
@@ -215,22 +225,19 @@ export class EditKartaComponent implements OnInit {
 
   // Set Temporary Field Value to FormArray
   setFieldValues(id: number) {
-    this.formulaGroup.controls['fields']['controls'][id].patchValue({
-      fieldName: this.formulagroupDefaultValues[id],
-    });
-    delete this.formulagroupDefaultValues[id];
-    this.editFieldStatus(id, false);
-  }
-
-  // Remove Temporary Field Value
-  removeFieldValues(id: number) {
-    let value =
-      this.formulaGroup.controls['fields'].controls[id].controls['fieldName']
-        .value;
-    let element: any = document.getElementById('fd' + id);
-    element.innerText = value;
-    element.innerHTML = value;
-    delete this.formulagroupDefaultValues[id];
+    let domElem: any = document.getElementById('fd' + id);
+    if(domElem.innerText.length == 0){
+      domElem.innerText = this.formulagroupDefaultValues[id];
+      domElem.innerHTML = this.formulagroupDefaultValues[id];
+    }
+    else {
+      this.formulaGroup.controls['fields']['controls'][id].patchValue({
+        fieldName: this.formulagroupDefaultValues[id],
+      });
+      if(this.formulagroupDefaultValues[id]){
+        delete this.formulagroupDefaultValues[id];
+      }
+    }
     this.editFieldStatus(id, false);
   }
 
@@ -270,12 +277,14 @@ export class EditKartaComponent implements OnInit {
 
         if (this.formulaGroup.valid) {
           if (checkFrag) {
-            this._commonService.errorToaster('Please type correct formula');
+            $('#formula-field').addClass('is-invalid');
+            $('#formula-field').removeClass('is-valid');
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
             return;
           } else {
+            $('#formula-field').removeClass('is-invalid');
             total = eval(newValue);
             this.formulaGroup.patchValue({
               calculatedValue: total,
@@ -301,6 +310,7 @@ export class EditKartaComponent implements OnInit {
               .subscribe(
                 (x) => {
                   if (x) {
+                    $('#formula-field').addClass('is-valid');
                     this.updateNodeProperties(x);
                     this._commonService.successToaster(
                       'Node updated succesfully..!!'
@@ -322,7 +332,9 @@ export class EditKartaComponent implements OnInit {
 
   //Show Dropdown suggestions for Formula Fields
   filterFieldSuggestions(event: any) {
-    let value = event.target.value.trim();
+    $('#formula-field').removeClass('is-invalid');
+    $('#formula-field').removeClass('is-valid');
+    let value = event.target.value.trim().toLowerCase();
     let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
     let findLastIndex = null;
     
@@ -332,8 +344,6 @@ export class EditKartaComponent implements OnInit {
         break;
       }
     }
-
-    console.log(findLastIndex, 'check');
 
     if (!value) {
       this.formulaFieldSuggestions = [];
