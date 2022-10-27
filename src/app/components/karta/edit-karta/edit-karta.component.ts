@@ -48,7 +48,7 @@ export class EditKartaComponent implements OnInit {
           parentId: d.parent.id,
           phaseId: d.phaseId,
         };
-        this.updateNode('updateDraggedNode', data);
+        this.updateNode('updateDraggedNode', data, 'node dragged');
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -468,13 +468,13 @@ export class EditKartaComponent implements OnInit {
   setTarget(type: string, e: any, index: any) {
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
-      this.updateNode('target', this.target);
+      this.updateNode('target', this.target, 'change target frequency');
     }
     else {
       let percentage= (this.currentNode.achieved_value/e.target.value) * 100;
       this.target[index].percentage = Math.round(percentage);
       this.target[index].value = parseInt(e.target.value);
-      this.updateNode('target', this.target);
+      this.updateNode('target', this.target, 'change target value');
       
     }
   }
@@ -487,7 +487,7 @@ export class EditKartaComponent implements OnInit {
   }
   removeTarget(index: number) {
     this.target.splice(index, 1);
-    this.updateNode('target', this.target);
+    this.updateNode('target', this.target, 'remove particular target');
   }
 
   // Find phase index
@@ -549,7 +549,7 @@ export class EditKartaComponent implements OnInit {
   // Change node name
   changeNodeName() {
     if (this.currentNodeName !== "") {
-      this.updateNode('name', this.currentNodeName);
+      this.updateNode('name', this.currentNodeName, 'change node name');
     }
   }
   // Change weightage
@@ -565,20 +565,20 @@ export class EditKartaComponent implements OnInit {
         );
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weightage of all the nodes cannot be greator than 100!");
-      } else this.updateNode('weightage', this.currentNodeWeight, "yes");
+      } else this.updateNode('weightage', this.currentNodeWeight, 'change node weightage', 'yes');
     }
   }
   // Change alignment
   changeAlignment(value: string) {
     this.selectedAlignment = value;
-    this.updateNode('alignment', value);
+    this.updateNode('alignment', value, 'change node alignment');
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
     this.karta.node.percentage = Math.round(
       this.calculatePercentage(this.karta.node)
     );
-    this.updateNode('kpi_calc_period', el.target.value);
+    this.updateNode('kpi_calc_period', el.target.value, 'change kpi calculation period');
   }
   // Change achieved value
   changeAchievedValue(e: any) {
@@ -592,31 +592,31 @@ export class EditKartaComponent implements OnInit {
       achieved_value: e.target.value,
       target: this.target,
     };
-    this.updateNode('achieved_value', data);
+    this.updateNode('achieved_value', data, 'change achieved value');
   }
   // Change contributor
   changeContributor(userId: string) {
-    this.updateNode('contributorId', userId);
+    this.updateNode('contributorId', userId, 'change contributor');
   }
   // Set notify user
   setNotifyUser() {
     if (this.notifyType === "owner") {
-      this.updateNode('notifyUserId', this.currentNode.contributorId);
+      this.updateNode('notifyUserId', this.currentNode.contributorId, 'change notify user');
       this.currentNode.notifyUserId = this.currentNode.contributorId;
     } else this.currentNode.notifyUserId = undefined;
   }
   selectNotifyUser(userId: string) {
-    this.updateNode('notifyUserId', userId);
+    this.updateNode('notifyUserId', userId, 'change notify user');
     this.currentNode.notifyUserId = userId;
   }
   // Change alert type
   changeAlertType(e: any) {
-    this.updateNode('alert_type', e.target.value);
+    this.updateNode('alert_type', e.target.value, 'change alert type');
     this.currentNode.alert_type = e.target.value;
   }
   // Change alert frequency
   changeAlertFrequency(e: any) {
-    this.updateNode('alert_frequency', e.target.value);
+    this.updateNode('alert_frequency', e.target.value, 'change alert frequency');
     this.currentNode.alert_frequency = e.target.value;
   }
 
@@ -723,12 +723,12 @@ export class EditKartaComponent implements OnInit {
 
   // Get color settings
   getColorSettings() {
-    this._kartaService
-      .getColorSettingByUser({ userId: this._commonService.getUserId() })
-      .subscribe((response: any) => {
+    this._kartaService.getColorSettingsByUser({ userId: this._commonService.getUserId() }).subscribe(
+      (response: any) => {
         this.colorSettings = response;
         this.getPhases();
-      });
+      }
+    );
   }
 
   // Add node
@@ -822,15 +822,13 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, addTarget: string = "") {
+  updateNode(key: string, value: any, event: string = "unknown", addTarget: string = "") {
     let data;
     if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
     else data = { [key]: value };
-    this._kartaService
-      .updateNode(this.currentNode.id, data)
-      .subscribe((response: any) => {
-        this.currentNode[key] =
-          key === 'achieved_value' ? value.achieved_value : value;
+    this._kartaService.updateNode(this.currentNode.id, data).subscribe(
+      (response: any) => {
+        this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
         this.D3SVG.updateNode(this.currentNode);
         if (addTarget === "yes" && !this.currentNode.children && this.currentNode.hasOwnProperty("achieved_value")) {
           this.addNode(this.currentNode, "Target", 100);
@@ -838,6 +836,14 @@ export class EditKartaComponent implements OnInit {
         if (key === "achieved_value" || key === "target" || key === "weightage") {
           this.updateNewPercentage();
         }
+        let history_data = {
+          event,
+          event_key: key,
+          event_value: value
+        }
+        this._kartaService.addKartaHistory(history_data).subscribe(
+          (response: any) => { }
+        )
       }
     );
   }
@@ -934,7 +940,6 @@ export class EditKartaComponent implements OnInit {
       percentage: ""
     }
   ];
-
   pushCSVData(data: any) {
     if (!data.hasOwnProperty("parentId")) {
       data.kartaName = this.karta.name;
@@ -968,22 +973,8 @@ export class EditKartaComponent implements OnInit {
     csvExporter.generateCsv(this.csvKartaData);
   }
 
-    // Get all kartas
-    getKartas() {
-      let data = {
-        page: 1,
-        limit: 3,
-        userId: this._commonService.getUserId(),
-      };
-      this._kartaService.getKartas(data).subscribe((response: any) => {
-        if (response) {
-          this.kartas = response.kartas[0].data;
-        } else this.kartas = [];
-      });
-    }
-
+  // Sharing karta
   onShare(param: any) {
-    console.log("param", param);
     delete param.node
     this.selectedSharedUsers = [];
     this.emails = [];
@@ -991,52 +982,43 @@ export class EditKartaComponent implements OnInit {
     if (param.sharedTo) this.sharingKartaCount = param.sharedTo.length;
     else this.sharingKartaCount = 0;
   }
-
-    // Add new email and share
-    addTagPromise(e: string) {
-      return new Promise((resolve) => {
-        this.loading = true;
-        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (e.match(mailformat)) {
-          // Callback function
-          setTimeout(() => {
-            resolve({ email: e });
-            this.loading = false;
-          });
-        } this.loading = false;
-      })
-    }
-
-    // Submit shared data
-    shareKarta() {
-      this.selectedSharedUsers.forEach((element: any) => {
-        if (element.email == this._commonService.getEmailId()) {
-          alert("You can not share karta to your self.");
-          if (element.email !== this._commonService.getEmailId()) { }
-        } else {
-          this.emails.push(element.email);
-        }
-      });
-      if (this.emails.length > 0) {
-        let data = {
-          karta: this.sharingKarta,
-          emails: this.emails
-        }
-        console.log("data log", data);
-        
-        this.sharedSubmitFlag = true;
-        this._kartaService.sharedEmails(data).subscribe(
-          (response: any) => {
-            this._commonService.successToaster("Your have shared karta successfully");
-            $('#shareLinkModal').modal('hide');
-            // this.getKartas();
-            // this.getSharedKarta();
-            this.getKartaInfo();
-          },
-          (error: any) => { console.log(error) }
-        ).add(() => this.sharedSubmitFlag = false);
+  // Email validation
+  addTagPromise(e: string) {
+    return new Promise((resolve) => {
+      this.loading = true;
+      var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (e.match(mailformat)) {
+        // Callback function
+        setTimeout(() => {
+          resolve({ email: e });
+          this.loading = false;
+        });
+      } this.loading = false;
+    })
+  }
+  shareKarta() {
+    this.selectedSharedUsers.forEach((element: any) => {
+      if (element.email == this._commonService.getEmailId()) {
+        alert("You can not share karta to your self.");
+      } else this.emails.push(element.email);
+    });
+    if (this.emails.length > 0) {
+      let data = {
+        karta: this.sharingKarta,
+        emails: this.emails
       }
+      this.sharedSubmitFlag = true;
+
+      this._kartaService.shareKarta(data).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Your have shared karta successfully");
+          $('#shareLinkModal').modal('hide');
+          this.getKartaInfo();
+        },
+        (error: any) => { console.log(error) }
+      ).add(() => this.sharedSubmitFlag = false);
     }
+  }
 
 }
 

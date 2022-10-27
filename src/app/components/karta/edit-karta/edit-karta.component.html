@@ -207,7 +207,7 @@
   <div id="content" class="karta-edit-contnet">
 
     <div class="karta-edit-header">
-      <div class="row">
+      <div class="row no-gutters">
         <div class="col-lg-6">
           <div class="row">
             <div class="col-lg-3 pr-0">
@@ -231,7 +231,7 @@
           </div>
         </div>
         <div class="col-lg-6">
-          <div class="row">
+          <div class="row no-gutters">
             <div class="col-lg-4">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta-mode" (change)="changeMode($event)">
@@ -624,7 +624,7 @@
           <div class="col-lg-7">
             <div class="color-picker">
               <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor"
-                (change)="updateNode('text_color', selectedColor)">
+                (change)="updateNode('text_color', selectedColor)" style="cursor: pointer;">
             </div>
           </div>
         </div>
