@@ -7,6 +7,7 @@ import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as moment from 'moment';
 
+
 declare const $: any;
 
 @Component({
@@ -409,6 +410,11 @@ export class EditKartaComponent implements OnInit {
   togggleLeftSidebar() {
     $('#sidebar-two').toggleClass('active');
     $('.sidebar_collapsible_btn').toggleClass('show');
+    if ($('#sidebar-two').hasClass('active')) {
+      $('.sidebar_collapsible_btn img').attr('src', 'assets/img/side-arrow-left.svg');
+    } else {
+      $('.sidebar_collapsible_btn img').attr('src', 'assets/img/side-arrow-right.svg')
+    }
   }
   // HIDE LEFT SIDEBAR
   hideLeftSidebar() {
