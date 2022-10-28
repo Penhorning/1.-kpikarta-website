@@ -1,12 +1,11 @@
-import { filter } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as moment from 'moment';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExportToCsv } from 'export-to-csv';
 
 declare const $: any;
 
@@ -16,6 +15,7 @@ declare const $: any;
   styleUrls: ['./edit-karta.component.scss'],
 })
 export class EditKartaComponent implements OnInit {
+  
   kartaId: string = '';
   karta: any;
   currentNode: any = {};
@@ -96,18 +96,20 @@ export class EditKartaComponent implements OnInit {
   dropdownSettings: any = {};
   contributorUsers: any = [];
   selectedContributorUsers: any = [];
+  // Metric Formula
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
 
+  // Person notify
+  notifyType: string  = "";
+
   // Share karta
   sharedKartaStr: any = [];
   kartas: any = [];
-  // users: any = [];
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
-
   selectedSharedUsers: any = [];
   sharingKartaCount: any = 0;
   loading: boolean = false;
@@ -134,7 +136,7 @@ export class EditKartaComponent implements OnInit {
       that.togggleLeftSidebar();
     });
     // Close right sidebar when click outside
-    $(document).on('click', '.right_sidebar_overlay', function (event: any) {
+    $(document).on('click', '.right_sidebar_overlay', function () {
       that.closeRightSidebar();
     });
     // Get color settings
@@ -153,7 +155,7 @@ export class EditKartaComponent implements OnInit {
       for(let i = 0; i < 2; i++){
         newArr.push(this.fb.group({
           fieldName: [`Field${i + 1}`],
-          fieldValue: [0],
+          fieldValue: [0, Validators.min(1)],
         }))
       }
     }
@@ -164,7 +166,7 @@ export class EditKartaComponent implements OnInit {
   addFormulaGroup() {
     let fieldForm = this.fb.group({
       fieldName: [`Field${this.fields.length + 1}`],
-      fieldValue: [0],
+      fieldValue: [0, Validators.min(1)],
     })
     this.fields.push(fieldForm);
   }
@@ -176,9 +178,10 @@ export class EditKartaComponent implements OnInit {
     for (let i = 0; i < this.fields.length; i++) {
       newArr.push({
         ...this.formulaGroup.controls['fields']['controls'][i],
-        fieldName: this.currentNode.node_type
-          ? this.currentNode.node_type.fields[i].fieldName
-          : `Field${i + 1}`,
+        // fieldName: this.currentNode.node_type
+        //   ? this.currentNode.node_type.fields[i].fieldName
+        //   : `Field${i + 1}`,
+        fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
       });
     }
     this.formulaGroup.patchValue({
@@ -188,8 +191,17 @@ export class EditKartaComponent implements OnInit {
 
   // Enable/Disable Readonly value of Formula Fields
   editFieldStatus(id: number, value: boolean) {
+    let dom: any = document.getElementById('fd' + id);
+    dom.innerHTML = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
+    dom.innerText = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
+    this.formulagroupDefaultValues[id] = dom.innerText;
     $('#fd' + id).attr('contenteditable', value);
-    return;
+    $('#fd' + id).focus();
+  }
+
+  // Limiting length for Content Editable
+  setLimitForContentEditable(event: any) {
+    return event.target.innerText.length < 15;
   }
 
   // Check Field Value for ReadOnly
@@ -213,22 +225,19 @@ export class EditKartaComponent implements OnInit {
 
   // Set Temporary Field Value to FormArray
   setFieldValues(id: number) {
-    this.formulaGroup.controls['fields']['controls'][id].patchValue({
-      fieldName: this.formulagroupDefaultValues[id],
-    });
-    delete this.formulagroupDefaultValues[id];
-    this.editFieldStatus(id, false);
-  }
-
-  // Remove Temporary Field Value
-  removeFieldValues(id: number) {
-    let value =
-      this.formulaGroup.controls['fields'].controls[id].controls['fieldName']
-        .value;
-    let element: any = document.getElementById('fd' + id);
-    element.innerText = value;
-    element.innerHTML = value;
-    delete this.formulagroupDefaultValues[id];
+    let domElem: any = document.getElementById('fd' + id);
+    if(domElem.innerText.length == 0){
+      domElem.innerText = this.formulagroupDefaultValues[id];
+      domElem.innerHTML = this.formulagroupDefaultValues[id];
+    }
+    else {
+      this.formulaGroup.controls['fields']['controls'][id].patchValue({
+        fieldName: this.formulagroupDefaultValues[id],
+      });
+      if(this.formulagroupDefaultValues[id]){
+        delete this.formulagroupDefaultValues[id];
+      }
+    }
     this.editFieldStatus(id, false);
   }
 
@@ -268,12 +277,14 @@ export class EditKartaComponent implements OnInit {
 
         if (this.formulaGroup.valid) {
           if (checkFrag) {
-            this._commonService.errorToaster('Please type correct formula');
+            $('#formula-field').addClass('is-invalid');
+            $('#formula-field').removeClass('is-valid');
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
             return;
           } else {
+            $('#formula-field').removeClass('is-invalid');
             total = eval(newValue);
             this.formulaGroup.patchValue({
               calculatedValue: total,
@@ -299,6 +310,7 @@ export class EditKartaComponent implements OnInit {
               .subscribe(
                 (x) => {
                   if (x) {
+                    $('#formula-field').addClass('is-valid');
                     this.updateNodeProperties(x);
                     this._commonService.successToaster(
                       'Node updated succesfully..!!'
@@ -320,7 +332,9 @@ export class EditKartaComponent implements OnInit {
 
   //Show Dropdown suggestions for Formula Fields
   filterFieldSuggestions(event: any) {
-    let value = event.target.value.trim();
+    $('#formula-field').removeClass('is-invalid');
+    $('#formula-field').removeClass('is-valid');
+    let value = event.target.value.trim().toLowerCase();
     let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
     let findLastIndex = null;
     
@@ -330,8 +344,6 @@ export class EditKartaComponent implements OnInit {
         break;
       }
     }
-
-    console.log(findLastIndex, 'check');
 
     if (!value) {
       this.formulaFieldSuggestions = [];
@@ -539,6 +551,9 @@ export class EditKartaComponent implements OnInit {
           .toISOString()
           .substring(0, 10);
     }
+
+    if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
+    else if (this.currentNode.notifyUserId) this.notifyType = "specific";
   }
 
   // Change node name
@@ -588,6 +603,31 @@ export class EditKartaComponent implements OnInit {
       target: this.target,
     };
     this.updateNode('achieved_value', data);
+  }
+  // Change contributor
+  changeContributor(userId: string) {
+    this.updateNode('contributorId', userId);
+  }
+  // Set notify user
+  setNotifyUser() {
+    if (this.notifyType === "owner") {
+      this.updateNode('notifyUserId', this.currentNode.contributorId);
+      this.currentNode.notifyUserId = this.currentNode.contributorId;
+    } else this.currentNode.notifyUserId = undefined;
+  }
+  selectNotifyUser(userId: string) {
+    this.updateNode('notifyUserId', userId);
+    this.currentNode.notifyUserId = userId;
+  }
+  // Change alert type
+  changeAlertType(e: any) {
+    this.updateNode('alert_type', e.target.value);
+    this.currentNode.alert_type = e.target.value;
+  }
+  // Change alert frequency
+  changeAlertFrequency(e: any) {
+    this.updateNode('alert_frequency', e.target.value);
+    this.currentNode.alert_frequency = e.target.value;
   }
 
   // Calculate each node percentage
@@ -718,6 +758,10 @@ export class EditKartaComponent implements OnInit {
       data.due_date = new Date();
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
+      data.threshold_value = 70;
+      data.is_achieved_modified = false;
+      data.alert_type = "";
+      data.alert_frequency = "";
       data.kpi_calc_period = 'month-to-date';
       if (!this.currentNode.node_type) {
         // Creating 2 Formula Fields by Default
@@ -878,11 +922,11 @@ export class EditKartaComponent implements OnInit {
     let data = {
       name: this.karta.name,
     };
-    this._kartaService
-      .updateKarta(this.karta.id, data)
-      .subscribe((response: any) => {
+    this._kartaService.updateKarta(this.karta.id, data).subscribe(
+      (response: any) => {
         this.karta = response;
-      });
+      }
+    );
   }
 
   // Export karta to CSV

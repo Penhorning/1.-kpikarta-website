@@ -105,6 +105,7 @@ export class MyKpiComponent implements OnInit {
   metricsSubmitFlag: boolean = false;
   measureFlag = false;
   kartaName: any;
+  editingKarta: any;
   index: any;
   metricsForm = this.fb.group({
     fields: this.fb.array([]),
@@ -113,7 +114,7 @@ export class MyKpiComponent implements OnInit {
   });
 
   measureForm = this.fb.group({
-    measure: [0,Validators.pattern('^[0-9]*$')]
+    actualValue: [0, Validators.pattern('^[0-9]*$')]
   });
 
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,private route: ActivatedRoute) {
@@ -150,7 +151,7 @@ export class MyKpiComponent implements OnInit {
     if (this.metricsData?.fields) {
       this.metricsData?.fields.forEach((element: any) => {
         const metricsForm = this.fb.group({
-          fieldValue: [element?.fieldValue, Validators.pattern('^[0-9]*$')],
+          fieldValue: [element?.fieldValue, [Validators.required, Validators.pattern('^[0-9]*$')]],
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);
@@ -213,12 +214,12 @@ export class MyKpiComponent implements OnInit {
       this.metricsSubmitFlag = true;
       this._myKpiService.updateNode(this.currentNode, { node_type: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
         (response) => {
-          if (response) { this._commonService.successToaster('Actual value updated succesfully..!!'); }
+          if (response) { this._commonService.successToaster('Actual value updated succesfully!'); }
         $('#editActualValueModal').modal('hide');
           this.getMyKPIsList();
         },
         (err) => {
-          console.log(err); this._commonService.errorToaster('Something went wrong..!!');
+          console.log(err); this._commonService.errorToaster('Something went wrong!');
         }
       ).add(() => this.metricsSubmitFlag = false);
       return;
@@ -234,32 +235,24 @@ export class MyKpiComponent implements OnInit {
     }
 
     this.target.forEach((element: any) => {
-      let percentage = (+this.measureForm.value.name / element.value) * 100;
+      let percentage = (+this.measureForm.value.actualValue / element.value) * 100;
       return element.percentage = Math.round(percentage);
     });
 
     this.measureSubmitFlag = true;
-    this._myKpiService.updateNode(this.currentNode, { achieved_value: +this.measureForm.value.name, target: this.target }).subscribe(
+    this._myKpiService.updateNode(this.currentNode, { achieved_value: +this.measureForm.value.actualValue, target: this.target, is_achieved_modified: true }).subscribe(
       (response) => {
-        if (response) { this._commonService.successToaster('Actual value updated succesfully..!!'); }
+        if (response) { this._commonService.successToaster('Actual value updated succesfully!'); }
         $('#editActualValueModal').modal('hide');
         this.getMyKPIsList();
       },
       (err) => {
-        console.log(err); this._commonService.errorToaster('Something went wrong..!!');
+        console.log(err); this._commonService.errorToaster('Something went wrong!');
       }
     ).add(() => this.measureSubmitFlag = false);
     return;
   }
   // Formula of metrics ends
-
-  // Custom error handeling
-  returnMetricsError(i: any) {
-    return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.hasError('pattern');
-  }
-  returnError(i: any) {
-    return (this.metricsForm.get('fields') as FormArray).controls[i].get('fieldValue')?.errors ? true : false;
-  }
 
   // Get color settings
   getColorSettings() {
@@ -431,6 +424,7 @@ export class MyKpiComponent implements OnInit {
 
   // On click geting data of acheived value
   editActualValue(e: any) {
+    this.editingKarta = e;
     this.measureFlag = false; 
     this.metricsData = e.node_type;
     this.currentNode = e._id;
@@ -449,7 +443,7 @@ export class MyKpiComponent implements OnInit {
     } else {
       this.measureFlag = this.measureFlag;
       this.measureForm.patchValue({
-        measure : e.achieved_value
+        actualValue : e.achieved_value
       });
     }
     this.addMetricsData();
