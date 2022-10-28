@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SubscriptionService } from '@app/shared/_services/subscription.service';
 import { SignupService } from '../sign-up/service/signup.service';
 import { DepartmentService } from './service/department.service';
@@ -23,6 +23,8 @@ export class MembersComponent implements OnInit {
   checkFormType: string = "Invite";
   submitted: boolean = false;
   hideDepartment: boolean = false;
+  hideValues: any = ['company admin' , 'billing staff']
+  hide: boolean = true
 
   // ngx-intl-tel-input config
   separateDialCode = true;
@@ -42,15 +44,17 @@ export class MembersComponent implements OnInit {
 
   ngOnInit(): void {
     this.inviteGroup = this._fb.group({
-      fullName: ['', Validators.required],
-      email: ['', [Validators.required]],
+      fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
+      email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
       license: ['', Validators.required],
-      mobile: ['', Validators.required],
+      mobile: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
       role: ['', Validators.required],
-      department: [''],
+      department:  [this.ageRangeValidator(this.hideDepartment)],
+      
       type: ['invite'],
       creatorId: [this._commonService.getUserId()]
     });
+console.log('this.inviteGroupt',this.inviteGroup);
 
     this._signupService.getUers().subscribe(data => {
       if(data || data.length > 0){
@@ -94,6 +98,18 @@ export class MembersComponent implements OnInit {
 
   get form() { return this.inviteGroup.controls; }
 
+ ageRangeValidator(val: any){
+  return function (control: AbstractControl){
+    if(!control.value && !val)
+    {
+      return {required: true}
+    }
+    return null
+  };
+  
+}
+
+
   setFormType(type: string, data?: any){
     if(type == 'Invite'){
       this.checkFormType = type;
@@ -120,12 +136,13 @@ export class MembersComponent implements OnInit {
   }
 
   handleDepartment(event: any){
-    let hideValues = ['company admin' , 'billing staff']
+   
     let roleValue = this.rolesData.filter(x => x.id == event.target.value);
-    hideValues.includes(roleValue[0].name) ? this.hideDepartment = true : this.hideDepartment = false;
+    this.hideValues.includes(roleValue[0].name) ? this.hideDepartment = true : this.hideDepartment = false;
   }
   
   sendInvite(){
+    console.log("this.inviteGroup.valid", this.inviteGroup)
     this.submitted = true;
     if(this.inviteGroup.valid){
       this._signupService.signup(this.inviteGroup.value).subscribe(data => {
@@ -143,5 +160,24 @@ export class MembersComponent implements OnInit {
       this.inviteGroup.markAllAsTouched();
     }
   }
-
+  
+updateMembers(){
+  this.submitted = true;
+    if(this.inviteGroup.valid){
+      this._signupService.signup(this.inviteGroup.value).subscribe(data => {
+        if(data){
+          $('#memberModal').modal('hide');
+          this._commonService.successToaster("Members invited successfully.. !!")
+        }
+      }, err => {
+        if (err.status === 422 && err.error.error.details.codes.email[0] === "uniqueness") {
+          this._commonService.errorToaster("Email is already registered, please try with a different one");
+        }
+      });
+    }
+    else {
+      this.inviteGroup.markAllAsTouched();
+    }
 }
+}
+

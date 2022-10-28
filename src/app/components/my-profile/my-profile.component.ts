@@ -170,7 +170,10 @@ export class MyProfileComponent implements OnInit {
   }
 
   getCompanyProfile() {
-    this._profileService.getCompanyByUser(this.user.id).subscribe(
+    let userId: "";
+    if (this.user.hasOwnProperty("addedBy")) userId = this.user.creatorId;
+    else userId = this.user.id;
+    this._profileService.getCompanyByUser(userId).subscribe(
       (response: any) => {
         this.company = response;
         this.companyForm.patchValue({
