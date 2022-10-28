@@ -137,8 +137,11 @@ export class DashboardComponent implements OnInit {
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
       if (element.email == this._commonService.getEmailId()) {
-        alert("You can not share karta to your self.");
-      } else this.emails.push(element.email);
+        this._commonService.warningToaster("You can not share karta to yourself!");
+        if (element.email !== this._commonService.getEmailId()) { }
+      } else {
+        this.emails.push(element.email);
+      }
     });
     if (this.emails.length > 0) {
       let data = {

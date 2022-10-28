@@ -981,10 +981,9 @@ export class EditKartaComponent implements OnInit {
       useTextFile: false,
       filename: this.karta.name,
       useBom: true,
-      headers: 
-        [ 'Node Name', 'Weightage', 'Font Style', 'Alignment','Text Color', 'Karta Name',
-         'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage' ]
-    };
+      headers: ['Name', 'Weightage', 'Font_style', 'Alignment','Text_color',
+      'Karta Name', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage' ]
+  };
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.csvKartaData);
   }
