@@ -894,7 +894,6 @@ export class EditKartaComponent implements OnInit {
       alignment: "",
       text_color: "",
       kartaName: "",
-      assigned_date: "",
       createdAt: "",
       phaseId: "",
       phaseName: "",
@@ -928,8 +927,7 @@ export class EditKartaComponent implements OnInit {
       filename: this.karta.name,
       useBom: true,
       headers: ['Name', 'Weightage', 'Font_style', 'Alignment','Text_color',
-      'Karta Name', 'Assigned Date', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage',
-    'Target Value', 'Achieved Value']
+      'Karta Name', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage' ]
   };
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.csvKartaData);
@@ -978,7 +976,7 @@ export class EditKartaComponent implements OnInit {
     shareKarta() {
       this.selectedSharedUsers.forEach((element: any) => {
         if (element.email == this._commonService.getEmailId()) {
-          alert("You can not share karta to your self.");
+          this._commonService.warningToaster("You can not share karta to yourself!");
           if (element.email !== this._commonService.getEmailId()) { }
         } else {
           this.emails.push(element.email);
@@ -989,15 +987,11 @@ export class EditKartaComponent implements OnInit {
           karta: this.sharingKarta,
           emails: this.emails
         }
-        console.log("data log", data);
-        
         this.sharedSubmitFlag = true;
         this._kartaService.sharedEmails(data).subscribe(
           (response: any) => {
             this._commonService.successToaster("Your have shared karta successfully");
             $('#shareLinkModal').modal('hide');
-            // this.getKartas();
-            // this.getSharedKarta();
             this.getKartaInfo();
           },
           (error: any) => { console.log(error) }
