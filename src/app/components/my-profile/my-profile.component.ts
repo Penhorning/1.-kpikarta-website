@@ -101,7 +101,7 @@ export class MyProfileComponent implements OnInit {
     this.getEmployeesRanges();
 
     this.route.fragment.subscribe(f => {
-      const element = document.querySelector("#" + f)
+      const element = document.querySelector("#" + f);
       if (element) element.scrollIntoView({ behavior: 'smooth', block: 'end' });
     });
   }

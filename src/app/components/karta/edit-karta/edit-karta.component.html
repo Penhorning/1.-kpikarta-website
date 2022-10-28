@@ -200,14 +200,14 @@
 
   </nav>
   <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle sidebar_collapsible_btn">
-    <img src="assets/img/side-arrow-new-bar1.svg.png" alt="">
+    <img src="assets/img/side-arrow-right.svg" alt="">
   </button>
 
   <!-- Page Content  -->
   <div id="content" class="karta-edit-contnet">
 
     <div class="karta-edit-header">
-      <div class="row">
+      <div class="row no-gutters">
         <div class="col-lg-6">
           <div class="row">
             <div class="col-lg-3 pr-0">
@@ -231,7 +231,7 @@
           </div>
         </div>
         <div class="col-lg-6">
-          <div class="row">
+          <div class="row no-gutters">
             <div class="col-lg-4">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta-mode" (change)="changeMode($event)">
@@ -505,7 +505,7 @@
       <div class="right-side-bar" id="rightSidebar">
         <!-- <div class="test">
           <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle">
-            <img src="assets/img/side-arrow-new-bar1.svg.png" alt="">
+            <img src="assets/img/side-arrow-new-bar1.svg" alt="">
           </button>
         </div> -->
         <div class="row">
@@ -624,7 +624,7 @@
           <div class="col-lg-7">
             <div class="color-picker">
               <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor"
-                (change)="updateNode('text_color', selectedColor)">
+                (change)="updateNode('text_color', selectedColor)" style="cursor: pointer;">
             </div>
           </div>
         </div>

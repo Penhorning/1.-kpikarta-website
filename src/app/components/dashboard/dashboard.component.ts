@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../karta/service/karta.service';
 
+
 declare const $: any;
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -52,6 +54,20 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // Get all users
+  getAllUser() {
+    this._kartaService.getAllUsers().subscribe((response: any) => {
+      if (response) {
+        this.users = response.users[0].data.filter((x: any) => {
+          return x.email != this._commonService.getEmailId();
+        });
+      } else {
+        this.users = [];
+      }
+    });
+  }
+
+  // Get shared kartas
   getSharedKarta() {
     let data = {
       page: 1,
@@ -97,59 +113,14 @@ export class DashboardComponent implements OnInit {
   //   }
   // }
 
-  // On share karta
-  onShare(param: any) {
-    console.log("param 1", param);
-    
+  // Sharing karta
+  onShare(param: any) {    
     this.selectedUsers = [];
     this.emails = [];
     this.sharingKarta = param;
     if (param.sharedTo) this.sharingKartaCount = param.sharedTo.length;
     else this.sharingKartaCount = 0;
   }
-
-  // Submit shared data
-  shareKarta() {
-    this.selectedUsers.forEach((element: any) => {
-      if (element.email == this._commonService.getEmailId()) {
-        alert("You can not share karta to your self.");
-        if (element.email !== this._commonService.getEmailId()) { }
-      } else {
-        this.emails.push(element.email);
-      }
-    });
-    if (this.emails.length > 0) {
-      let data = {
-        karta: this.sharingKarta,
-        emails: this.emails
-      }
-      this.sharedSubmitFlag = true;
-      this._kartaService.sharedEmails(data).subscribe(
-        (response: any) => {
-          this._commonService.successToaster("Your have shared karta successfully");
-          $('#shareLinkModal').modal('hide');
-          this.getKartas();
-          this.getSharedKarta();
-        },
-        (error: any) => { }
-      ).add(() => this.sharedSubmitFlag = false);
-    }
-  }
-
-  // Get all users
-  getAllUser() {
-    this._kartaService.getAllUsers().subscribe((response: any) => {
-      if (response) {
-        this.users = response.users[0].data.filter((x: any) => {
-          return x.email != this._commonService.getEmailId();
-        });
-      } else {
-        this.users = [];
-      }
-    });
-  }
-
-  // Add new email and share
   addTagPromise(e: string) {
     return new Promise((resolve) => {
       this.loading = true;
@@ -162,6 +133,30 @@ export class DashboardComponent implements OnInit {
         });
       } this.loading = false;
     })
+  }
+  shareKarta() {
+    this.selectedUsers.forEach((element: any) => {
+      if (element.email == this._commonService.getEmailId()) {
+        alert("You can not share karta to your self.");
+      } else this.emails.push(element.email);
+    });
+    if (this.emails.length > 0) {
+      let data = {
+        karta: this.sharingKarta,
+        emails: this.emails
+      }
+      this.sharedSubmitFlag = true;
+
+      this._kartaService.shareKarta(data).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Your have shared karta successfully");
+          $('#shareLinkModal').modal('hide');
+          this.getKartas();
+          this.getSharedKarta();
+        },
+        (error: any) => { }
+      ).add(() => this.sharedSubmitFlag = false);
+    }
   }
 
   // Copy karta
@@ -176,16 +171,16 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  changeEditStatus(id: number, value: boolean) {
-    $('#kt' + id).attr('contenteditable', value);
+  // Rename karta
+  changeEditStatus(id: number) {
+    $('#kt' + id).attr('contenteditable', true);
+    $('#kt' + id).focus();
     return;
   }
-
   checkEditStatus(id: number) {
     let value = $('#kt' + id).attr('contenteditable');
     return JSON.parse(value);
   }
-
   renameKarta(id: string, index: number) {
     let value = document.getElementById('kt' + index)?.innerHTML;
     this._kartaService.updateKarta(id, { name: value }).subscribe(

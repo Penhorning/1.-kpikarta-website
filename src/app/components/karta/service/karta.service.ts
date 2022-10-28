@@ -12,16 +12,16 @@ export class KartaService {
   getPhases() {
     return this._httpService.GET('/karta_phases');
   }
-  addSubPhase(data: any) {
-    return this._httpService.POST('/karta_sub_phases', data);
-  }
-  getSubPhases(kartaId: string) {
-    return this._httpService.GET(`/karta_sub_phases?filter[where][kartaId]=${kartaId}&filter[order]=createdAt Desc`);
-  }
+  // addSubPhase(data: any) {
+  //   return this._httpService.POST('/karta_sub_phases', data);
+  // }
+  // getSubPhases(kartaId: string) {
+  //   return this._httpService.GET(`/karta_sub_phases?filter[where][kartaId]=${kartaId}&filter[order]=createdAt Desc`);
+  // }
   getSuggestion(data: any) {
     return this._httpService.POST('/suggestion-by-phase', data);
   }
-  getColorSettingByUser(data: any) {
+  getColorSettingsByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);
   }
   createKarta(data: any) {
@@ -39,9 +39,9 @@ export class KartaService {
   deleteKarta(data: any) {
     return this._httpService.POST('/karta/delete', data);
   }
-  deleteSharedKarta(id: any) {
-    return this._httpService.POST('/karta/delete-shared-karta', id);
-  }
+  // deleteSharedKarta(id: any) {
+  //   return this._httpService.POST('/karta/delete-shared-karta', id);
+  // }
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);
   }
@@ -51,10 +51,13 @@ export class KartaService {
   removeNode(nodeId: string) {
     return this._httpService.POST('/karta_nodes/delete', {nodeId});
   }
+  addKartaHistory(data: any) {
+    return this._httpService.POST('/karta_histories', data);
+  }
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
   }
-  sharedEmails(data: any) {
+  shareKarta(data: any) {
     return this._httpService.POST('/karta/share', data);
   }
   getSharedKarta(data: any) {
