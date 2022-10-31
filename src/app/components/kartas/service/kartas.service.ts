@@ -32,4 +32,5 @@ export class KartasService {
   deleteKarta(data: any) {
     return this._httpService.POST('/karta/delete', data);
   }
+  /*============================== API FUNCTIONS ENDS ==============================*/
 }

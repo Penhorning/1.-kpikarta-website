@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SubscriptionService } from '@app/shared/_services/subscription.service';
-import { SignupService } from '../sign-up/service/signup.service';
-import { DepartmentService } from './service/department.service';
-import { RolesService } from './service/roles.service';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { CommonService } from '@app/shared/_services/common.service';
+import { MemberService } from './service/member.service';
 
 declare const $: any;
 
@@ -15,14 +12,16 @@ declare const $: any;
   styleUrls: ['./members.component.scss']
 })
 export class MembersComponent implements OnInit {
-  usersData: any[] = [];
-  rolesData: any[] = [];
-  departmentsData: any[] = [];
-  licenseData: any[] = [];
-  inviteGroup: FormGroup | any = [];
-  checkFormType: string = "Invite";
+
+  users: any[] = [];
+  roles: any[] = [];
+  departments: any[] = [];
+  subscriptions: any[] = [];
+  checkFormType: string = "CREATE";
   submitted: boolean = false;
-  hideDepartment: boolean = false;
+  submitFlag = false;
+  showDepartment: boolean = false;
+  showRole: boolean = true;
   hideValues: any = ['company admin' , 'billing staff']
   hide: boolean = true
 
@@ -33,38 +32,27 @@ export class MembersComponent implements OnInit {
   PhoneNumberFormat = PhoneNumberFormat;
 	preferredCountries: CountryISO[] = [CountryISO.UnitedStates, CountryISO.India, CountryISO.Canada];
 
+  inviteForm = this.fb.group({
+    fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
+    email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
+    subscriptionId: ['', Validators.required],
+    mobile: [{}, Validators.required],
+    roleId: ['', Validators.required],
+    creatorId: [this._commonService.getUserId()]
+  });
+
+  get form() { return this.inviteForm.controls; }
+
   constructor(
-    private _signupService: SignupService, 
-    private _departmentService: DepartmentService, 
-    private _fb: FormBuilder, 
-    private _subscriptionService: SubscriptionService,
-    private _rolesService: RolesService,
+    private _memberService: MemberService,
+    private fb: FormBuilder,
     private _commonService: CommonService
-    ) {}
+  ) {}
 
   ngOnInit(): void {
-    this.inviteGroup = this._fb.group({
-      fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
-      email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
-      license: ['', Validators.required],
-      mobile: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
-      role: ['', Validators.required],
-      department:  [this.ageRangeValidator(this.hideDepartment)],
-      
-      type: ['invite'],
-      creatorId: [this._commonService.getUserId()]
-    });
-console.log('this.inviteGroupt',this.inviteGroup);
+    this.getAllInvites();
 
-    this._signupService.getUers().subscribe(data => {
-      if(data || data.length > 0){
-        this.usersData = data;
-      }
-    }, err => {
-      console.log(err);
-    });
-
-    this._rolesService.getRoles().subscribe(data => {
+    this._memberService.getRoles().subscribe(data => {
       if(data){
         let updatedRoles = data.data.map((x: any) => {
           let newObj = {
@@ -73,98 +61,109 @@ console.log('this.inviteGroupt',this.inviteGroup);
           };
           return newObj;
         })
-        this.rolesData = updatedRoles;
+        this.roles = updatedRoles;
       }
     }, err => {
       console.log(err);
     });
 
-    this._departmentService.getDepartments().subscribe(data => {
+    this._memberService.getDepartments().subscribe(data => {
       if(data){
-        this.departmentsData = data;
+        this.departments = data;
       }
     }, err => {
       console.log(err);
     });
 
-    this._subscriptionService.getSubscriptions().subscribe(data => {
+    this._memberService.getSubscriptions().subscribe(data => {
       if(data){
-        this.licenseData = data;
+        this.subscriptions = data;
       }
     }, err => {
       console.log(err);
     });
   }
 
-  get form() { return this.inviteGroup.controls; }
-
- ageRangeValidator(val: any){
-  return function (control: AbstractControl){
-    if(!control.value && !val)
-    {
-      return {required: true}
-    }
-    return null
-  };
-  
-}
-
+  // Get all invites users
+  getAllInvites() {
+    this._memberService.getAllInvites({ userId: this._commonService.getUserId()}).subscribe(
+      (response: any) => {
+        this.users = response.data[0].data;
+      },
+      (error: any) => { }
+    );
+  }
 
   setFormType(type: string, data?: any){
-    if(type == 'Invite'){
+    if (type == 'CREATE') {
+      this.showRole = true;
       this.checkFormType = type;
-      this.inviteGroup.patchValue({
+      this.inviteForm.patchValue({
         fullName: "",
         email: "",
-        license: "",
+        subscriptionId: "",
         mobile: "",
-        role: "",
-        department: "",
+        roleId: "",
+        departmentId: "",
       });
     }
     else {
       this.checkFormType = type;
-      this.inviteGroup.patchValue({
+      this.showRole = false;
+      this.inviteForm.removeControl("roleId");
+      if (!data.departmentId) this.inviteForm.removeControl("departmentId");
+      else this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+      this.inviteForm.patchValue({
         fullName: data.fullName ? data.fullName : '',
         email: data.email ? data.email : '',
-        license: data.license ? data.license : '',
+        subscriptionId: data.subscriptionId ? data.subscriptionId : '',
         mobile: data.mobile ? data.mobile : {},
-        role: data.role ? data.role : '',
-        department: data.department ? data.department : '',
+        // roleId: data.roleId ? data.roleId : '',
+        departmentId: data.departmentId ? data.departmentId : '',
       });
     }
   }
 
-  handleDepartment(event: any){
-   
-    let roleValue = this.rolesData.filter(x => x.id == event.target.value);
-    this.hideValues.includes(roleValue[0].name) ? this.hideDepartment = true : this.hideDepartment = false;
+  handleDepartment(event: any) {
+    let role = this.roles.filter(x => x.id == event.target.value);
+    if (role[0].name === "billing staff" || role[0].name === "company admin") {
+      this.showDepartment = false;
+      this.inviteForm.removeControl("departmentId");
+    } else {
+      this.showDepartment = true;
+      this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+    }
   }
   
-  sendInvite(){
-    console.log("this.inviteGroup.valid", this.inviteGroup)
+  onSubmit() {
+
     this.submitted = true;
-    if(this.inviteGroup.valid){
-      this._signupService.signup(this.inviteGroup.value).subscribe(data => {
-        if(data){
-          $('#memberModal').modal('hide');
-          this._commonService.successToaster("Members invited successfully.. !!")
-        }
-      }, err => {
-        if (err.status === 422 && err.error.error.details.codes.email[0] === "uniqueness") {
-          this._commonService.errorToaster("Email is already registered, please try with a different one");
-        }
-      });
-    }
-    else {
-      this.inviteGroup.markAllAsTouched();
-    }
+
+    if (this.inviteForm.valid) {
+      
+      this.submitFlag = true;
+      if (this.checkFormType === "CREATE") {
+        this._memberService.invite({data: this.inviteForm.value}).subscribe(
+          (response: any) => {
+            $('#memberModal').modal('hide');
+            this._commonService.successToaster("Members invited successfully!");
+          },
+          (error: any) => {
+            if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+              this._commonService.errorToaster("Email is already registered, please try with a different one");
+            }
+          }
+        );
+      } else {
+
+      }
+    } else this.inviteForm.markAllAsTouched();
   }
   
 updateMembers(){
   this.submitted = true;
-    if(this.inviteGroup.valid){
-      this._signupService.signup(this.inviteGroup.value).subscribe(data => {
+    if(this.inviteForm.valid){
+      this._memberService.updateUser(this.inviteForm.value, this._commonService.getUserId(), this._commonService.getSession().token).subscribe(data => {
         if(data){
           $('#memberModal').modal('hide');
           this._commonService.successToaster("Members invited successfully.. !!")
@@ -176,7 +175,7 @@ updateMembers(){
       });
     }
     else {
-      this.inviteGroup.markAllAsTouched();
+      this.inviteForm.markAllAsTouched();
     }
 }
 }
