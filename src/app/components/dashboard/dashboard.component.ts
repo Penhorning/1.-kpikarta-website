@@ -205,15 +205,12 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  getCountOfKarta(e: any){
-       if(e > 15){
-      let totalcount = '15+'
+  getCountOfKarta(val: number){
+       if(val > 100){
+      let totalcount = '100+'
       return totalcount;
-       } else if( e > 10){
-        let totalcount = '10+'
-        return totalcount;
-       }else if(e > 1){
-        let totalcount = e - 1
+       }else if(val > 1){
+        let totalcount = val - 1
         return totalcount;
        }
        return '';
