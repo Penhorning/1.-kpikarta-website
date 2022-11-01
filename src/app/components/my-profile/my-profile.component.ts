@@ -101,7 +101,7 @@ export class MyProfileComponent implements OnInit {
     this.getEmployeesRanges();
 
     this.route.fragment.subscribe(f => {
-      const element = document.querySelector("#" + f)
+      const element = document.querySelector("#" + f);
       if (element) element.scrollIntoView({ behavior: 'smooth', block: 'end' });
     });
   }
@@ -170,7 +170,10 @@ export class MyProfileComponent implements OnInit {
   }
 
   getCompanyProfile() {
-    this._profileService.getCompanyByUser(this.user.id).subscribe(
+    let userId: "";
+    if (this.user.hasOwnProperty("addedBy")) userId = this.user.creatorId;
+    else userId = this.user.id;
+    this._profileService.getCompanyByUser(userId).subscribe(
       (response: any) => {
         this.company = response;
         this.companyForm.patchValue({
@@ -240,15 +243,16 @@ export class MyProfileComponent implements OnInit {
       (response: any) => {
       if (this.cropperModel.type == "company") {
         this.companyLogo.newImage = response.result.files.photo[0].name;
-        this.companyLogo.fileUploading = false;
       } else {
         this.profileImage.newImage = response.result.files.photo[0].name;
-        this.profileImage.fileUploading = false;
       }
       $('#cropperModal').modal('hide');
-      },
-      (error: any) => {}
-    );
+      this.croppedImage = "";
+      }
+    ).add(() => {
+      this.profileImage.fileUploading = false;
+      this.companyLogo.fileUploading = false;
+    });
   }
 
   // On submit
@@ -286,6 +290,7 @@ export class MyProfileComponent implements OnInit {
               if (this.profileImage.newImage) this._commonService.updateUserImageInSession(this.profileImage.newImage);
               this._commonService.successToaster("Profile updated successfully");
               this.profileImage.oldImage = response.profilePic;
+              this.resetPictureModal();
             },
             (error: any) => { }
           ).add(() => this.submitFlag = false );
@@ -320,12 +325,19 @@ export class MyProfileComponent implements OnInit {
               if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
               this._commonService.successToaster("Company details updated successfully");
               this.companyLogo.oldImage = response.logo;
+              this.resetPictureModal();
             },
             (error: any) => { }
           ).add(() => this.companySubmitFlag = false );
         }
       }
     }
+  }
+
+  resetPictureModal() {
+    this.profileImage.newImage = "";
+    this.companyLogo.newImage = "";
+    this.croppedImage = "";
   }
 
   resetModal(mobileNumber: any) {

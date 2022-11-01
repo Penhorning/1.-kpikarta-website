@@ -27,12 +27,6 @@
     right: 0;
 }
 
-.karta-name p {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
 .phase_column ul {
     width: 100%;
 }
@@ -78,6 +72,20 @@
     -webkit-appearance: auto !important;
 }
 
+.formula-value {
+    border: none;
+    background-color: transparent;
+    font-weight: 600;
+}
+
+.add-icon:hover {
+    cursor: pointer;
+}
+
+.remove-icon:hover {
+    cursor: pointer;
+}
+
 ::ng-deep .dropdown-list ul {
     width: auto !important;
 }
@@ -93,4 +101,13 @@ overflow: auto;
 
 ::ng-deep .multiselect-dropdown .dropdown-btn .selected-item{
  margin-top: 4px!important;
+}
+
+.field-options {
+
+}
+
+.field-options:hover {
+    cursor: pointer;
+    background-color: #F5FAFF;
 }

@@ -1,0 +1,225 @@
+<app-header></app-header>
+<app-sidebar></app-sidebar>
+
+<!-- main-section -->
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="page-heading">
+          <h4 class="pt-3">Members</h4>
+        </div>
+      </div>
+      <div class="col-lg-6 text-right">
+        <button class="karta-btn mt-2" data-toggle="modal" data-target="#memberModal" (click)="setFormType('CREATE')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+            class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+            <path fill-rule="evenodd"
+              d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z" />
+          </svg>
+          Invite
+        </button>
+      </div>
+      <div class="col-md-12">
+        <div class="search-bar">
+          <form action="" class="search-form">
+              <div class="form-group search-filed inventory m-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-search" style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
+                      <path
+                          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                  </svg>
+                  <input type="text" class="form-control mt-0" name="search" [(ngModel)]="search_text"
+                      id="search" placeholder="Search...">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-x-lg" viewBox="0 0 16 16"
+                      style="cursor: pointer; margin-right: 30px; margin-top: 4px;" *ngIf="search_text"
+                      (click)="clearSearch()">
+                      <path
+                          d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                  </svg>
+              </div>
+          </form>
+      </div>
+      </div>
+    </div>
+    <div class="karta-setip-white-table-box">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="member-table">
+            <table class="table">
+              <thead class="border-thead">
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email ID</th>
+                  <th>Department</th>
+                  <th>Licence</th>
+                  <th>Date added</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody class="border-0">
+                <tr *ngFor="let user of users">
+                  <td>{{ user?.fullName }}</td>
+                  <td>{{ user?.email }}</td>
+                  <td>{{ user?.department?.name ? user?.department?.name : 'N/A' }}</td>
+                  <td>{{ user?.subscription?.name }}</td>
+                  <td>{{ user?.createdAt | date }}</td>
+                  <!-- <td>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-pencil-fill" viewBox="0 0 16 16" data-toggle="modal" data-target="#memberModal"
+                      (click)="setFormType('UPDATE', user)" style="cursor: pointer;">
+                      <path
+                        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                    </svg>
+                  </td> -->
+                  <td>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                      <path
+                        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                    </svg>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ng-container *ngIf="loading">
+              <div [innerHtml]="loader"></div>
+            </ng-container>
+            <ng-container *ngIf="!loading && users.length === 0">
+                <div [innerHtml]="noDataAvailable"></div>
+            </ng-container>
+            <div class="text-center" *ngIf="!loading && totalData > users.length">
+              <p class="view_more" (click)="getAllInvites()">View More..</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- add -member-Modal -->
+  <div class="modal fade" id="memberModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content p-4">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">
+            {{checkFormType === 'CREATE' ? 'Invite': 'Update'}} {{checkFormType == 'CREATE' ? 'New' : null}} Member
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetFormModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="share-link-model mt-3">
+            <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Full Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input-share-link" placeholder="Enter name"
+                      formControlName="fullName" [maxlength]="50"
+                      [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
+                    <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
+                      <div *ngIf="form.fullName.errors.required">Full name is required!</div>
+                      <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Email <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control custom-input-share-link" placeholder="Enter email"
+                      formControlName="email"
+                      [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
+                    <div *ngIf="(submitted || form.email.touched) && form.email.errors" class="invalid-feedback">
+                      <div *ngIf="form.email.errors.required">Email is required!</div>
+                      <div *ngIf="form.email.errors.pattern">Enter a valid email address!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="mobile">Mobile Number <span class="text-danger">*</span></label>
+                    <ngx-intl-tel-input [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true"
+                      [enablePlaceholder]="true" [searchCountryFlag]="true"
+                      [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                      [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.UnitedStates" [maxLength]=15
+                      class="ngx_phone_number" [phoneValidation]="true" [separateDialCode]="separateDialCode"
+                      [numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="mobile"
+                      [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
+                    </ngx-intl-tel-input>
+                    <div *ngIf="(submitted || form.mobile.touched) && form.mobile.errors" class="invalid-feedback">
+                      <div *ngIf="form.mobile.errors.required">Mobile number is required!</div>
+                      <div *ngIf="!form.mobile.errors.required && form.mobile.errors">Mobile number is invalid!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label>Select License</label>
+                    <select class="form-control custom-select-option" formControlName="subscriptionId">
+                      <option value="" selected>Select License</option>
+                      <option *ngFor="let subscription of subscriptions" [value]="subscription.id">{{subscription.name}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6" *ngIf="showRole">
+                  <div class="form-group">
+                    <label>Select Role <span class="text-danger">*</span></label>
+                    <select class="form-control custom-select-option" (change)="handleDepartment($event)"
+                      formControlName="roleId"
+                      [ngClass]="{ 'is-invalid': (submitted || form.roleId.touched) && form.roleId.errors }">
+                      <option value="" selected disabled>Select Role</option>
+                      <option *ngFor="let role of roles" [value]="role.id">{{role.name | titlecase}}</option>
+                    </select>
+                    <div *ngIf="(submitted || form.roleId.touched) && form.roleId.errors" class="invalid-feedback">
+                      <div *ngIf="form.roleId.errors.required">Role is required!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6" *ngIf="showDepartment">
+                  <div class="form-group">
+                    <label>Select Department <span class="text-danger">*</span></label>
+                    <select class="form-control custom-select-option" formControlName="departmentId"
+                      [ngClass]="{ 'is-invalid': (submitted || form.departmentId.touched) && form.departmentId.errors }">
+                      <option value="" selected disabled>Select Department</option>
+                      <option *ngFor="let department of departments" [value]="department.id">{{department.name}}
+                      </option>
+                    </select>
+                    <div *ngIf="(submitted || form.departmentId.touched) && form.departmentId.errors"
+                      class="invalid-feedback">
+                      <div *ngIf="form.departmentId.errors.required">Department is required!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-lg-6 text-left">
+                  <button class="send-btn" [disabled]="submitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!submitFlag">{{checkFormType}}</ng-container>
+                  </button>
+                </div>
+                <!-- <div class="col-lg-6 text-right">
+                  <div class="">
+                    <button class="send-btn">CREDENTIALS</button>
+                  </div>
+                </div> -->
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

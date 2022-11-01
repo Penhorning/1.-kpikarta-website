@@ -27,7 +27,7 @@ export class SignUpComponent implements OnInit {
 	SearchCountryField = SearchCountryField;
 	CountryISO = CountryISO;
   PhoneNumberFormat = PhoneNumberFormat;
-	preferredCountries: CountryISO[] = [CountryISO.Canada, CountryISO.UnitedStates, CountryISO.India];
+	preferredCountries: CountryISO[] = [CountryISO.UnitedStates, CountryISO.India, CountryISO.Canada];
 
   signupForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
@@ -110,7 +110,7 @@ export class SignUpComponent implements OnInit {
               stage: 1
             }
             this._signupService.setSignUpSession(sessionData);
-            this.router.navigate(['/subscription-plan']);
+            this.router.navigate(['/thank-you']);
           },
           (error: any) => { }
         ).add(() => this.submitFlag = false );

@@ -10,20 +10,25 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 import { EditKartaComponent } from './edit-karta/edit-karta.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AllKartasComponent } from './all-kartas/all-kartas.component';
 
 
 @NgModule({
   declarations: [
     KartaComponent,
     CreateKartaComponent,
-    EditKartaComponent
+    EditKartaComponent,
+    AllKartasComponent
   ],
   imports: [
     CommonModule,
     KartaRoutingModule,
     SharedModule,
     NgSelectModule,
-    NgOptionHighlightModule
+    NgOptionHighlightModule,
+    FormsModule,
+    ReactiveFormsModule
   ]
 })
 export class KartaModule { }

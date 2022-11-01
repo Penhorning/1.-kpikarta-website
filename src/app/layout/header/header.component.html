@@ -34,7 +34,7 @@
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <label class="mr-2">{{_commonService.getSession().name}}</label>
+                      <label class="mr-2 user_label_name short_text">{{_commonService.getSession().name}}</label>
                       <img
                         [src]="_commonService.getSession().profilePic ? _commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic : 'assets/img/avatar.png'"
                         class="rounded-circle login_profile">

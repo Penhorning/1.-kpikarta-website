@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit {
 
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, currentPlan, _2faEnabled } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, creatorId, _2faEnabled } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -80,22 +80,24 @@ export class LoginComponent implements OnInit {
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
-          } else if (!currentPlan) {
-            let sessionData = {
-              token: response.id,
-              email,
-              stage: 1
-            }
-            this._signupService.setSignUpSession(sessionData);
-            this.router.navigate(['/subscription-plan']);
-          } else {
+          }
+          // else if (!cardId) {
+          //   let sessionData = {
+          //     token: response.id,
+          //     email,
+          //     stage: 1
+          //   }
+          //   this._signupService.setSignUpSession(sessionData);
+          //   this.router.navigate(['/add-card']);
+          // }
+          else {
             let sessionData = {
               token: response.id,
               userId: id,
               name: fullName,
               email,
               profilePic,
-              companyLogo: response.companyLogo
+              companyLogo: response.company.logo
             }
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({ email: this.loginForm.value.email });

@@ -28,7 +28,8 @@ export class SettingsComponent implements OnInit {
   _2fa = {
     isChecking: false,
     isSetup: false,
-    isEnabled: false
+    isEnabled: false,
+    showVerifyAlert: false
   }
 
   // Color slider form
@@ -156,12 +157,16 @@ export class SettingsComponent implements OnInit {
         },
         (error: any) => { }
       );
+    } else {
+      setTimeout(() => e.target.checked = false, 500);
+      this._2fa.showVerifyAlert = true;
+      setTimeout(() => this._2fa.showVerifyAlert = false, 5000);
     }
   }
 
   navigateToProfile() {
     this.router.navigate(['/my-profile'], { fragment: 'phoneNumber' });
-    this._commonService.warningToaster("Please verify your mobile number first!");
+    // this._commonService.warningToaster("Please verify your mobile number first!");
   }
 
 

@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { NotificationsRoutingModule } from './notifications-routing.module';
-import { NotificationsComponent } from './notifications.component';
+import { NotificationRoutingModule } from './notification-routing.module';
+import { NotificationComponent } from './notification.component';
 import { SharedModule } from '@app/shared/_modules/shared.module';
 
 
 @NgModule({
   declarations: [
-    NotificationsComponent
+    NotificationComponent
   ],
   imports: [
     CommonModule,
-    NotificationsRoutingModule,
+    NotificationRoutingModule,
     SharedModule
   ]
 })
-export class NotificationsModule { }
+export class NotificationModule { }
