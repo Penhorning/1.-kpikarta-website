@@ -290,7 +290,7 @@ export class MyKpiComponent implements OnInit {
           this.kpis = response.kpi_nodes[0].data;
         } else this.kpis = [];
       }
-    ).add(() => this.loading = false);
+    ).add(() => this.loading = false );
   }
 
   // Get color for each node percentage
