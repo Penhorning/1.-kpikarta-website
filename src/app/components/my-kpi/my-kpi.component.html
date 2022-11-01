@@ -595,6 +595,9 @@
                       <ng-container *ngIf="loadingKarta">
                         <div class="p-5" [innerHtml]="loader"></div>
                       </ng-container>
+                      <ng-container *ngIf="!loadingKarta && kpis.length === 0">
+                        <div class="no-data">No data available in table.</div>
+                      </ng-container>
                       <p style="cursor: pointer; color: #007bff;"
                         *ngIf="!loadingKarta && kpis.length > 9 && viewMore_hide" (click)="viewMore()">View More..</p>
                     </div>
@@ -1058,6 +1061,9 @@
                       <ng-container *ngIf="loadingKarta">
                         <div class="p-5" [innerHtml]="loader"></div>
                       </ng-container>
+                      <ng-container *ngIf="!loadingKarta && kpis.length === 0">
+                        <div class="no-data">No data available in table.</div>
+                      </ng-container>
                       <p style="cursor: pointer; color: #007bff;"
                         *ngIf="!loadingKarta  && kpis.length > 9 && viewMore_hide" (click)="viewMore()">View More..</p>
                     </div>
@@ -1198,8 +1204,6 @@
                   <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors" class="invalid-feedback">
                       <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors">Actual value is required!</div>
                       <div *ngIf="form.actualValue.hasError('pattern')">Actual value should be a positive number!</div>
-
-                      
                   </div>
                 </div>
               </div>

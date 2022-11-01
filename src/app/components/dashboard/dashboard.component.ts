@@ -18,6 +18,8 @@ export class DashboardComponent implements OnInit {
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
 
+  loadingKarta: boolean = true;
+  loader: any = this._commonService.loader;
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
   loading: boolean = false;
@@ -51,7 +53,7 @@ export class DashboardComponent implements OnInit {
       if (response) {
         this.kartas = response.kartas[0].data;
       } else this.kartas = [];
-    });
+    }).add(() => this.loadingKarta = false);;
   }
 
   // Get all users
@@ -78,7 +80,7 @@ export class DashboardComponent implements OnInit {
       if (response) {
         this.sharedKartas = response.kartas[0].data;
       } else this.sharedKartas = [];
-    });
+    }).add(() => this.loadingKarta = false);;
   }
 
   // Update karta
@@ -202,4 +204,16 @@ export class DashboardComponent implements OnInit {
       }
     );
   }
+
+  getCountOfKarta(val: number){
+       if(val > 100){
+      let totalcount = '100+'
+      return totalcount;
+       }else if(val > 1){
+        let totalcount = val - 1
+        return totalcount;
+       }
+       return '';
+    }
+   
 }

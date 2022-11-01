@@ -243,4 +243,16 @@ export class AllKartasComponent implements OnInit {
     this.getSharedKarta();
   }
 
+  getCountOfKarta(val: number){
+    if(val > 100){
+   let totalcount = '100+'
+   return totalcount;
+    }else if(val > 1){
+     let totalcount = val - 1
+     return totalcount;
+    }
+    return '';
+ }
+  
+
 }
