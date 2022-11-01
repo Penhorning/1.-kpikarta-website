@@ -243,16 +243,16 @@ export class MyProfileComponent implements OnInit {
       (response: any) => {
       if (this.cropperModel.type == "company") {
         this.companyLogo.newImage = response.result.files.photo[0].name;
-        this.companyLogo.fileUploading = false;
       } else {
         this.profileImage.newImage = response.result.files.photo[0].name;
-        this.profileImage.fileUploading = false;
       }
       $('#cropperModal').modal('hide');
       this.croppedImage = "";
-      },
-      (error: any) => {}
-    );
+      }
+    ).add(() => {
+      this.profileImage.fileUploading = false;
+      this.companyLogo.fileUploading = false;
+    });
   }
 
   // On submit

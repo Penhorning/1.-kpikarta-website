@@ -57,7 +57,7 @@ export class DashboardComponent implements OnInit {
       if (response) {
         this.kartas = response.kartas[0].data;
       } else this.kartas = [];
-    }).add(() => this.loadingKartas = false);;
+    }).add(() => this.loadingKartas = false );;
   }
 
   // Get all users
@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
       if (response) {
         this.sharedKartas = response.kartas[0].data;
       } else this.sharedKartas = [];
-    }).add(() => this.loadingSharedKartas = false);;
+    }).add(() => this.loadingSharedKartas = false );
   }
 
   // Update karta
