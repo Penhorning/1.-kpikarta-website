@@ -116,6 +116,10 @@ export class EditKartaComponent implements OnInit {
   loading: boolean = false;
   emails: any = [];
 
+  // Version Control
+  version: any = [];
+  versionId: any = "";
+
   constructor(
     private _kartaService: KartaService,
     private _commonService: CommonService,
@@ -146,6 +150,8 @@ export class EditKartaComponent implements OnInit {
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
     // Get users
     this.getAllUser();
+    // Get versions
+    this.getAllVersion();
   }
 
   // ---------FormArray Functions defined Below----------
@@ -240,6 +246,16 @@ export class EditKartaComponent implements OnInit {
       }
     }
     this.editFieldStatus(id, false);
+    $('#formula-field').focus();
+    $('#formula-field').blur();
+  }
+
+  // Change formula value of each input blur
+  recheckFormula(){
+    if($('#formula-field').val()){
+      $('#formula-field').focus();
+      $('#formula-field').blur();
+    }
   }
 
   // Formula Fields Calculation
@@ -276,14 +292,13 @@ export class EditKartaComponent implements OnInit {
           }
         });
 
-        if (this.formulaGroup.valid) {
+        if (this.formulaGroup.valid && originalValue) {
           if (checkFrag) {
             $('#formula-field').addClass('is-invalid');
             $('#formula-field').removeClass('is-valid');
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
-            return;
           } else {
             $('#formula-field').removeClass('is-invalid');
             total = eval(newValue);
@@ -310,20 +325,14 @@ export class EditKartaComponent implements OnInit {
               .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
               .subscribe(
                 (x) => {
-                  if (x) {
-                    $('#formula-field').addClass('is-valid');
-                    this.updateNodeProperties(x);
-                    this._commonService.successToaster(
-                      'Node updated succesfully..!!'
-                    );
-                  }
+                  $('#formula-field').addClass('is-valid');
+                  // this.updateNodeProperties(x);
                 },
                 (err) => {
                   console.log(err);
                   this._commonService.errorToaster('Something went wrong..!!');
                 }
-              );
-            return;
+            );
           }
         } else {
           this.formulaGroup.markAllAsTouched();
@@ -475,9 +484,21 @@ export class EditKartaComponent implements OnInit {
 
   // Get all users
   getAllUser() {
-    this._kartaService.getAllUsers().subscribe((response: any) => {
-      this.users = response.users[0].data;
-    });
+    this._kartaService.getAllUsers().subscribe(
+      (response: any) => {
+        this.users = response.users[0].data;
+      }
+    );
+  }
+
+  // Get all versions
+  getAllVersion() {
+    this._kartaService.getAllVersions(this.kartaId).subscribe(
+      (response: any) => {
+        this.version = response;
+        this.versionId = response[0].id;
+      }
+    );
   }
 
   // Measure calculation section
@@ -783,6 +804,17 @@ export class EditKartaComponent implements OnInit {
       // this.D3SVG.updateNode(param, response);
       // this.getKartaInfo();
     });
+
+    Object.keys(data).map((key: string) => {
+      let history_data = {
+        event: "new node added",
+        event_key: key,
+        event_value: data[key]
+      };
+      this._kartaService.addKartaHistory(history_data).subscribe(
+        (response: any) => { }
+      );
+    })
   }
 
   // Add right node
@@ -855,7 +887,10 @@ export class EditKartaComponent implements OnInit {
         let history_data = {
           event,
           event_key: key,
-          event_value: value
+          event_value: value,
+          kartaNodeId: this.currentNode.id,
+          userId: this._commonService.getUserId(),
+          versionId: this.versionId
         }
         this._kartaService.addKartaHistory(history_data).subscribe(
           (response: any) => { }
