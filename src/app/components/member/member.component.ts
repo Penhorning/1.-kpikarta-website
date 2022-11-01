@@ -13,17 +13,24 @@ declare const $: any;
 })
 export class MemberComponent implements OnInit {
 
-  users: any[] = [];
-  roles: any[] = [];
-  departments: any[] = [];
-  subscriptions: any[] = [];
+  users: any = [];
+  roles: any = [];
+  departments: any = [];
+  subscriptions: any = [];
   checkFormType: string = "CREATE";
   submitted: boolean = false;
   submitFlag = false;
   showDepartment: boolean = false;
   showRole: boolean = true;
   hideValues: any = ['company admin' , 'billing staff']
-  hide: boolean = true
+  hide: boolean = true;
+
+  search_text: string = "";
+  totalData: number = 0;
+  pageIndex: number = 0;
+  pageSize: number = 10;
+  loader: any = this._commonService.loader;
+  loading = false;
 
   // ngx-intl-tel-input config
   separateDialCode = true;
@@ -50,46 +57,64 @@ export class MemberComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllInvites();
+    this.getRoles();
+    this.getDepartments();
+    this.getSubscriptions();
+  }
 
-    this._memberService.getRoles().subscribe(data => {
-      if(data){
-        let updatedRoles = data.data.map((x: any) => {
+  // Get all invites users
+  getAllInvites() {
+    let data = {
+      page: this.pageIndex + 1,
+      limit: this.pageSize,
+      userId: this._commonService.getUserId(),
+      searchQuery: this.search_text
+    }
+    this.loading = true;
+    this._memberService.getAllInvites(data).subscribe(
+      (response: any) => {
+        if (response.users[0].data.length > 0) {
+          this.users.push(...response.users[0].data);
+          this.totalData = response.users[0].metadata[0].total;
+        } else {
+          this.users = [];
+          this.totalData = 0;
+        }
+      }
+    ).add(() =>  this.loading = false );
+  }
+
+  // Get roles
+  getRoles() {
+    this._memberService.getRoles().subscribe(
+      (response: any) => {
+        let updatedRoles = response.data.map((x: any) => {
           let newObj = {
             ...x,
             name: x.name.split("_").join(" ")
           };
           return newObj;
-        })
+        });
         this.roles = updatedRoles;
       }
-    }, err => {
-      console.log(err);
-    });
-
-    this._memberService.getDepartments().subscribe(data => {
-      if(data){
-        this.departments = data;
-      }
-    }, err => {
-      console.log(err);
-    });
-
-    this._memberService.getSubscriptions().subscribe(data => {
-      if(data){
-        this.subscriptions = data;
-      }
-    }, err => {
-      console.log(err);
-    });
+    );
   }
 
-  // Get all invites users
-  getAllInvites() {
-    this._memberService.getAllInvites({ userId: this._commonService.getUserId()}).subscribe(
-      (response: any) => {
-        this.users = response.data[0].data;
-      },
-      (error: any) => { }
+  // Get departments
+  getDepartments() {
+    this._memberService.getDepartments().subscribe(
+      (response: any)  => {
+        this.departments = response;
+      }
+    );
+  }
+
+  // Get subscriptions
+  getSubscriptions() {
+    this._memberService.getSubscriptions().subscribe(
+      (response: any)  => {
+        this.subscriptions = response;
+      }
     );
   }
 
@@ -124,7 +149,7 @@ export class MemberComponent implements OnInit {
   }
 
   handleDepartment(event: any) {
-    let role = this.roles.filter(x => x.id == event.target.value);
+    let role = this.roles.filter((x: any) => x.id == event.target.value);
     if (role[0].name === "billing staff" || role[0].name === "company admin") {
       this.showDepartment = false;
       this.inviteForm.removeControl("departmentId");
@@ -181,7 +206,20 @@ export class MemberComponent implements OnInit {
     this.submitted = false;
     this.showDepartment = false;
     this.inviteForm.removeControl("departmentId");
-    $('#member_modal').modal('hide');
+    $('#memberModal').modal('hide');
+  }
+  
+  search() {
+    if (this.search_text) {
+      this.pageIndex = 0;
+      this.users = [];
+      this.getAllInvites();
+    }
+  }
+  clearSearch() {
+    this.search_text = "";
+    this.users = [];
+    this.getAllInvites();
   }
 }
 

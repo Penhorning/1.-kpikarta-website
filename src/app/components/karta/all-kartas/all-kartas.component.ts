@@ -17,7 +17,7 @@ export class AllKartasComponent implements OnInit {
   sharingKarta: any;
   shareSubmitFlag: boolean = false;
   sharedKartas: any = [];
-  search_text: any;
+  search_text: string = "";
   // Share var
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
@@ -99,7 +99,7 @@ export class AllKartasComponent implements OnInit {
     if (result) {
       this._kartaService.deleteKarta({ kartaId: id }).subscribe(
         (response: any) => {
-          this._commonService.successToaster("Karta deleted successfully");
+          this._commonService.successToaster("Karta deleted successfully!");
           this.getKartas();
         }
       );
@@ -108,8 +108,6 @@ export class AllKartasComponent implements OnInit {
 
   // On share karta
   onShare(param: any) {
-    console.log("data", param);
-    
     this.selectedUsers = [];
     this.emails = [];
     this.sharingKarta = param;
@@ -126,12 +124,11 @@ export class AllKartasComponent implements OnInit {
       karta: this.sharingKarta,
       emails: this.emails
     }
-    console.log("data karta", data);
     
     this.shareSubmitFlag = true;
     this._kartaService.shareKarta(data).subscribe(
       (response: any) => {
-        this._commonService.successToaster("Your have shared karta successfully");
+        this._commonService.successToaster("Your have shared karta successfully!");
         $('#shareLinkModal').modal('hide');
         this.getKartas();
         this.getSharedKarta();
@@ -148,9 +145,7 @@ export class AllKartasComponent implements OnInit {
           this.users = response.users[0].data.filter((x: any) => {
             return x.email != this._commonService.getEmailId();
           })
-        } else {
-          this.users = [];
-        }
+        } else this.users = [];
       }
     );
   }
@@ -176,7 +171,7 @@ export class AllKartasComponent implements OnInit {
     if (result) {
       this._kartaService.copyKarta({ kartaId: id }).subscribe(
         (response: any) => {
-          this._commonService.successToaster("Karta copy created successfully.");
+          this._commonService.successToaster("Karta copy created successfully!");
           this.getKartas();
         }
       );
@@ -212,7 +207,7 @@ export class AllKartasComponent implements OnInit {
     this._kartaService.getSharedKarta(data).subscribe(
       (response: any) => {
         if (response) {
-          this.sharedKartas.push(...response.kartas[0].data)
+          this.sharedKartas.push(...response.kartas[0].data);
           if (response.kartas[0].metadata[0].total == this.sharedKartas.length) this.viewMoreShared_hide = !this.viewMoreShared_hide;
         }
       }
@@ -235,14 +230,13 @@ export class AllKartasComponent implements OnInit {
     this.getSharedKarta();
   }
 
-  search(){
+  search() {
     if (this.search_text) {
       this.pageIndex = 0;
       this.getKartas();
       this.getSharedKarta();
     }
   }
-
   clearSearch() {
     this.search_text = "";
     this.getKartas();
