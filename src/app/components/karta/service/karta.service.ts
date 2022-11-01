@@ -54,6 +54,9 @@ export class KartaService {
   addKartaHistory(data: any) {
     return this._httpService.POST('/karta_histories', data);
   }
+  addKartaHistoryObject(data: any) {
+    return this._httpService.POST('/karta_histories/create-karta-history', data);
+  }
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
   }
