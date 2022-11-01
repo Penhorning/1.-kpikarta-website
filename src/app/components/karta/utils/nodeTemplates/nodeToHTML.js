@@ -3,9 +3,9 @@
  * Return the HTML representation of a node.
  */
 module.exports = (node, source) => {
-  if (node.phaseId === "62b079b0c389310e2c74f58c") {
+  if (node.phase.name === "KPI") {
     return `
-    <div id="nodeItem" nodeid=${node.id} class="align-self-center d-flex">
+    <div id="nodeItem" nodeid=${node.id} class="align-self-center da-flex">
       <div class="center-options">
         <div class="option remove-item"><i id="removeNode" class="fa fa-minus-circle"></i></div>
       </div>
@@ -14,15 +14,6 @@ module.exports = (node, source) => {
           <span id="nodeItem" class="d-block short_text" title="${node.name}">${node.name || ''}</span>
           <span class="font-weight-bold nodePercentage">${node.percentage || 0}%</span>
         </p>
-      </div>
-    </div>`;
-  } else if (node.phaseId === "62b079b4c389310e2c74f58d") {
-    return `
-    <div id="nodeItem" nodeid=${node.id} class="align-self-center d-flex">
-      <div id="nodeItem" nodeid=${node.id} class="node-text node-body">
-      <p class="py-1" id="nodeItem" style="font-family:${node.font_style};text-align:${node.alignment};color:${node.text_color}">
-        <span id="nodeItem" class="d-block short_text" title="${node.name}">${node.name || ''}</span>
-      </p>
       </div>
     </div>`;
   } else {

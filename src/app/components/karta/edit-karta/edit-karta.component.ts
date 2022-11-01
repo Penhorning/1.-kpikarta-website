@@ -575,13 +575,10 @@ export class EditKartaComponent implements OnInit {
     else {
       let sum = this.currentNode.parent.children
         .filter((item: any) => item.id !== this.currentNode.id)
-        .reduce(
-          (total: any, currentValue: any) => total + currentValue.weightage,
-          0
-        );
+        .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weightage of all the nodes cannot be greator than 100!");
-      } else this.updateNode('weightage', this.currentNodeWeight, 'change node weightage', 'yes');
+      } else this.updateNode('weightage', this.currentNodeWeight, 'change node weightage');
     }
   }
   // Change alignment
@@ -666,13 +663,27 @@ export class EditKartaComponent implements OnInit {
         }
         let current_percentage= (element.achieved_value/targetValue) * 100;
         element.percentage = Math.round(current_percentage);
+        // if (element.percentage > 100) {
+        //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
+        //   element.border_color = colorSetting[0]?.color || 'black';
+        // } else if (this.colorSettings.settings) {
+        //   let colorSetting = this.colorSettings.settings.filter((item: any) => element.percentage >= item.min && element.percentage <= item.max);
+        //   element.border_color = colorSetting[0]?.color || 'black';
+        // } else element.border_color = 'black';
         // Set percentage for target nodes, if exists
-        if (element.hasOwnProperty("children") && element.children.length > 0) {
-          element.children[0].percentage = Math.round(current_percentage);
-        }
+        // if (element.hasOwnProperty("children") && element.children.length > 0) {
+        //   element.children[0].percentage = Math.round(current_percentage);
+        // }
       } else {
         let returnedPercentage = this.calculatePercentage(element, percentage);
         element.percentage = Math.round(returnedPercentage);
+        // if (element.percentage > 100) {
+        //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
+        //   element.border_color = colorSetting[0]?.color || 'black';
+        // } else if (this.colorSettings.settings) {
+        //   let colorSetting = this.colorSettings.settings.filter((item: any) => element.percentage >= item.min && element.percentage <= item.max);
+        //   element.border_color = colorSetting[0]?.color || 'black';
+        // } else element.border_color = 'black';
       }
       total_percentage.push((element.percentage * element.weightage) / 100);
     });
@@ -838,7 +849,7 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", addTarget: string = "") {
+  updateNode(key: string, value: any, event: string = "unknown") {
     let data;
     if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
     else data = { [key]: value };
@@ -846,12 +857,11 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
         this.D3SVG.updateNode(this.currentNode);
-        if (addTarget === "yes" && !this.currentNode.children && this.currentNode.hasOwnProperty("achieved_value")) {
-          this.addNode(this.currentNode, "Target", 100);
-        }
+        // Calculate new percentage when any achieved, target and weightage value changes
         if (key === "achieved_value" || key === "target" || key === "weightage") {
           this.updateNewPercentage();
         }
+        // Save the karta update history
         let history_data = {
           event,
           event_key: key,
@@ -859,7 +869,7 @@ export class EditKartaComponent implements OnInit {
         }
         this._kartaService.addKartaHistory(history_data).subscribe(
           (response: any) => { }
-        )
+        );
       }
     );
   }

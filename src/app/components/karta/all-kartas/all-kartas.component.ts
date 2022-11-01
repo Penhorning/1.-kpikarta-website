@@ -1,23 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { KartasService } from './service/kartas.service';
+import { KartaService } from '../service/karta.service';
 
 declare const $: any;
 
-
 @Component({
-  selector: 'app-kartas',
-  templateUrl: './kartas.component.html',
-  styleUrls: ['./kartas.component.scss']
+  selector: 'app-all-kartas',
+  templateUrl: './all-kartas.component.html',
+  styleUrls: ['./all-kartas.component.scss']
 })
-export class KartasComponent implements OnInit {
-
+export class AllKartasComponent implements OnInit {
 
   kartas: any = [];
   users: any = [];
   sharingKarta: any;
-  sharedSubmitFlag: boolean = false;
+  shareSubmitFlag: boolean = false;
   sharedKartas: any = [];
   search_text: any;
   // Share var
@@ -37,7 +35,7 @@ export class KartasComponent implements OnInit {
   viewMoreShared_hide: boolean = true;
 
 
-  constructor(private _kartasService: KartasService, private _commonService: CommonService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private _kartaService: KartaService, private _commonService: CommonService, private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.getKartas();
@@ -51,7 +49,6 @@ export class KartasComponent implements OnInit {
 
   // Navigate to create karta
   navigateToKarta() {
-    console.log("data")
     this.router.navigate(['/karta/create-karta']);
   }
 
@@ -63,13 +60,10 @@ export class KartasComponent implements OnInit {
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text
     }
-    this._kartasService.getKartas(data).subscribe(
+    this._kartaService.getKartas(data).subscribe(
       (response: any) => {
-        if (response) {
-          this.kartas = response.kartas[0].data;
-          console.log("this.kartas", this.kartas);
-          
-        } else this.kartas = [];
+        if (response) this.kartas = response.kartas[0].data;
+        else this.kartas = [];
       }
     ).add(() => this.loadingKarta = false);
   }
@@ -81,7 +75,7 @@ export class KartasComponent implements OnInit {
       email: this._commonService.getEmailId(),
       searchQuery: this.search_text
     }
-    this._kartasService.getSharedKarta(data).subscribe(
+    this._kartaService.getSharedKarta(data).subscribe(
       (response: any) => {
         if (response) {
           this.sharedKartas = response.kartas[0].data;
@@ -92,7 +86,7 @@ export class KartasComponent implements OnInit {
 
   // Update karta
   updateKarta(type: string, id: string, index: number) {
-    this._kartasService.updateKarta(id, { type }).subscribe(
+    this._kartaService.updateKarta(id, { type }).subscribe(
       (response: any) => {
         this.kartas[index].type = type;
       }
@@ -103,7 +97,7 @@ export class KartasComponent implements OnInit {
   deleteKarta(id: string) {
     const result = confirm("Are you sure you want to delete this karta?");
     if (result) {
-      this._kartasService.deleteKarta({ kartaId: id }).subscribe(
+      this._kartaService.deleteKarta({ kartaId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta deleted successfully");
           this.getKartas();
@@ -134,8 +128,8 @@ export class KartasComponent implements OnInit {
     }
     console.log("data karta", data);
     
-    this.sharedSubmitFlag = true;
-    this._kartasService.sharedEmails(data).subscribe(
+    this.shareSubmitFlag = true;
+    this._kartaService.shareKarta(data).subscribe(
       (response: any) => {
         this._commonService.successToaster("Your have shared karta successfully");
         $('#shareLinkModal').modal('hide');
@@ -143,12 +137,12 @@ export class KartasComponent implements OnInit {
         this.getSharedKarta();
       },
       (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false);
+    ).add(() => this.shareSubmitFlag = false);
   }
 
   // Get all users 
   getAllUser() {
-    this._kartasService.getAllUsers().subscribe(
+    this._kartaService.getAllUsers().subscribe(
       (response: any) => {
         if (response) {
           this.users = response.users[0].data.filter((x: any) => {
@@ -180,7 +174,7 @@ export class KartasComponent implements OnInit {
   copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
-      this._kartasService.copyKarta({ kartaId: id }).subscribe(
+      this._kartaService.copyKarta({ kartaId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta copy created successfully.");
           this.getKartas();
@@ -197,7 +191,7 @@ export class KartasComponent implements OnInit {
       limit: this.pageSize,
       userId: this._commonService.getUserId()
     }
-    this._kartasService.getKartas(data).subscribe(
+    this._kartaService.getKartas(data).subscribe(
       (response: any) => {
         if (response) {
           this.kartas.push(...response.kartas[0].data);
@@ -215,7 +209,7 @@ export class KartasComponent implements OnInit {
       limit: this.sharePageSize,
       email: this._commonService.getEmailId()
     }
-    this._kartasService.getSharedKarta(data).subscribe(
+    this._kartaService.getSharedKarta(data).subscribe(
       (response: any) => {
         if (response) {
           this.sharedKartas.push(...response.kartas[0].data)

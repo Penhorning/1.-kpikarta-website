@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MembersComponent } from './members.component';
-import { MembersRoutingModule } from './members-routing.module';
+import { MemberComponent } from './member.component';
+import { MemberRoutingModule } from './member-routing.module';
 import { SharedModule } from '@app/shared/_modules/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -9,14 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    MembersComponent
+    MemberComponent
   ],
   imports: [
     CommonModule,
-    MembersRoutingModule,
+    MemberRoutingModule,
     SharedModule,
     FormsModule,
     ReactiveFormsModule
   ]
 })
-export class MembersModule { }
+export class MemberModule { }

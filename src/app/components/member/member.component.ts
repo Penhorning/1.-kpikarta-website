@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { CommonService } from '@app/shared/_services/common.service';
 import { MemberService } from './service/member.service';
@@ -7,11 +7,11 @@ import { MemberService } from './service/member.service';
 declare const $: any;
 
 @Component({
-  selector: 'app-members',
-  templateUrl: './members.component.html',
-  styleUrls: ['./members.component.scss']
+  selector: 'app-member',
+  templateUrl: './member.component.html',
+  styleUrls: ['./member.component.scss']
 })
-export class MembersComponent implements OnInit {
+export class MemberComponent implements OnInit {
 
   users: any[] = [];
   roles: any[] = [];
@@ -37,8 +37,7 @@ export class MembersComponent implements OnInit {
     email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
     subscriptionId: ['', Validators.required],
     mobile: [{}, Validators.required],
-    roleId: ['', Validators.required],
-    creatorId: [this._commonService.getUserId()]
+    roleId: ['', Validators.required]
   });
 
   get form() { return this.inviteForm.controls; }
@@ -135,48 +134,54 @@ export class MembersComponent implements OnInit {
     }
   }
   
+  // Submit user data
   onSubmit() {
-
     this.submitted = true;
-
+    
     if (this.inviteForm.valid) {
-      
+
       this.submitFlag = true;
+      this.inviteForm.value.creatorId = this._commonService.getUserId();
+      
+      // When new user create
       if (this.checkFormType === "CREATE") {
-        this._memberService.invite({data: this.inviteForm.value}).subscribe(
+        this._memberService.invite({ data: this.inviteForm.value }).subscribe(
           (response: any) => {
-            $('#memberModal').modal('hide');
-            this._commonService.successToaster("Members invited successfully!");
+            this.resetFormModal();
+            this.getAllInvites();
+            this._commonService.successToaster("Member invited successfully!");
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
               this._commonService.errorToaster("Email is already registered, please try with a different one");
             }
           }
-        );
-      } else {
-
+        ).add(() => this.submitFlag = false );
       }
-    } else this.inviteForm.markAllAsTouched();
+      // When update any existing user
+      else if (this.checkFormType === "UPDATE") {
+        this._memberService.updateUser(this.inviteForm.value, this._commonService.getUserId(), this._commonService.getSession().token).subscribe(
+          (response: any) => {
+            this.resetFormModal();
+            this.getAllInvites();
+            this._commonService.successToaster("Member updated successfully!");
+          },
+          (error: any) => {
+            if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+              this._commonService.errorToaster("Email is already registered, please try with a different one");
+            }
+          }
+        ).add(() => this.submitFlag = false );
+      }
+    }
   }
-  
-updateMembers(){
-  this.submitted = true;
-    if(this.inviteForm.valid){
-      this._memberService.updateUser(this.inviteForm.value, this._commonService.getUserId(), this._commonService.getSession().token).subscribe(data => {
-        if(data){
-          $('#memberModal').modal('hide');
-          this._commonService.successToaster("Members invited successfully.. !!")
-        }
-      }, err => {
-        if (err.status === 422 && err.error.error.details.codes.email[0] === "uniqueness") {
-          this._commonService.errorToaster("Email is already registered, please try with a different one");
-        }
-      });
-    }
-    else {
-      this.inviteForm.markAllAsTouched();
-    }
-}
+  // Clear modal validation when close
+  resetFormModal () {
+    this.inviteForm.reset();
+    this.submitted = false;
+    this.showDepartment = false;
+    this.inviteForm.removeControl("departmentId");
+    $('#member_modal').modal('hide');
+  }
 }
 

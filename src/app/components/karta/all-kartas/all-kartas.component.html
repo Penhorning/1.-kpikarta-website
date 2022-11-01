@@ -1,12 +1,9 @@
-<app-header></app-header>
-<app-sidebar></app-sidebar>
-
 <div class="main-content">
     <div class="container-fluid">
       <div class="row">
         <div class="col-lg-2">
           <div class="page-heading">
-            <h4 class="pt-2">Inventory</h4>
+            <h4 class="pt-2">Kartas</h4>
           </div>
         </div>
       
@@ -340,11 +337,11 @@
                     <div style="border-color: unset;" data-dismiss="" aria-label="">
                         <span aria-hidden="true">
                             <button type="button" class="send-btn" (click)="shareKarta()"
-                                [disabled]="selectedUsers?.length < 1  || sharedSubmitFlag">
-                                <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
+                                [disabled]="selectedUsers?.length < 1  || shareSubmitFlag">
+                                <div class="spinner-border text-light align-top" role="status" *ngIf="shareSubmitFlag">
                                     <span class="sr-only">Loading...</span>
                                 </div>
-                                <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
+                                <ng-container *ngIf="!shareSubmitFlag">SEND</ng-container>
                             </button>
                         </span>
                     </div>

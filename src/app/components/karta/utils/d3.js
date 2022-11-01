@@ -483,12 +483,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 <span id="nodeItem" class="d-block" title="${d.name}">${d.name || ''}</span>
                 <span class="font-weight-bold nodePercentage">${d.percentage || 0}%</span>
             </p>`;
-        if (d.phaseId === "62b079b4c389310e2c74f58d") {
-            nodeHtml = `
-            <p class="py-1" id="nodeItem">
-                <span id="nodeItem" class="d-block" title="${d.name}">${d.name || ''}</span>
-            </p>`;
-        }
         $(`.node-text[nodeid=${d.id}]`).html(nodeHtml);
         $(`.node-text[nodeid=${d.id}] p`).css('color', d.text_color);
         $(`.node-text[nodeid=${d.id}] p`).css('font-family', d.font_style);
