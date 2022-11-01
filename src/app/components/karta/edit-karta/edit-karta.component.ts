@@ -805,16 +805,14 @@ export class EditKartaComponent implements OnInit {
       // this.getKartaInfo();
     });
 
-    Object.keys(data).map((key: string) => {
-      let history_data = {
-        event: "new node added",
-        event_key: key,
-        event_value: data[key]
-      };
-      this._kartaService.addKartaHistory(history_data).subscribe(
-        (response: any) => { }
-      );
-    })
+    // let history_data = {
+    //   event: "new node added",
+    //   event_key: key,
+    //   event_value: data[key]
+    // };
+    // this._kartaService.addKartaHistory(history_data).subscribe(
+    //   (response: any) => { }
+    // );
   }
 
   // Add right node
