@@ -155,8 +155,6 @@ export class MyKpiComponent implements OnInit {
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);
-        console.log("form.metricsForm",this.fields.controls);
-        
       });
     } else {
       this.fields.removeAt(0);

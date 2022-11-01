@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="col-lg-6 text-right">
-        <button class="karta-btn mt-2" data-toggle="modal" data-target="#memberModal" (click)="setFormType('Invite')">
+        <button class="karta-btn mt-2" data-toggle="modal" data-target="#memberModal" (click)="setFormType('CREATE')">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
             class="bi bi-person-plus-fill" viewBox="0 0 16 16">
             <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
@@ -38,16 +38,16 @@
                 </tr>
               </thead>
               <tbody class="border-0">
-                <tr *ngFor="let user of usersData">
-                  <td>{{user.fullName}}</td>
-                  <td>{{user.email}}</td>
-                  <td>Sales</td>
-                  <td>Creator</td>
-                  <td>{{user.createdAt | date}}</td>
+                <tr *ngFor="let user of users">
+                  <td>{{ user?.fullName }}</td>
+                  <td>{{ user?.email }}</td>
+                  <td>{{ user?.department?.name ? user?.department?.name : 'N/A' }}</td>
+                  <td>{{ user?.subscription?.name }}</td>
+                  <td>{{ user?.createdAt | date }}</td>
                   <td>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                       class="bi bi-pencil-fill" viewBox="0 0 16 16" data-toggle="modal" data-target="#memberModal"
-                      (click)="setFormType('Update', user)" style="cursor: pointer;">
+                      (click)="setFormType('UPDATE', user)" style="cursor: pointer;">
                       <path
                         d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
                     </svg>
@@ -68,7 +68,7 @@
       <div class="modal-content p-4">
         <div class="modal-header">
           <h5 class="modal-title pt-4" id="staticBackdropLabel">
-            {{checkFormType}} {{checkFormType == 'Invite' ? 'New' : null}} Member
+            {{checkFormType === 'CREATE' ? 'Invite': 'Update'}} {{checkFormType == 'CREATE' ? 'New' : null}} Member
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: 7px;">
             <span aria-hidden="true">&times;</span>
@@ -76,19 +76,17 @@
         </div>
         <div class="modal-body">
           <div class="share-link-model mt-3">
-            <form [formGroup]="inviteGroup">
+            <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
               <div class="row">
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label>Full Name <span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input-share-link" placeholder="Enter Full Name"
-                      formControlName="fullName"
-                      [ngClass]="{ 'is-invalid': (submitted || inviteGroup.get('fullName')?.touched) && inviteGroup.get('fullName')?.errors  }" />
-                    <div
-                      *ngIf="(submitted || inviteGroup.get('fullName')?.touched) && inviteGroup.get('fullName')?.errors"
-                      class="invalid-feedback">
-                      <div *ngIf="inviteGroup.get('fullName')?.hasError('required')"> Full name is required!</div>
-                      <div *ngIf="inviteGroup.get('fullName')?.hasError('pattern')">Blank space is not allowed!</div>
+                      formControlName="fullName" [maxlength]="50"
+                      [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
+                    <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
+                      <div *ngIf="form.fullName.errors.required">Full name is required!</div>
+                      <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
                     </div>
                   </div>
                 </div>
@@ -97,11 +95,10 @@
                     <label>Email <span class="text-danger">*</span></label>
                     <input type="email" class="form-control custom-input-share-link" placeholder="Enter Email"
                       formControlName="email"
-                      [ngClass]="{ 'is-invalid': (submitted || inviteGroup.get('email')?.touched) && inviteGroup.get('email')?.errors  }" />
-                    <div *ngIf="(submitted || inviteGroup.get('email')?.touched) && inviteGroup.get('email')?.errors"
-                      class="invalid-feedback">
-                      <div *ngIf="inviteGroup.get('email')?.hasError('required')"> Email is required!</div>
-                      <div *ngIf="inviteGroup.get('email')?.hasError('pattern')"> Enter a valid email address!</div>
+                      [ngClass]="{ 'is-invalid': (submitted || form.email.touched) && form.email.errors }">
+                    <div *ngIf="(submitted || form.email.touched) && form.email.errors" class="invalid-feedback">
+                      <div *ngIf="form.email.errors.required">Email is required!</div>
+                      <div *ngIf="form.email.errors.pattern">Enter a valid email address!</div>
                     </div>
                   </div>
                 </div>
@@ -116,73 +113,65 @@
                       [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.UnitedStates" [maxLength]=15
                       class="ngx_phone_number" [phoneValidation]="true" [separateDialCode]="separateDialCode"
                       [numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="mobile"
-                      [ngClass]="{ 'is-invalid': (submitted || inviteGroup.get('mobile')?.touched) && inviteGroup.get('mobile')?.errors  }">
+                      [ngClass]="{ 'is-invalid': (submitted || form.mobile.touched) && form.mobile.errors }">
                     </ngx-intl-tel-input>
-                    <div *ngIf="(submitted || inviteGroup.get('mobile')?.touched) && inviteGroup.get('mobile')?.errors"
-                      class="invalid-feedback">
-                      <div *ngIf="inviteGroup.get('mobile')?.hasError('required')"> Mobile number is required!</div>
-                      <div *ngIf="!inviteGroup.get('mobile')?.hasError('pattern')">Mobile number is invalid!</div>
+                    <div *ngIf="(submitted || form.mobile.touched) && form.mobile.errors" class="invalid-feedback">
+                      <div *ngIf="form.mobile.errors.required">Mobile number is required!</div>
+                      <div *ngIf="!form.mobile.errors.required && form.mobile.errors">Mobile number is invalid</div>
                     </div>
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label>Select License</label>
-                    <select class="form-control custom-select-option" formControlName="license"
-                      [ngClass]="{ 'is-invalid': (submitted || inviteGroup.get('license')?.touched) && inviteGroup.get('license')?.errors  }">
-                      <option value="" selected disabled hidden>Select License</option>
-                      <option *ngFor="let license of licenseData" [value]="license.id">{{license.name}}</option>
+                    <select class="form-control custom-select-option" formControlName="subscriptionId">
+                      <option value="" selected>Select License</option>
+                      <option *ngFor="let subscription of subscriptions" [value]="subscription.id">{{subscription.name}}
+                      </option>
                     </select>
-                    <div
-                      *ngIf="(submitted || inviteGroup.get('license')?.touched) && inviteGroup.get('license')?.errors"
-                      class="invalid-feedback">
-                      <div *ngIf="inviteGroup.get('license')?.hasError('required')"> License is required!</div>
-                    </div>
                   </div>
                 </div>
               </div>
               <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-6" *ngIf="showRole">
                   <div class="form-group">
                     <label>Select Role <span class="text-danger">*</span></label>
                     <select class="form-control custom-select-option" (change)="handleDepartment($event)"
-                      formControlName="role"
-                      [ngClass]="{ 'is-invalid': (submitted || inviteGroup.get('role')?.touched) && inviteGroup.get('role')?.errors  }">
-                      <option value="" selected disabled hidden>Select Role</option>
-                      <option *ngFor="let role of rolesData" [value]="role.id">{{role.name | titlecase}}</option>
+                      formControlName="roleId"
+                      [ngClass]="{ 'is-invalid': (submitted || form.roleId.touched) && form.roleId.errors }">
+                      <option value="" selected disabled>Select Role</option>
+                      <option *ngFor="let role of roles" [value]="role.id">{{role.name | titlecase}}</option>
                     </select>
-                    <div *ngIf="(submitted || inviteGroup.get('role')?.touched) && inviteGroup.get('role')?.errors"
-                      class="invalid-feedback">
-                      <div *ngIf="inviteGroup.get('role')?.hasError('required')"> Role is required!</div>
+                    <div *ngIf="(submitted || form.roleId.touched) && form.roleId.errors" class="invalid-feedback">
+                      <div *ngIf="form.roleId.errors.required">Role is required!</div>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-6" *ngIf="!hideDepartment">
+                <div class="col-lg-6" *ngIf="showDepartment">
                   <div class="form-group">
                     <label>Select Department <span class="text-danger">*</span></label>
-                    <select class="form-control custom-select-option" formControlName="department"
-                      [ngClass]="{ 'is-invalid': (submitted || inviteGroup.get('department')?.touched) && inviteGroup.get('department')?.errors  }">
-                      <option value="" selected disabled hidden>Select Department</option>
-                      <option *ngFor="let department of departmentsData" [value]="department.id">{{department.name}}
+                    <select class="form-control custom-select-option" formControlName="departmentId"
+                      [ngClass]="{ 'is-invalid': (submitted || form.departmentId.touched) && form.departmentId.errors }">
+                      <option value="" selected disabled>Select Department</option>
+                      <option *ngFor="let department of departments" [value]="department.id">{{department.name}}
                       </option>
                     </select>
-                    <div
-                      *ngIf="(submitted || inviteGroup.get('department')?.touched) && inviteGroup.get('department')?.errors"
+                    <div *ngIf="(submitted || form.departmentId.touched) && form.departmentId.errors"
                       class="invalid-feedback">
-                      <div *ngIf="inviteGroup.get('department')?.hasError('required')"> Department is required!</div>
+                      <div *ngIf="form.departmentId.errors.required">Department is required!</div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="row mt-5">
-                <ng-container *ngIf="checkFormType == 'Invite'; else elseTemplate">
-                  <div class="col-lg-6 text-left">
-                    <button type="button" class="send-btn" (click)="sendInvite()">CREATE</button>
-                  </div>
-                </ng-container>
-                <ng-template #elseTemplate>
-                  <button type="button" class="send-btn" (click)="updateMembers()">UPDATE</button>
-                </ng-template>
+              <div class="row mt-3">
+                <div class="col-lg-6 text-left">
+                  <button class="send-btn" [disabled]="submitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!submitFlag">{{checkFormType}}</ng-container>
+                  </button>
+                </div>
                 <!-- <div class="col-lg-6 text-right">
                   <div class="">
                     <button class="send-btn">CREDENTIALS</button>

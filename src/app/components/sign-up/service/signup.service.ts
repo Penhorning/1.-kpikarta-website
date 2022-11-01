@@ -27,9 +27,6 @@ export class SignupService {
 
 
 /*============================== API FUNCTIONS STARTS ==============================*/
-  getUers() {
-    return this._httpService.GET('/users');
-  }
   signup(data: any) {
     return this._httpService.POST('/users', data);
   }
