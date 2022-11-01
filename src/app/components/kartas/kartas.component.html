@@ -151,9 +151,7 @@
                                                 <img src="assets/img/user-placeholder.svg">
                                             </div>
                                             <div class="user-counter" *ngIf="karta?.sharedTo?.length > 1">
-                                                <p>+{{ karta?.sharedTo?.length > 1 ? karta?.sharedTo?.length - 1
-                                                    :
-                                                    ''}}</p>
+                                                <p>+{{getCountOfKarta(karta?.sharedTo?.length)}}</p>
                                             </div>
                                         </ng-container>
                                     </div>
@@ -167,6 +165,11 @@
                 <ng-container *ngIf="loadingKarta">
                     <div class="p-5" [innerHtml]="loader"></div>
                   </ng-container>
+                  <div class="text-center">
+                    <ng-container *ngIf="!loadingKarta && kartas.length === 0">
+                       <div class="no-data">No data available in table.</div>
+                     </ng-container>
+                 </div>
                 <p style="cursor: pointer; color: #007bff; text-align: center;"
                 *ngIf="!loadingKarta && kartas.length > 7 && viewMoreAssign_hide"
                 (click)="assignViewMore()">View More..</p>
@@ -174,6 +177,7 @@
                 <!-- end-card-one -->
                 </div>
               </div>
+              
               <div class="tab-pane p-3" id="tabs-2" role="tabpanel">
                 <div class="row mt-4">
                     <!-- card-one -->
@@ -271,9 +275,7 @@
                                                     <img src="assets/img/user-placeholder.svg">
                                                 </div>
                                                 <div class="user-counter" *ngIf="karta?.sharedTo?.length > 1">
-                                                    <p>+{{ karta?.sharedTo?.length > 1 ? karta?.sharedTo?.length - 1
-                                                        :
-                                                        ''}}</p>
+                                                    <p>+{{getCountOfKarta(karta?.sharedTo?.length)}}</p>
                                                 </div>
                                             </ng-container>
                                         </div>
@@ -295,6 +297,11 @@
                         <ng-container *ngIf="loadingKarta">
                             <div class="p-5" [innerHtml]="loader"></div>
                           </ng-container>
+                          <div class="text-center">
+                            <ng-container *ngIf="!loadingKarta && kartas.length === 0">
+                               <div class="no-data">No data available in table.</div>
+                             </ng-container>
+                         </div>
                         <p style="cursor: pointer; color: #007bff; text-align: center;"
                         *ngIf="!loadingKarta && sharedKartas.length > 7 && viewMoreShared_hide"
                         (click)="sharedViewMore()">View More..</p>

@@ -51,7 +51,6 @@ export class KartasComponent implements OnInit {
 
   // Navigate to create karta
   navigateToKarta() {
-    console.log("data")
     this.router.navigate(['/karta/create-karta']);
   }
 
@@ -67,8 +66,6 @@ export class KartasComponent implements OnInit {
       (response: any) => {
         if (response) {
           this.kartas = response.kartas[0].data;
-          console.log("this.kartas", this.kartas);
-          
         } else this.kartas = [];
       }
     ).add(() => this.loadingKarta = false);
@@ -114,8 +111,6 @@ export class KartasComponent implements OnInit {
 
   // On share karta
   onShare(param: any) {
-    console.log("data", param);
-    
     this.selectedUsers = [];
     this.emails = [];
     this.sharingKarta = param;
@@ -132,8 +127,6 @@ export class KartasComponent implements OnInit {
       karta: this.sharingKarta,
       emails: this.emails
     }
-    console.log("data karta", data);
-    
     this.sharedSubmitFlag = true;
     this._kartasService.sharedEmails(data).subscribe(
       (response: any) => {
@@ -254,5 +247,20 @@ export class KartasComponent implements OnInit {
     this.getKartas();
     this.getSharedKarta();
   }
+
+  getCountOfKarta(e: any){
+       if(e > 15){
+      let totalcount = '15+'
+      return totalcount;
+       } else if( e > 10){
+        let totalcount = '10+'
+        return totalcount;
+       }else if(e > 1){
+        let totalcount = e - 1
+        return totalcount;
+       }
+       return '';
+    }
+  
 
 }
