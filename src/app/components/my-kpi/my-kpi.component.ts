@@ -18,8 +18,9 @@ export class MyKpiComponent implements OnInit {
   colorSettings: any = [];
   users: any = [];
   creators: any = [];
-  loadingKarta: boolean = true;
+  loading: boolean = false;
   loader: any = this._commonService.loader;
+  noDataAvailable: any = this._commonService.noDataAvailable;
   currentNode: any;
   // Pagination
   pageIndex: number = 0;
@@ -155,8 +156,6 @@ export class MyKpiComponent implements OnInit {
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);
-        console.log("form.metricsForm",this.fields.controls);
-        
       });
     } else {
       this.fields.removeAt(0);
@@ -284,15 +283,14 @@ export class MyKpiComponent implements OnInit {
       statusType: this.statusType
     }
     this.kpis = [];
+    this.loading = true;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
           this.kpis = response.kpi_nodes[0].data;
-        } else {
-          this.kpis = [];
-        }
+        } else this.kpis = [];
       }
-    ).add(() => this.loadingKarta = false);
+    ).add(() => this.loading = false);
   }
 
   // Get color for each node percentage
@@ -522,13 +520,14 @@ export class MyKpiComponent implements OnInit {
       kpiType: this.kpiType,
       statusType: this.statusType
     }
+    this.loading = true;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         if (response) {
           this.kpis.push(...response.kpi_nodes[0].data);
           if (response.kpi_nodes[0].metadata[0].total == this.kpis.length) this.viewMore_hide = !this.viewMore_hide;
         }
-      }).add(() => this.loadingKarta = false);
+      }).add(() => this.loading = false);
   }
 
   // Sort function starts

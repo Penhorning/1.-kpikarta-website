@@ -20,10 +20,10 @@ const routes: Routes = [
   { path: 'settings', canActivateChild: [AuthGuard], loadChildren: () => import('./components/settings/settings.module').then(m => m.SettingsModule) },
   { path: 'my-suggestion', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-suggestion/my-suggestion.module').then(m => m.MySuggestionModule) },
   { path: 'my-profile', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-profile/my-profile.module').then(m => m.MyProfileModule) },
+  { path: 'members', canActivateChild: [ AuthGuard ], loadChildren: () => import('./components/member/member.module').then(m => m.MemberModule) },
   { path: 'karta', canActivateChild: [AuthGuard], loadChildren: () => import('./components/karta/karta.module').then(m => m.KartaModule) },
   { path: 'my-kpi', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-kpi/my-kpi.module').then(m => m.MyKpiModule) },
-  { path: 'notifications', canActivateChild: [AuthGuard], loadChildren: () => import('./components/notifications/notifications.module').then(m => m.NotificationsModule) },
-  { path: 'kartas', canActivateChild: [AuthGuard], loadChildren: () => import('./components/kartas/kartas.module').then(m => m.KartasModule) },
+  { path: 'notifications', canActivateChild: [AuthGuard], loadChildren: () => import('./components/notification/notification.module').then(m => m.NotificationModule) },
   { path: '**', loadChildren: () => import('./components/page-not-found/page-not-found.module').then(m => m.PageNotFoundModule) },
 
 ];

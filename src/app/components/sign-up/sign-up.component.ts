@@ -110,7 +110,7 @@ export class SignUpComponent implements OnInit {
               stage: 1
             }
             this._signupService.setSignUpSession(sessionData);
-            this.router.navigate(['/subscription-plan']);
+            this.router.navigate(['/thank-you']);
           },
           (error: any) => { }
         ).add(() => this.submitFlag = false );

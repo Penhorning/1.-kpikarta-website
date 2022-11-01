@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { NotificationsComponent } from './notifications.component';
+import { NotificationComponent } from './notification.component';
 
 const routes: Routes = [
-  { path: '', component: NotificationsComponent, data: { title: "Notification - KPI Karta" }}
+  { path: '', component: NotificationComponent, data: { title: "Notification - KPI Karta" }}
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class NotificationsRoutingModule { }
+export class NotificationRoutingModule { }

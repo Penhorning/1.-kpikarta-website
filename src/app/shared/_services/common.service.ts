@@ -29,6 +29,11 @@ export class CommonService {
       </div>
     </div>
   `;
+  noDataAvailable = `
+    <div class="text-center bg-light p-5">
+      <h5>No data available</h5>
+    </div>
+  `;
 
   formValidation: any  = {
     blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
