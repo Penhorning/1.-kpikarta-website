@@ -84,12 +84,14 @@
                 </tr>
               </tbody>
             </table>
-            <div class="text-center">
-              <ng-container *ngIf="loading">
-                <div class="p-5" [innerHtml]="loader"></div>
-              </ng-container>
-              <p style="cursor: pointer; color: #007bff;"
-                *ngIf="!loading && totalData > users.length" (click)="getAllInvites()">View More..</p>
+            <ng-container *ngIf="loading">
+              <div [innerHtml]="loader"></div>
+            </ng-container>
+            <ng-container *ngIf="!loading && users.length === 0">
+                <div [innerHtml]="noDataAvailable"></div>
+            </ng-container>
+            <div class="text-center" *ngIf="!loading && totalData > users.length">
+              <p class="view_more" (click)="getAllInvites()">View More..</p>
             </div>
           </div>
         </div>

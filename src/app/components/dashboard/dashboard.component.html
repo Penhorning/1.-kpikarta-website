@@ -120,12 +120,9 @@
                                                     <div class="user-img">
                                                         <img src="assets/img/user-placeholder.svg">
                                                     </div>
-                                                    <div class="user-counter" *ngIf="karta?.sharedTo?.length > 1">
-                                                        <p>+{{getCountOfKarta(karta?.sharedTo?.length)}}</p>
+                                                    <div class="user-counter">
+                                                        <p>{{ karta?.sharedTo?.length > 100 ? '100+': karta?.sharedTo?.length }}</p>
                                                     </div>
-                                                      <!-- <div class="user-counter" *ngIf="karta?.sharedTo?.length > 1">
-                                                        <p>+{{getCountOfKarta(karta?.sharedTo?.length)}}</p>
-                                                    </div> -->
                                                 </ng-container>
                                             </div>
 
@@ -144,14 +141,12 @@
                         </ng-container>
                         <!-- end-card-one -->
                     </div>
-                    <div class="text-center">
-                        <ng-container *ngIf="loadingKarta">
-                            <div [innerHtml]="loader"></div>
-                        </ng-container>
-                        <ng-container *ngIf="!loadingKarta && kartas.length === 0">
-                            <div class="no-data">No data available.</div>
-                          </ng-container>
-                    </div>
+                    <ng-container *ngIf="loadingSharedKartas">
+                        <div [innerHtml]="loader"></div>
+                    </ng-container>
+                    <ng-container *ngIf="!loadingSharedKartas && sharedKartas.length === 0">
+                        <div [innerHtml]="noDataAvailable"></div>
+                    </ng-container>
                 </div>
                 <div class="white-karata-card mt-3">
                     <div class="row">
@@ -277,16 +272,9 @@
                                                     <div class="user-img">
                                                         <img src="assets/img/user-placeholder.svg">
                                                     </div>
-                                                    <!-- <div class="user-counter" *ngIf="karta?.sharedTo?.length > 1">
-                                                        <p>+{{ karta?.sharedTo?.length > 1 ? karta?.sharedTo?.length - 1
-                                                            :
-                                                            ''}}</p>
-                                                    </div> -->
-                                                    <div class="user-counter" *ngIf="karta?.sharedTo?.length > 1">
-                                                        <p>+{{getCountOfKarta(karta?.sharedTo?.length)}}</p>
+                                                    <div class="user-counter">
+                                                        <p>{{ karta?.sharedTo?.length > 100 ? '100+': karta?.sharedTo?.length }}</p>
                                                     </div>
-                                                    <!-- <p>+{{getCountOfKarta(karta?.sharedTo?.length)}}</p> -->
-
                                                 </ng-container>
                                             </div>
                                         </div>
@@ -296,14 +284,12 @@
                         </ng-container>
                         <!-- end-card-one -->
                     </div>
-                    <div class="text-center">
-                        <ng-container *ngIf="loadingKarta">
-                            <div [innerHtml]="loader"></div>
-                        </ng-container>
-                        <ng-container *ngIf="!loadingKarta && sharedKartas.length === 0">
-                            <div class="no-data">No data available.</div>
-                          </ng-container>
-                    </div>
+                    <ng-container *ngIf="loadingKartas">
+                        <div [innerHtml]="loader"></div>
+                    </ng-container>
+                    <ng-container *ngIf="!loadingKartas && kartas.length === 0">
+                        <div [innerHtml]="noDataAvailable"></div>
+                    </ng-container>
                 </div>
             </div>
             <div class="col-lg-3">

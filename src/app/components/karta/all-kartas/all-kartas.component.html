@@ -160,12 +160,8 @@
                                                             <div class="user-img">
                                                                 <img src="assets/img/user-placeholder.svg">
                                                             </div>
-                                                            <div class="user-counter"
-                                                                *ngIf="karta?.sharedTo?.length > 1">
-                                                                <p>+{{ karta?.sharedTo?.length > 1 ?
-                                                                    karta?.sharedTo?.length - 1
-                                                                    :
-                                                                    ''}}</p>
+                                                            <div class="user-counter">
+                                                                <p>{{ karta?.sharedTo?.length > 100 ? '100+': karta?.sharedTo?.length }}</p>
                                                             </div>
                                                         </ng-container>
                                                     </div>
@@ -176,12 +172,15 @@
                                 </ng-container>
 
                                 <div class="col-lg-12">
-                                    <ng-container *ngIf="loadingKarta">
-                                        <div class="p-5" [innerHtml]="loader"></div>
-                                    </ng-container>
-                                    <p style="cursor: pointer; color: #007bff; text-align: center;"
-                                        *ngIf="!loadingKarta && kartas.length > pageSize && viewMoreAssign_hide"
-                                        (click)="assignViewMore()">View More..</p>
+                                        <ng-container *ngIf="loading">
+                                            <div [innerHtml]="loader"></div>
+                                          </ng-container>
+                                          <ng-container *ngIf="!loading && kartas.length === 0">
+                                              <div [innerHtml]="noDataAvailable"></div>
+                                          </ng-container>
+                                          <div class="text-center" *ngIf="!loading && kartas.length > 8 && viewMoreAssign_hide">
+                                            <p style="cursor: pointer; color: #007bff;" (click)="assignViewMore()">View More..</p>
+                                          </div>
                                 </div>
                                 <!-- end-card-one -->
                             </div>
@@ -285,12 +284,8 @@
                                                             <div class="user-img">
                                                                 <img src="assets/img/user-placeholder.svg">
                                                             </div>
-                                                            <div class="user-counter"
-                                                                *ngIf="karta?.sharedTo?.length > 1">
-                                                                <p>+{{ karta?.sharedTo?.length > 1 ?
-                                                                    karta?.sharedTo?.length - 1
-                                                                    :
-                                                                    ''}}</p>
+                                                            <div class="user-counter">
+                                                                <p>{{ karta?.sharedTo?.length > 100 ? '100+': karta?.sharedTo?.length }}</p>
                                                             </div>
                                                         </ng-container>
                                                     </div>
@@ -309,12 +304,15 @@
                                     </div>
                                 </ng-container>
                                 <div class="col-lg-12">
-                                    <ng-container *ngIf="loadingKarta">
-                                        <div class="p-5" [innerHtml]="loader"></div>
-                                    </ng-container>
-                                    <p style="cursor: pointer; color: #007bff; text-align: center;"
-                                        *ngIf="!loadingKarta && sharedKartas.length > pageSize && viewMoreShared_hide"
-                                        (click)="sharedViewMore()">View More..</p>
+                                        <ng-container *ngIf="loadingShared">
+                                            <div [innerHtml]="loader"></div>
+                                          </ng-container>
+                                          <ng-container *ngIf="!loadingShared && sharedKartas.length === 0">
+                                              <div [innerHtml]="noDataAvailable"></div>
+                                          </ng-container>
+                                          <div class="text-center" *ngIf="!loadingShared && sharedKartas.length > 8 && viewMoreShared_hide">
+                                            <p style="cursor: pointer; color: #007bff;" (click)="sharedViewMore()">View More..</p>
+                                          </div>
                                 </div>
                                 <!-- end-card-one -->
                             </div>

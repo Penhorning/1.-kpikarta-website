@@ -809,6 +809,7 @@ export class EditKartaComponent implements OnInit {
       }
     }
     this._kartaService.addNode(data).subscribe((response: any) => {
+      response.phase = phase;
       this.D3SVG.updateNewNode(param, response);
       this.setKartaDimension();
       this.updateNodeProperties(response);

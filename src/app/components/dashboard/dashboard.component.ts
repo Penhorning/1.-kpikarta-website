@@ -12,14 +12,17 @@ declare const $: any;
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+
   kartas: any = [];
   users: any = [];
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
 
-  loadingKarta: boolean = true;
+  loadingKartas: boolean = false;
+  loadingSharedKartas: boolean = false;
   loader: any = this._commonService.loader;
+  noDataAvailable: any = this._commonService.noDataAvailable;
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
   loading: boolean = false;
@@ -34,7 +37,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.getKartas();
     this.getAllUser();
-    this.getSharedKarta();
+    this.getSharedKartas();
   }
 
   // Navigate to create karta
@@ -49,11 +52,12 @@ export class DashboardComponent implements OnInit {
       limit: 3,
       userId: this._commonService.getUserId(),
     };
+    this.loadingKartas = true;
     this._kartaService.getKartas(data).subscribe((response: any) => {
       if (response) {
         this.kartas = response.kartas[0].data;
       } else this.kartas = [];
-    }).add(() => this.loadingKarta = false);;
+    }).add(() => this.loadingKartas = false);;
   }
 
   // Get all users
@@ -70,17 +74,18 @@ export class DashboardComponent implements OnInit {
   }
 
   // Get shared kartas
-  getSharedKarta() {
+  getSharedKartas() {
     let data = {
       page: 1,
       limit: 6,
       email: this._commonService.getEmailId(),
     };
-    this._kartaService.getSharedKarta(data).subscribe((response: any) => {
+    this.loadingSharedKartas = true;
+    this._kartaService.getSharedKartas(data).subscribe((response: any) => {
       if (response) {
         this.sharedKartas = response.kartas[0].data;
       } else this.sharedKartas = [];
-    }).add(() => this.loadingKarta = false);;
+    }).add(() => this.loadingSharedKartas = false);;
   }
 
   // Update karta
@@ -96,7 +101,7 @@ export class DashboardComponent implements OnInit {
     if (result) {
       this._kartaService.deleteKarta({ kartaId: id }).subscribe(
         (response: any) => {
-          this._commonService.successToaster("Karta deleted successfully");
+          this._commonService.successToaster("Karta deleted successfully!");
           this.getKartas();
         });
     }
@@ -109,7 +114,7 @@ export class DashboardComponent implements OnInit {
   //     this._kartaService.deleteSharedKarta({kartaId:_id}).subscribe(
   //       (response: any) => {
   //         this._commonService.successToaster("Karta deleted successfully");
-  //         this.getSharedKarta();
+  //         this.getSharedKartas();
   //       }
   //     );
   //   }
@@ -154,10 +159,10 @@ export class DashboardComponent implements OnInit {
 
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
-          this._commonService.successToaster("Your have shared karta successfully");
+          this._commonService.successToaster("Your have shared karta successfully!");
           $('#shareLinkModal').modal('hide');
           this.getKartas();
-          this.getSharedKarta();
+          this.getSharedKartas();
         },
         (error: any) => { }
       ).add(() => this.sharedSubmitFlag = false);
@@ -170,7 +175,7 @@ export class DashboardComponent implements OnInit {
     if (result) {
       this._kartaService.copyKarta({ kartaId: id }).subscribe(
         (response: any) => {
-          this._commonService.successToaster('Karta copy created successfully.');
+          this._commonService.successToaster('Karta copy created successfully!');
           this.getKartas();
         });
     }
@@ -194,26 +199,15 @@ export class DashboardComponent implements OnInit {
           $('#kt' + index).attr('contenteditable', false);
           this.ngOnInit();
           this._commonService.successToaster(
-            'Karta name updated uccessfully..!!'
+            'Karta name updated uccessfully!'
           );
         }
       },
       (err) => {
         console.log(err);
-        this._commonService.errorToaster('Error while updating name..!!');
+        this._commonService.errorToaster('Error while updating name!');
       }
     );
   }
-
-  getCountOfKarta(val: number){
-       if(val > 100){
-      let totalcount = '100+'
-      return totalcount;
-       }else if(val > 1){
-        let totalcount = val - 1
-        return totalcount;
-       }
-       return '';
-    }
    
 }

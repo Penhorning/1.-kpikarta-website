@@ -28,9 +28,10 @@ export class AllKartasComponent implements OnInit {
   sharedPageIndex: number = 0;
   sharePageSize: number = 8;
   // Loding var
-  loadingKarta: boolean = true;
+  loading: boolean = false;
+  loadingShared: boolean = false;
   loader: any = this._commonService.loader;
-  loading = false;
+  noDataAvailable: any = this._commonService.noDataAvailable;
   viewMoreAssign_hide: boolean = true;
   viewMoreShared_hide: boolean = true;
 
@@ -40,7 +41,7 @@ export class AllKartasComponent implements OnInit {
   ngOnInit(): void {
     this.getKartas();
     this.getAllUser();
-    this.getSharedKarta();
+    this.getSharedKartas();
 
     this.route.fragment.subscribe(f => {
       if (f === "tabs-2") $("#shared_tab").click();
@@ -60,28 +61,30 @@ export class AllKartasComponent implements OnInit {
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text
     }
+    this.loading = true;
     this._kartaService.getKartas(data).subscribe(
       (response: any) => {
         if (response) this.kartas = response.kartas[0].data;
         else this.kartas = [];
       }
-    ).add(() => this.loadingKarta = false);
+    ).add(() => this.loading = false);
   }
 
-  getSharedKarta() {
+  getSharedKartas() {
     let data = {
       page: this.sharedPageIndex + 1,
       limit: this.sharePageSize,
       email: this._commonService.getEmailId(),
       searchQuery: this.search_text
     }
-    this._kartaService.getSharedKarta(data).subscribe(
+    this.loadingShared = true;
+    this._kartaService.getSharedKartas(data).subscribe(
       (response: any) => {
         if (response) {
           this.sharedKartas = response.kartas[0].data;
         } else this.sharedKartas = [];
       }
-    ).add(() => this.loadingKarta = false);
+    ).add(() => this.loadingShared = false);
   }
 
   // Update karta
@@ -131,7 +134,7 @@ export class AllKartasComponent implements OnInit {
         this._commonService.successToaster("Your have shared karta successfully!");
         $('#shareLinkModal').modal('hide');
         this.getKartas();
-        this.getSharedKarta();
+        this.getSharedKartas();
       },
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);
@@ -186,6 +189,7 @@ export class AllKartasComponent implements OnInit {
       limit: this.pageSize,
       userId: this._commonService.getUserId()
     }
+    this.loading = true;
     this._kartaService.getKartas(data).subscribe(
       (response: any) => {
         if (response) {
@@ -193,7 +197,7 @@ export class AllKartasComponent implements OnInit {
           if (response.kartas[0].metadata[0].total == this.kartas.length) this.viewMoreAssign_hide = !this.viewMoreAssign_hide;
         }
       }
-    ).add(() => this.loadingKarta = false);
+    ).add(() => this.loading = false);
   }
 
   // View more shared
@@ -204,14 +208,15 @@ export class AllKartasComponent implements OnInit {
       limit: this.sharePageSize,
       email: this._commonService.getEmailId()
     }
-    this._kartaService.getSharedKarta(data).subscribe(
+    this.loadingShared = true;
+    this._kartaService.getSharedKartas(data).subscribe(
       (response: any) => {
         if (response) {
           this.sharedKartas.push(...response.kartas[0].data);
           if (response.kartas[0].metadata[0].total == this.sharedKartas.length) this.viewMoreShared_hide = !this.viewMoreShared_hide;
         }
       }
-    ).add(() => this.loadingKarta = false);
+    ).add(() => this.loadingShared = false);
   }
 
   // Tab switch assign
@@ -227,20 +232,20 @@ export class AllKartasComponent implements OnInit {
     this.sharedPageIndex = 0;
     this.search_text = "";
     this.sharedKartas = [];
-    this.getSharedKarta();
+    this.getSharedKartas();
   }
 
   search() {
     if (this.search_text) {
       this.pageIndex = 0;
       this.getKartas();
-      this.getSharedKarta();
+      this.getSharedKartas();
     }
   }
   clearSearch() {
     this.search_text = "";
     this.getKartas();
-    this.getSharedKarta();
+    this.getSharedKartas();
   }
 
   getCountOfKarta(val: number){

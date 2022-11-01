@@ -30,6 +30,7 @@ export class MemberComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   loader: any = this._commonService.loader;
+  noDataAvailable: any = this._commonService.noDataAvailable;
   loading = false;
 
   // ngx-intl-tel-input config
