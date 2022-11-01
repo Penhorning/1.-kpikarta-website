@@ -803,16 +803,18 @@ export class EditKartaComponent implements OnInit {
       this.updateNodeProperties(response);
       // this.D3SVG.updateNode(param, response);
       // this.getKartaInfo();
-    });
 
-    // let history_data = {
-    //   event: "new node added",
-    //   event_key: key,
-    //   event_value: data[key]
-    // };
-    // this._kartaService.addKartaHistory(history_data).subscribe(
-    //   (response: any) => { }
-    // );
+      let history_data = {
+        event: "new node added",
+        eventValue: data,
+        kartaNodeId: response.id,
+        userId: this._commonService.getUserId(),
+        versionId: this.versionId
+      };
+      this._kartaService.addKartaHistoryObject(history_data).subscribe(
+        (result: any) => { }
+      );
+    });
   }
 
   // Add right node
@@ -959,6 +961,17 @@ export class EditKartaComponent implements OnInit {
       this.showSVG = true;
       this.isRtNodDrgFrmSide = false;
       this.updateNodeProperties(response);
+
+      let history_data = {
+        event: "new root node added",
+        eventValue: data,
+        kartaNodeId: response.id,
+        userId: this._commonService.getUserId(),
+        versionId: this.versionId
+      };
+      this._kartaService.addKartaHistoryObject(history_data).subscribe(
+        (result: any) => { }
+      );
     });
   }
 
