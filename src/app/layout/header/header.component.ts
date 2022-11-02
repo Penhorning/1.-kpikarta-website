@@ -10,11 +10,6 @@ export class HeaderComponent implements OnInit {
 
   scrolled: boolean = false;
 
-  // name: string = this._commonService.getSession().name;
-  // token: string = this._commonService.getSession().token;
-  // profilePic: string = this._commonService.getSession().profilePic;
-
-
   @HostListener("window:scroll", [])
   onWindowScroll() {
       this.scrolled = window.scrollY > 0;
@@ -27,13 +22,9 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this._commonService.logout().subscribe(
-      (response: any) => {
-        this._commonService.deleteSession();
-      },
-      (error: any) => {
-        this._commonService.deleteSession();
-      }
-    );
+      (response: any) => { },
+      (error: any) => { }
+    ).add(() => this._commonService.deleteSession() );
   }
 
 }

@@ -69,7 +69,7 @@ export class KartaService {
   shareKarta(data: any) {
     return this._httpService.POST('/karta/share', data);
   }
-  getSharedKarta(data: any) {
+  getSharedKartas(data: any) {
     return this._httpService.POST('/karta/shared-kartas', data);
   }
   copyKarta(data: any) {

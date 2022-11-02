@@ -4,11 +4,11 @@ import { NotificationService } from './service/notification.service';
 import * as moment from 'moment';
 
 @Component({
-  selector: 'app-notifications',
-  templateUrl: './notifications.component.html',
-  styleUrls: ['./notifications.component.scss']
+  selector: 'app-notification',
+  templateUrl: './notification.component.html',
+  styleUrls: ['./notification.component.scss']
 })
-export class NotificationsComponent implements OnInit {
+export class NotificationComponent implements OnInit {
 
   notifications: any = [];
   moment: any = moment;
