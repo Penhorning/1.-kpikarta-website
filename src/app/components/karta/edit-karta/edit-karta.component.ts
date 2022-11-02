@@ -496,7 +496,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getAllVersions(this.kartaId).subscribe(
       (response: any) => {
         this.version = response;
-        this.versionId = response[0].id;
+        this.getKartaInfo();
       }
     );
   }
@@ -710,8 +710,8 @@ export class EditKartaComponent implements OnInit {
       .getKarta(this.kartaId)
       .subscribe((response: any) => {
         this.karta = response;
+        this.versionId = response.versionId;
         this.sharedKartaStr = response;
-        console.log("res", response)
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(
             this.calculatePercentage(this.karta.node)
@@ -977,13 +977,39 @@ export class EditKartaComponent implements OnInit {
 
   // Save karta
   saveKarta() {
-    let data = {
-      name: this.karta.name,
-    };
-    this._kartaService.updateKarta(this.karta.id, data).subscribe(
-      (response: any) => {
-        this.karta = response;
+    // New Version Calculation
+    let versionNumber = this.version.reduce((acc: any,curr: any) => {
+      let num = curr.name.split(".")[0];
+      if(Number(num) > acc){
+        acc = Number(num);
       }
+      return acc;
+    }, 0);
+
+    // New Version Object
+    let new_version = {
+      name: `${versionNumber+1}.0.0`,
+      kartaId: this.kartaId
+    };
+
+    this._kartaService.createKartaVersion(new_version).subscribe(
+      (versionResponse: any) => {
+        // New Karta Data
+        let data = {
+          name: this.karta.name,
+          versionId: versionResponse.id
+        };
+
+        this._kartaService.updateKarta(this.kartaId, data).subscribe(
+          (kartaResponse: any) => {
+            this.karta = kartaResponse;
+            this._commonService.successToaster("New version created successfully..!!");
+          },
+          (err: any) => console.log(err)
+        )
+        this.getAllVersion();
+      },
+      (err: any) => console.log(err)
     );
   }
 
