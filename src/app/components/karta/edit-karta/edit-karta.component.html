@@ -508,7 +508,7 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="goal-name mt-3">
-              <h6>{{currentPhase?.name}}</h6>
+              <h6>{{currentNode?.phase?.name}}</h6>
             </div>
           </div>
         </div>
@@ -520,7 +520,7 @@
           </div>
         </div>
         <!-- Weightage -->
-        <ng-container *ngIf="phaseId !== '62b07978c389310e2c74f586' && phaseId !== '62b079b4c389310e2c74f58d'">
+        <ng-container *ngIf="currentNode?.phase?.name !== 'Goal'">
           <div class="row">
             <div class="col-lg-12">
               <div class="goal-name mt-3">
@@ -532,8 +532,9 @@
             <div class="col-lg-12">
               <div class="search-sugg mt-3">
                 <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
-                  [ngClass]="{ 'is-invalid': currentNodeWeight < 0 }">
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0">Please enter weightage!</div>
+                  [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please enter weightage!</div>
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than 100!</div>
               </div>
             </div>
           </div>

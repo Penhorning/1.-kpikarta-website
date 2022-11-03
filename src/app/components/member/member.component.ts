@@ -174,6 +174,7 @@ export class MemberComponent implements OnInit {
         this._memberService.invite({ data: this.inviteForm.value }).subscribe(
           (response: any) => {
             this.resetFormModal();
+            this.users = [];
             this.getAllInvites();
             this._commonService.successToaster("Member invited successfully!");
           },

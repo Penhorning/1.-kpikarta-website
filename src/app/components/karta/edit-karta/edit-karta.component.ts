@@ -20,7 +20,7 @@ export class EditKartaComponent implements OnInit {
   kartaId: string = '';
   karta: any;
   currentNode: any = {};
-  currentPhase: any;
+  // currentPhase: any;
   phaseId: string = '';
   phases: any = [];
   // subPhases: any = [];
@@ -566,8 +566,8 @@ export class EditKartaComponent implements OnInit {
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
     // Show Measure and metrics when KPI's node selected
-    this.currentPhase = this.phases[this.phaseIndex(param.phaseId)];
-    if (this.currentPhase.name === 'KPI') {
+    // this.currentPhase = this.phases[this.phaseIndex(param.phaseId)];
+    if (this.currentNode.phase.name === 'KPI') {
       this.showKPICalculation = true;
       if (param.target) this.target = param.target;
       else {
