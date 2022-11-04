@@ -5,6 +5,7 @@ import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
+import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 
 
@@ -16,7 +17,7 @@ declare const $: any;
   styleUrls: ['./edit-karta.component.scss'],
 })
 export class EditKartaComponent implements OnInit {
-  
+
   kartaId: string = '';
   karta: any;
   currentNode: any = {};
@@ -31,6 +32,24 @@ export class EditKartaComponent implements OnInit {
   showSVG: boolean = false;
   isRtNodDrgFrmSide: boolean = false;
   formulaGroup: FormGroup | any = [];
+
+  // Color variables
+  colorSubmitFlag: boolean = false;
+  editColorSettings: any;
+  selectedColor2: string = "#F85C5C";
+  minValue: number = 0;
+  maxValue: number = 100;
+  options: Options = {
+    floor: 0,
+    ceil: 100
+  };
+
+  // Color slider form
+  colorForm = this.fb.group({
+    color: ["000000", Validators.required],
+    min: [this.minValue, Validators.required],
+    max: [this.maxValue, Validators.required]
+  });
 
   // D3 karta events
   D3SVG: any = {
@@ -75,7 +94,7 @@ export class EditKartaComponent implements OnInit {
       }
     }
   }
-  
+
   /* Node properties */
   currentNodeName: string = '';
   currentNodeWeight: number = 0;
@@ -103,7 +122,7 @@ export class EditKartaComponent implements OnInit {
   formulaFieldSuggestions: any = [];
 
   // Person notify
-  notifyType: string  = "";
+  notifyType: string = "";
 
   // Share karta
   sharedKartaStr: any = [];
@@ -152,14 +171,16 @@ export class EditKartaComponent implements OnInit {
     this.getAllUser();
     // Get versions
     this.getAllVersion();
+    // Get edit color code setting
+    this.getEditColorSettings();
   }
 
   // ---------FormArray Functions defined Below----------
   //Adding 2 default FormulaField Group
   addFormulaGroupByDefault(): any[] {
     let newArr = [];
-    if(!this.currentNode.node_type){
-      for(let i = 0; i < 2; i++){
+    if (!this.currentNode.node_type) {
+      for (let i = 0; i < 2; i++) {
         newArr.push(this.fb.group({
           fieldName: [`Field${i + 1}`],
           fieldValue: [0, Validators.min(1)],
@@ -233,7 +254,7 @@ export class EditKartaComponent implements OnInit {
   // Set Temporary Field Value to FormArray
   setFieldValues(id: number) {
     let domElem: any = document.getElementById('fd' + id);
-    if(domElem.innerText.length == 0){
+    if (domElem.innerText.length == 0) {
       domElem.innerText = this.formulagroupDefaultValues[id];
       domElem.innerHTML = this.formulagroupDefaultValues[id];
     }
@@ -241,7 +262,7 @@ export class EditKartaComponent implements OnInit {
       this.formulaGroup.controls['fields']['controls'][id].patchValue({
         fieldName: this.formulagroupDefaultValues[id],
       });
-      if(this.formulagroupDefaultValues[id]){
+      if (this.formulagroupDefaultValues[id]) {
         delete this.formulagroupDefaultValues[id];
       }
     }
@@ -251,8 +272,8 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Change formula value of each input blur
-  recheckFormula(){
-    if($('#formula-field').val()){
+  recheckFormula() {
+    if ($('#formula-field').val()) {
       $('#formula-field').focus();
       $('#formula-field').blur();
     }
@@ -320,7 +341,7 @@ export class EditKartaComponent implements OnInit {
                 value: obj.value
               }
             });
-            
+
             this._kartaService
               .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
               .subscribe(
@@ -332,7 +353,7 @@ export class EditKartaComponent implements OnInit {
                   console.log(err);
                   this._commonService.errorToaster('Something went wrong..!!');
                 }
-            );
+              );
           }
         } else {
           this.formulaGroup.markAllAsTouched();
@@ -347,7 +368,7 @@ export class EditKartaComponent implements OnInit {
     let value = event.target.value.trim().toLowerCase();
     let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
     let findLastIndex = null;
-    
+
     for (let i = value.length - 1; i >= 0; i--) {
       if (mathOperators.includes(value[i])) {
         findLastIndex = value.lastIndexOf(value[i]);
@@ -359,7 +380,7 @@ export class EditKartaComponent implements OnInit {
       this.formulaFieldSuggestions = [];
       return;
     }
-    
+
     if (findLastIndex != -1 || findLastIndex) {
       let replaceValue = value.slice(findLastIndex + 1, value.length).trim();
       if (replaceValue) {
@@ -508,11 +529,11 @@ export class EditKartaComponent implements OnInit {
       this.updateNode('target', this.target, 'change target frequency');
     }
     else {
-      let percentage= (this.currentNode.achieved_value/e.target.value) * 100;
+      let percentage = (this.currentNode.achieved_value / e.target.value) * 100;
       this.target[index].percentage = Math.round(percentage);
       this.target[index].value = parseInt(e.target.value);
       this.updateNode('target', this.target, 'change target value');
-      
+
     }
   }
   addMoreTarget() {
@@ -669,7 +690,7 @@ export class EditKartaComponent implements OnInit {
           const todayDay = moment().date();
           targetValue = element.target.find(
             (item: any) => item.frequency === 'monthly'
-          ).value;
+          )?.value;
           targetValue = todayDay * (targetValue / totalDays);
         }
         // Set target value according to year to date
@@ -682,7 +703,7 @@ export class EditKartaComponent implements OnInit {
           ).value;
           targetValue = todayDay * (targetValue / totalDays);
         }
-        let current_percentage= (element.achieved_value/targetValue) * 100;
+        let current_percentage = (element.achieved_value / targetValue) * 100;
         element.percentage = Math.round(current_percentage);
         // if (element.percentage > 100) {
         //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
@@ -1019,7 +1040,7 @@ export class EditKartaComponent implements OnInit {
       data.phaseName = this.phases[this.phaseIndex(data.phaseId)].name;
       this.csvKartaData.push(data);
     }
-    if(data.hasOwnProperty("children") && data.children.length > 0) {
+    if (data.hasOwnProperty("children") && data.children.length > 0) {
       data.children.forEach((element: any) => {
         element.kartaName = this.karta.name;
         element.phaseName = this.phases[this.phaseIndex(element.phaseId)].name;
@@ -1030,7 +1051,7 @@ export class EditKartaComponent implements OnInit {
   }
   exportAsCSV(param: any) {
     this.pushCSVData(param.node);
-    const options = { 
+    const options = {
       fieldSeparator: ',',
       quoteStrings: '"',
       decimalSeparator: '.',
@@ -1038,9 +1059,9 @@ export class EditKartaComponent implements OnInit {
       useTextFile: false,
       filename: this.karta.name,
       useBom: true,
-      headers: ['Name', 'Weightage', 'Font_style', 'Alignment','Text_color',
-      'Karta Name', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage' ]
-  };
+      headers: ['Name', 'Weightage', 'Font_style', 'Alignment', 'Text_color',
+        'Karta Name', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage']
+    };
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.csvKartaData);
   }
@@ -1068,6 +1089,7 @@ export class EditKartaComponent implements OnInit {
       } this.loading = false;
     })
   }
+
   shareKarta() {
     this.selectedSharedUsers.forEach((element: any) => {
       if (element.email == this._commonService.getEmailId()) {
@@ -1089,6 +1111,81 @@ export class EditKartaComponent implements OnInit {
         },
         (error: any) => { console.log(error) }
       ).add(() => this.sharedSubmitFlag = false);
+    }
+  }
+
+  // Color setting functions 
+  getEditColorSettings() {
+    this._kartaService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
+      (response: any) => {
+        this.editColorSettings = response;
+        this.editColorSettings.settings = this.editColorSettings.settings.sort((a: any, b: any) => a.min - b.min);
+      }
+    );
+  }
+  removeColor(index: number) {
+    this.editColorSettings.settings.splice(index, 1);
+  }
+  onColorChange2(colorCode: string, index: number) {
+    this.editColorSettings.settings[index].color = colorCode;
+  }
+  onMinValueChange(value: number) {
+    this.colorForm.patchValue({ min: value });
+  }
+  onMaxValueChange(value: number) {
+    this.colorForm.patchValue({ max: value });
+  }
+  checkInRange(minValue: number, maxValue: number): boolean {
+    for (let item of this.editColorSettings.settings) {
+      if (minValue >= item.min && minValue <= item.max) return true;
+      else if (maxValue >= item.min && maxValue <= item.max) return true;
+    }
+    return false;
+  }
+  findColorInRange(color: string) {
+    return this.editColorSettings.settings.find((item: any) => item.color === color);
+  }
+  sumOfRange() {
+    let sum = 0;
+    for (let i = 0; i < this.editColorSettings.settings.length; i++) {
+      if (this.editColorSettings.settings[i].min < 101 && this.editColorSettings.settings[i].max < 101) {
+        sum += this.editColorSettings.settings[i].max - this.editColorSettings.settings[i].min;
+      }
+    }
+    return sum += this.editColorSettings.settings.length - 2;
+  }
+  onColorSubmit() {
+    if (this.checkInRange(this.colorForm.value.min, this.colorForm.value.max)) {
+      this._commonService.errorToaster("You cannot add this range of color!");
+    } else {
+      if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
+      else this.editColorSettings.settings.push(this.colorForm.value);
+    }
+  }
+  saveColorSetting() {
+    if (this.colorForm.valid) {
+      if (this.sumOfRange() == 100) {
+        this.colorSubmitFlag = true;
+        if (this.editColorSettings.hasOwnProperty("userId")) {
+          this._kartaService.updateColorSetting(this.editColorSettings, this.editColorSettings.id).subscribe(
+            (response: any) => {
+              this._commonService.successToaster("Settings saved successfully");
+              this.getEditColorSettings();
+            }
+          ).add(() => this.colorSubmitFlag = false);
+        } else {
+          let settingData = {
+            userId: this._commonService.getUserId(),
+            settings: this.editColorSettings.settings
+          }
+          this._kartaService.createColorSetting(settingData).subscribe(
+            (response: any) => {
+              this._commonService.successToaster("Settings saved successfully");
+              this.getEditColorSettings();
+            }
+          ).add(() => this.colorSubmitFlag = false);
+        }
+      } else this._commonService.errorToaster("Please complete all the color ranges!");
     }
   }
 

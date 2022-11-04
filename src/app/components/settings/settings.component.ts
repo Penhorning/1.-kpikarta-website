@@ -174,7 +174,6 @@ export class SettingsComponent implements OnInit {
 // Change password functions
   onPasswordSubmit() {
     this.submitted = true;
-
     if (this.passwordForm.valid) {
       if (this.passwordForm.value.newPassword != this.passwordForm.value.confirmPassword) {
         this._commonService.errorToaster("Confirm password should be same as new password");

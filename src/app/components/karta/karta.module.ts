@@ -12,7 +12,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AllKartasComponent } from './all-kartas/all-kartas.component';
-
+// Third party module
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { AllKartasComponent } from './all-kartas/all-kartas.component';
     NgSelectModule,
     NgOptionHighlightModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxSliderModule
   ]
 })
 export class KartaModule { }

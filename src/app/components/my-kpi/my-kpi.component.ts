@@ -115,7 +115,7 @@ export class MyKpiComponent implements OnInit {
   });
 
   measureForm = this.fb.group({
-    actualValue: [0, Validators.pattern('^[0-9]*$')]
+    actualValue: [0,[Validators.required, Validators.pattern('^[0-9]*$')]]
   });
 
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,private route: ActivatedRoute) {
