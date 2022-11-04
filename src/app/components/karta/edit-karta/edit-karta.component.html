@@ -349,9 +349,7 @@
                   </button>
                   <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
-
                     <div class="fillter-inner-white-box p-2">
-
                       <div class="row ">
                         <div class="col-6">
                           <div class="pl-1">
@@ -375,54 +373,56 @@
                           </div>
                         </div>
                         <div class="col-lg-4 text-right">
-                          <div class="plusbtn-karta">
+                          <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                            id="rangeDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
                             <img src="assets/img/plus-btn.svg" class="img-fluid" alt="">
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="rangeDropdownMenuButton">
+                            Test
                           </div>
+
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-lg-12">
-                          <div class="color-box-plus-min mt-2 p-2">
-                            <div class="row">
-                              <div class="col-lg-6">
-                                <h6>0-50%</h6>
-                              </div>
-                              <div class="col-lg-6 text-right">
-                                <div class="float-right d-flex">
-                                  <div class="color-box-two"></div>
-                                  <div class="plus-minus"><img src="assets/img/minus.png"></div>
+                          <div class="color-box-plus-min">
+                            <ng-container *ngFor="let setting of editColorSettings?.settings; let i = index">
+                              <div class="row" [ngClass]="{'mt-2' : i > 0}">
+                                <div class="col-lg-6">
+                                  <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
+                                    <h6>100%+</h6>
+                                  </ng-container>
+                                  <ng-template #not100>
+                                    <h6>{{setting.min}}-{{setting.max}}%</h6>
+                                  </ng-template>
+                                </div>
+                                <div class="col-lg-6 text-right">
+                                  <div class="float-right d-flex">
+                                    <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
+                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"
+                                        [style.background]="selectedColor2"></div>
+                                      <div class="plus-minus above100">
+                                        <label for="colorPicker2"><img src="assets/img/edit.png"></label>
+                                        <input type="color" id="colorPicker2" value="#000000"
+                                          [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
+                                      </div>
+                                    </ng-container>
+                                    <ng-template #not100Color>
+                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
+                                      <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
+                                        <img src="assets/img/minus.png">
+                                      </div>
+                                    </ng-template>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div class="row mt-2">
-                              <div class="col-lg-6">
-                                <h6>51-99%</h6>
-                              </div>
-                              <div class="col-lg-6 text-right">
-                                <div class="float-right d-flex">
-                                  <div class="color-box-two"></div>
-                                  <div class="plus-minus"><img src="assets/img/minus.png"></div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="row mt-2">
-                              <div class="col-lg-6">
-                                <h6>0-50%</h6>
-                              </div>
-                              <div class="col-lg-6 text-right">
-                                <div class="float-right d-flex">
-                                  <div class="color-box-two"></div>
-                                  <div class="plus-minus"><img src="assets/img/minus.png"></div>
-                                </div>
-                              </div>
-                            </div>
-
+                            </ng-container>
                           </div>
+
+
                         </div>
                       </div>
                     </div>
-
-
                   </div>
                 </div>
 
@@ -533,8 +533,10 @@
               <div class="search-sugg mt-3">
                 <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                   [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please enter weightage!</div>
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than 100!</div>
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please
+                  enter weightage!</div>
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than
+                  100!</div>
               </div>
             </div>
           </div>
@@ -769,17 +771,20 @@
                       <div class="col-lg-8">
                         <div class="form-group">
                           <div class="d-flex justify-content-between align-items-center">
-                            <label (keypress)="setLimitForContentEditable($event)" (blur)="setFieldValues(i)" contenteditable="false" [id]="'fd'+i"
+                            <label (keypress)="setLimitForContentEditable($event)" (blur)="setFieldValues(i)"
+                              contenteditable="false" [id]="'fd'+i"
                               [class]="checkFieldStatus('fd'+i) ? 'mb-2 border' : 'mb-2'"
                               (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
-                            <a class="mb-2" role="button" (click)="editFieldStatus(i, true)" *ngIf="!checkFieldStatus('fd'+i)"><img
-                              src="assets/img/edit-icon-side-r.svg" class="img-fluid edit-btn-r"></a>
+                            <a class="mb-2" role="button" (click)="editFieldStatus(i, true)"
+                              *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"
+                                class="img-fluid edit-btn-r"></a>
                           </div>
-                          <input type="text" class="form-control" placeholder="" (blur)="recheckFormula()" formControlName="fieldValue"
-                          [ngClass]="{ 'is-invalid': formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched) }" />
+                          <input type="text" class="form-control" placeholder="" (blur)="recheckFormula()"
+                            formControlName="fieldValue"
+                            [ngClass]="{ 'is-invalid': formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched) }" />
                           <div class="invalid-feedback d-block"
-                          *ngIf="formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched)">
-                          Please enter value greater than 0</div>
+                            *ngIf="formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched)">
+                            Please enter value greater than 0</div>
                         </div>
                       </div>
                       <div class="col-lg-4 d-flex flex-column justify-content-end align-items-center pb-3">
@@ -796,8 +801,9 @@
                 <div class="row mt-3">
                   <div class="col-lg-12 row">
                     <div class="col-lg-10">
-                      <input type="text" class="form-control font-weight-bold" id="formula-field" formControlName="formula"
-                        (input)="filterFieldSuggestions($event)" (blur)="calculateFormula($event)"
+                      <input type="text" class="form-control font-weight-bold" id="formula-field"
+                        formControlName="formula" (input)="filterFieldSuggestions($event)"
+                        (blur)="calculateFormula($event)"
                         [ngClass]="( formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)) || (formulaGroup.get('calculatedValue').value <= 0 && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)) ? 'is-invalid' : (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched) ? 'is-valid' : ''" />
                       <div class="invalid-feedback d-block"
                         *ngIf="formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)">
@@ -821,7 +827,7 @@
               </form>
             </ng-container>
             <hr *ngIf="kpiType === 'metrics' ">
-          
+
             <!-- Contributor -->
             <div class="row mt-3">
               <div class="col-lg-6">
@@ -830,7 +836,8 @@
             </div>
             <div class="row">
               <div class="col-lg-12">
-                <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select users" (change)="changeContributor($event)">
+                <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select users"
+                  (change)="changeContributor($event)">
                   <ng-option *ngFor="let user of users" [value]="user._id">
                     {{ user.fullName }} ({{ user.email }})
                   </ng-option>
@@ -851,7 +858,8 @@
                   <option value="specific">Specific Person</option>
                 </select>
                 <ng-container *ngIf="notifyType === 'specific'">
-                  <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user" (change)="selectNotifyUser($event)">
+                  <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user"
+                    (change)="selectNotifyUser($event)">
                     <ng-option *ngFor="let user of users" [value]="user._id">
                       {{ user.fullName }} ({{ user.email }})
                     </ng-option>
@@ -869,7 +877,8 @@
             <div class="col-lg-6">
               <div class="selct-option-side-r">
                 <label>Period</label>
-                <select class="form-control" [(ngModel)]="currentNode.alert_frequency" (change)="changeAlertFrequency($event)">
+                <select class="form-control" [(ngModel)]="currentNode.alert_frequency"
+                  (change)="changeAlertFrequency($event)">
                   <option value="" selected>Select period</option>
                   <option value="weekly">Weekly</option>
                   <option value="monthly">Monthly</option>
