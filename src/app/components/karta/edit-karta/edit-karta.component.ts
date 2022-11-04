@@ -29,7 +29,7 @@ export class EditKartaComponent implements OnInit {
   loadingKarta: boolean = true;
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
-  isRtNodDrgFrmSide: boolean = false;
+  isRtNodDrgingFrmSide: boolean = false;
   formulaGroup: FormGroup | any = [];
 
   // D3 karta events
@@ -607,6 +607,22 @@ export class EditKartaComponent implements OnInit {
     this.selectedAlignment = value;
     this.updateNode('alignment', value, 'change node alignment');
   }
+  // Change start date
+  changeStartDate(el: any) {
+    this.updateNode('start_date', el.target.value, 'change start date');
+  }
+  // Change days to calculate
+  changeDaysToCalculate(el: any) {
+    this.updateNode('days_to_calculate', el.target.value, 'change days to calculate');
+  }
+  // Change fiscal year start date
+  changeFiscalStartDate(el: any) {
+    this.updateNode('fiscal_year_start_date', el.target.value, 'change fiscal year start date');
+  }
+  // Change fiscal year end date
+  changeFiscalEndDate(el: any) {
+    this.updateNode('fiscal_year_end_date', el.target.value, 'change fiscal year end date');
+  }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
     this.karta.node.percentage = Math.round(
@@ -661,15 +677,13 @@ export class EditKartaComponent implements OnInit {
     if (!params.hasOwnProperty("children")) params.children = [];
     params?.children?.forEach((element: any) => {
       // Check if current element is a kpi node or not
-      if (element.hasOwnProperty("achieved_value")) {
+      if (element.phase.name === "KPI") {
         let targetValue = 0;
         // Set target value according to month to date
         if (this.kpiCalculationPeriod === "month-to-date") {
           const totalDays = moment().daysInMonth();
           const todayDay = moment().date();
-          targetValue = element.target.find(
-            (item: any) => item.frequency === 'monthly'
-          ).value;
+          targetValue = element.target.find((item: any) => item.frequency === 'monthly').value;
           targetValue = todayDay * (targetValue / totalDays);
         }
         // Set target value according to year to date
@@ -677,13 +691,13 @@ export class EditKartaComponent implements OnInit {
           const currentYear = moment().year();
           const totalDays = moment([currentYear]).isLeapYear() ? 366 : 365;
           const todayDay = moment().date();
-          targetValue = element.target.find(
-            (item: any) => item.frequency === 'annually'
-          ).value;
+          targetValue = element.target.find((item: any) => item.frequency === 'annually').value;
           targetValue = todayDay * (targetValue / totalDays);
         }
+        console.log("achie v ", element.achieved_value)
         let current_percentage= (element.achieved_value/targetValue) * 100;
         element.percentage = Math.round(current_percentage);
+        element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);
         // if (element.percentage > 100) {
         //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
         //   element.border_color = colorSetting[0]?.color || 'black';
@@ -696,8 +710,9 @@ export class EditKartaComponent implements OnInit {
         //   element.children[0].percentage = Math.round(current_percentage);
         // }
       } else {
-        let returnedPercentage = this.calculatePercentage(element, percentage);
-        element.percentage = Math.round(returnedPercentage);
+        let returned_percentage = this.calculatePercentage(element, percentage);
+        element.percentage = Math.round(returned_percentage);
+        element.percentage = element.percentage === Infinity ? 0 : Math.round(returned_percentage);
         // if (element.percentage > 100) {
         //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
         //   element.border_color = colorSetting[0]?.color || 'black';
@@ -717,12 +732,10 @@ export class EditKartaComponent implements OnInit {
 
   // Get karta details including all nodes
   getKartaInfo() {
-    this._kartaService
-      .getKarta(this.kartaId)
-      .subscribe((response: any) => {
+    this._kartaService.getKarta(this.kartaId).subscribe(
+      (response: any) => {
         this.karta = response;
         this.sharedKartaStr = response;
-        console.log("res", response)
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(
             this.calculatePercentage(this.karta.node)
@@ -731,8 +744,8 @@ export class EditKartaComponent implements OnInit {
           this.setKartaDimension();
           this.showSVG = true;
         }
-      })
-      .add(() => (this.loadingKarta = false));
+      }
+    ).add(() => (this.loadingKarta = false));
   }
 
   // Get all phases
@@ -780,20 +793,14 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Add node
-  addNode(param: any, name: string = "Child", weightage: number = 0) {
+  addNode(param: any) {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     let data: any = {
-      name: name,
-      font_style: "sans-serif",
-      alignment: "center",
-      text_color: "#000000",
       kartaDetailId: this.kartaId,
       phaseId: phase.id,
-      parentId: param.id,
-      weightage: weightage
+      parentId: param.id
     }
     if (phase.name === "KPI") {
-      data.due_date = new Date();
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
       data.threshold_value = 70;
@@ -942,13 +949,13 @@ export class EditKartaComponent implements OnInit {
   }
   onDragLeave(ev: any) {
     ev.preventDefault();
-    this.isRtNodDrgFrmSide = false;
+    this.isRtNodDrgingFrmSide = false;
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.remove('selectedPhase');
   }
 
   onDragStart(ev: any) {
-    this.isRtNodDrgFrmSide = true;
+    this.isRtNodDrgingFrmSide = true;
   }
 
   onDrop(ev: any, type?: string) {
@@ -958,19 +965,18 @@ export class EditKartaComponent implements OnInit {
       ev.preventDefault();
       phaseId = ev.target.id;
     }
+    let phase = this.phases[this.phaseIndex(phaseId.substring(9))];
     let data = {
-      name: 'Empty',
-      font_style: 'sans-serif',
-      alignment: 'center',
-      text_color: '#000000',
+      name: "Empty",
       phaseId: phaseId.substring(9),
       kartaId: this.kartaId,
       weightage: 100,
     };
     this._kartaService.addNode(data).subscribe((response: any) => {
+      response.phase = phase;
       this.getKartaInfo();
       this.showSVG = true;
-      this.isRtNodDrgFrmSide = false;
+      this.isRtNodDrgingFrmSide = false;
       this.updateNodeProperties(response);
 
       let history_data = {

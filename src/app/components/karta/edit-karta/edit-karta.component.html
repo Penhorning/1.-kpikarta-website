@@ -458,7 +458,7 @@
                     *ngIf="phase.name !== 'Target'" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
                     (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
                     (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgFrmSide" (click)="addRoteNode($event)"><i
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide" (click)="addRoteNode($event)"><i
                         class="fa fa-plus-circle"></i> Node</button>
                   </div>
                   <div class="d-block border karta_dummy_lines" *ngIf="phase.name === 'Target'" [id]="phase?.id">
@@ -650,16 +650,15 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" name="bday" max="3000-12-31" min="1000-01-01" class="form-control">
+                  <input type="date" class="form-control" [value]="currentNode.start_date" (change)="changeStartDate($event)">
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Days to Calculate</label>
-                  <select class="form-control ">
-                    <option>Business Days</option>
-                    <option>Lorem Ipsum</option>
-                    <option>Lorem Ipsum</option>
+                  <select class="form-control" [value]="currentNode.days_to_calculate" (change)="changeDaysToCalculate($event)">
+                    <option value="all">All Days</option>
+                    <option value="business">Business Days</option>
                   </select>
                 </div>
               </div>
@@ -668,28 +667,23 @@
             <div class="row mt-3">
               <div class="col-lg-12">
                 <h5>Fiscal year</h5>
-                <div class="row mt-3">
+                <div class="row">
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
-                      <input type="date" name="start_date" max="3000-12-31" min="1000-01-01" class="form-control">
+                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_start_date" (change)="changeFiscalStartDate($event)">
                     </div>
                   </div>
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>End Date</label>
-                      <input type="date" name="end_date" max="3000-12-31" min="1000-01-01" class="form-control">
+                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date" (change)="changeFiscalEndDate($event)">
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <!-- Measure Due Date (Not Common) -->
-            <div *ngIf="kpiType === 'measure' " class="selct-option-side-r mt-2">
-              <label>Due Date</label>
-              <input type="date" class="form-control" [value]="currentNode.due_date"
-                (change)="updateNode('due_date', $any($event.target).value)">
-            </div>
+            <hr>
             <!-- Target Value -->
             <ng-container *ngFor="let t of target; let i = index">
               <div class="row mt-3">
@@ -707,6 +701,10 @@
                 <div class="col-lg-4 px-2">
                   <div class="custom-input-side-r">
                     <input type="number" class="form-control" [value]="t.value" (input)="setTarget('value', $event, i)">
+                    <!-- <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
+                    [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
+                  <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please enter weightage!</div>
+                  <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than 100!</div> -->
                   </div>
                 </div>
                 <div class="col-lg-3 d-flex px-2">
@@ -891,23 +889,6 @@
               </div>
             </div>
           </div>
-          <hr>
-          <!-- Viewer Access -->
-          <div class="row mt-3">
-            <div class="col-lg-6">
-              <h5>Viewer Access</h5>
-            </div>
-            <div class="col-lg-6 text-right">
-              <a href="" class="add-side-r-custom">+ ADD</a>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="custom-tag mt-3">
-                <input type="text" class="form-control p-4 w-100 border-0" data-role="tagsinput" />
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -917,7 +898,7 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content p-4">
             <div class="modal-header">
-              <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Link</h5>
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Karta</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"
                 (click)="selectedSharedUsers = undefined">
                 <span aria-hidden="true">&times;</span>

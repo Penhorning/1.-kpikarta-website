@@ -1,6 +1,6 @@
 'use strict';
 
-var nodeToHTML = require("./nodeTemplates/nodeToHTML.js");
+var nodeToHTML = require("./nodeTemplates/nodeToHTML.js").default;
 
 var levelDepth = [];
 var levelHeight = 0;
@@ -496,9 +496,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         $(`.node-text[nodeid=${d.id}] p`).css('text-align', d.alignment);
         update(d.parent);
         if (d.hasOwnProperty("children") && d.children.length > 0) {
-            d.children.forEach(item => {
-                updateNode(item);
-            });
+            d.children.forEach(item => updateNode(item));
         }
     }
 
