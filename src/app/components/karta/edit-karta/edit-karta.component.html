@@ -726,8 +726,10 @@
               <div class="col-lg-12">
                 <div class="form-group">
                   <label style="font-weight: 500;">Achieved Value</label>
-                  <input type="number" class="form-control" [value]="currentNode?.achieved_value"
-                    (blur)="changeAchievedValue($event)">
+                  <input type="number" class="form-control" [(ngModel)]="currentNodeAchievedValue" (blur)="changeAchievedValue()"
+                    [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null || currentNodeAchievedValue > 9999 }">
+                  <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue < 0 || currentNodeAchievedValue === null">Please enter achieved value!</div>
+                  <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue > 9999">Achieved value cannot be greator than 9999!</div>
                 </div>
               </div>
             </div>
@@ -839,7 +841,7 @@
                 <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select users"
                   (change)="changeContributor($event)">
                   <ng-option *ngFor="let user of users" [value]="user._id">
-                    {{ user.fullName }} ({{ user.email }})
+                    {{ user?.fullName }} ({{ user?.email }})
                   </ng-option>
                 </ng-select>
               </div>
@@ -861,7 +863,7 @@
                   <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user"
                     (change)="selectNotifyUser($event)">
                     <ng-option *ngFor="let user of users" [value]="user._id">
-                      {{ user.fullName }} ({{ user.email }})
+                      {{ user?.fullName }} ({{ user?.email }})
                     </ng-option>
                   </ng-select>
                 </ng-container>

@@ -98,6 +98,7 @@ export class EditKartaComponent implements OnInit {
   /* Node properties */
   currentNodeName: string = '';
   currentNodeWeight: number = 0;
+  currentNodeAchievedValue: number = 0;
   // Typography
   selectedFont: any = '';
   selectedColor: any = '';
@@ -563,6 +564,7 @@ export class EditKartaComponent implements OnInit {
     this.selectedAlignment = param.alignment;
     this.currentNodeName = param.name;
     this.currentNodeWeight = param.weightage;
+    this.currentNodeAchievedValue = param.achieved_value;
     if (param.node_type) {
       const arr = this.formulaGroup.get('fields') as FormArray;
       arr.clear();
@@ -652,18 +654,22 @@ export class EditKartaComponent implements OnInit {
     this.updateNode('kpi_calc_period', el.target.value, 'change kpi calculation period');
   }
   // Change achieved value
-  changeAchievedValue(e: any) {
-    // Calculate new percentage
-    this.target.forEach((element: any) => {
-      let percentage = (e.target.value / element.value) * 100;
-      return (element.percentage = Math.round(percentage));
-    });
-    // Submit updated achieved value
-    let data = {
-      achieved_value: e.target.value,
-      target: this.target,
-    };
-    this.updateNode('achieved_value', data, 'change achieved value');
+  changeAchievedValue() {
+    if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
+    else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greator than 9999!");
+    else {
+      // Calculate new percentage
+      this.target.forEach((element: any) => {
+        let percentage = (this.currentNodeAchievedValue / element.value) * 100;
+        return (element.percentage = Math.round(percentage));
+      });
+      // Submit updated achieved value
+      let data = {
+        achieved_value: this.currentNodeAchievedValue,
+        target: this.target,
+      };
+      this.updateNode('achieved_value', data, 'change achieved value');
+    }
   }
   // Change contributor
   changeContributor(userId: string) {

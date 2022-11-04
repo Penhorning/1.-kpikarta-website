@@ -16,12 +16,12 @@ export class MemberComponent implements OnInit {
   users: any = [];
   roles: any = [];
   departments: any = [];
-  subscriptions: any = [];
+  licenses: any = [];
   checkFormType: string = "CREATE";
+  currentUser: any;
   submitted: boolean = false;
   submitFlag = false;
   showDepartment: boolean = false;
-  showRole: boolean = true;
   hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
   viewMore_hide: boolean = true;
@@ -44,7 +44,7 @@ export class MemberComponent implements OnInit {
   inviteForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
     email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
-    subscriptionId: [''],
+    licenseId: ['', Validators.required],
     mobile: [{}, Validators.required],
     roleId: ['', Validators.required]
   });
@@ -61,7 +61,7 @@ export class MemberComponent implements OnInit {
     this.getAllInvites();
     this.getRoles();
     this.getDepartments();
-    this.getSubscriptions();
+    this.getLicenses();
   }
 
   // Get all invites users
@@ -112,40 +112,44 @@ export class MemberComponent implements OnInit {
   }
 
   // Get subscriptions
-  getSubscriptions() {
-    this._memberService.getSubscriptions().subscribe(
+  getLicenses() {
+    this._memberService.getLicenses().subscribe(
       (response: any) => {
-        this.subscriptions = response;
+        this.licenses = response;
       }
     );
   }
 
   setFormType(type: string, data?: any) {
+    this.checkFormType = type;
+    this.currentUser = data;
     if (type == 'CREATE') {
-      this.showRole = true;
-      this.checkFormType = type;
       this.inviteForm.patchValue({
         fullName: "",
         email: "",
-        subscriptionId: "",
+        licenseId: "",
         mobile: "",
         roleId: "",
         departmentId: "",
       });
     }
     else {
-      this.checkFormType = type;
-      this.showRole = false;
-      this.inviteForm.removeControl("roleId");
-      if (!data.departmentId) this.inviteForm.removeControl("departmentId");
-      else this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+      if (!data.departmentId) {
+        this.showDepartment = false;
+        this.inviteForm.removeControl("departmentId");
+      } else {
+        this.showDepartment = true;
+        this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+        this.inviteForm.patchValue({
+          departmentId: data.departmentId ? data.departmentId : ''
+        })
+      }
       this.inviteForm.patchValue({
         fullName: data.fullName ? data.fullName : '',
         email: data.email ? data.email : '',
-        subscriptionId: data.subscriptionId ? data.subscriptionId : '',
+        licenseId: data.licenseId ? data.licenseId : '',
         mobile: data.mobile ? data.mobile : {},
-        // roleId: data.roleId ? data.roleId : '',
-        departmentId: data.departmentId ? data.departmentId : '',
+        roleId: data.roleId ? data.roleId : '',
       });
     }
   }
@@ -155,6 +159,7 @@ export class MemberComponent implements OnInit {
     if (role[0].name === "billing staff" || role[0].name === "company admin") {
       this.showDepartment = false;
       this.inviteForm.removeControl("departmentId");
+      this.inviteForm.value.departmentId = "";
     } else {
       this.showDepartment = true;
       this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
@@ -190,7 +195,9 @@ export class MemberComponent implements OnInit {
       }
       // When update any existing user
       else if (this.checkFormType === "UPDATE") {
-        this._memberService.updateUser(this.inviteForm.value, this._commonService.getUserId(), this._commonService.getSession().token).subscribe(
+        this.inviteForm.value.type = "invited_user";
+        this.inviteForm.value.userId = this.currentUser._id;
+        this._memberService.updateUser(this.inviteForm.value, this.currentUser._id, this._commonService.getSession().token).subscribe(
           (response: any) => {
             this.resetFormModal();
             this.getAllInvites();
