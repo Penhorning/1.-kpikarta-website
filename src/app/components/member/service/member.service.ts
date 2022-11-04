@@ -17,8 +17,8 @@ export class MemberService {
   getAllInvites(data: any) {
     return this._httpService.POST('/users/get-all-invites', data);
   }
-  getSubscriptions() {
-    return this._httpService.GET('/subscriptions?filter[status]=true');
+  getLicenses() {
+    return this._httpService.GET('/licenses?filter[active]=true');
   }
   invite(data: any) {
     return this._httpService.POST('/users/invite', data);
