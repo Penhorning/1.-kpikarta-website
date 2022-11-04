@@ -16,14 +16,15 @@ export class MemberComponent implements OnInit {
   users: any = [];
   roles: any = [];
   departments: any = [];
-  subscriptions: any = [];
+  licenses: any = [];
   checkFormType: string = "CREATE";
+  currentUser: any;
   submitted: boolean = false;
   submitFlag = false;
   showDepartment: boolean = false;
-  showRole: boolean = true;
-  hideValues: any = ['company admin' , 'billing staff']
+  hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
+  viewMore_hide: boolean = true;
 
   search_text: string = "";
   totalData: number = 0;
@@ -35,15 +36,15 @@ export class MemberComponent implements OnInit {
 
   // ngx-intl-tel-input config
   separateDialCode = true;
-	SearchCountryField = SearchCountryField;
-	CountryISO = CountryISO;
+  SearchCountryField = SearchCountryField;
+  CountryISO = CountryISO;
   PhoneNumberFormat = PhoneNumberFormat;
-	preferredCountries: CountryISO[] = [CountryISO.UnitedStates, CountryISO.India, CountryISO.Canada];
+  preferredCountries: CountryISO[] = [CountryISO.UnitedStates, CountryISO.India, CountryISO.Canada];
 
   inviteForm = this.fb.group({
     fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
     email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
-    subscriptionId: [''],
+    licenseId: ['', Validators.required],
     mobile: [{}, Validators.required],
     roleId: ['', Validators.required]
   });
@@ -54,13 +55,13 @@ export class MemberComponent implements OnInit {
     private _memberService: MemberService,
     private fb: FormBuilder,
     private _commonService: CommonService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getAllInvites();
     this.getRoles();
     this.getDepartments();
-    this.getSubscriptions();
+    this.getLicenses();
   }
 
   // Get all invites users
@@ -75,14 +76,14 @@ export class MemberComponent implements OnInit {
     this._memberService.getAllInvites(data).subscribe(
       (response: any) => {
         if (response.users[0].data.length > 0) {
-          this.users.push(...response.users[0].data);
+          this.users = response.users[0].data;
           this.totalData = response.users[0].metadata[0].total;
         } else {
           this.users = [];
           this.totalData = 0;
         }
       }
-    ).add(() =>  this.loading = false );
+    ).add(() => this.loading = false);
   }
 
   // Get roles
@@ -104,47 +105,51 @@ export class MemberComponent implements OnInit {
   // Get departments
   getDepartments() {
     this._memberService.getDepartments().subscribe(
-      (response: any)  => {
+      (response: any) => {
         this.departments = response;
       }
     );
   }
 
   // Get subscriptions
-  getSubscriptions() {
-    this._memberService.getSubscriptions().subscribe(
-      (response: any)  => {
-        this.subscriptions = response;
+  getLicenses() {
+    this._memberService.getLicenses().subscribe(
+      (response: any) => {
+        this.licenses = response;
       }
     );
   }
 
-  setFormType(type: string, data?: any){
+  setFormType(type: string, data?: any) {
+    this.checkFormType = type;
+    this.currentUser = data;
     if (type == 'CREATE') {
-      this.showRole = true;
-      this.checkFormType = type;
       this.inviteForm.patchValue({
         fullName: "",
         email: "",
-        subscriptionId: "",
+        licenseId: "",
         mobile: "",
         roleId: "",
         departmentId: "",
       });
     }
     else {
-      this.checkFormType = type;
-      this.showRole = false;
-      this.inviteForm.removeControl("roleId");
-      if (!data.departmentId) this.inviteForm.removeControl("departmentId");
-      else this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+      if (!data.departmentId) {
+        this.showDepartment = false;
+        this.inviteForm.removeControl("departmentId");
+      } else {
+        this.showDepartment = true;
+        this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+        this.inviteForm.patchValue({
+          departmentId: data.departmentId ? data.departmentId : ''
+        })
+      }
       this.inviteForm.patchValue({
         fullName: data.fullName ? data.fullName : '',
         email: data.email ? data.email : '',
-        subscriptionId: data.subscriptionId ? data.subscriptionId : '',
+        licenseId: data.licenseId ? data.licenseId : '',
         mobile: data.mobile ? data.mobile : {},
-        // roleId: data.roleId ? data.roleId : '',
-        departmentId: data.departmentId ? data.departmentId : '',
+        roleId: data.roleId ? data.roleId : '',
       });
     }
   }
@@ -154,26 +159,30 @@ export class MemberComponent implements OnInit {
     if (role[0].name === "billing staff" || role[0].name === "company admin") {
       this.showDepartment = false;
       this.inviteForm.removeControl("departmentId");
+      this.inviteForm.value.departmentId = "";
     } else {
       this.showDepartment = true;
       this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
     }
   }
-  
+
   // Submit user data
   onSubmit() {
     this.submitted = true;
-    
+
     if (this.inviteForm.valid) {
 
       this.submitFlag = true;
       this.inviteForm.value.creatorId = this._commonService.getUserId();
-      
+
       // When new user create
       if (this.checkFormType === "CREATE") {
         this._memberService.invite({ data: this.inviteForm.value }).subscribe(
           (response: any) => {
             this.resetFormModal();
+            this.users = [];
+            this.pageIndex = 0,
+            this.viewMore_hide = !this.viewMore_hide;
             this.getAllInvites();
             this._commonService.successToaster("Member invited successfully!");
           },
@@ -182,11 +191,13 @@ export class MemberComponent implements OnInit {
               this._commonService.errorToaster("Email is already registered, please try with a different one");
             }
           }
-        ).add(() => this.submitFlag = false );
+        ).add(() => this.submitFlag = false);
       }
       // When update any existing user
       else if (this.checkFormType === "UPDATE") {
-        this._memberService.updateUser(this.inviteForm.value, this._commonService.getUserId(), this._commonService.getSession().token).subscribe(
+        this.inviteForm.value.type = "invited_user";
+        this.inviteForm.value.userId = this.currentUser._id;
+        this._memberService.updateUser(this.inviteForm.value, this.currentUser._id, this._commonService.getSession().token).subscribe(
           (response: any) => {
             this.resetFormModal();
             this.getAllInvites();
@@ -197,19 +208,19 @@ export class MemberComponent implements OnInit {
               this._commonService.errorToaster("Email is already registered, please try with a different one");
             }
           }
-        ).add(() => this.submitFlag = false );
+        ).add(() => this.submitFlag = false);
       }
     }
   }
   // Clear modal validation when close
-  resetFormModal () {
+  resetFormModal() {
     this.inviteForm.reset();
     this.submitted = false;
     this.showDepartment = false;
     this.inviteForm.removeControl("departmentId");
     $('#memberModal').modal('hide');
   }
-  
+
   search() {
     if (this.search_text) {
       this.pageIndex = 0;
@@ -221,6 +232,24 @@ export class MemberComponent implements OnInit {
     this.search_text = "";
     this.users = [];
     this.getAllInvites();
+  }
+
+  viewMore() {
+    this.pageIndex++
+    let data = {
+      page: this.pageIndex + 1,
+      limit: this.pageSize,
+      userId: this._commonService.getUserId(),
+      searchQuery: this.search_text
+    }
+    this.loading = true;
+    this._memberService.getAllInvites(data).subscribe(
+      (response: any) => {
+        if (response) {
+          this.users.push(...response.users[0].data);
+          if (response.users[0].metadata[0].total == this.users.length) this.viewMore_hide = !this.viewMore_hide;
+        }
+      }).add(() => this.loading = false);
   }
 }
 
