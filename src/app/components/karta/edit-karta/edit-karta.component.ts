@@ -196,16 +196,21 @@ export class EditKartaComponent implements OnInit {
 
   //Adding a New FormulaField Group
   addFormulaGroup() {
-    if(this.fields.length < 5) {
-      let fieldForm = this.fb.group({
+    // if(this.fields.length < 5) {
+    //   let fieldForm = this.fb.group({
+    //     fieldName: [`Field${this.fields.length + 1}`],
+    //     fieldValue: [0, Validators.min(1)],
+    //   })
+    //   this.fields.push(fieldForm);
+    // }
+    // else {
+    //   this._commonService.warningToaster("Can't add more than 5 fields");
+    // }
+    let fieldForm = this.fb.group({
         fieldName: [`Field${this.fields.length + 1}`],
         fieldValue: [0, Validators.min(1)],
-      })
-      this.fields.push(fieldForm);
-    }
-    else {
-      this._commonService.warningToaster("Can't add more than 5 fields");
-    }
+    })
+    this.fields.push(fieldForm);
   }
 
   //Deleting a particular FormulaField Group
@@ -1008,7 +1013,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.removeNode(param.id).subscribe((response: any) => {
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
-      this.updateNode('kartaNodeId', param.id, 'node_removed');
+      // this.updateNode('kartaNodeId', param.id, 'node_removed');
     });
   }
 
