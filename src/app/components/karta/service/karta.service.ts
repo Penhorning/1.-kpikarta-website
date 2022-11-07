@@ -86,6 +86,15 @@ export class KartaService {
   versionControlHistory(data: any){
     return this._httpService.POST('/karta_histories/version-control', data);
   }
+  getColorSettingByUser(data: any) {
+    return this._httpService.POST('/color-settings-by-user', data);
+  }
+  createColorSetting(data: any) {
+    return this._httpService.POST('/color_settings', data);
+  }
+  updateColorSetting(data: any, settingId: string) {
+    return this._httpService.PATCH(`/color_settings/${settingId}`, data);
+  }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }

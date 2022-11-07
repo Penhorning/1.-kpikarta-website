@@ -121,13 +121,19 @@ export class AllKartasComponent implements OnInit {
   // Submit shared data
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
-      if (element.email !== this._commonService.getEmailId()) this.emails.push(element.email);
+      // if (element.email !== this._commonService.getEmailId()) this.emails.push(element.email);
+      if (element.email == this._commonService.getEmailId()) {
+        this._commonService.warningToaster("You can not share karta to yourself!");
+        if (element.email !== this._commonService.getEmailId()) { }
+      } else {
+        this.emails.push(element.email);
+      }
     });
+    if (this.emails.length > 0) {
     let data = {
       karta: this.sharingKarta,
       emails: this.emails
     }
-    
     this.shareSubmitFlag = true;
     this._kartaService.shareKarta(data).subscribe(
       (response: any) => {
@@ -138,6 +144,7 @@ export class AllKartasComponent implements OnInit {
       },
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);
+    }
   }
 
   // Get all users 
