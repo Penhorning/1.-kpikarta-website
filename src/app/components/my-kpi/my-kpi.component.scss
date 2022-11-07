@@ -194,21 +194,31 @@ a.nav-link-cus {
     margin-top: -30px;
     margin-left: -9px;
 }
+
 .editacval input {
     // padding: 5px;
     border: 1px solid #e4e4e4;
     text-align: center;
     width: 50px;
 }
+
 .editacval span {
     text-align: center;
     // padding: 5px;
     width: 50px;
     float: left;
 }
+
 .achieved-val {
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
 
+}
+
+.short_text_with_width {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100px;
 }

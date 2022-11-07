@@ -1,0 +1,139 @@
+/* billing CSS */
+/*Supriya css start*/
+
+.overview{
+    padding: 20px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px; 
+    width:60%;
+    margin:0 auto;
+    max-width: 100%;
+    background-color: #fff;
+    box-shadow: 0 0 6px 0 #cbcbcb;
+    height: auto;
+    padding-bottom: 100px;
+  }
+  .heading{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .overview-btn{
+  background-color: #d8d9db;
+  font-size: 14px;
+  padding: 2px 30px;
+  font-weight: 600;
+  }
+  .creators{
+    border: 1px solid #e1e1e1;
+    border-radius: 5px; 
+    padding: 20px;
+    display:flex;
+    margin-top:20px;
+    justify-content: space-between;
+    background: #fff;
+    box-shadow: 0 0 6px 0 #cbcbcb;
+  }
+  .creators p{
+    color: rgb(131, 131, 131);
+    font-size: 14px;
+  }
+  .KPI-billing-tab li{
+    margin-right: 40px;
+  }
+  .thead{
+    border-bottom: 1px solid #e1e1e1;
+  }
+  .thead th,td{
+     padding: 20px !important;
+  }
+  .paid{
+    color:#27a746;
+  }
+
+  .container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    display: inline-block;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 83%;
+    opacity: 0;
+    transition: .3s ease;
+    background-color: #38373780;
+  }
+  
+  .container:hover .overlay {
+    opacity: 1;
+  }
+  
+  .icon{
+    color:#fff;
+    font-size: 18px;
+    margin: 20px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color:#07070896;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .icon-container {
+    color: white;
+    font-size: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    justify-content: space-around ;
+  }
+  
+  .fa-user:hover {
+    color: #eee;
+  }
+  
+  .icon-container a:hover {
+    text-decoration: none;
+    color: #eee;
+  }
+
+  /*media query billing page*/
+@media (max-width:600px){
+    .overview{
+      width:100%;
+      height:auto;
+    }
+    .heading{
+      flex-direction: column;
+    }
+    .heading h5{
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    .creators p{
+      font-size: 12px;
+    }
+    .creators{
+      padding:10px;
+    }
+    .creators h6{
+      font-size: 14px;
+    }
+    .overlay{
+      width:100%;
+    }
+  }
+

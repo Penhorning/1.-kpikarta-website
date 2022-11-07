@@ -5,12 +5,33 @@
 <div class="main-content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-3">
         <div class="page-heading">
           <h4 class="pt-3">Members</h4>
         </div>
       </div>
-      <div class="col-lg-6 text-right">
+      <div class="col-md-6">
+        <div class="search-bar">
+          <form action="" class="search-form">
+            <div class="form-group search-filed inventory m-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+              <input type="text" class="form-control mt-0" name="search" [(ngModel)]="search_text" id="search"
+                placeholder="Search...">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg"
+                viewBox="0 0 16 16" style="cursor: pointer; margin-right: 30px; margin-top: 4px;" *ngIf="search_text"
+                (click)="clearSearch()">
+                <path
+                  d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+              </svg>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-lg-3 text-right">
         <button class="karta-btn mt-2" data-toggle="modal" data-target="#memberModal" (click)="setFormType('CREATE')">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
             class="bi bi-person-plus-fill" viewBox="0 0 16 16">
@@ -20,28 +41,6 @@
           </svg>
           Invite
         </button>
-      </div>
-      <div class="col-md-3 ml-auto">
-        <div class="search-bar">
-          <form action="" class="search-form">
-              <div class="form-group search-filed inventory m-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                      class="bi bi-search" style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
-                      <path
-                          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                  </svg>
-                  <input type="text" class="form-control mt-0" name="search" [(ngModel)]="search_text"
-                      id="search" placeholder="Search...">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                      class="bi bi-x-lg" viewBox="0 0 16 16"
-                      style="cursor: pointer; margin-right: 30px; margin-top: 4px;" *ngIf="search_text"
-                      (click)="clearSearch()">
-                      <path
-                          d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                  </svg>
-              </div>
-          </form>
-      </div>
       </div>
     </div>
     <div class="karta-setip-white-table-box">
@@ -61,7 +60,7 @@
                 </tr>
               </thead>
               <tbody class="border-0">
-                <tr *ngFor="let user of users">
+                <tr *ngFor="let user of members">
                   <td class="short_text" style="max-width: 100px;">{{ user?.fullName }}</td>
                   <td>{{ user?.email }}</td>
                   <td>{{ user?.Role.name.replace('_', ' ') | titlecase }}</td>
@@ -75,26 +74,31 @@
                       <path
                         d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
                     </svg>
+                    <span *ngIf="!sendingCredentials" title="Send Credentials" class="ml-1" style="cursor: pointer;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16.059" viewBox="0 0 16 16.059">
+                        <g id="Group_8497" data-name="Group 8497" transform="translate(-14116.767 -3543)">
+                          <path id="Path_38517" data-name="Path 38517"
+                            d="M176.3,97.157l-16-7.557,3.557,7.557H176.3Zm0,.945H163.855l-3.557,7.557,16-7.557Z"
+                            transform="translate(13956.469 3453.4)" />
+                        </g>
+                      </svg>
+                    </span>
+                    <div class="spinner-border spinner-grow-sm" role="status" *ngIf="sendingCredentials">
+                      <span class="sr-only">Loading...</span>
+                    </div>
                   </td>
-                  <!-- <td>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                      class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                      <path
-                        d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                    </svg>
-                  </td> -->
                 </tr>
               </tbody>
             </table>
             <ng-container *ngIf="loading">
               <div class="p-5" [innerHtml]="loader"></div>
             </ng-container>
-            <ng-container *ngIf="!loading && users.length === 0">
+            <ng-container *ngIf="!loading && members.length === 0">
               <div [innerHtml]="noDataAvailable"></div>
-             </ng-container>
-           <div class="text-center" *ngIf="!loading && users.length > 9 && viewMore_hide">
-            <p class="view_more" (click)="viewMore()">View More..</p>
-          </div>
+            </ng-container>
+            <div class="text-center" *ngIf="!loading && members.length > 9 && viewMore_hide">
+              <p class="view_more" (click)="viewMore()">View More..</p>
+            </div>
           </div>
         </div>
       </div>
@@ -165,12 +169,13 @@
                   <div class="form-group">
                     <label>Select License <span class="text-danger">*</span></label>
                     <select class="form-control custom-select-option" formControlName="licenseId"
-                    [ngClass]="{ 'is-invalid': (submitted || form.licenseId.touched) && form.licenseId.errors }">
+                      [ngClass]="{ 'is-invalid': (submitted || form.licenseId.touched) && form.licenseId.errors }">
                       <option value="" selected>Select License</option>
                       <option *ngFor="let license of licenses" [value]="license.id">{{license.name}}
                       </option>
                     </select>
-                    <div *ngIf="(submitted || form.licenseId.touched) && form.licenseId.errors" class="invalid-feedback">
+                    <div *ngIf="(submitted || form.licenseId.touched) && form.licenseId.errors"
+                      class="invalid-feedback">
                       <div *ngIf="form.licenseId.errors.required">License is required!</div>
                     </div>
                   </div>
@@ -216,11 +221,6 @@
                     <ng-container *ngIf="!submitFlag">{{checkFormType}}</ng-container>
                   </button>
                 </div>
-                <!-- <div class="col-lg-6 text-right">
-                  <div class="">
-                    <button class="send-btn">CREDENTIALS</button>
-                  </div>
-                </div> -->
               </div>
             </form>
           </div>
