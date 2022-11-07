@@ -791,7 +791,7 @@
                       </div>
                       <div class="col-lg-4 d-flex flex-column justify-content-end align-items-center pb-3">
                         <div class="custom-add-minus">
-                          <a class="add-icon" *ngIf="fields.length == i+1" (click)="addFormulaGroup()"><img
+                          <a class="add-icon" *ngIf="fields.length == i+1 && fields.length < 5" (click)="addFormulaGroup()"><img
                               src="assets/img/plus-field-side-r.svg" class="img-fluid mr-3"></a>
                           <a class="remove-icon" *ngIf="fields.length > 1" (click)="deleteFormulaGroup(i)"><img
                               src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>

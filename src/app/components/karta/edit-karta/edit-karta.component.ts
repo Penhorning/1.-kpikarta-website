@@ -197,11 +197,16 @@ export class EditKartaComponent implements OnInit {
 
   //Adding a New FormulaField Group
   addFormulaGroup() {
-    let fieldForm = this.fb.group({
-      fieldName: [`Field${this.fields.length + 1}`],
-      fieldValue: [0, Validators.min(1)],
-    })
-    this.fields.push(fieldForm);
+    if(this.fields.length < 5) {
+      let fieldForm = this.fb.group({
+        fieldName: [`Field${this.fields.length + 1}`],
+        fieldValue: [0, Validators.min(1)],
+      })
+      this.fields.push(fieldForm);
+    }
+    else {
+      this._commonService.warningToaster("Can't add more than 5 fields");
+    }
   }
 
   //Deleting a particular FormulaField Group
@@ -211,10 +216,10 @@ export class EditKartaComponent implements OnInit {
     for (let i = 0; i < this.fields.length; i++) {
       newArr.push({
         ...this.formulaGroup.controls['fields']['controls'][i],
-        // fieldName: this.currentNode.node_type
-        //   ? this.currentNode.node_type.fields[i].fieldName
-        //   : `Field${i + 1}`,
-        fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
+        fieldName: this.currentNode.node_type
+          ? this.currentNode.node_type.fields[i].fieldName
+          : `Field${i + 1}`,
+        // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
       });
     }
     this.formulaGroup.patchValue({
@@ -287,11 +292,11 @@ export class EditKartaComponent implements OnInit {
 
   // Formula Fields Calculation
   calculateFormula(event: any) {
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
-    }
-    this.timer =
+    // if (this.timer) {
+    //   clearTimeout(this.timer);
+    //   this.timer = null;
+    // }
+    // this.timer =
       this.formulaFieldSuggestions.length == 0 &&
       setTimeout(() => {
         let tempObj: any = {};
@@ -372,7 +377,7 @@ export class EditKartaComponent implements OnInit {
         } else {
           this.formulaGroup.markAllAsTouched();
         }
-      }, 2000);
+      }, 1000);
   }
 
   //Show Dropdown suggestions for Formula Fields
