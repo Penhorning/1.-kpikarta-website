@@ -652,7 +652,9 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" class="form-control" [value]="currentNode.start_date" (change)="changeStartDate($event)">
+                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'" (change)="changeStartDate($event)"
+                  [ngClass]="{ 'is-invalid': !currentNode.start_date }">
+                  <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                 </div>
               </div>
               <div class="col-lg-6">
@@ -673,13 +675,13 @@
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
-                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_start_date" (change)="changeFiscalStartDate($event)">
+                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'" (change)="changeFiscalStartDate($event)">
                     </div>
                   </div>
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>End Date</label>
-                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date" (change)="changeFiscalEndDate($event)">
+                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'" (change)="changeFiscalEndDate($event)">
                     </div>
                   </div>
                 </div>
@@ -838,12 +840,13 @@
             </div>
             <div class="row">
               <div class="col-lg-12">
-                <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select users"
-                  (change)="changeContributor($event)">
+                <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select user"
+                  (change)="changeContributor($event)" [ngClass]="{ 'is-invalid': !currentNode.contributorId }">
                   <ng-option *ngFor="let user of users" [value]="user._id">
                     {{ user?.fullName }} ({{ user?.email }})
                   </ng-option>
                 </ng-select>
+                  <div class="invalid-feedback d-block" *ngIf="!currentNode.contributorId">Contributor is required!</div>
               </div>
             </div>
           </div>

@@ -527,6 +527,7 @@ export class EditKartaComponent implements OnInit {
   setTarget(type: string, e: any, index: any) {
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
+      if (index === 0 && this.currentNode.hasOwnProperty("start_date")) this.setDueDate(this.currentNode.start_date);
       this.updateNode('target', this.target, 'change target frequency');
     }
     else {
@@ -589,21 +590,33 @@ export class EditKartaComponent implements OnInit {
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
     // Show Measure and metrics when KPI's node selected
-    // this.currentPhase = this.phases[this.phaseIndex(param.phaseId)];
     if (this.currentNode.phase.name === 'KPI') {
       this.showKPICalculation = true;
+      // Set target
       if (param.target) this.target = param.target;
-      else {
-        this.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
-      }
+      else this.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
+      // Set due date, if available
       if (this.currentNode.due_date)
-        this.currentNode.due_date = new Date(this.currentNode.due_date)
-          .toISOString()
-          .substring(0, 10);
+        this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
     }
 
     if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
     else if (this.currentNode.notifyUserId) this.notifyType = "specific";
+  }
+
+  // Set due date
+  setDueDate(start_date: any) {
+    let due_date: any;
+    if (this.currentNode.target[0].frequency === "weekly") {
+      due_date = moment(start_date).add(1, 'weeks');
+    } else if (this.currentNode.target[0].frequency === "monthly") {
+      due_date = moment(start_date).add(1, 'months');
+    } else if (this.currentNode.target[0].frequency === "quarterly") {
+      due_date = moment(start_date).add(3, 'months');
+    } else if (this.currentNode.target[0].frequency === "annually") {
+      due_date = moment(start_date).add(1, 'years');
+    }
+    this.updateNode('due_date', due_date, 'change due date');
   }
 
   // Change node name
@@ -632,6 +645,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Change start date
   changeStartDate(el: any) {
+    this.setDueDate(el.target.value);
     this.updateNode('start_date', el.target.value, 'change start date');
   }
   // Change days to calculate
@@ -707,21 +721,24 @@ export class EditKartaComponent implements OnInit {
       if (element.phase.name === "KPI") {
         let targetValue = 0;
         // Set target value according to month to date
-        if (this.kpiCalculationPeriod === "month-to-date") {
+        // if (this.kpiCalculationPeriod === "month-to-date") {
+        //   const totalDays = moment().daysInMonth();
+        //   const todayDay = moment().date();
+        //   targetValue = element.target.find((item: any) => item.frequency === 'monthly').value;
+        //   targetValue = todayDay * (targetValue / totalDays);
+        // }
+        // // Set target value according to year to date
+        // else if (this.kpiCalculationPeriod === "year-to-date") {
+        //   const currentYear = moment().year();
+        //   const totalDays = moment([currentYear]).isLeapYear() ? 366 : 365;
+        //   const todayDay = moment().date();
+        //   targetValue = element.target.find((item: any) => item.frequency === 'annually').value;
+        //   targetValue = todayDay * (targetValue / totalDays);
+        // }
           const totalDays = moment().daysInMonth();
           const todayDay = moment().date();
-          targetValue = element.target.find((item: any) => item.frequency === 'monthly').value;
+          targetValue = element.target[0].value;
           targetValue = todayDay * (targetValue / totalDays);
-        }
-        // Set target value according to year to date
-        else if (this.kpiCalculationPeriod === "year-to-date") {
-          const currentYear = moment().year();
-          const totalDays = moment([currentYear]).isLeapYear() ? 366 : 365;
-          const todayDay = moment().date();
-          targetValue = element.target.find((item: any) => item.frequency === 'annually').value;
-          targetValue = todayDay * (targetValue / totalDays);
-        }
-        console.log("achie v ", element.achieved_value)
         let current_percentage= (element.achieved_value/targetValue) * 100;
         element.percentage = Math.round(current_percentage);
         element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);

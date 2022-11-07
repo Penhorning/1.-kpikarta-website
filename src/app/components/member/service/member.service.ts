@@ -23,8 +23,11 @@ export class MemberService {
   invite(data: any) {
     return this._httpService.POST('/users/invite', data);
   }
-  updateUser(data: any, userId: string, accessToken: string) {
-    return this._httpService.PATCH(`/users/${userId}?access_token=${accessToken}`, data);
+  updateUser(data: any, userId: string) {
+    return this._httpService.PATCH(`/users/${userId}`, data);
+  }
+  sendCredentials(data: any) {
+    return this._httpService.POST('/users/send-credentials', data);
   }
   /*============================== API FUNCTIONS ENDS ==============================*/
 }

@@ -70,7 +70,7 @@ export class KartaService {
     return this._httpService.POST('/karta/shared-kartas', data);
   }
   copyKarta(data: any) {
-    return this._httpService.POST('/karta/copy-shared-karta', data);
+    return this._httpService.POST('/karta/copy', data);
   }
   getColorSettingByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);

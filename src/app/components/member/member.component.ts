@@ -25,6 +25,7 @@ export class MemberComponent implements OnInit {
   hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
   viewMore_hide: boolean = true;
+  sendingCredentials: boolean = false;
 
   search_text: string = "";
   totalData: number = 0;
@@ -197,7 +198,7 @@ export class MemberComponent implements OnInit {
       else if (this.checkFormType === "UPDATE") {
         this.inviteForm.value.type = "invited_user";
         this.inviteForm.value.userId = this.currentUser._id;
-        this._memberService.updateUser(this.inviteForm.value, this.currentUser._id, this._commonService.getSession().token).subscribe(
+        this._memberService.updateUser(this.inviteForm.value, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
             this.getAllInvites();
@@ -219,6 +220,18 @@ export class MemberComponent implements OnInit {
     this.showDepartment = false;
     this.inviteForm.removeControl("departmentId");
     $('#memberModal').modal('hide');
+  }
+
+  // Send credential
+  sendCredential(userId: string) {
+    let data = { userId }
+    this.sendingCredentials = true;
+    this._memberService.sendCredentials(data).subscribe(
+      (response: any) => {
+        this._commonService.successToaster("Credentials sent successully!");
+      },
+      (error: any) => { }
+    ).add(() => this.sendingCredentials = false);
   }
 
   search() {
