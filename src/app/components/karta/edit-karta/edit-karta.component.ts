@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
@@ -68,7 +68,7 @@ export class EditKartaComponent implements OnInit {
           parentId: d.parent.id,
           phaseId: d.phaseId,
         };
-        this.updateNode('updateDraggedNode', data, 'node dragged');
+        this.updateNode('update_dragged_node', data, 'node_updated');
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -144,7 +144,8 @@ export class EditKartaComponent implements OnInit {
     private _kartaService: KartaService,
     private _commonService: CommonService,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -152,7 +153,7 @@ export class EditKartaComponent implements OnInit {
     // Formula Fields
     this.formulaGroup = this.fb.group({
       calculatedValue: [0],
-      fields: this.fb.array(this.addFormulaGroupByDefault()),
+      fields: this.fb.array([]),
       formula: ['', Validators.required],
     });
 
@@ -172,32 +173,40 @@ export class EditKartaComponent implements OnInit {
     this.getAllUser();
     // Get versions
     this.getAllVersion();
-    // Get edit color code setting
-    this.getEditColorSettings();
+    // Default Fields for Formula
+    this.addFormulaGroupByDefault();
   }
 
   // ---------FormArray Functions defined Below----------
   //Adding 2 default FormulaField Group
-  addFormulaGroupByDefault(): any[] {
+  addFormulaGroupByDefault() {
     let newArr = [];
-    if (!this.currentNode.node_type) {
-      for (let i = 0; i < 2; i++) {
-        newArr.push(this.fb.group({
-          fieldName: [`Field${i + 1}`],
-          fieldValue: [0, Validators.min(1)],
-        }))
+    if(this.formulaGroup.controls['fields'].controls.length == 0){
+      if(!this.currentNode.node_type){
+        for(let i = 0; i < 2; i++){
+          newArr.push(this.fb.group({
+            fieldName: [`Field${i + 1}`],
+            fieldValue: [0, Validators.min(1)],
+          }))
+        }
       }
     }
-    return newArr;
+    // return newArr;
+    this.formulaGroup.controls['fields'] = new FormArray(newArr);
   }
 
   //Adding a New FormulaField Group
   addFormulaGroup() {
-    let fieldForm = this.fb.group({
-      fieldName: [`Field${this.fields.length + 1}`],
-      fieldValue: [0, Validators.min(1)],
-    })
-    this.fields.push(fieldForm);
+    if(this.fields.length < 5) {
+      let fieldForm = this.fb.group({
+        fieldName: [`Field${this.fields.length + 1}`],
+        fieldValue: [0, Validators.min(1)],
+      })
+      this.fields.push(fieldForm);
+    }
+    else {
+      this._commonService.warningToaster("Can't add more than 5 fields");
+    }
   }
 
   //Deleting a particular FormulaField Group
@@ -207,10 +216,10 @@ export class EditKartaComponent implements OnInit {
     for (let i = 0; i < this.fields.length; i++) {
       newArr.push({
         ...this.formulaGroup.controls['fields']['controls'][i],
-        // fieldName: this.currentNode.node_type
-        //   ? this.currentNode.node_type.fields[i].fieldName
-        //   : `Field${i + 1}`,
-        fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
+        fieldName: this.currentNode.node_type
+          ? this.currentNode.node_type.fields[i].fieldName
+          : `Field${i + 1}`,
+        // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
       });
     }
     this.formulaGroup.patchValue({
@@ -249,7 +258,8 @@ export class EditKartaComponent implements OnInit {
 
   // Saving Field Values temporarily in an object until the tick option is not clicked
   saveFieldValuesTemporarily(id: number, event: any) {
-    this.formulagroupDefaultValues[id] = event.target.innerText;
+    let value = event.target.innerText.split(" ").join("_");
+    this.formulagroupDefaultValues[id] = value;
   }
 
   // Set Temporary Field Value to FormArray
@@ -282,11 +292,11 @@ export class EditKartaComponent implements OnInit {
 
   // Formula Fields Calculation
   calculateFormula(event: any) {
-    if (this.timer) {
-      clearTimeout(this.timer);
-      this.timer = null;
-    }
-    this.timer =
+    // if (this.timer) {
+    //   clearTimeout(this.timer);
+    //   this.timer = null;
+    // }
+    // this.timer =
       this.formulaFieldSuggestions.length == 0 &&
       setTimeout(() => {
         let tempObj: any = {};
@@ -321,45 +331,53 @@ export class EditKartaComponent implements OnInit {
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
+            this._commonService.errorToaster("Invalid Formula..!!");
           } else {
-            $('#formula-field').removeClass('is-invalid');
             total = eval(newValue);
             this.formulaGroup.patchValue({
               calculatedValue: total,
             });
 
-            let request = {
-              ...this.formulaGroup.value,
-              metrics: true,
-            };
-            delete request['calculatedValue'];
-
-            let newTarget = this.target.map((obj: any) => {
-              let percentage = (total / obj.value) * 100;
-              return {
-                ...obj,
-                percentage: Math.round(percentage),
-                value: obj.value
-              }
-            });
-
-            this._kartaService
-              .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
-              .subscribe(
-                (x) => {
-                  $('#formula-field').addClass('is-valid');
-                  // this.updateNodeProperties(x);
-                },
-                (err) => {
-                  console.log(err);
-                  this._commonService.errorToaster('Something went wrong..!!');
+            if(total < 0) {
+              this._commonService.errorToaster("Achieved value can't be a negative value..!!");
+              $('#formula-field').addClass('is-invalid');
+              $('#formula-field').removeClass('is-valid');
+            }
+            else {
+              $('#formula-field').removeClass('is-invalid');
+              let request = {
+                ...this.formulaGroup.value,
+                metrics: true,
+              };
+              delete request['calculatedValue'];
+  
+              let newTarget = this.target.map((obj: any) => {
+                let percentage = (total / obj.value) * 100;
+                return {
+                  ...obj,
+                  percentage: Math.round(percentage),
+                  value: obj.value
                 }
+              });
+              
+              this._kartaService
+                .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
+                .subscribe(
+                  (x) => {
+                    $('#formula-field').addClass('is-valid');
+                    // this.updateNodeProperties(x);
+                  },
+                  (err) => {
+                    console.log(err);
+                    this._commonService.errorToaster('Something went wrong..!!');
+                  }
               );
+            }
           }
         } else {
           this.formulaGroup.markAllAsTouched();
         }
-      }, 2000);
+      }, 1000);
   }
 
   //Show Dropdown suggestions for Formula Fields
@@ -518,7 +536,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getAllVersions(this.kartaId).subscribe(
       (response: any) => {
         this.version = response;
-        this.versionId = response[0].id;
+        this.getKartaInfo();
       }
     );
   }
@@ -528,14 +546,14 @@ export class EditKartaComponent implements OnInit {
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
       if (index === 0 && this.currentNode.hasOwnProperty("start_date")) this.setDueDate(this.currentNode.start_date);
-      this.updateNode('target', this.target, 'change target frequency');
+      this.updateNode('target', this.target, 'node_updated');
     }
     else {
       let percentage = (this.currentNode.achieved_value / e.target.value) * 100;
       this.target[index].percentage = Math.round(percentage);
       this.target[index].value = parseInt(e.target.value);
-      this.updateNode('target', this.target, 'change target value');
-
+      this.updateNode('target', this.target, 'node_updated');
+      
     }
   }
   addMoreTarget() {
@@ -547,7 +565,7 @@ export class EditKartaComponent implements OnInit {
   }
   removeTarget(index: number) {
     this.target.splice(index, 1);
-    this.updateNode('target', this.target, 'remove particular target');
+    this.updateNode('target', this.target, 'node_update_key_remove');
   }
 
   // Find phase index
@@ -622,7 +640,7 @@ export class EditKartaComponent implements OnInit {
   // Change node name
   changeNodeName() {
     if (this.currentNodeName !== "") {
-      this.updateNode('name', this.currentNodeName, 'change node name');
+      this.updateNode('name', this.currentNodeName, 'node_updated');
     }
   }
   // Change weightage
@@ -635,13 +653,13 @@ export class EditKartaComponent implements OnInit {
         .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weightage of all the nodes cannot be greator than 100!");
-      } else this.updateNode('weightage', this.currentNodeWeight, 'change node weightage');
+      } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated');
     }
   }
   // Change alignment
   changeAlignment(value: string) {
     this.selectedAlignment = value;
-    this.updateNode('alignment', value, 'change node alignment');
+    this.updateNode('alignment', value, 'node_updated');
   }
   // Change start date
   changeStartDate(el: any) {
@@ -665,7 +683,7 @@ export class EditKartaComponent implements OnInit {
     this.karta.node.percentage = Math.round(
       this.calculatePercentage(this.karta.node)
     );
-    this.updateNode('kpi_calc_period', el.target.value, 'change kpi calculation period');
+    this.updateNode('kpi_calc_period', el.target.value, 'node_updated');
   }
   // Change achieved value
   changeAchievedValue() {
@@ -682,32 +700,32 @@ export class EditKartaComponent implements OnInit {
         achieved_value: this.currentNodeAchievedValue,
         target: this.target,
       };
-      this.updateNode('achieved_value', data, 'change achieved value');
+      this.updateNode('achieved_value', data, 'node_updated');
     }
   }
   // Change contributor
   changeContributor(userId: string) {
-    this.updateNode('contributorId', userId, 'change contributor');
+    this.updateNode('contributorId', userId, 'node_updated');
   }
   // Set notify user
   setNotifyUser() {
     if (this.notifyType === "owner") {
-      this.updateNode('notifyUserId', this.currentNode.contributorId, 'change notify user');
+      this.updateNode('notifyUserId', this.currentNode.contributorId, 'node_updated');
       this.currentNode.notifyUserId = this.currentNode.contributorId;
     } else this.currentNode.notifyUserId = undefined;
   }
   selectNotifyUser(userId: string) {
-    this.updateNode('notifyUserId', userId, 'change notify user');
+    this.updateNode('notifyUserId', userId, 'node_updated');
     this.currentNode.notifyUserId = userId;
   }
   // Change alert type
   changeAlertType(e: any) {
-    this.updateNode('alert_type', e.target.value, 'change alert type');
+    this.updateNode('alert_type', e.target.value, 'node_updated');
     this.currentNode.alert_type = e.target.value;
   }
   // Change alert frequency
   changeAlertFrequency(e: any) {
-    this.updateNode('alert_frequency', e.target.value, 'change alert frequency');
+    this.updateNode('alert_frequency', e.target.value, 'node_updated');
     this.currentNode.alert_frequency = e.target.value;
   }
 
@@ -779,6 +797,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
         this.karta = response;
+        this.versionId = response.versionId;
         this.sharedKartaStr = response;
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(
@@ -790,6 +809,17 @@ export class EditKartaComponent implements OnInit {
         }
       }
     ).add(() => (this.loadingKarta = false));
+  }
+
+  versionRollback(event: any){
+    // Need working here
+    // this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
+    //   (data) => {
+    //     this.ngOnInit();
+    //     this.getKartaInfo();
+    //   },
+    //   (err) => console.log(err)
+    // );
   }
 
   // Get all phases
@@ -868,11 +898,13 @@ export class EditKartaComponent implements OnInit {
       // this.getKartaInfo();
 
       let history_data = {
-        event: "new node added",
+        event: "node_created",
         eventValue: data,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
-        versionId: this.versionId
+        versionId: this.versionId,
+        kartaId: this.kartaId,
+        parentNodeId: param.id
       };
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => { }
@@ -948,13 +980,15 @@ export class EditKartaComponent implements OnInit {
         // Save the karta update history
         let history_data = {
           event,
-          event_key: key,
-          event_value: value,
+          eventValue: {
+            [key]: value
+          },
           kartaNodeId: this.currentNode.id,
           userId: this._commonService.getUserId(),
-          versionId: this.versionId
+          versionId: this.versionId,
+          kartaId: this.kartaId
         }
-        this._kartaService.addKartaHistory(history_data).subscribe(
+        this._kartaService.addKartaHistoryObject(history_data).subscribe(
           (response: any) => { }
         );
       }
@@ -966,6 +1000,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.removeNode(param.id).subscribe((response: any) => {
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
+      this.updateNode('kartaNodeId', param.id, 'node_removed');
     });
   }
 
@@ -1024,11 +1059,12 @@ export class EditKartaComponent implements OnInit {
       this.updateNodeProperties(response);
 
       let history_data = {
-        event: "new root node added",
+        event: "node_created",
         eventValue: data,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
-        versionId: this.versionId
+        versionId: this.versionId,
+        kartaId: this.kartaId
       };
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => { }
@@ -1038,13 +1074,39 @@ export class EditKartaComponent implements OnInit {
 
   // Save karta
   saveKarta() {
-    let data = {
-      name: this.karta.name,
-    };
-    this._kartaService.updateKarta(this.karta.id, data).subscribe(
-      (response: any) => {
-        this.karta = response;
+    // New Version Calculation
+    let versionNumber = this.version.reduce((acc: any,curr: any) => {
+      let num = curr.name.split(".")[0];
+      if(Number(num) > acc){
+        acc = Number(num);
       }
+      return acc;
+    }, 0);
+
+    // New Version Object
+    let new_version = {
+      name: `${versionNumber+1}.0.0`,
+      kartaId: this.kartaId
+    };
+
+    this._kartaService.createKartaVersion(new_version).subscribe(
+      (versionResponse: any) => {
+        // New Karta Data
+        let data = {
+          name: this.karta.name,
+          versionId: versionResponse.id
+        };
+
+        this._kartaService.updateKarta(this.kartaId, data).subscribe(
+          (kartaResponse: any) => {
+            this.karta = kartaResponse;
+            this._commonService.successToaster("New version created successfully..!!");
+          },
+          (err: any) => console.log(err)
+        )
+        this.getAllVersion();
+      },
+      (err: any) => console.log(err)
     );
   }
 

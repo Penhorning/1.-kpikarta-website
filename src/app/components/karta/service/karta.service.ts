@@ -24,38 +24,11 @@ export class KartaService {
   getColorSettingsByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);
   }
-  createKarta(data: any) {
-    return this._httpService.POST('/karta', data);
-  }
-  updateKarta(kartaId: string, data: any) {
-    return this._httpService.PATCH(`/karta/${kartaId}`, data);
-  }
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
   getKartas(data: any) {
     return this._httpService.POST('/karta/get-kartas', data);
-  }
-  deleteKarta(data: any) {
-    return this._httpService.POST('/karta/delete', data);
-  }
-  // deleteSharedKarta(id: any) {
-  //   return this._httpService.POST('/karta/delete-shared-karta', id);
-  // }
-  addNode(data: any) {
-    return this._httpService.POST('/karta_nodes', data);
-  }
-  updateNode(nodeId: string, data: any) {
-    return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
-  }
-  removeNode(nodeId: string) {
-    return this._httpService.POST('/karta_nodes/delete', {nodeId});
-  }
-  addKartaHistory(data: any) {
-    return this._httpService.POST('/karta_histories', data);
-  }
-  addKartaHistoryObject(data: any) {
-    return this._httpService.POST('/karta_histories/create-karta-history', data);
   }
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
@@ -63,14 +36,55 @@ export class KartaService {
   getAllVersions(kartaId: string) {
     return this._httpService.GET(`/karta_versions?filter[where][kartaId]=${kartaId}&filter[order]=name ASC`);
   }
-  shareKarta(data: any) {
-    return this._httpService.POST('/karta/share', data);
+  getKartaHistory(){
+    return this._httpService.GET(`/karta_histories`);
   }
   getSharedKartas(data: any) {
     return this._httpService.POST('/karta/shared-kartas', data);
   }
+
+  createKartaVersion(data: any){
+    return this._httpService.POST('/karta_versions', data);
+  }
+  createKarta(data: any) {
+    return this._httpService.POST('/karta', data);
+  }
+
+  // deleteSharedKarta(id: any) {
+  //   return this._httpService.POST('/karta/delete-shared-karta', id);
+  // }
+  addNode(data: any) {
+    return this._httpService.POST('/karta_nodes', data);
+  }
+  addKartaHistory(data: any) {
+    return this._httpService.POST('/karta_histories', data);
+  }
+  addKartaHistoryObject(data: any) {
+    return this._httpService.POST('/karta_histories/create-karta-history', data);
+  }
+
+  updateNode(nodeId: string, data: any) {
+    return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
+  }
+  updateKarta(kartaId: string, data: any) {
+    return this._httpService.PATCH(`/karta/${kartaId}`, data);
+  }
+
+  deleteKarta(data: any) {
+    return this._httpService.POST('/karta/delete', data);
+  }
+  removeNode(nodeId: string) {
+    return this._httpService.POST('/karta_nodes/delete', {nodeId});
+  }
+
+  shareKarta(data: any) {
+    return this._httpService.POST('/karta/share', data);
+  }
   copyKarta(data: any) {
     return this._httpService.POST('/karta/copy', data);
+  }
+  versionControlHistory(data: any){
+    return this._httpService.POST('/karta_histories/version-control', data);
   }
   getColorSettingByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);
