@@ -13,7 +13,7 @@ declare const $: any;
 })
 export class MemberComponent implements OnInit {
 
-  users: any = [];
+  members: any = [];
   roles: any = [];
   departments: any = [];
   licenses: any = [];
@@ -59,14 +59,14 @@ export class MemberComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getAllInvites();
+    this.getAllMembers();
     this.getRoles();
     this.getDepartments();
     this.getLicenses();
   }
 
-  // Get all invites users
-  getAllInvites() {
+  // Get all members users
+  getAllMembers() {
     let data = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
@@ -74,13 +74,13 @@ export class MemberComponent implements OnInit {
       searchQuery: this.search_text
     }
     this.loading = true;
-    this._memberService.getAllInvites(data).subscribe(
+    this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
-        if (response.users[0].data.length > 0) {
-          this.users = response.users[0].data;
-          this.totalData = response.users[0].metadata[0].total;
+        if (response.members[0].data.length > 0) {
+          this.members = response.members[0].data;
+          this.totalData = response.members[0].metadata[0].total;
         } else {
-          this.users = [];
+          this.members = [];
           this.totalData = 0;
         }
       }
@@ -178,13 +178,13 @@ export class MemberComponent implements OnInit {
 
       // When new user create
       if (this.checkFormType === "CREATE") {
-        this._memberService.invite({ data: this.inviteForm.value }).subscribe(
+        this._memberService.inviteMember({ data: this.inviteForm.value }).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.users = [];
+            this.members = [];
             this.pageIndex = 0,
             this.viewMore_hide = !this.viewMore_hide;
-            this.getAllInvites();
+            this.getAllMembers();
             this._commonService.successToaster("Member invited successfully!");
           },
           (error: any) => {
@@ -201,7 +201,7 @@ export class MemberComponent implements OnInit {
         this._memberService.updateUser(this.inviteForm.value, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.getAllInvites();
+            this.getAllMembers();
             this._commonService.successToaster("Member updated successfully!");
           },
           (error: any) => {
@@ -237,14 +237,14 @@ export class MemberComponent implements OnInit {
   search() {
     if (this.search_text) {
       this.pageIndex = 0;
-      this.users = [];
-      this.getAllInvites();
+      this.members = [];
+      this.getAllMembers();
     }
   }
   clearSearch() {
     this.search_text = "";
-    this.users = [];
-    this.getAllInvites();
+    this.members = [];
+    this.getAllMembers();
   }
 
   viewMore() {
@@ -256,11 +256,11 @@ export class MemberComponent implements OnInit {
       searchQuery: this.search_text
     }
     this.loading = true;
-    this._memberService.getAllInvites(data).subscribe(
+    this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
         if (response) {
-          this.users.push(...response.users[0].data);
-          if (response.users[0].metadata[0].total == this.users.length) this.viewMore_hide = !this.viewMore_hide;
+          this.members.push(...response.users[0].data);
+          if (response.users[0].metadata[0].total == this.members.length) this.viewMore_hide = !this.viewMore_hide;
         }
       }).add(() => this.loading = false);
   }

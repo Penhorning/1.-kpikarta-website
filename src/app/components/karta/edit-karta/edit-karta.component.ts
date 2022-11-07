@@ -112,7 +112,7 @@ export class EditKartaComponent implements OnInit {
   disabled = false;
   ShowFilter = false;
   limitSelection = false;
-  users: any = [];
+  contributors: any = [];
   selectedUsers: any;
   dropdownSettings: any = {};
   contributorUsers: any = [];
@@ -126,6 +126,7 @@ export class EditKartaComponent implements OnInit {
   notifyType: string = "";
 
   // Share karta
+  members: any = [];
   sharedKartaStr: any = [];
   kartas: any = [];
   sharingKarta: any;
@@ -169,10 +170,8 @@ export class EditKartaComponent implements OnInit {
     this.getColorSettings();
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
-    // Get users
-    this.getAllUser();
-    // Get versions
-    this.getAllVersion();
+    // Get all members
+    this.getAllMembers();
     // Default Fields for Formula
     this.addFormulaGroupByDefault();
   }
@@ -522,11 +521,21 @@ export class EditKartaComponent implements OnInit {
     else this.disableChart();
   }
 
-  // Get all users
-  getAllUser() {
-    this._kartaService.getAllUsers().subscribe(
+  // Get all members
+  getAllMembers() {
+    let data = {
+      limit: 1000,
+      type: "all",
+      userId: this._commonService.getUserId()
+    }
+    this._kartaService.getAllMembers(data).subscribe(
       (response: any) => {
-        this.users = response.users[0].data;
+        this.contributors = response.members[0].data;
+        if (response.members[0].data.length > 0) {
+          this.members = response.members[0].data.filter((x: any) => {
+            return x.email != this._commonService.getEmailId();
+          });
+        } else this.members = [];
       }
     );
   }
@@ -824,7 +833,8 @@ export class EditKartaComponent implements OnInit {
   getPhases() {
     this._kartaService.getPhases().subscribe((response: any) => {
       this.phases = response;
-      this.getKartaInfo();
+      // Get versions
+      this.getAllVersion();
       // this._kartaService.getSubPhases(this.kartaId).subscribe(
       //   (response: any) => {
       //     this.subPhases = response;

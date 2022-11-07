@@ -842,7 +842,7 @@
               <div class="col-lg-12">
                 <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select user"
                   (change)="changeContributor($event)" [ngClass]="{ 'is-invalid': !currentNode.contributorId }">
-                  <ng-option *ngFor="let user of users" [value]="user._id">
+                  <ng-option *ngFor="let user of contributors" [value]="user._id">
                     {{ user?.fullName }} ({{ user?.email }})
                   </ng-option>
                 </ng-select>
@@ -865,7 +865,7 @@
                 <ng-container *ngIf="notifyType === 'specific'">
                   <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user"
                     (change)="selectNotifyUser($event)">
-                    <ng-option *ngFor="let user of users" [value]="user._id">
+                    <ng-option *ngFor="let user of members" [value]="user._id">
                       {{ user?.fullName }} ({{ user?.email }})
                     </ng-option>
                   </ng-select>
@@ -921,10 +921,10 @@
             <div class="modal-body">
               <div class="share-link-model mt-3">
                 <div class="form-group">
-                  <label class="short_text" style="max-width: 100px;" >{{sharingKarta?.name}}</label>
+                  <label class="short_text" style="max-width: 500px;" >{{sharingKarta?.name}}</label>
                   <div class="row">
                     <div class="col-lg-12">
-                      <ng-select [items]="users" [addTag]="addTagPromise" placeholder="Select users" [loading]="loading"
+                      <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users" [loading]="loading"
                         [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers">
                         <ng-template ng-tag-tmp let-search="searchTerm">
                           <b>Add new email</b>: {{search}}
@@ -952,9 +952,9 @@
                   <span>Shared with:</span>
                   <ng-container *ngIf="sharingKartaCount">
                     <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-                    <span class="ml-2" *ngIf="sharingKartaCount > 1">
+                    <span class="ml-2">
                       <div class="user-counter">
-                        <p>+{{ sharingKartaCount - 1 }}</p>
+                        <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
                       </div>
                     </span>
                   </ng-container>
