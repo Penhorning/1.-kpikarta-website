@@ -43,12 +43,6 @@ input[type=number]::-webkit-outer-spin-button {
     white-space: nowrap;
     overflow: hidden;
 }
-.short_text_mykpi {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    max-width: 100px;
-}
 
 .view_more {
     cursor: pointer;
