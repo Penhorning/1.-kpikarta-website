@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../karta/service/karta.service';
+import { MemberService } from '../member/service/member.service';
 
 
 declare const $: any;
@@ -31,12 +32,13 @@ export class DashboardComponent implements OnInit {
   constructor(
     private _commonService: CommonService,
     private _kartaService: KartaService,
+    private _memberService: MemberService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.getKartas();
-    this.getAllUser();
+    this.getAllMembers();
     this.getSharedKartas();
   }
 
@@ -60,16 +62,15 @@ export class DashboardComponent implements OnInit {
     }).add(() => this.loadingKartas = false );;
   }
 
-  // Get all users
-  getAllUser() {
-    this._kartaService.getAllUsers().subscribe((response: any) => {
-      if (response) {
-        this.users = response.users[0].data.filter((x: any) => {
-          return x.email != this._commonService.getEmailId();
-        });
-      } else {
-        this.users = [];
-      }
+  // Get all members
+  getAllMembers() {
+    let data = {
+      limit: 1000,
+      userId: this._commonService.getUserId()
+    }
+    this._memberService.getAllMembers(data).subscribe(
+      (response: any) => {
+        this.users = response.members[0].data;
     });
   }
 
@@ -173,7 +174,7 @@ export class DashboardComponent implements OnInit {
   copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
-      this._kartaService.copyKarta({ kartaId: id }).subscribe(
+      this._kartaService.copyKarta({ kartaId: id, userId: this._commonService.getUserId() }).subscribe(
         (response: any) => {
           this._commonService.successToaster('Karta copy created successfully!');
           this.getKartas();
@@ -186,6 +187,10 @@ export class DashboardComponent implements OnInit {
     $('#kt' + id).attr('contenteditable', true);
     $('#kt' + id).focus();
     return;
+  }
+  // Limiting length for Content Editable
+  setLimitForContentEditable(event: any) {
+    return event.target.innerText.length < 50;
   }
   checkEditStatus(id: number) {
     let value = $('#kt' + id).attr('contenteditable');

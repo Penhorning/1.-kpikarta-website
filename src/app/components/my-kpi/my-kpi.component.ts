@@ -16,7 +16,7 @@ export class MyKpiComponent implements OnInit {
   karta: any = [];
   kpis: any = [];
   colorSettings: any = [];
-  users: any = [];
+  members: any = [];
   creators: any = [];
   loading: boolean = false;
   loader: any = this._commonService.loader;
@@ -124,7 +124,7 @@ export class MyKpiComponent implements OnInit {
 
   ngOnInit(): void {
     this.getColorSettings();
-    this.getAllUser();
+    this.getAllMembers();
     this.getKpiStats();
     this.getCreators();
 
@@ -308,13 +308,16 @@ export class MyKpiComponent implements OnInit {
     return moment(due_date).diff(moment(), 'days') + 1;
   }
 
-  // Get all users 
-  getAllUser() {
-    this._myKpiService.getAllUsers().subscribe(
+  // Get all members
+  getAllMembers() {
+    let data = {
+      limit: 1000,
+      userId: this._commonService.getUserId()
+    }
+    this._myKpiService.getAllMembers(data).subscribe(
       (response: any) => {
-        this.users = response.users[0].data.filter((el: any) => el.email !== this._commonService.getEmailId()).map((item: any) => { return { "_id": item._id, "fullName": `${item.fullName} (${item.email})` } });
-      }
-    );
+        this.members = response.members[0].data;
+    });
   }
 
   // Search
@@ -384,13 +387,13 @@ export class MyKpiComponent implements OnInit {
     } else {
       // this.selectedUsers = new Array()
       this.sharingKartaCount = 0;
-      this.users.forEach((user: any) => {
+      this.members.forEach((user: any) => {
         delete user.isDisabled;
       });
     }
     this.selectedSharedUsers = [];
     if (param.sharedTo && param.sharedTo.length > 0) {
-      this.users.forEach((user: any) => {
+      this.members.forEach((user: any) => {
         delete user.isDisabled;
         param.sharedTo.forEach((item: any) => {
           if (item.userId === user._id) {
@@ -411,7 +414,7 @@ export class MyKpiComponent implements OnInit {
     this.sharedSubmitFlag = true;
     this._myKpiService.shareNode(data).subscribe(
       (response: any) => {
-        if (response) this._commonService.successToaster("Your have shared successfully");
+        if (response) this._commonService.successToaster("Your have shared the node successfully");
         $('#staticBackdrop').modal('hide');
         this.sharingKarta = null;
         this.getMyKPIsList();
