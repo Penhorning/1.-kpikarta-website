@@ -173,7 +173,7 @@ export class DashboardComponent implements OnInit {
   copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
-      this._kartaService.copyKarta({ kartaId: id }).subscribe(
+      this._kartaService.copyKarta({ kartaId: id, userId: this._commonService.getUserId() }).subscribe(
         (response: any) => {
           this._commonService.successToaster('Karta copy created successfully!');
           this.getKartas();

@@ -812,14 +812,12 @@ export class EditKartaComponent implements OnInit {
   }
 
   versionRollback(event: any){
-    // Need working here
-    // this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
-    //   (data) => {
-    //     this.ngOnInit();
-    //     this.getKartaInfo();
-    //   },
-    //   (err) => console.log(err)
-    // );
+    this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
+      (data) => {
+        this.getKartaInfo();
+      },
+      (err) => console.log(err)
+    );
   }
 
   // Get all phases
