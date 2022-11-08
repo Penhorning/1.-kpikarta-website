@@ -213,7 +213,7 @@ export class MyKpiComponent implements OnInit {
       this.metricsSubmitFlag = true;
       this._myKpiService.updateNode(this.currentNode, { node_type: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
         (response) => {
-          if (response) { this._commonService.successToaster('Actual value updated succesfully!'); }
+          if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
           this.getMyKPIsList();
         },
@@ -241,7 +241,7 @@ export class MyKpiComponent implements OnInit {
     this.measureSubmitFlag = true;
     this._myKpiService.updateNode(this.currentNode, { achieved_value: +this.measureForm.value.actualValue, target: this.target, is_achieved_modified: true }).subscribe(
       (response) => {
-        if (response) { this._commonService.successToaster('Actual value updated succesfully!'); }
+        if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
         this.getMyKPIsList();
       },

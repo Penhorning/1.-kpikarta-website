@@ -160,7 +160,7 @@ export class DashboardComponent implements OnInit {
 
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
-          this._commonService.successToaster("Your have shared karta successfully!");
+          this._commonService.successToaster("You have shared Karta successfully!");
           $('#shareLinkModal').modal('hide');
           this.getKartas();
           this.getSharedKartas();
@@ -204,7 +204,7 @@ export class DashboardComponent implements OnInit {
           $('#kt' + index).attr('contenteditable', false);
           this.ngOnInit();
           this._commonService.successToaster(
-            'Karta name updated uccessfully!'
+            'Karta name updated successfully!'
           );
         }
       },
