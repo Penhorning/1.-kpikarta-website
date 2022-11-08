@@ -96,7 +96,7 @@
             <ng-container *ngIf="!loading && members.length === 0">
               <div [innerHtml]="noDataAvailable"></div>
             </ng-container>
-            <div class="text-center" *ngIf="!loading && members.length > 9 && viewMore_hide">
+            <div class="text-center" *ngIf="!loading && members.length > pageSize-1 && viewMore_hide">
               <p class="view_more" (click)="viewMore()">View More..</p>
             </div>
           </div>
@@ -189,7 +189,7 @@
                       formControlName="roleId"
                       [ngClass]="{ 'is-invalid': (submitted || form.roleId.touched) && form.roleId.errors }">
                       <option value="" selected disabled>Select Role</option>
-                      <option *ngFor="let role of roles" [value]="role.id">{{role.name | titlecase}}</option>
+                      <option *ngFor="let role of roles" [value]="role.id">{{ role.name.replace('_', ' ') | titlecase }}</option>
                     </select>
                     <div *ngIf="(submitted || form.roleId.touched) && form.roleId.errors" class="invalid-feedback">
                       <div *ngIf="form.roleId.errors.required">Role is required!</div>
