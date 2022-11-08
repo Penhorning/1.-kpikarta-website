@@ -290,7 +290,7 @@ export class EditKartaComponent implements OnInit {
         let tempObj: any = {};
         let originalValue = event.target.value.trim();
         let newValue = '';
-        let value = event.target.value.trim().split(/[,.+\-\/% *)(\/\\s]/);
+        let value = event.target.value.trim().split(/[\s() */%+-]+/g);
 
         let total: any = 0;
         let checkFrag = false;
@@ -311,6 +311,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
         });
+        
 
         if (this.formulaGroup.valid && originalValue) {
           if (checkFrag) {
