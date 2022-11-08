@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
@@ -173,27 +173,9 @@ export class EditKartaComponent implements OnInit {
     this.getAllUser();
     // Get versions
     this.getAllVersion();
-    // Default Fields for Formula
-    this.addFormulaGroupByDefault();
   }
 
   // ---------FormArray Functions defined Below----------
-  //Adding 2 default FormulaField Group
-  addFormulaGroupByDefault() {
-    let newArr = [];
-    if(this.formulaGroup.controls['fields'].controls.length == 0){
-      if(!this.currentNode.node_type){
-        for(let i = 0; i < 2; i++){
-          newArr.push(this.fb.group({
-            fieldName: [`Field${i + 1}`],
-            fieldValue: [0, Validators.min(1)],
-          }))
-        }
-      }
-    }
-    // return newArr;
-    this.formulaGroup.controls['fields'] = new FormArray(newArr);
-  }
 
   //Adding a New FormulaField Group
   addFormulaGroup() {
@@ -290,13 +272,18 @@ export class EditKartaComponent implements OnInit {
     }
   }
 
+  @HostListener('window:scroll', ['$event']) 
+  getScrollPosition() {
+    return $('#rightSidebar').scrollTop();
+  }
+
   // Formula Fields Calculation
   calculateFormula(event: any) {
-    // if (this.timer) {
-    //   clearTimeout(this.timer);
-    //   this.timer = null;
-    // }
-    // this.timer =
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    this.timer =
       this.formulaFieldSuggestions.length == 0 &&
       setTimeout(() => {
         let tempObj: any = {};
@@ -360,12 +347,16 @@ export class EditKartaComponent implements OnInit {
                 }
               });
               
+              this.currentNode.achieved_value = total;
+              this.currentNode.target = newTarget;
               this._kartaService
                 .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
                 .subscribe(
                   (x) => {
+                    this.currentNode.node_type = x.node_type;
                     $('#formula-field').addClass('is-valid');
-                    // this.updateNodeProperties(x);
+                    let scrollValue = this.getScrollPosition();
+                    this.updateNodeProperties(x, scrollValue);
                   },
                   (err) => {
                     console.log(err);
@@ -476,9 +467,14 @@ export class EditKartaComponent implements OnInit {
     $('body').removeClass('rightSidebarOpened');
   }
   // OPEN RIGHT SIDEBAR
-  openRightSidebar() {
+  openRightSidebar(value?: any) {
     $('#rightSidebar, .right_sidebar_overlay').addClass('open');
-    $('#rightSidebar').scrollTop(0);
+    if(value && value !== 0){
+      $('#rightSidebar').scrollTop(value);
+    }
+    else {
+      $('#rightSidebar').scrollTop(0);
+    }
     $('body').addClass('rightSidebarOpened');
   }
 
@@ -574,7 +570,7 @@ export class EditKartaComponent implements OnInit {
     });
   }
   // Update node properties
-  updateNodeProperties(param: any) {
+  updateNodeProperties(param: any, scroll?: any) {
     this.currentNode = param;
     this.phaseId = param.phaseId;
     this.selectedFont = param.font_style;
@@ -583,27 +579,48 @@ export class EditKartaComponent implements OnInit {
     this.currentNodeName = param.name;
     this.currentNodeWeight = param.weightage;
     this.currentNodeAchievedValue = param.achieved_value;
-    if (param.node_type) {
-      const arr = this.formulaGroup.get('fields') as FormArray;
-      arr.clear();
-      for (let i of param.node_type.fields) {
-        arr.push(
-          new FormGroup({
-            fieldName: new FormControl(i.fieldName),
-            fieldValue: new FormControl(i.fieldValue),
-          })
-        );
+    if (param.hasOwnProperty("node_type")) {
+      this.formulaGroup.controls['fields'] = new FormArray([]);
+      for (let i = 0; i < param.node_type.fields.length; i++ ) {
+        let fieldForm = this.fb.group({
+          fieldName: new FormControl(param.node_type.fields[i].fieldName),
+          fieldValue: new FormControl(param.node_type.fields[i].fieldValue),
+        })
+        this.fields.push(fieldForm);
       }
       this.formulaGroup.patchValue({
         calculatedValue: param.achieved_value,
         formula: param.node_type.formula,
       });
+    } else {
+      let newArr: any = [];
+      this.formulaGroup.controls['fields'] = new FormArray(newArr);
+      if(this.formulaGroup.controls['fields'].controls.length == 0){
+        if(!this.currentNode.node_type){
+          for(let i = 0; i < 2; i++){
+            newArr.push(this.fb.group({
+              fieldName: [`Field${i + 1}`],
+              fieldValue: [0, Validators.min(1)],
+            }))
+          }
+        }
+      }
+      this.formulaGroup.controls['fields'] = new FormArray(newArr);
+      this.formulaGroup.patchValue({
+        calculatedValue: 0,
+        formula: '',
+      });
     }
 
+    this.D3SVG.updateNode(param);
     this.showKPICalculation = false;
 
     // Show properties right sidebar
-    this.openRightSidebar();
+    if(scroll && scroll !== 0){
+      this.openRightSidebar(scroll);
+    } else {
+      this.openRightSidebar();
+    }
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
     // Show Measure and metrics when KPI's node selected
@@ -863,12 +880,6 @@ export class EditKartaComponent implements OnInit {
       data.alert_type = "";
       data.alert_frequency = "";
       data.kpi_calc_period = 'month-to-date';
-      if (!this.currentNode.node_type) {
-        // Creating 2 Formula Fields by Default
-        for (let i = 0; i < 2; i++) {
-          this.addFormulaGroup();
-        }
-      }
     }
     this._kartaService.addNode(data).subscribe((response: any) => {
       response.phase = phase;
