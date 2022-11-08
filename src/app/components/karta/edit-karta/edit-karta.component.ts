@@ -71,6 +71,7 @@ export class EditKartaComponent implements OnInit {
         this.updateNode('update_dragged_node', data, 'node_updated');
       },
       nodeItem: (d: any) => {
+        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -165,7 +166,6 @@ export class EditKartaComponent implements OnInit {
     $(document).on('click', '.right_sidebar_overlay', function () {
       that.closeRightSidebar();
     });
-    
     // Get color settings
     this.getColorSettings();
     // Get karta id from url
@@ -1202,7 +1202,6 @@ export class EditKartaComponent implements OnInit {
     })
   }
 
-  // Share karta function
   shareKarta() {
     this.selectedSharedUsers.forEach((element: any) => {
       if (element.email == this._commonService.getEmailId()) {
@@ -1238,11 +1237,9 @@ export class EditKartaComponent implements OnInit {
   }
   removeColor(index: number) {
     this.editColorSettings.settings.splice(index, 1);
-    this.saveColorSetting();
   }
   onColorChange2(colorCode: string, index: number) {
     this.editColorSettings.settings[index].color = colorCode;
-    this.saveColorSetting();
   }
   onMinValueChange(value: number) {
     this.colorForm.patchValue({ min: value });
@@ -1274,7 +1271,7 @@ export class EditKartaComponent implements OnInit {
       this._commonService.errorToaster("You cannot add this range of color!");
     } else {
       if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
-      else this.editColorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
+      else this.editColorSettings.settings.push(this.colorForm.value);
     }
   }
   saveColorSetting() {
@@ -1303,11 +1300,6 @@ export class EditKartaComponent implements OnInit {
       } else this._commonService.errorToaster("Please complete all the color ranges!");
     }
   }
-  // Color setting ends
-
-
-  
 
 }
-
 
