@@ -91,14 +91,7 @@ export class MemberComponent implements OnInit {
   getRoles() {
     this._memberService.getRoles().subscribe(
       (response: any) => {
-        let updatedRoles = response.data.map((x: any) => {
-          let newObj = {
-            ...x,
-            name: x.name.split("_").join(" ")
-          };
-          return newObj;
-        });
-        this.roles = updatedRoles;
+        this.roles = response.data;
       }
     );
   }
@@ -259,8 +252,8 @@ export class MemberComponent implements OnInit {
     this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
         if (response) {
-          this.members.push(...response.users[0].data);
-          if (response.users[0].metadata[0].total == this.members.length) this.viewMore_hide = !this.viewMore_hide;
+          this.members.push(...response.members[0].data);
+          if (response.members[0].metadata[0].total == this.members.length) this.viewMore_hide = !this.viewMore_hide;
         }
       }).add(() => this.loading = false);
   }
