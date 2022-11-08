@@ -30,8 +30,8 @@ export class KartaService {
   getKartas(data: any) {
     return this._httpService.POST('/karta/get-kartas', data);
   }
-  getAllUsers() {
-    return this._httpService.POST('/users/get-all');
+  getAllMembers(data: any) {
+    return this._httpService.POST('/users/get-all-members', data);
   }
   getAllVersions(kartaId: string) {
     return this._httpService.GET(`/karta_versions?filter[where][kartaId]=${kartaId}&filter[order]=name ASC`);
@@ -76,12 +76,11 @@ export class KartaService {
   removeNode(nodeId: string) {
     return this._httpService.POST('/karta_nodes/delete', {nodeId});
   }
-
   shareKarta(data: any) {
     return this._httpService.POST('/karta/share', data);
   }
   copyKarta(data: any) {
-    return this._httpService.POST('/karta/copy-shared-karta', data);
+    return this._httpService.POST('/karta/copy', data);
   }
   versionControlHistory(data: any){
     return this._httpService.POST('/karta_histories/version-control', data);

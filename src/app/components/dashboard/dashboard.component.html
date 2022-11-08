@@ -80,7 +80,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 text-center">
                                             <div class="mt-3">
-                                                <h5 class="short_text">{{karta?.name}}</h5>
+                                                <h5 class="short_text" [title]="karta.name">{{karta?.name}}</h5>
                                                 <p>{{karta?.createdAt | date:'mediumDate'}}</p>
                                             </div>
                                         </div>
@@ -226,7 +226,7 @@
                                         <div class="col-lg-12 text-center">
                                             <div class="mt-3">
                                                 <div class="d-flex justify-content-center align-items-center">
-                                                    <h5 class="short_text" [id]="'kt'+i" contenteditable="false">
+                                                    <h5 class="short_text" [id]="'kt'+i" (keypress)="setLimitForContentEditable($event)" contenteditable="false" [title]="karta.name">
                                                         {{karta?.name}}</h5>
                                                     <img class="ml-2 img-fluid-tick" (click)="renameKarta(karta._id, i)"
                                                         *ngIf="checkEditStatus(i) != false"
@@ -460,7 +460,7 @@
             <div class="modal-body">
                 <div class="share-link-model mt-3">
                     <div class="form-group">
-                        <label>{{sharingKarta?.name}}</label>
+                        <label class="short_text" style="max-width: 500px;">{{sharingKarta?.name}}</label>
                         <div class="row">
                             <div class="col-lg-12">
                                 <ng-select [items]="users" [addTag]="addTagPromise" placeholder="Select users"
@@ -487,13 +487,13 @@
             </div>
             <div class="row">
                 <div class="col-lg-12 text-left">
-                    <div class="shared-with" style="display:flex;">
+                    <div class="shared-with d-flex">
                         <span>Shared with:</span>
                         <ng-container *ngIf="sharingKartaCount">
                             <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-                            <span class="ml-2" *ngIf="sharingKartaCount > 1">
+                            <span class="ml-2">
                                 <div class="user-counter">
-                                    <p>+{{ sharingKartaCount - 1 }}</p>
+                                    <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
                                 </div>
                             </span>
                         </ng-container>

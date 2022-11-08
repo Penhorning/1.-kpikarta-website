@@ -489,8 +489,8 @@
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis; let i = index;">
                           <td>
-                            <p class="m-0">{{ kpi?.karta?.name }}</p>
-                            <p class="user-name-iocn short_text_mykpi">
+                            <p class="m-0 short_text_with_width">{{ kpi?.karta?.name }}</p>
+                            <p class="user-name-iocn short_text_with_width">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 class="bi bi-person-circle" viewBox="0 0 16 16">
                                 <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
@@ -989,8 +989,8 @@
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis">
                           <td>
-                            <p class="m-0">{{ kpi?.karta.name }}</p>
-                            <p class="user-name-iocn short_text_mykpi">
+                            <p class="m-0 short_text_with_width">{{ kpi?.karta.name }}</p>
+                            <p class="user-name-iocn short_text_with_width">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 class="bi bi-person-circle" viewBox="0 0 16 16">
                                 <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
@@ -1078,7 +1078,7 @@
 
 
 
-<!-- share-link-model -->
+<!-- share-link-modal -->
 
 <div class="modal fade shara-link" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
   aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -1093,11 +1093,11 @@
       <div class="modal-body">
         <div class="share-link-model mt-3">
           <div class="form-group">
-            <label style="font-weight: bold;">{{ sharingKarta?.karta?.name }}: {{ sharingKarta?.name }}</label>
+            <label class="short_text" style="font-weight: bold; max-width: 500px;">{{ sharingKarta?.karta?.name }}: {{ sharingKarta?.name }}</label>
             <div class="row">
               <div class="col-lg-12" *ngIf="sharingKarta">
                 <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
-                  [settings]="dropdownSettings" [data]="users" (onSelect)="onItemSelect($event)"
+                  [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
                   (onDeSelect)="onItemDeSelect($event)">
                 </ng-multiselect-dropdown>
               </div>
@@ -1136,7 +1136,7 @@
   </div>
 </div>
 
-<!-- Edit actual value model -->
+<!-- Edit actual value modal -->
 
 <div class="modal fade" id="editActualValueModal" tabindex="-1" role="dialog" data-backdrop="static"
   data-keyboard="false" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
@@ -1152,7 +1152,7 @@
         <div class="modal-body">
           <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()" class="achieved-val">
             <div formArrayName="fields">
-              <h5>{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
+              <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
               <div class="share-link-model mt-3" *ngFor="let field of fields.controls; let i = index"
                 [formGroupName]="i">
                 <div class="form-group">
@@ -1192,7 +1192,7 @@
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
           <div class="share-link-model mt-3">
           <div class="form-group">
-            <h5>{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
+            <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
             <div class="row">
               <div class="col-lg-12">
                 <div class="">

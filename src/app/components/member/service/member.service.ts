@@ -14,17 +14,20 @@ export class MemberService {
   getRoles() {
     return this._httpService.GET('/users/get-roles');
   }
-  getAllInvites(data: any) {
-    return this._httpService.POST('/users/get-all-invites', data);
-  }
   getLicenses() {
     return this._httpService.GET('/licenses?filter[active]=true');
   }
-  invite(data: any) {
-    return this._httpService.POST('/users/invite', data);
+  inviteMember(data: any) {
+    return this._httpService.POST('/users/invite-member', data);
   }
-  updateUser(data: any, userId: string, accessToken: string) {
-    return this._httpService.PATCH(`/users/${userId}?access_token=${accessToken}`, data);
+  getAllMembers(data: any) {
+    return this._httpService.POST('/users/get-all-members', data);
+  }
+  updateUser(data: any, userId: string) {
+    return this._httpService.PATCH(`/users/${userId}`, data);
+  }
+  sendCredentials(data: any) {
+    return this._httpService.POST('/users/send-credentials', data);
   }
   /*============================== API FUNCTIONS ENDS ==============================*/
 }
