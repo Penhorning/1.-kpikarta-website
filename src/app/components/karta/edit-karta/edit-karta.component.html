@@ -780,9 +780,14 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
+<<<<<<<<< Temporary merge branch 1
+                  <input type="date" class="form-control" [value]="currentNode.start_date"
+                    (change)="changeStartDate($event)">
+=========
                   <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'" (change)="changeStartDate($event)"
                   [ngClass]="{ 'is-invalid': !currentNode.start_date }">
                   <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
+>>>>>>>>> Temporary merge branch 2
                 </div>
               </div>
               <div class="col-lg-6">
@@ -804,13 +809,23 @@
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
+<<<<<<<<< Temporary merge branch 1
+                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_start_date"
+                        (change)="changeFiscalStartDate($event)">
+=========
                       <input type="date" class="form-control" [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'" (change)="changeFiscalStartDate($event)">
+>>>>>>>>> Temporary merge branch 2
                     </div>
                   </div>
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>End Date</label>
+<<<<<<<<< Temporary merge branch 1
+                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date"
+                        (change)="changeFiscalEndDate($event)">
+=========
                       <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'" (change)="changeFiscalEndDate($event)">
+>>>>>>>>> Temporary merge branch 2
                     </div>
                   </div>
                 </div>
@@ -1054,11 +1069,7 @@
             <div class="modal-body">
               <div class="share-link-model mt-3">
                 <div class="form-group">
-<<<<<<< HEAD
-                  <label class="short_text" style="max-width: 100px;">{{sharingKarta?.name}}</label>
-=======
                   <label class="short_text" style="max-width: 500px;" >{{sharingKarta?.name}}</label>
->>>>>>> 634476db52111f39ee96d6838c9b393581c6d133
                   <div class="row">
                     <div class="col-lg-12">
                       <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users" [loading]="loading"
