@@ -15,8 +15,8 @@ export class MyKpiService {
   getColorSettingByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);
   }
-  getAllUsers() {
-    return this._httpService.POST('/users/get-all');
+  getAllMembers(data: any) {
+    return this._httpService.POST('/users/get-all-members', data);
   }
   updateNode(nodeId: string, data: any) {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);

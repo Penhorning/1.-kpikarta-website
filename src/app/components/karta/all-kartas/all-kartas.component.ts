@@ -13,7 +13,7 @@ declare const $: any;
 export class AllKartasComponent implements OnInit {
 
   kartas: any = [];
-  users: any = [];
+  members: any = [];
   sharingKarta: any;
   shareSubmitFlag: boolean = false;
   sharedKartas: any = [];
@@ -40,7 +40,7 @@ export class AllKartasComponent implements OnInit {
 
   ngOnInit(): void {
     this.getKartas();
-    this.getAllUser();
+    this.getAllMembers();
     this.getSharedKartas();
 
     this.route.fragment.subscribe(f => {
@@ -147,15 +147,15 @@ export class AllKartasComponent implements OnInit {
     }
   }
 
-  // Get all users 
-  getAllUser() {
-    this._kartaService.getAllUsers().subscribe(
+  // Get all members
+  getAllMembers() {
+    let data = {
+      limit: 1000,
+      userId: this._commonService.getUserId()
+    }
+    this._kartaService.getAllMembers(data).subscribe(
       (response: any) => {
-        if (response) {
-          this.users = response.users[0].data.filter((x: any) => {
-            return x.email != this._commonService.getEmailId();
-          })
-        } else this.users = [];
+        this.members = response.members[0].data;
       }
     );
   }
@@ -179,7 +179,7 @@ export class AllKartasComponent implements OnInit {
   copyKarta(id: string) {
     const result = confirm("Are you sure you want to create a copy of this karta?");
     if (result) {
-      this._kartaService.copyKarta({ kartaId: id }).subscribe(
+      this._kartaService.copyKarta({ kartaId: id, userId: this._commonService.getUserId() }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta copy created successfully!");
           this.getKartas();

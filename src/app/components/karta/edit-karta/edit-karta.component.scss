@@ -103,8 +103,13 @@ overflow: auto;
  margin-top: 4px!important;
 }
 
-.field-options {
+.ng-select.is-invalid ::ng-deep .ng-select-container {
+    border-color: #dc3545;
+}
 
+.ng-select.is-invalid.ng-select-focused ::ng-deep .ng-select-container {
+    border-color: #dc3545;
+    box-shadow: unset;
 }
 
 .field-options:hover {
