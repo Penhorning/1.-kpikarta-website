@@ -625,7 +625,6 @@ export class EditKartaComponent implements OnInit {
       });
     }
 
-    this.D3SVG.updateNode(param);
     this.showKPICalculation = false;
 
     // Show properties right sidebar
@@ -921,7 +920,7 @@ export class EditKartaComponent implements OnInit {
 
       let history_data = {
         event: "node_created",
-        eventValue: data,
+        eventValue: response,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
@@ -1082,7 +1081,7 @@ export class EditKartaComponent implements OnInit {
 
       let history_data = {
         event: "node_created",
-        eventValue: data,
+        eventValue: response,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
