@@ -845,25 +845,10 @@ export class EditKartaComponent implements OnInit {
     ).add(() => (this.loadingKarta = false));
   }
 
-  getKartaDetails() {
-    this._kartaService.getKarta(this.kartaId).subscribe(
-      (response: any) => {
-        this.karta = response;
-        this.versionId = response.versionId;
-        this.sharedKartaStr = response;
-        if (this.karta.node) {
-          this.karta.node.percentage = Math.round(
-            this.calculatePercentage(this.karta.node)
-          );
-        }
-      }
-    )
-  }
-
   versionRollback(event: any){
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
-        this.getKartaDetails();
+        this.getKartaInfo();
       },
       (err) => console.log(err)
     );
@@ -936,10 +921,18 @@ export class EditKartaComponent implements OnInit {
       this.updateNodeProperties(response);
       // this.D3SVG.updateNode(param, response);
       // this.getKartaInfo();
+      let new_response = {
+        ...data,
+        name: response.name,
+        font_style: response.font_style,
+        alignment: response.alignment,
+        text_color: response.text_color,
+        weightage: response.weightage,
+      };
 
       let history_data = {
         event: "node_created",
-        eventValue: response,
+        eventValue: new_response,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
@@ -1100,7 +1093,7 @@ export class EditKartaComponent implements OnInit {
 
       let history_data = {
         event: "node_created",
-        eventValue: response,
+        eventValue: data,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
