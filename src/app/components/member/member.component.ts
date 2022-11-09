@@ -150,7 +150,7 @@ export class MemberComponent implements OnInit {
 
   handleDepartment(event: any) {
     let role = this.roles.filter((x: any) => x.id == event.target.value);
-    if (role[0].name === "billing staff" || role[0].name === "company admin") {
+    if (role[0].name === "billing_staff" || role[0].name === "company_admin") {
       this.showDepartment = false;
       this.inviteForm.removeControl("departmentId");
       this.inviteForm.value.departmentId = "";
