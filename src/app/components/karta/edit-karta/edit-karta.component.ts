@@ -848,6 +848,7 @@ export class EditKartaComponent implements OnInit {
   versionRollback(event: any){
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
+        $('#karta-svg svg').remove();
         this.getKartaInfo();
       },
       (err) => console.log(err)
