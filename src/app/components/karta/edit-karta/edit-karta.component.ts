@@ -323,7 +323,7 @@ export class EditKartaComponent implements OnInit {
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
-            this.formulaError = "Invalid Formula..!!";
+            this.formulaError = "Invalid Formula!";
           } else {
             total = eval(newValue);
             this.formulaGroup.patchValue({
@@ -364,6 +364,7 @@ export class EditKartaComponent implements OnInit {
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
+                    this.updateNode('node_type', request , 'node_updated');
                   },
                   (err) => {
                     console.log(err);
@@ -374,7 +375,6 @@ export class EditKartaComponent implements OnInit {
           }
         } else {
           this.formulaGroup.markAllAsTouched();
-          this.formulaError = "Invalid Formula..!!";
         }
       }, 1000);
   }
