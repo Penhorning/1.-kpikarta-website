@@ -373,8 +373,6 @@ export class EditKartaComponent implements OnInit {
               );
             }
           }
-        } else {
-          this.formulaGroup.markAllAsTouched();
         }
       }, 1000);
   }
