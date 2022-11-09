@@ -16,8 +16,8 @@ export class ResetPasswordComponent implements OnInit {
   accessToken: string = "";
 
   resetPasswordForm = this.fb.group({
-    newPassword: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]],
-    confirmPassword: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]]
+    newPassword: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.password)]],
+    confirmPassword: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.password)]]
   });
   get form() { return this.resetPasswordForm.controls; }
 

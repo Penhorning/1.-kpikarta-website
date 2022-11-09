@@ -91,14 +91,7 @@ export class MemberComponent implements OnInit {
   getRoles() {
     this._memberService.getRoles().subscribe(
       (response: any) => {
-        let updatedRoles = response.data.map((x: any) => {
-          let newObj = {
-            ...x,
-            name: x.name.split("_").join(" ")
-          };
-          return newObj;
-        });
-        this.roles = updatedRoles;
+        this.roles = response.data;
       }
     );
   }
@@ -157,7 +150,7 @@ export class MemberComponent implements OnInit {
 
   handleDepartment(event: any) {
     let role = this.roles.filter((x: any) => x.id == event.target.value);
-    if (role[0].name === "billing staff" || role[0].name === "company admin") {
+    if (role[0].name === "billing_staff" || role[0].name === "company_admin") {
       this.showDepartment = false;
       this.inviteForm.removeControl("departmentId");
       this.inviteForm.value.departmentId = "";
@@ -181,10 +174,6 @@ export class MemberComponent implements OnInit {
         this._memberService.inviteMember({ data: this.inviteForm.value }).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.members = [];
-            this.pageIndex = 0,
-            this.viewMore_hide = !this.viewMore_hide;
-            this.getAllMembers();
             this._commonService.successToaster("Member invited successfully!");
           },
           (error: any) => {
@@ -201,7 +190,6 @@ export class MemberComponent implements OnInit {
         this._memberService.updateUser(this.inviteForm.value, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.getAllMembers();
             this._commonService.successToaster("Member updated successfully!");
           },
           (error: any) => {
@@ -220,6 +208,10 @@ export class MemberComponent implements OnInit {
     this.showDepartment = false;
     this.inviteForm.removeControl("departmentId");
     $('#memberModal').modal('hide');
+    this.members = [];
+    this.pageIndex = 0;
+    this.viewMore_hide = !this.viewMore_hide;
+    this.getAllMembers();
   }
 
   // Send credential
@@ -259,8 +251,8 @@ export class MemberComponent implements OnInit {
     this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
         if (response) {
-          this.members.push(...response.users[0].data);
-          if (response.users[0].metadata[0].total == this.members.length) this.viewMore_hide = !this.viewMore_hide;
+          this.members.push(...response.members[0].data);
+          if (response.members[0].metadata[0].total == this.members.length) this.viewMore_hide = !this.viewMore_hide;
         }
       }).add(() => this.loading = false);
   }

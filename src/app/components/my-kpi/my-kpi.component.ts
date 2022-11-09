@@ -133,7 +133,7 @@ export class MyKpiComponent implements OnInit {
       enableCheckAll: false,
       singleSelection: false,
       idField: '_id',
-      textField: 'fullName',
+      textField: 'nameAndEmail',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
@@ -213,7 +213,7 @@ export class MyKpiComponent implements OnInit {
       this.metricsSubmitFlag = true;
       this._myKpiService.updateNode(this.currentNode, { node_type: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
         (response) => {
-          if (response) { this._commonService.successToaster('Actual value updated succesfully!'); }
+          if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
           this.getMyKPIsList();
         },
@@ -241,7 +241,7 @@ export class MyKpiComponent implements OnInit {
     this.measureSubmitFlag = true;
     this._myKpiService.updateNode(this.currentNode, { achieved_value: +this.measureForm.value.actualValue, target: this.target, is_achieved_modified: true }).subscribe(
       (response) => {
-        if (response) { this._commonService.successToaster('Actual value updated succesfully!'); }
+        if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
         this.getMyKPIsList();
       },
@@ -317,6 +317,9 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getAllMembers(data).subscribe(
       (response: any) => {
         this.members = response.members[0].data;
+        this.members?.map((element:any) => {
+          element.nameAndEmail = (element.fullName +' '+ `(${element.email})`);
+        });
     });
   }
 

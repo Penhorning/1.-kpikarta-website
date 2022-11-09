@@ -265,6 +265,43 @@ export class AllKartasComponent implements OnInit {
     }
     return '';
  }
+
+   // Rename karta
+   changeEditStatus(id: number) {
+    $('#kt' + id).attr('contenteditable', true);
+    $('#kt' + id).focus();
+    return;
+  }
+  // Limiting length for Content Editable
+  setLimitForContentEditable(event: any) {
+    return event.target.innerText.length < 50;
+  }
+  checkEditStatus(id: number) {
+    let value = $('#kt' + id).attr('contenteditable');
+    return JSON.parse(value);
+  }
+  renameKarta(id: string, index: number) {
+    let value = document.getElementById('kt' + index)?.innerHTML;
+    if(value?.length == 0){
+      this.ngOnInit();
+    return  this._commonService.errorToaster('Karta name should not be blank!');
+    }
+    this._kartaService.updateKarta(id, { name: value }).subscribe(
+      (x) => {
+        if (x) {
+          $('#kt' + index).attr('contenteditable', false);
+          this.ngOnInit();
+          this._commonService.successToaster(
+            'Karta name updated successfully!'
+          );
+        }
+      },
+      (err) => {
+        console.log(err);
+        this._commonService.errorToaster('Error while updating name!');
+      }
+    );
+  }
   
 
 }

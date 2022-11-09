@@ -261,7 +261,7 @@ a:hover {
 .color-box {
   background-color: #fff;
   border: 1px solid #ebebeb;
-  padding: 2rem 1rem;
+  padding: 1rem 1rem;
 }
 
 span.color-range-box {
@@ -293,7 +293,7 @@ button.add-button {
   background-color: #fff;
   border: 1px solid #ebebeb;
   padding: 2rem 1rem;
-  margin-top: 2.4rem;
+  margin-top: 0.5rem;
 }
 
 .color-box-two {
