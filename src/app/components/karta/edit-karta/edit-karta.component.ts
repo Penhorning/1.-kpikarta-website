@@ -71,7 +71,6 @@ export class EditKartaComponent implements OnInit {
         this.updateNode('update_dragged_node', data, 'node_updated');
       },
       nodeItem: (d: any) => {
-        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -256,11 +255,21 @@ export class EditKartaComponent implements OnInit {
       domElem.innerHTML = this.formulagroupDefaultValues[id];
     }
     else {
-      this.formulaGroup.controls['fields']['controls'][id].patchValue({
-        fieldName: this.formulagroupDefaultValues[id],
+      let checkVal = this.fields['controls'].filter((x: any) => {
+        return x.value.fieldName == domElem.innerText;
       });
-      if (this.formulagroupDefaultValues[id]) {
-        delete this.formulagroupDefaultValues[id];
+      
+      if(checkVal.length > 0){
+        domElem.innerText = this.formulagroupDefaultValues[id];
+        domElem.innerHTML = this.formulagroupDefaultValues[id];
+      }
+      else {
+        this.formulaGroup.controls['fields']['controls'][id].patchValue({
+          fieldName: this.formulagroupDefaultValues[id],
+        });
+        if (this.formulagroupDefaultValues[id]) {
+          delete this.formulagroupDefaultValues[id];
+        }
       }
     }
     this.editFieldStatus(id, false);
