@@ -857,10 +857,25 @@ export class EditKartaComponent implements OnInit {
     ).add(() => (this.loadingKarta = false));
   }
 
+  getKartaDetails() {
+    this._kartaService.getKarta(this.kartaId).subscribe(
+      (response: any) => {
+        this.karta = response;
+        this.versionId = response.versionId;
+        this.sharedKartaStr = response;
+        if (this.karta.node) {
+          this.karta.node.percentage = Math.round(
+            this.calculatePercentage(this.karta.node)
+          );
+        }
+      }
+    )
+  }
+
   versionRollback(event: any){
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
-        this.getKartaInfo();
+        this.getKartaDetails();
       },
       (err) => console.log(err)
     );
@@ -870,8 +885,6 @@ export class EditKartaComponent implements OnInit {
   getPhases() {
     this._kartaService.getPhases().subscribe((response: any) => {
       this.phases = response;
-      // Get versions
-      this.getAllVersion();
       // this._kartaService.getSubPhases(this.kartaId).subscribe(
       //   (response: any) => {
       //     this.subPhases = response;
@@ -880,7 +893,7 @@ export class EditKartaComponent implements OnInit {
       //         if (item.id === sub_item.kartaPhaseId) this.phases.splice(index+1, 0, sub_item);
       //       });
       //     });
-      //     this.getKartaInfo();
+          // this.getKartaInfo();
       //   }
       // );
     });
