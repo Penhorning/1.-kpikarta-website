@@ -506,12 +506,14 @@ export class EditKartaComponent implements OnInit {
   setKartaDimension() {
     let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
     karta_col_width = $('.karta_column').width();
-    karta_col_height = $('.karta_column').height();
+    // karta_col_height = $('.karta_column').height();
+    karta_col_height = 455;
     svg_width = $('#karta-svg svg').width();
     svg_height = $('#karta-svg svg').height();
 
     width = svg_width > karta_col_width ? svg_width : karta_col_width;
-    height = svg_height > karta_col_height ? svg_height : karta_col_height;
+    // height = svg_height > karta_col_height ? svg_height : karta_col_height;
+    height = 455;
 
     $('#karta-svg').css('max-width', karta_col_width);
     // $('#karta-svg').css("max-height", karta_col_height + 5);   // For multiple phases
@@ -679,7 +681,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Change weightage
   changeWeightage() {
-    if (this.currentNodeWeight < 0) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
+    if (this.currentNodeWeight < 0 || !this.currentNodeWeight) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
     else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weightage cannot be greator than 100!");
     else {
       let sum = this.currentNode.parent.children
