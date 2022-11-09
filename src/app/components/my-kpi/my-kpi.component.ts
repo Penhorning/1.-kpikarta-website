@@ -133,7 +133,7 @@ export class MyKpiComponent implements OnInit {
       enableCheckAll: false,
       singleSelection: false,
       idField: '_id',
-      textField: 'fullName',
+      textField: 'nameAndEmail',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
@@ -317,6 +317,9 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getAllMembers(data).subscribe(
       (response: any) => {
         this.members = response.members[0].data;
+        this.members?.map((element:any) => {
+          element.nameAndEmail = (element.fullName +' '+ `(${element.email})`);
+        });
     });
   }
 

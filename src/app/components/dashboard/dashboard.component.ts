@@ -198,6 +198,10 @@ export class DashboardComponent implements OnInit {
   }
   renameKarta(id: string, index: number) {
     let value = document.getElementById('kt' + index)?.innerHTML;
+    if(value?.length == 0){
+      this.ngOnInit();
+    return  this._commonService.errorToaster('Karta name should not be blank!');
+    }
     this._kartaService.updateKarta(id, { name: value }).subscribe(
       (x) => {
         if (x) {
