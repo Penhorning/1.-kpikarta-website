@@ -183,7 +183,7 @@ export class EditKartaComponent implements OnInit {
     if(this.fields.length < 5) {
       let fieldForm = this.fb.group({
         fieldName: [`Field${this.fields.length + 1}`],
-        fieldValue: [0, Validators.min(1)],
+        fieldValue: [0, Validators.min(0)],
       })
       this.fields.push(fieldForm);
       this.recheckFormula();
@@ -314,7 +314,7 @@ export class EditKartaComponent implements OnInit {
 
         value.forEach((y: any) => {
           if (y) {
-            if (tempObj[y]) {
+            if (tempObj[y] || tempObj[y] == 0) {
               newValue = newValue
                 ? newValue.replace(y, tempObj[y])
                 : originalValue.replace(y, tempObj[y]);
@@ -626,7 +626,7 @@ export class EditKartaComponent implements OnInit {
           for(let i = 0; i < 2; i++){
             newArr.push(this.fb.group({
               fieldName: [`Field${i + 1}`],
-              fieldValue: [0, Validators.min(1)],
+              fieldValue: [0, Validators.min(0)],
             }))
           }
         }
