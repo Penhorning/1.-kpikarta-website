@@ -939,11 +939,12 @@
                       <div class="invalid-feedback d-block"
                         *ngIf="formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)">
                         Please enter formula!</div>
-                        <div *ngIf="formulaError" class="invalid-feedback d-block is-invalid">{{formulaError}}</div>
                       <p class="d-flex flex-column" *ngIf="formulaFieldSuggestions.length > 0">
                         <span class="field-options border py-1 pl-2" *ngFor="let field of formulaFieldSuggestions"
                           (click)="concatenateFieldValue(field)">{{field ? field?.fieldName : ''}}</span>
                       </p>
+
+                      <div *ngIf="formulaError" class="invalid-feedback d-block is-invalid">{{formulaError}}</div>
                     </div>
                     <!-- <div class="col-lg-2" *ngIf="formulaGroup.get('calculatedValue').value > 0">
                       <img src="assets/img/tick-mark-side-r.svg" class="img-fluid tick-custom">

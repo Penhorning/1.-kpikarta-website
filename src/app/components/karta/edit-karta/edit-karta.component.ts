@@ -326,7 +326,7 @@ export class EditKartaComponent implements OnInit {
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
-            this.formulaError = "Invalid Formula..!!";
+            this.formulaError = "Invalid Formula!";
           } else {
             total = eval(newValue);
             this.formulaGroup.patchValue({
@@ -367,6 +367,7 @@ export class EditKartaComponent implements OnInit {
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
+                    this.updateNode('node_type', request , 'node_updated');
                   },
                   (err) => {
                     console.log(err);
@@ -375,9 +376,6 @@ export class EditKartaComponent implements OnInit {
               );
             }
           }
-        } else {
-          this.formulaGroup.markAllAsTouched();
-          this.formulaError = "Invalid Formula..!!";
         }
       }, 1000);
   }
@@ -857,25 +855,12 @@ export class EditKartaComponent implements OnInit {
     ).add(() => (this.loadingKarta = false));
   }
 
-  getKartaDetails() {
-    this._kartaService.getKarta(this.kartaId).subscribe(
-      (response: any) => {
-        this.karta = response;
-        this.versionId = response.versionId;
-        this.sharedKartaStr = response;
-        if (this.karta.node) {
-          this.karta.node.percentage = Math.round(
-            this.calculatePercentage(this.karta.node)
-          );
-        }
-      }
-    )
-  }
-
   versionRollback(event: any){
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
-        this.getKartaDetails();
+        $('#karta-svg svg').remove();
+        this.getKartaInfo();
+        this.recheckFormula();
       },
       (err) => console.log(err)
     );
@@ -948,10 +933,18 @@ export class EditKartaComponent implements OnInit {
       this.updateNodeProperties(response);
       // this.D3SVG.updateNode(param, response);
       // this.getKartaInfo();
+      let new_response = {
+        ...data,
+        name: response.name,
+        font_style: response.font_style,
+        alignment: response.alignment,
+        text_color: response.text_color,
+        weightage: response.weightage,
+      };
 
       let history_data = {
         event: "node_created",
-        eventValue: response,
+        eventValue: new_response,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
@@ -1112,7 +1105,7 @@ export class EditKartaComponent implements OnInit {
 
       let history_data = {
         event: "node_created",
-        eventValue: response,
+        eventValue: data,
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
