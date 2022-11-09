@@ -174,10 +174,6 @@ export class MemberComponent implements OnInit {
         this._memberService.inviteMember({ data: this.inviteForm.value }).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.members = [];
-            this.pageIndex = 0,
-            this.viewMore_hide = !this.viewMore_hide;
-            this.getAllMembers();
             this._commonService.successToaster("Member invited successfully!");
           },
           (error: any) => {
@@ -194,7 +190,6 @@ export class MemberComponent implements OnInit {
         this._memberService.updateUser(this.inviteForm.value, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.getAllMembers();
             this._commonService.successToaster("Member updated successfully!");
           },
           (error: any) => {
@@ -213,6 +208,10 @@ export class MemberComponent implements OnInit {
     this.showDepartment = false;
     this.inviteForm.removeControl("departmentId");
     $('#memberModal').modal('hide');
+    this.members = [];
+    this.pageIndex = 0;
+    this.viewMore_hide = !this.viewMore_hide;
+    this.getAllMembers();
   }
 
   // Send credential
