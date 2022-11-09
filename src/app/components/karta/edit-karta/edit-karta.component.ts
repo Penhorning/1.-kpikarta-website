@@ -850,6 +850,7 @@ export class EditKartaComponent implements OnInit {
       (data) => {
         $('#karta-svg svg').remove();
         this.getKartaInfo();
+        this.recheckFormula();
       },
       (err) => console.log(err)
     );
