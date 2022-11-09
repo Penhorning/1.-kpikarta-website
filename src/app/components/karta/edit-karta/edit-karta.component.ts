@@ -140,6 +140,7 @@ export class EditKartaComponent implements OnInit {
   // Version Control
   version: any = [];
   versionId: any = "";
+  formulaError: string = "";
 
   constructor(
     private _kartaService: KartaService,
@@ -186,6 +187,7 @@ export class EditKartaComponent implements OnInit {
         fieldValue: [0, Validators.min(1)],
       })
       this.fields.push(fieldForm);
+      this.recheckFormula();
     }
     else {
       this._commonService.warningToaster("Can't add more than 5 fields");
@@ -208,6 +210,7 @@ export class EditKartaComponent implements OnInit {
     this.formulaGroup.patchValue({
       fields: newArr,
     });
+    this.recheckFormula();
   }
 
   // Enable/Disable Readonly value of Formula Fields
@@ -320,7 +323,7 @@ export class EditKartaComponent implements OnInit {
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
-            this._commonService.errorToaster("Invalid Formula..!!");
+            this.formulaError = "Invalid Formula..!!";
           } else {
             total = eval(newValue);
             this.formulaGroup.patchValue({
@@ -328,12 +331,13 @@ export class EditKartaComponent implements OnInit {
             });
 
             if(total < 0) {
-              this._commonService.errorToaster("Achieved value can't be a negative value..!!");
               $('#formula-field').addClass('is-invalid');
               $('#formula-field').removeClass('is-valid');
+              this.formulaError = "Achieved value can't be a negative value..!!";
             }
             else {
               $('#formula-field').removeClass('is-invalid');
+              this.formulaError = "";
               let request = {
                 ...this.formulaGroup.value,
                 metrics: true,
@@ -357,6 +361,7 @@ export class EditKartaComponent implements OnInit {
                   (x) => {
                     this.currentNode.node_type = x.node_type;
                     $('#formula-field').addClass('is-valid');
+                    this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
                   },
@@ -369,6 +374,7 @@ export class EditKartaComponent implements OnInit {
           }
         } else {
           this.formulaGroup.markAllAsTouched();
+          this.formulaError = "Invalid Formula..!!";
         }
       }, 1000);
   }
