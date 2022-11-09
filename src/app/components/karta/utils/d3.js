@@ -8,7 +8,8 @@ let width2, height2;
 var getSVGSize = (tree, level = 0) => {
     var children = (tree.children || tree._children || []);
     width2 = $(".karta_column").width();
-    height2 = $(".karta_column").height();
+    // height2 = $(".karta_column").height();
+    height2 = 455;
     if (!level) {
         levelDepth = [children.length * 100 || width2];
     } else {
@@ -79,12 +80,19 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
     // Reset the zoom, when click on reset button
     $(document).on('click', '#reset_zoom_btn', function () {
-        let transformArray = d3.select("g").attr("transform").split(')');
-        if (transformArray.length > 2) {
-            svg.transition().duration(500).attr("transform", d3.zoomIdentity);
-            zoomListener.translate([0,0]).scale(1);
-            buildKartaDivider();
-            $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+        let g_attribute = d3.select("g").attr("transform");
+        if (g_attribute) {
+            let attributeArray = g_attribute.split(')');
+            if (attributeArray.length > 2) {
+                svg.transition().duration(500).attr("transform", d3.zoomIdentity);
+                // Restore zoom position
+                zoomListener.translate([0,0]).scale(1);
+                // Draw phase lines
+                buildKartaDivider();
+                // Make chart editable based on the current chart mode
+                let current_chart_mode = $("#chartMode").val();
+                if (current_chart_mode === "enable") $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+            }
         }
     });
 
@@ -94,7 +102,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         .attr("width", width)
         .attr("height", height)
         .call(zoomListener)
-        .attr({viewBox: "" + (-width / 2) + " " + (height / 20.7) + " " + width + " " + height})
+        .attr({ viewBox: "" + (-width / 2) + " " + (height / 20.7) + " " + width + " " + height })
         .append("g");
         // .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
@@ -289,6 +297,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         var svg = d3.select('#karta-svg svg')
             .attr("width", svgSize.width)
             .attr("height", svgSize.height)
+            .attr({ viewBox: "" + (-svgSize.width / 2) + " " + (height / 20.7) + " " + svgSize.width + " " + svgSize.height })
             .select('g');
             // .attr("transform", "translate(" + ((svgSize.width / 2)) + "," + (margin.top) + ")");
         buildKartaDivider();
@@ -301,6 +310,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         nodes.forEach(function (d) {
             // if (d.depth >= options.phases().length) d.depth -= d.depth;
             // console.log("my depth ", d.depth)
+            console.log("my phases ", options.phases())
             d.phaseId = options.phases()[d.depth].id
         });
         // nodes.forEach(function (d) {
@@ -507,6 +517,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         parent.children.push(d);
         update(parent);
         update(root);
+        document.getElementById('karta-svg').scrollLeft += 50;
     }
 
     // Export as image

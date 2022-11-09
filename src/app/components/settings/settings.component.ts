@@ -45,9 +45,9 @@ export class SettingsComponent implements OnInit {
   submitFlag: boolean = false;
 
   passwordForm = this.fb.group({
-    oldPassword: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]],
-    newPassword: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]],
-    confirmPassword: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)]]
+    oldPassword: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.password)]],
+    newPassword: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.password)]],
+    confirmPassword: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.password)]]
   });
 
   get form() { return this.passwordForm.controls };
