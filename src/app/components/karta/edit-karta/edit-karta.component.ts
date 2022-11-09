@@ -113,6 +113,7 @@ export class EditKartaComponent implements OnInit {
   ShowFilter = false;
   limitSelection = false;
   contributors: any = [];
+  users: any = [];
   selectedUsers: any;
   dropdownSettings: any = {};
   contributorUsers: any = [];
@@ -175,6 +176,8 @@ export class EditKartaComponent implements OnInit {
     this.getAllMembers();
     // Get versions
     this.getAllVersion();
+     // Get edit color code setting
+     this.getEditColorSettings();
   }
 
   // ---------FormArray Functions defined Below----------
@@ -525,6 +528,15 @@ export class EditKartaComponent implements OnInit {
     if (e.target.value === "enable") this.enableChart();
     else this.disableChart();
   }
+
+    // Get all users
+    getAllUser() {
+      this._kartaService.getAllUsers().subscribe(
+        (response: any) => {
+          this.users = response.users[0].data;
+        }
+      );
+    }
 
   // Get all members
   getAllMembers() {
@@ -1243,9 +1255,11 @@ export class EditKartaComponent implements OnInit {
   }
   removeColor(index: number) {
     this.editColorSettings.settings.splice(index, 1);
+    this.saveColorSetting();
   }
   onColorChange2(colorCode: string, index: number) {
     this.editColorSettings.settings[index].color = colorCode;
+    this.saveColorSetting();
   }
   onMinValueChange(value: number) {
     this.colorForm.patchValue({ min: value });
@@ -1277,7 +1291,7 @@ export class EditKartaComponent implements OnInit {
       this._commonService.errorToaster("You cannot add this range of color!");
     } else {
       if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
-      else this.editColorSettings.settings.push(this.colorForm.value);
+      else this.editColorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
     }
   }
   saveColorSetting() {
@@ -1306,6 +1320,7 @@ export class EditKartaComponent implements OnInit {
       } else this._commonService.errorToaster("Please complete all the color ranges!");
     }
   }
+  // Color setting ends
 
 }
 
