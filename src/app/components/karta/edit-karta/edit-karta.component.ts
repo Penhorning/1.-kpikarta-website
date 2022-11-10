@@ -1339,5 +1339,10 @@ export class EditKartaComponent implements OnInit {
   }
   // Color setting ends
 
+ colorFunctionDropDown() {
+    (document.getElementById('colorDropdown') as HTMLFormElement).classList.toggle("show");
+  }
+
+  
 }
 
