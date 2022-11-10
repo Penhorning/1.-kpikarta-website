@@ -1347,6 +1347,10 @@ export class EditKartaComponent implements OnInit {
       } else this._commonService.errorToaster("Please complete all the color ranges!");
     }
   }
+
+  colorFunctionDropDown() {
+    (document.getElementById('colorDropdown') as HTMLFormElement).classList.toggle("show");
+  }
   // Color setting ends
 
   // Undo Redo Functionality starts
