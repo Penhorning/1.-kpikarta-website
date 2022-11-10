@@ -10,8 +10,8 @@ export class SettingService {
   constructor(private _httpService: HttpService, private _commonService: CommonService) { }
 
 /*============================== API FUNCTIONS STARTS ==============================*/
-  getColorSettingByUser(data: any) {
-    return this._httpService.POST('/color-settings-by-user', data);
+  getColorSettingsByUser(data: any) {
+    return this._httpService.POST('/color_settings/by-user', data);
   }
   createColorSetting(data: any) {
     return this._httpService.POST('/color_settings', data);
