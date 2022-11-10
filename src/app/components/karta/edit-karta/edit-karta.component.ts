@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
@@ -71,6 +71,7 @@ export class EditKartaComponent implements OnInit {
         this.updateNode('update_dragged_node', data, 'node_updated');
       },
       nodeItem: (d: any) => {
+        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -146,9 +147,11 @@ export class EditKartaComponent implements OnInit {
     private _kartaService: KartaService,
     private _commonService: CommonService,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private router: Router
-  ) { }
+    private fb: FormBuilder
+  ) {
+    // Get karta id from url
+    this.kartaId = this.route.snapshot.paramMap.get('id') || '';
+  }
 
   ngOnInit(): void {
     const that = this;
@@ -168,15 +171,11 @@ export class EditKartaComponent implements OnInit {
       that.closeRightSidebar();
     });
     // Get color settings
-    this.getColorSettings();
-    // Get karta id from url
-    this.kartaId = this.route.snapshot.paramMap.get('id') || '';
+    this.getColorSettingsByKarta();
     // Get all members
     this.getAllMembers();
     // Get versions
     this.getAllVersion();
-     // Get edit color code setting
-     this.getEditColorSettings();
   }
 
   // ---------FormArray Functions defined Below----------
@@ -571,7 +570,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getAllVersions(this.kartaId).subscribe(
       (response: any) => {
         this.version = response;
-        this.getKartaInfo();
+        this.getColorSettingsByKarta();
       }
     );
   }
@@ -838,12 +837,9 @@ export class EditKartaComponent implements OnInit {
         //   element.border_color = colorSetting[0]?.color || 'black';
         // } else element.border_color = 'black';
       }
-      total_percentage.push((element.percentage * element.weightage) / 100);
+      total_percentage.push(((element.percentage * element.weightage) / 100) || 0);
     });
-    let aggregate_percentage = total_percentage.reduce(
-      (acc: number, num: number) => acc + num,
-      0
-    );
+    let aggregate_percentage = total_percentage.reduce((acc: number, num: number) => acc + num, 0);
     return aggregate_percentage;
   }
 
@@ -889,7 +885,7 @@ export class EditKartaComponent implements OnInit {
       //         if (item.id === sub_item.kartaPhaseId) this.phases.splice(index+1, 0, sub_item);
       //       });
       //     });
-          // this.getKartaInfo();
+          this.getKartaInfo();
       //   }
       // );
     });
@@ -910,11 +906,15 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
-  // Get color settings
-  getColorSettings() {
-    this._kartaService.getColorSettingsByUser({ userId: this._commonService.getUserId() }).subscribe(
+  // Get color settings by karta
+  getColorSettingsByKarta() {
+    let data = {
+      userId: this._commonService.getUserId(),
+      kartaId: this.kartaId
+    }
+    this._kartaService.getColorSettingsByKarta(data).subscribe(
       (response: any) => {
-        this.colorSettings = response;
+        this.colorSettings = response.color_settings;
         this.getPhases();
       }
     );
@@ -1262,20 +1262,12 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Color setting functions 
-  getEditColorSettings() {
-    this._kartaService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
-      (response: any) => {
-        this.editColorSettings = response;
-        this.editColorSettings.settings = this.editColorSettings.settings.sort((a: any, b: any) => a.min - b.min);
-      }
-    );
-  }
   removeColor(index: number) {
-    this.editColorSettings.settings.splice(index, 1);
+    this.colorSettings.settings.splice(index, 1);
     this.saveColorSetting();
   }
   onColorChange2(colorCode: string, index: number) {
-    this.editColorSettings.settings[index].color = colorCode;
+    this.colorSettings.settings[index].color = colorCode;
     this.saveColorSetting();
   }
   onMinValueChange(value: number) {
@@ -1285,52 +1277,53 @@ export class EditKartaComponent implements OnInit {
     this.colorForm.patchValue({ max: value });
   }
   checkInRange(minValue: number, maxValue: number): boolean {
-    for (let item of this.editColorSettings.settings) {
+    for (let item of this.colorSettings.settings) {
       if (minValue >= item.min && minValue <= item.max) return true;
       else if (maxValue >= item.min && maxValue <= item.max) return true;
     }
     return false;
   }
   findColorInRange(color: string) {
-    return this.editColorSettings.settings.find((item: any) => item.color === color);
+    return this.colorSettings.settings.find((item: any) => item.color === color);
   }
   sumOfRange() {
     let sum = 0;
-    for (let i = 0; i < this.editColorSettings.settings.length; i++) {
-      if (this.editColorSettings.settings[i].min < 101 && this.editColorSettings.settings[i].max < 101) {
-        sum += this.editColorSettings.settings[i].max - this.editColorSettings.settings[i].min;
+    for (let i = 0; i < this.colorSettings.settings.length; i++) {
+      if (this.colorSettings.settings[i].min < 101 && this.colorSettings.settings[i].max < 101) {
+        sum += this.colorSettings.settings[i].max - this.colorSettings.settings[i].min;
       }
     }
-    return sum += this.editColorSettings.settings.length - 2;
+    return sum += this.colorSettings.settings.length - 2;
   }
   onColorSubmit() {
     if (this.checkInRange(this.colorForm.value.min, this.colorForm.value.max)) {
       this._commonService.errorToaster("You cannot add this range of color!");
     } else {
       if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
-      else this.editColorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
+      else this.colorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
     }
   }
   saveColorSetting() {
     if (this.colorForm.valid) {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
-        if (this.editColorSettings.hasOwnProperty("userId")) {
-          this._kartaService.updateColorSetting(this.editColorSettings, this.editColorSettings.id).subscribe(
+        if (this.colorSettings.hasOwnProperty("userId") && this.colorSettings.hasOwnProperty("kartaId")) {
+          this._kartaService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
             (response: any) => {
               this._commonService.successToaster("Settings saved successfully");
-              this.getEditColorSettings();
+              this.getColorSettingsByKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         } else {
           let settingData = {
             userId: this._commonService.getUserId(),
-            settings: this.editColorSettings.settings
+            kartaId: this.kartaId,
+            settings: this.colorSettings.settings
           }
           this._kartaService.createColorSetting(settingData).subscribe(
             (response: any) => {
               this._commonService.successToaster("Settings saved successfully");
-              this.getEditColorSettings();
+              this.getColorSettingsByKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         }

@@ -425,7 +425,7 @@
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="color-box-plus-min">
-                            <ng-container *ngFor="let setting of editColorSettings?.settings; let i = index">
+                            <ng-container *ngFor="let setting of colorSettings?.settings; let i = index">
                               <div class="row" [ngClass]="{'mt-2' : i > 0}">
                                 <div class="col-lg-6">
                                   <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">

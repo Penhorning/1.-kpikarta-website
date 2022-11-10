@@ -25,6 +25,7 @@ export class MemberComponent implements OnInit {
   hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
   viewMore_hide: boolean = true;
+  currentSendingUserId: string = "";
   sendingCredentials: boolean = false;
 
   search_text: string = "";
@@ -202,20 +203,23 @@ export class MemberComponent implements OnInit {
     }
   }
   // Clear modal validation when close
-  resetFormModal() {
+  resetFormModal(type?: string) {
     this.inviteForm.reset();
     this.submitted = false;
     this.showDepartment = false;
     this.inviteForm.removeControl("departmentId");
     $('#memberModal').modal('hide');
-    this.members = [];
-    this.pageIndex = 0;
-    this.viewMore_hide = !this.viewMore_hide;
-    this.getAllMembers();
+    if (type !== "normal") {
+      this.members = [];
+      this.pageIndex = 0;
+      this.viewMore_hide = !this.viewMore_hide;
+      this.getAllMembers();
+    }
   }
 
   // Send credential
   sendCredential(userId: string) {
+    this.currentSendingUserId = userId;
     let data = { userId }
     this.sendingCredentials = true;
     this._memberService.sendCredentials(data).subscribe(
@@ -223,7 +227,10 @@ export class MemberComponent implements OnInit {
         this._commonService.successToaster("Credentials sent successully!");
       },
       (error: any) => { }
-    ).add(() => this.sendingCredentials = false);
+    ).add(() => {
+      this.sendingCredentials = false;
+      this.currentSendingUserId = "";
+    });
   }
 
   search() {
