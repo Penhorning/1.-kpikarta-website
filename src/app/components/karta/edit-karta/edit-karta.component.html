@@ -215,7 +215,8 @@
             </div>
             <div class="col-lg-3 pl-0">
               <div class="select-karta-name">
-                <select class="form-control custom-select-karta" (change)="versionRollback($event)" [(ngModel)]="versionId">
+                <select class="form-control custom-select-karta" (change)="versionRollback($event)"
+                  [(ngModel)]="versionId">
                   <option *ngFor="let ver of version" [value]="ver.id">Version {{ver.name}}</option>
                 </select>
               </div>
@@ -341,14 +342,10 @@
             <div class="col-lg-4">
               <div class="save-setting-btn">
                 <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
+                <div class="dropdown">
+                  <button (click)="colorFunctionDropDown()" class="dropbtn"><img src="assets/img/settings.svg"></button>
+                  <div id="colorDropdown" class="dropdown-content custom-drop">
 
-
-                <div class="btn-group custom-dropdown-edit-karta show-on-hover">
-                  <button type="button" class="btn btn-default dropdown-toggle arrow-hide-setting p-0"
-                    data-toggle="dropdown">
-                    <a href="#"><img src="assets/img/settings.svg"></a>
-                  </button>
-                  <ul class="dropdown-menu custom-dropdown-item-show" role="menu">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
                     <div class="fillter-inner-white-box p-2">
                       <div class="row ">
@@ -389,7 +386,8 @@
                                           <div class="color-range">
                                             <p class="d-flex">
                                               <span class="align-self-center pr-4">Color Range</span>
-                                              <input type="color" id="colorPicker" formControlName="color" style="cursor: pointer;">
+                                              <input type="color" id="colorPicker" formControlName="color"
+                                                style="cursor: pointer;">
                                             </p>
                                           </div>
                                         </div>
@@ -397,10 +395,7 @@
                                       <div class="container">
                                         <div class="row">
                                           <div class="col-sm-12">
-                                            <ngx-slider
-                                              [options]="options"
-                                              [value]="minValue"
-                                              [highValue]="maxValue"
+                                            <ngx-slider [options]="options" [value]="minValue" [highValue]="maxValue"
                                               (valueChange)="onMinValueChange($event)"
                                               (highValueChange)="onMaxValueChange($event)">
                                             </ngx-slider>
@@ -425,7 +420,7 @@
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="color-box-plus-min">
-                            <ng-container *ngFor="let setting of editColorSettings?.settings; let i = index">
+                            <ng-container *ngFor="let setting of colorSettings?.settings; let i = index">
                               <div class="row" [ngClass]="{'mt-2' : i > 0}">
                                 <div class="col-lg-6">
                                   <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
@@ -457,17 +452,15 @@
                               </div>
                             </ng-container>
                           </div>
-                          <!-- <div class="row">
-                            <div class="col-lg-12 text-center">
-                              <button class="btn btn-light btn_default max-270" (click)="saveColorSetting()" [disabled]="colorSubmitFlag">Save</button>
-                            </div>
-                          </div> -->
-
                         </div>
                       </div>
                     </div>
-                  </ul>
+                  </div>
                 </div>
+
+
+
+
 
                 <!-- <div class="dropdown filter-option m-0"> 
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
@@ -779,15 +772,16 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'" (change)="changeStartDate($event)"
-                  [ngClass]="{ 'is-invalid': !currentNode.start_date }">
+                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
+                    (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
                   <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                 </div>
               </div>
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Days to Calculate</label>
-                  <select class="form-control" [value]="currentNode.days_to_calculate" (change)="changeDaysToCalculate($event)">
+                  <select class="form-control" [value]="currentNode.days_to_calculate"
+                    (change)="changeDaysToCalculate($event)">
                     <option value="all">All Days</option>
                     <option value="business">Business Days</option>
                   </select>
@@ -802,13 +796,17 @@
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
-                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'" (change)="changeFiscalStartDate($event)">
+                      <input type="date" class="form-control"
+                        [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'"
+                        (change)="changeFiscalStartDate($event)">
                     </div>
                   </div>
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>End Date</label>
-                      <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'" (change)="changeFiscalEndDate($event)">
+                      <input type="date" class="form-control"
+                        [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'"
+                        (change)="changeFiscalEndDate($event)">
                     </div>
                   </div>
                 </div>
@@ -855,10 +853,14 @@
               <div class="col-lg-12">
                 <div class="form-group">
                   <label style="font-weight: 500;">Achieved Value</label>
-                  <input type="number" class="form-control" [(ngModel)]="currentNodeAchievedValue" (blur)="changeAchievedValue()"
+                  <input type="number" class="form-control" [(ngModel)]="currentNodeAchievedValue"
+                    (blur)="changeAchievedValue()"
                     [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null || currentNodeAchievedValue > 9999 }">
-                  <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue < 0 || currentNodeAchievedValue === null">Please enter achieved value!</div>
-                  <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue > 9999">Achieved value cannot be greator than 9999!</div>
+                  <div class="invalid-feedback d-block"
+                    *ngIf="currentNodeAchievedValue < 0 || currentNodeAchievedValue === null">Please enter achieved
+                    value!</div>
+                  <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue > 9999">Achieved value cannot be
+                    greator than 9999!</div>
                 </div>
               </div>
             </div>
@@ -920,8 +922,9 @@
                       </div>
                       <div class="col-lg-4 d-flex flex-column justify-content-end align-items-center pb-3">
                         <div class="custom-add-minus">
-                          <a class="add-icon" *ngIf="fields.length == i+1 && fields.length < 5" (click)="addFormulaGroup()"><img
-                              src="assets/img/plus-field-side-r.svg" class="img-fluid mr-3"></a>
+                          <a class="add-icon" *ngIf="fields.length == i+1 && fields.length < 5"
+                            (click)="addFormulaGroup()"><img src="assets/img/plus-field-side-r.svg"
+                              class="img-fluid mr-3"></a>
                           <a class="remove-icon" *ngIf="fields.length > 1" (click)="deleteFormulaGroup(i)"><img
                               src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>
                         </div>
@@ -974,7 +977,7 @@
                     {{ user?.fullName }} ({{ user?.email }})
                   </ng-option>
                 </ng-select>
-                  <div class="invalid-feedback d-block" *ngIf="!currentNode.contributorId">Contributor is required!</div>
+                <div class="invalid-feedback d-block" *ngIf="!currentNode.contributorId">Contributor is required!</div>
               </div>
             </div>
           </div>
@@ -1049,11 +1052,11 @@
             <div class="modal-body">
               <div class="share-link-model mt-3">
                 <div class="form-group">
-                  <label class="short_text" style="max-width: 500px;" >{{sharingKarta?.name}}</label>
+                  <label class="short_text" style="max-width: 500px;">{{sharingKarta?.name}}</label>
                   <div class="row">
                     <div class="col-lg-12">
-                      <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users" [loading]="loading"
-                        [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers">
+                      <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
+                        [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers">
                         <ng-template ng-tag-tmp let-search="searchTerm">
                           <b>Add new email</b>: {{search}}
                         </ng-template>

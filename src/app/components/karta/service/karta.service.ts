@@ -21,9 +21,6 @@ export class KartaService {
   getSuggestion(data: any) {
     return this._httpService.POST('/suggestion-by-phase', data);
   }
-  getColorSettingsByUser(data: any) {
-    return this._httpService.POST('/color-settings-by-user', data);
-  }
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
@@ -88,8 +85,14 @@ export class KartaService {
   versionControlHistory(data: any){
     return this._httpService.POST('/karta_histories/version-control', data);
   }
-  getColorSettingByUser(data: any) {
-    return this._httpService.POST('/color-settings-by-user', data);
+  undoFunctionality(data: any) {
+    return this._httpService.POST('/karta_histories/undo-control', data);
+  }
+  redoFunctionality(data: any) {
+    return this._httpService.POST('/karta_histories/redo-control', data);
+  }
+  getColorSettingsByKarta(data: any) {
+    return this._httpService.POST('/color_settings/by-karta', data);
   }
   createColorSetting(data: any) {
     return this._httpService.POST('/color_settings', data);
