@@ -197,21 +197,36 @@ export class EditKartaComponent implements OnInit {
 
   //Deleting a particular FormulaField Group
   deleteFormulaGroup(fieldIndex: number) {
-    this.fields.removeAt(fieldIndex);
-    let newArr = [];
-    for (let i = 0; i < this.fields.length; i++) {
-      newArr.push({
-        ...this.formulaGroup.controls['fields']['controls'][i],
-        fieldName: this.currentNode.node_type
-          ? this.currentNode.node_type.fields[i].fieldName
-          : `Field${i + 1}`,
-        // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
+    if (this.currentNode.node_type) {
+      this.fields.removeAt(fieldIndex);
+      let newArr = [];
+      for (let i = 0; i < this.fields.length; i++) {
+        newArr.push({
+          ...this.formulaGroup.controls['fields']['controls'][i]
+        });
+      }
+      this.formulaGroup.patchValue({
+        fields: newArr,
       });
+      this.recheckFormula();
     }
-    this.formulaGroup.patchValue({
-      fields: newArr,
-    });
-    this.recheckFormula();
+    else {
+      this.fields.removeAt(fieldIndex);
+      let newArr = [];
+      for (let i = 0; i < this.fields.length; i++) {
+        newArr.push({
+          ...this.formulaGroup.controls['fields']['controls'][i],
+          fieldName: this.currentNode.node_type
+            ? this.currentNode.node_type.fields[i].fieldName
+            : `Field${i + 1}`,
+          // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
+        });
+      }
+      this.formulaGroup.patchValue({
+        fields: newArr,
+      });
+      this.recheckFormula();
+    }
   }
 
   // Enable/Disable Readonly value of Formula Fields
@@ -370,12 +385,14 @@ export class EditKartaComponent implements OnInit {
                 .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
                 .subscribe(
                   (x) => {
-                    this.currentNode.node_type = x.node_type;
                     $('#formula-field').addClass('is-valid');
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
+                    this.currentNode.node_type = x.node_type;
                     this.updateNode('node_type', request , 'node_updated');
+                    this.updateNode('achieved_value', total , 'node_updated');
+                    this.updateNode('target', newTarget , 'node_updated');
                   },
                   (err) => {
                     console.log(err);
@@ -537,14 +554,14 @@ export class EditKartaComponent implements OnInit {
     else this.disableChart();
   }
 
-    // Get all users
-    getAllUser() {
-      this._kartaService.getAllUsers().subscribe(
-        (response: any) => {
-          this.users = response.users[0].data;
-        }
-      );
-    }
+  // Get all users
+  getAllUser() {
+    this._kartaService.getAllUsers().subscribe(
+      (response: any) => {
+        this.users = response.users[0].data;
+      }
+    );
+  }
 
   // Get all members
   getAllMembers() {
@@ -1022,9 +1039,9 @@ export class EditKartaComponent implements OnInit {
 
   // Update node
   updateNode(key: string, value: any, event: string = "unknown") {
-    let data;
-    if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
-    else data = { [key]: value };
+    let data = { [key]: value };
+    // if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
+    // else data = { [key]: value };
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
         this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
@@ -1331,6 +1348,23 @@ export class EditKartaComponent implements OnInit {
     }
   }
   // Color setting ends
+
+  // Undo Redo Functionality starts
+  undoKarta() {
+    this._kartaService.undoFunctionality({ versionId: this.versionId, kartaId: this.kartaId }).subscribe(
+      (response) => {
+        if(response.message == "Undo Reached..!!"){
+          this._commonService.warningToaster(response.message);
+        }
+        else {
+          $('#karta-svg svg').remove();
+          this.getKartaInfo();
+        }
+      },
+      (err) => console.log(err)
+    );
+  }
+  // Undo Redo Functionality ends
 
 }
 
