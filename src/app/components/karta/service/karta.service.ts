@@ -88,6 +88,12 @@ export class KartaService {
   versionControlHistory(data: any){
     return this._httpService.POST('/karta_histories/version-control', data);
   }
+  undoFunctionality(data: any) {
+    return this._httpService.POST('/karta_histories/undo-control', data);
+  }
+  redoFunctionality(data: any) {
+    return this._httpService.POST('/karta_histories/redo-control', data);
+  }
   getColorSettingByUser(data: any) {
     return this._httpService.POST('/color-settings-by-user', data);
   }
