@@ -57,7 +57,7 @@ export class SettingsComponent implements OnInit {
   ngOnInit(): void {
     this.getColorSettings();
   }
-// Color setting functions 
+  // Color setting functions 
   getColorSettings() {
     this._settingService.getColorSettingsByUser({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {

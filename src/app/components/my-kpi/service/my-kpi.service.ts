@@ -13,7 +13,7 @@ export class MyKpiService {
     return this._httpService.POST('/karta_nodes/kpis', data);
   }
   getColorSettingByUser(data: any) {
-    return this._httpService.POST('/color-settings-by-user', data);
+    return this._httpService.POST('/color_settings/by-user', data);
   }
   getAllMembers(data: any) {
     return this._httpService.POST('/users/get-all-members', data);
