@@ -310,7 +310,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         nodes.forEach(function (d) {
             // if (d.depth >= options.phases().length) d.depth -= d.depth;
             // console.log("my depth ", d.depth)
-            console.log("my phases ", options.phases())
             d.phaseId = options.phases()[d.depth].id
         });
         // nodes.forEach(function (d) {

@@ -59,9 +59,9 @@ export class SettingsComponent implements OnInit {
   }
 // Color setting functions 
   getColorSettings() {
-    this._settingService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
+    this._settingService.getColorSettingsByUser({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
-        this.colorSettings = response;
+        this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
       }
     );
@@ -109,7 +109,7 @@ export class SettingsComponent implements OnInit {
     if (this.colorForm.valid) {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
-        if (this.colorSettings.hasOwnProperty("userId")) {
+        if (this.colorSettings.hasOwnProperty("userId") && !this.colorSettings.hasOwnProperty("kartaId")) {
           this._settingService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
             (response: any) => {
               this._commonService.successToaster("Settings saved successfully");

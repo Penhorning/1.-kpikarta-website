@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
@@ -71,6 +71,7 @@ export class EditKartaComponent implements OnInit {
         this.updateNode('update_dragged_node', data, 'node_updated');
       },
       nodeItem: (d: any) => {
+        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -146,9 +147,11 @@ export class EditKartaComponent implements OnInit {
     private _kartaService: KartaService,
     private _commonService: CommonService,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private router: Router
-  ) { }
+    private fb: FormBuilder
+  ) {
+    // Get karta id from url
+    this.kartaId = this.route.snapshot.paramMap.get('id') || '';
+  }
 
   ngOnInit(): void {
     const that = this;
@@ -168,15 +171,11 @@ export class EditKartaComponent implements OnInit {
       that.closeRightSidebar();
     });
     // Get color settings
-    this.getColorSettings();
-    // Get karta id from url
-    this.kartaId = this.route.snapshot.paramMap.get('id') || '';
+    this.getColorSettingsByKarta();
     // Get all members
     this.getAllMembers();
     // Get versions
     this.getAllVersion();
-     // Get edit color code setting
-     this.getEditColorSettings();
   }
 
   // ---------FormArray Functions defined Below----------
@@ -198,21 +197,36 @@ export class EditKartaComponent implements OnInit {
 
   //Deleting a particular FormulaField Group
   deleteFormulaGroup(fieldIndex: number) {
-    this.fields.removeAt(fieldIndex);
-    let newArr = [];
-    for (let i = 0; i < this.fields.length; i++) {
-      newArr.push({
-        ...this.formulaGroup.controls['fields']['controls'][i],
-        fieldName: this.currentNode.node_type
-          ? this.currentNode.node_type.fields[i].fieldName
-          : `Field${i + 1}`,
-        // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
+    if (this.currentNode.node_type) {
+      this.fields.removeAt(fieldIndex);
+      let newArr = [];
+      for (let i = 0; i < this.fields.length; i++) {
+        newArr.push({
+          ...this.formulaGroup.controls['fields']['controls'][i]
+        });
+      }
+      this.formulaGroup.patchValue({
+        fields: newArr,
       });
+      this.recheckFormula();
     }
-    this.formulaGroup.patchValue({
-      fields: newArr,
-    });
-    this.recheckFormula();
+    else {
+      this.fields.removeAt(fieldIndex);
+      let newArr = [];
+      for (let i = 0; i < this.fields.length; i++) {
+        newArr.push({
+          ...this.formulaGroup.controls['fields']['controls'][i],
+          fieldName: this.currentNode.node_type
+            ? this.currentNode.node_type.fields[i].fieldName
+            : `Field${i + 1}`,
+          // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
+        });
+      }
+      this.formulaGroup.patchValue({
+        fields: newArr,
+      });
+      this.recheckFormula();
+    }
   }
 
   // Enable/Disable Readonly value of Formula Fields
@@ -371,12 +385,14 @@ export class EditKartaComponent implements OnInit {
                 .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
                 .subscribe(
                   (x) => {
-                    this.currentNode.node_type = x.node_type;
                     $('#formula-field').addClass('is-valid');
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
+                    this.currentNode.node_type = x.node_type;
                     this.updateNode('node_type', request , 'node_updated');
+                    this.updateNode('achieved_value', total , 'node_updated');
+                    this.updateNode('target', newTarget , 'node_updated');
                   },
                   (err) => {
                     console.log(err);
@@ -538,14 +554,14 @@ export class EditKartaComponent implements OnInit {
     else this.disableChart();
   }
 
-    // Get all users
-    getAllUser() {
-      this._kartaService.getAllUsers().subscribe(
-        (response: any) => {
-          this.users = response.users[0].data;
-        }
-      );
-    }
+  // Get all users
+  getAllUser() {
+    this._kartaService.getAllUsers().subscribe(
+      (response: any) => {
+        this.users = response.users[0].data;
+      }
+    );
+  }
 
   // Get all members
   getAllMembers() {
@@ -571,7 +587,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getAllVersions(this.kartaId).subscribe(
       (response: any) => {
         this.version = response;
-        this.getKartaInfo();
+        this.getColorSettingsByKarta();
       }
     );
   }
@@ -838,12 +854,9 @@ export class EditKartaComponent implements OnInit {
         //   element.border_color = colorSetting[0]?.color || 'black';
         // } else element.border_color = 'black';
       }
-      total_percentage.push((element.percentage * element.weightage) / 100);
+      total_percentage.push(((element.percentage * element.weightage) / 100) || 0);
     });
-    let aggregate_percentage = total_percentage.reduce(
-      (acc: number, num: number) => acc + num,
-      0
-    );
+    let aggregate_percentage = total_percentage.reduce((acc: number, num: number) => acc + num, 0);
     return aggregate_percentage;
   }
 
@@ -889,7 +902,7 @@ export class EditKartaComponent implements OnInit {
       //         if (item.id === sub_item.kartaPhaseId) this.phases.splice(index+1, 0, sub_item);
       //       });
       //     });
-          // this.getKartaInfo();
+          this.getKartaInfo();
       //   }
       // );
     });
@@ -910,11 +923,15 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
-  // Get color settings
-  getColorSettings() {
-    this._kartaService.getColorSettingsByUser({ userId: this._commonService.getUserId() }).subscribe(
+  // Get color settings by karta
+  getColorSettingsByKarta() {
+    let data = {
+      userId: this._commonService.getUserId(),
+      kartaId: this.kartaId
+    }
+    this._kartaService.getColorSettingsByKarta(data).subscribe(
       (response: any) => {
-        this.colorSettings = response;
+        this.colorSettings = response.color_settings;
         this.getPhases();
       }
     );
@@ -1022,9 +1039,9 @@ export class EditKartaComponent implements OnInit {
 
   // Update node
   updateNode(key: string, value: any, event: string = "unknown") {
-    let data;
-    if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
-    else data = { [key]: value };
+    let data = { [key]: value };
+    // if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
+    // else data = { [key]: value };
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
         this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
@@ -1262,20 +1279,12 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Color setting functions 
-  getEditColorSettings() {
-    this._kartaService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
-      (response: any) => {
-        this.editColorSettings = response;
-        this.editColorSettings.settings = this.editColorSettings.settings.sort((a: any, b: any) => a.min - b.min);
-      }
-    );
-  }
   removeColor(index: number) {
-    this.editColorSettings.settings.splice(index, 1);
+    this.colorSettings.settings.splice(index, 1);
     this.saveColorSetting();
   }
   onColorChange2(colorCode: string, index: number) {
-    this.editColorSettings.settings[index].color = colorCode;
+    this.colorSettings.settings[index].color = colorCode;
     this.saveColorSetting();
   }
   onMinValueChange(value: number) {
@@ -1285,64 +1294,81 @@ export class EditKartaComponent implements OnInit {
     this.colorForm.patchValue({ max: value });
   }
   checkInRange(minValue: number, maxValue: number): boolean {
-    for (let item of this.editColorSettings.settings) {
+    for (let item of this.colorSettings.settings) {
       if (minValue >= item.min && minValue <= item.max) return true;
       else if (maxValue >= item.min && maxValue <= item.max) return true;
     }
     return false;
   }
   findColorInRange(color: string) {
-    return this.editColorSettings.settings.find((item: any) => item.color === color);
+    return this.colorSettings.settings.find((item: any) => item.color === color);
   }
   sumOfRange() {
     let sum = 0;
-    for (let i = 0; i < this.editColorSettings.settings.length; i++) {
-      if (this.editColorSettings.settings[i].min < 101 && this.editColorSettings.settings[i].max < 101) {
-        sum += this.editColorSettings.settings[i].max - this.editColorSettings.settings[i].min;
+    for (let i = 0; i < this.colorSettings.settings.length; i++) {
+      if (this.colorSettings.settings[i].min < 101 && this.colorSettings.settings[i].max < 101) {
+        sum += this.colorSettings.settings[i].max - this.colorSettings.settings[i].min;
       }
     }
-    return sum += this.editColorSettings.settings.length - 2;
+    return sum += this.colorSettings.settings.length - 2;
   }
   onColorSubmit() {
     if (this.checkInRange(this.colorForm.value.min, this.colorForm.value.max)) {
       this._commonService.errorToaster("You cannot add this range of color!");
     } else {
       if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
-      else this.editColorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
+      else this.colorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
     }
   }
   saveColorSetting() {
     if (this.colorForm.valid) {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
-        if (this.editColorSettings.hasOwnProperty("userId")) {
-          this._kartaService.updateColorSetting(this.editColorSettings, this.editColorSettings.id).subscribe(
+        if (this.colorSettings.hasOwnProperty("userId") && this.colorSettings.hasOwnProperty("kartaId")) {
+          this._kartaService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
             (response: any) => {
               this._commonService.successToaster("Settings saved successfully");
-              this.getEditColorSettings();
+              this.getColorSettingsByKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         } else {
           let settingData = {
             userId: this._commonService.getUserId(),
-            settings: this.editColorSettings.settings
+            kartaId: this.kartaId,
+            settings: this.colorSettings.settings
           }
           this._kartaService.createColorSetting(settingData).subscribe(
             (response: any) => {
               this._commonService.successToaster("Settings saved successfully");
-              this.getEditColorSettings();
+              this.getColorSettingsByKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         }
       } else this._commonService.errorToaster("Please complete all the color ranges!");
     }
   }
-  // Color setting ends
 
- colorFunctionDropDown() {
+  colorFunctionDropDown() {
     (document.getElementById('colorDropdown') as HTMLFormElement).classList.toggle("show");
   }
+  // Color setting ends
 
-  
+  // Undo Redo Functionality starts
+  undoKarta() {
+    this._kartaService.undoFunctionality({ versionId: this.versionId, kartaId: this.kartaId }).subscribe(
+      (response) => {
+        if(response.message == "Undo Reached..!!"){
+          this._commonService.warningToaster(response.message);
+        }
+        else {
+          $('#karta-svg svg').remove();
+          this.getKartaInfo();
+        }
+      },
+      (err) => console.log(err)
+    );
+  }
+  // Undo Redo Functionality ends
+
 }
 
