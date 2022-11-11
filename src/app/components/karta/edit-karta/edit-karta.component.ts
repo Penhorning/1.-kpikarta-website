@@ -385,11 +385,11 @@ export class EditKartaComponent implements OnInit {
                 .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
                 .subscribe(
                   (x) => {
+                    this.currentNode.node_type = x.node_type;
                     $('#formula-field').addClass('is-valid');
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
-                    this.currentNode.node_type = x.node_type;
                     this.updateNode('node_type', request , 'node_updated');
                     this.updateNode('achieved_value', total , 'node_updated');
                     this.updateNode('target', newTarget , 'node_updated');
@@ -705,7 +705,7 @@ export class EditKartaComponent implements OnInit {
     } else if (this.currentNode.target[0].frequency === "annually") {
       due_date = moment(start_date).add(1, 'years');
     }
-    this.updateNode('due_date', due_date, 'change due date');
+    this.updateNode('due_date', due_date, 'node_updated');
   }
 
   // Change node name
@@ -735,19 +735,19 @@ export class EditKartaComponent implements OnInit {
   // Change start date
   changeStartDate(el: any) {
     this.setDueDate(el.target.value);
-    this.updateNode('start_date', el.target.value, 'change start date');
+    this.updateNode('start_date', el.target.value, 'node_updated');
   }
   // Change days to calculate
   changeDaysToCalculate(el: any) {
-    this.updateNode('days_to_calculate', el.target.value, 'change days to calculate');
+    this.updateNode('days_to_calculate', el.target.value, 'node_updated');
   }
   // Change fiscal year start date
   changeFiscalStartDate(el: any) {
-    this.updateNode('fiscal_year_start_date', el.target.value, 'change fiscal year start date');
+    this.updateNode('fiscal_year_start_date', el.target.value, 'node_updated');
   }
   // Change fiscal year end date
   changeFiscalEndDate(el: any) {
-    this.updateNode('fiscal_year_end_date', el.target.value, 'change fiscal year end date');
+    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated');
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
@@ -1039,9 +1039,9 @@ export class EditKartaComponent implements OnInit {
 
   // Update node
   updateNode(key: string, value: any, event: string = "unknown") {
-    let data = { [key]: value };
-    // if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
-    // else data = { [key]: value };
+    let data;
+    if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
+    else data = { [key]: value };
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
         this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
@@ -1073,7 +1073,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.removeNode(param.id).subscribe((response: any) => {
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
-      // this.updateNode('kartaNodeId', param.id, 'node_removed');
+      this.updateNode('kartaNodeId', param.id, 'node_removed');
     });
   }
 
