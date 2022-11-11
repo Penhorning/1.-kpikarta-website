@@ -288,6 +288,8 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
           this.kpis = response.kpi_nodes[0].data;
+          console.log(this.kpis, 'this.kpis');
+          
         } else this.kpis = [];
       }
     ).add(() => this.loading = false );
