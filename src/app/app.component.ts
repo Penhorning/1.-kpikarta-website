@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID , HostListener} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -15,6 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private routeSub: Subscription = new Subscription();
 
+ 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router,
@@ -37,6 +38,13 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('window:popstate', ['$event'])
+  onBrowserBackBtnClose(event: Event) {
+      event.preventDefault(); 
+      this.title.setTitle('KPI Karta');
+      this.router.navigate(['/dashboard'],  {replaceUrl:true} );
+  }
+  
   setTitle() {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
