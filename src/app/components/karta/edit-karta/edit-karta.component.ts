@@ -1369,20 +1369,19 @@ export class EditKartaComponent implements OnInit {
               "node_update_key_remove": "node_update_key_remove",
             };
 
-            switch(x.data.event){
+            switch(x.data.data.event){
               case "node_created":
-                this._kartaService.removeNode(x.data.kartaNodeId).subscribe((response: any) => {
+                this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
                   this.setKartaDimension();
-                  // this.D3SVG.removeOneKartaDivider();
+                  this.D3SVG.removeNode(x.data.data.kartaNodeId);
                 });
                 break;
               case "node_updated":
-                this._kartaService.updateNode(x.data.kartaNodeId, x.data.event_options.updated).subscribe(
+                this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
                   (response: any) => {
-                    Object.keys(x.data.event_options.updated).forEach(y => {
-                      this.currentNode[y] = x.data.event_options.updated[y];
+                    Object.keys(x.data.data.event_options.updated).forEach(y => {
+                      this.currentNode[y] = x.data.data.event_options.updated[y];
                       this.D3SVG.updateNode(this.currentNode);
-                      // Calculate new percentage when any achieved, target and weightage value changes
                       if (y === "achieved_value" || y === "target" || y === "weightage") {
                         this.updateNewPercentage();
                       }
