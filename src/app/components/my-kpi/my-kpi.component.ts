@@ -257,7 +257,7 @@ export class MyKpiComponent implements OnInit {
   getColorSettings() {
     this._myKpiService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
-        this.colorSettings = response;
+        this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
         this.getMyKPIsList();
       }
@@ -288,6 +288,8 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response.kpi_nodes[0]?.data.length > 0) {
           this.kpis = response.kpi_nodes[0].data;
+          console.log(this.kpis, 'this.kpis');
+          
         } else this.kpis = [];
       }
     ).add(() => this.loading = false );
@@ -531,6 +533,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response) {
           this.kpis.push(...response.kpi_nodes[0].data);
+          // this.totalData = response.members[0].metadata[0].total;
           if (response.kpi_nodes[0].metadata[0].total == this.kpis.length) this.viewMore_hide = !this.viewMore_hide;
         }
       }).add(() => this.loading = false);

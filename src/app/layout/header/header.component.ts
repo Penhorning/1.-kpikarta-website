@@ -14,7 +14,7 @@ export class HeaderComponent implements OnInit {
   onWindowScroll() {
       this.scrolled = window.scrollY > 0;
   }
-
+ 
   constructor(public _commonService: CommonService) { }
 
   ngOnInit(): void {
@@ -22,9 +22,10 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this._commonService.logout().subscribe(
-      (response: any) => { },
+      (response: any) => {},
       (error: any) => { }
     ).add(() => this._commonService.deleteSession() );
+    history.go(-(history.length - 2));
   }
 
 }

@@ -71,7 +71,6 @@ export class EditKartaComponent implements OnInit {
         this.updateNode('update_dragged_node', data, 'node_updated');
       },
       nodeItem: (d: any) => {
-        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -385,13 +384,13 @@ export class EditKartaComponent implements OnInit {
                 .updateNode(this.currentNode.id, { node_type: request, achieved_value: total, target: newTarget })
                 .subscribe(
                   (x) => {
+                    this.currentNode.node_type = x.node_type;
                     $('#formula-field').addClass('is-valid');
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
-                    this.currentNode.node_type = x.node_type;
                     this.updateNode('node_type', request , 'node_updated');
-                    this.updateNode('achieved_value', total , 'node_updated');
+                    // this.updateNode('achieved_value', total , 'node_updated');
                     this.updateNode('target', newTarget , 'node_updated');
                   },
                   (err) => {
@@ -705,7 +704,7 @@ export class EditKartaComponent implements OnInit {
     } else if (this.currentNode.target[0].frequency === "annually") {
       due_date = moment(start_date).add(1, 'years');
     }
-    this.updateNode('due_date', due_date, 'change due date');
+    this.updateNode('due_date', due_date, 'node_updated');
   }
 
   // Change node name
@@ -735,19 +734,19 @@ export class EditKartaComponent implements OnInit {
   // Change start date
   changeStartDate(el: any) {
     this.setDueDate(el.target.value);
-    this.updateNode('start_date', el.target.value, 'change start date');
+    this.updateNode('start_date', el.target.value, 'node_updated');
   }
   // Change days to calculate
   changeDaysToCalculate(el: any) {
-    this.updateNode('days_to_calculate', el.target.value, 'change days to calculate');
+    this.updateNode('days_to_calculate', el.target.value, 'node_updated');
   }
   // Change fiscal year start date
   changeFiscalStartDate(el: any) {
-    this.updateNode('fiscal_year_start_date', el.target.value, 'change fiscal year start date');
+    this.updateNode('fiscal_year_start_date', el.target.value, 'node_updated');
   }
   // Change fiscal year end date
   changeFiscalEndDate(el: any) {
-    this.updateNode('fiscal_year_end_date', el.target.value, 'change fiscal year end date');
+    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated');
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
@@ -977,7 +976,8 @@ export class EditKartaComponent implements OnInit {
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
         kartaId: this.kartaId,
-        parentNodeId: param.id
+        parentNodeId: param.id,
+        historyType: 'main'
       };
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => { }
@@ -1039,9 +1039,9 @@ export class EditKartaComponent implements OnInit {
 
   // Update node
   updateNode(key: string, value: any, event: string = "unknown") {
-    let data = { [key]: value };
-    // if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
-    // else data = { [key]: value };
+    let data;
+    if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
+    else data = { [key]: value };
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
         this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
@@ -1059,7 +1059,8 @@ export class EditKartaComponent implements OnInit {
           kartaNodeId: this.currentNode.id,
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
-          kartaId: this.kartaId
+          kartaId: this.kartaId,
+          historyType: 'main'
         }
         this._kartaService.addKartaHistoryObject(history_data).subscribe(
           (response: any) => { }
@@ -1137,7 +1138,8 @@ export class EditKartaComponent implements OnInit {
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
-        kartaId: this.kartaId
+        kartaId: this.kartaId,
+        historyType: 'main'
       };
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => { }
@@ -1149,7 +1151,7 @@ export class EditKartaComponent implements OnInit {
   saveKarta() {
     // New Version Calculation
     let versionNumber = this.version.reduce((acc: any,curr: any) => {
-      let num = curr.name.split(".")[0];
+      let num = curr.name;
       if(Number(num) > acc){
         acc = Number(num);
       }
@@ -1158,16 +1160,17 @@ export class EditKartaComponent implements OnInit {
 
     // New Version Object
     let new_version = {
-      name: `${versionNumber+1}.0.0`,
-      kartaId: this.kartaId
+      name: `${versionNumber+1}`,
+      kartaId: this.kartaId,
+      versionId: this.versionId
     };
 
-    this._kartaService.createKartaVersion(new_version).subscribe(
+    this._kartaService.createVersion(new_version).subscribe(
       (versionResponse: any) => {
         // New Karta Data
         let data = {
           name: this.karta.name,
-          versionId: versionResponse.id
+          versionId: versionResponse.data.id
         };
 
         this._kartaService.updateKarta(this.kartaId, data).subscribe(
@@ -1355,18 +1358,45 @@ export class EditKartaComponent implements OnInit {
 
   // Undo Redo Functionality starts
   undoKarta() {
-    this._kartaService.undoFunctionality({ versionId: this.versionId, kartaId: this.kartaId }).subscribe(
-      (response) => {
-        if(response.message == "Undo Reached..!!"){
-          this._commonService.warningToaster(response.message);
+    this._kartaService.undoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
+      (x: any) => {
+        if(x.message != "nothing"){
+          if(x.message != "final"){
+            const event_object = {
+              "node_created": "node_created",
+              "node_updated": "node_updated",
+              "node_removed": "node_removed",
+              "node_update_key_remove": "node_update_key_remove",
+            };
+
+            switch(x.data.data.event){
+              case "node_created":
+                this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
+                  this.setKartaDimension();
+                  this.D3SVG.removeNode(x.data.data.kartaNodeId);
+                });
+                break;
+              case "node_updated":
+                this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
+                  (response: any) => {
+                    Object.keys(x.data.data.event_options.updated).forEach(y => {
+                      this.currentNode[y] = x.data.data.event_options.updated[y];
+                      this.D3SVG.updateNode(this.currentNode);
+                      if (y === "achieved_value" || y === "target" || y === "weightage") {
+                        this.updateNewPercentage();
+                      }
+                    })
+                  }
+                );
+                break;
+            }
+          }
+          else {
+            this._commonService.warningToaster("Undo reached..!!");
+          }
         }
-        else {
-          $('#karta-svg svg').remove();
-          this.getKartaInfo();
-        }
-      },
-      (err) => console.log(err)
-    );
+      }
+    )
   }
   // Undo Redo Functionality ends
 

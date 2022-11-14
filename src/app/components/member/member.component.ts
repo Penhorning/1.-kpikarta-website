@@ -164,7 +164,6 @@ export class MemberComponent implements OnInit {
   // Submit user data
   onSubmit() {
     this.submitted = true;
-
     if (this.inviteForm.valid) {
 
       this.submitFlag = true;
@@ -175,6 +174,7 @@ export class MemberComponent implements OnInit {
         this._memberService.inviteMember({ data: this.inviteForm.value }).subscribe(
           (response: any) => {
             this.resetFormModal();
+            this.viewMore_hide = true;
             this._commonService.successToaster("Member invited successfully!");
           },
           (error: any) => {
@@ -191,6 +191,7 @@ export class MemberComponent implements OnInit {
         this._memberService.updateUser(this.inviteForm.value, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
+            this.viewMore_hide = true;
             this._commonService.successToaster("Member updated successfully!");
           },
           (error: any) => {
@@ -259,7 +260,8 @@ export class MemberComponent implements OnInit {
       (response: any) => {
         if (response) {
           this.members.push(...response.members[0].data);
-          if (response.members[0].metadata[0].total == this.members.length) this.viewMore_hide = !this.viewMore_hide;
+          if (response.members[0].metadata[0].total == this.members.length) 
+          this.viewMore_hide = !this.viewMore_hide;
         }
       }).add(() => this.loading = false);
   }
