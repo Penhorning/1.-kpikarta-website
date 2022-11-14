@@ -71,7 +71,6 @@ export class EditKartaComponent implements OnInit {
         this.updateNode('update_dragged_node', data, 'node_updated');
       },
       nodeItem: (d: any) => {
-        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -977,7 +976,8 @@ export class EditKartaComponent implements OnInit {
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
         kartaId: this.kartaId,
-        parentNodeId: param.id
+        parentNodeId: param.id,
+        historyType: 'main'
       };
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => { }
@@ -1059,7 +1059,8 @@ export class EditKartaComponent implements OnInit {
           kartaNodeId: this.currentNode.id,
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
-          kartaId: this.kartaId
+          kartaId: this.kartaId,
+          historyType: 'main'
         }
         this._kartaService.addKartaHistoryObject(history_data).subscribe(
           (response: any) => { }
@@ -1137,7 +1138,8 @@ export class EditKartaComponent implements OnInit {
         kartaNodeId: response.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
-        kartaId: this.kartaId
+        kartaId: this.kartaId,
+        historyType: 'main'
       };
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => { }
@@ -1149,7 +1151,7 @@ export class EditKartaComponent implements OnInit {
   saveKarta() {
     // New Version Calculation
     let versionNumber = this.version.reduce((acc: any,curr: any) => {
-      let num = curr.name.split(".")[0];
+      let num = curr.name;
       if(Number(num) > acc){
         acc = Number(num);
       }
@@ -1158,16 +1160,17 @@ export class EditKartaComponent implements OnInit {
 
     // New Version Object
     let new_version = {
-      name: `${versionNumber+1}.0.0`,
-      kartaId: this.kartaId
+      name: `${versionNumber+1}`,
+      kartaId: this.kartaId,
+      versionId: this.versionId
     };
 
-    this._kartaService.createKartaVersion(new_version).subscribe(
+    this._kartaService.createVersion(new_version).subscribe(
       (versionResponse: any) => {
         // New Karta Data
         let data = {
           name: this.karta.name,
-          versionId: versionResponse.id
+          versionId: versionResponse.data.id
         };
 
         this._kartaService.updateKarta(this.kartaId, data).subscribe(
@@ -1355,18 +1358,46 @@ export class EditKartaComponent implements OnInit {
 
   // Undo Redo Functionality starts
   undoKarta() {
-    this._kartaService.undoFunctionality({ versionId: this.versionId, kartaId: this.kartaId }).subscribe(
-      (response) => {
-        if(response.message == "Undo Reached..!!"){
-          this._commonService.warningToaster(response.message);
+    this._kartaService.undoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
+      (x: any) => {
+        if(x.message != "nothing"){
+          if(x.message != "final"){
+            const event_object = {
+              "node_created": "node_created",
+              "node_updated": "node_updated",
+              "node_removed": "node_removed",
+              "node_update_key_remove": "node_update_key_remove",
+            };
+
+            switch(x.data.event){
+              case "node_created":
+                this._kartaService.removeNode(x.data.kartaNodeId).subscribe((response: any) => {
+                  this.setKartaDimension();
+                  // this.D3SVG.removeOneKartaDivider();
+                });
+                break;
+              case "node_updated":
+                this._kartaService.updateNode(x.data.kartaNodeId, x.data.event_options.updated).subscribe(
+                  (response: any) => {
+                    Object.keys(x.data.event_options.updated).forEach(y => {
+                      this.currentNode[y] = x.data.event_options.updated[y];
+                      this.D3SVG.updateNode(this.currentNode);
+                      // Calculate new percentage when any achieved, target and weightage value changes
+                      if (y === "achieved_value" || y === "target" || y === "weightage") {
+                        this.updateNewPercentage();
+                      }
+                    })
+                  }
+                );
+                break;
+            }
+          }
+          else {
+            this._commonService.warningToaster("Undo reached..!!");
+          }
         }
-        else {
-          $('#karta-svg svg').remove();
-          this.getKartaInfo();
-        }
-      },
-      (err) => console.log(err)
-    );
+      }
+    )
   }
   // Undo Redo Functionality ends
 
