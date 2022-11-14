@@ -533,6 +533,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         if (response) {
           this.kpis.push(...response.kpi_nodes[0].data);
+          // this.totalData = response.members[0].metadata[0].total;
           if (response.kpi_nodes[0].metadata[0].total == this.kpis.length) this.viewMore_hide = !this.viewMore_hide;
         }
       }).add(() => this.loading = false);

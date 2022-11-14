@@ -10,7 +10,6 @@ import { SignupService } from '@app/components/sign-up/service/signup.service';
 export class AuthGuard implements CanActivateChild {
 
   constructor (private _commonService: CommonService, private router: Router) { }
-  
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
