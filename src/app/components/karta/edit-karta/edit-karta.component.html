@@ -594,7 +594,7 @@
 
               <div class="row">
                 <div class="col-3">
-                  <a href="javascript:void(0);"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
+                  <a href="javascript:void(0);" (click)="undoKarta()"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
                   <a href="javascript:void(0);"><img src="assets/img/Redo.svg" class="img-fluid ml-1"></a>
                 </div>
 
@@ -703,7 +703,7 @@
           </div>
           <div class="col-lg-7">
             <select class="form-control font-style" [(ngModel)]="selectedFont"
-              (change)="updateNode('font_style', selectedFont)">
+              (change)="updateNode('font_style', selectedFont, 'node_updated')">
               <option value="system-ui">System-UI</option>
               <option value="sans-serif">Sans-Serif</option>
               <option value="monospace">Monospace</option>
@@ -744,7 +744,7 @@
           <div class="col-lg-7">
             <div class="color-picker">
               <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor"
-                (change)="updateNode('text_color', selectedColor)" style="cursor: pointer;">
+                (change)="updateNode('text_color', selectedColor, 'node_updated')" style="cursor: pointer;">
             </div>
           </div>
         </div>
