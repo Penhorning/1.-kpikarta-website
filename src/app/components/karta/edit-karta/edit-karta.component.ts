@@ -1074,7 +1074,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.removeNode(param.id).subscribe((response: any) => {
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
-      this.updateNode('kartaNodeId', param.id, 'node_removed');
+      // this.updateNode('kartaNodeId', param.id, 'node_removed');
     });
   }
 
