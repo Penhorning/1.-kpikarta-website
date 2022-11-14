@@ -390,7 +390,7 @@ export class EditKartaComponent implements OnInit {
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
                     this.updateNode('node_type', request , 'node_updated');
-                    this.updateNode('achieved_value', total , 'node_updated');
+                    // this.updateNode('achieved_value', total , 'node_updated');
                     this.updateNode('target', newTarget , 'node_updated');
                   },
                   (err) => {
