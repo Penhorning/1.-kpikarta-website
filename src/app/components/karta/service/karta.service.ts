@@ -43,6 +43,9 @@ export class KartaService {
   createKartaVersion(data: any){
     return this._httpService.POST('/karta_versions', data);
   }
+  createVersion(data: any){
+    return this._httpService.POST('/karta_versions/create-version', data);
+  }
   createKarta(data: any) {
     return this._httpService.POST('/karta', data);
   }
