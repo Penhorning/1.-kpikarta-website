@@ -51,6 +51,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     //   .size([height, width])
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
+    options.updateRemovedNode = updateRemovedNode;
     options.exportAsImage = exportAsImage;
     options.exportAsPDF = exportAsPDF;
     // options.buildOneKartaDivider = buildOneKartaDivider;
@@ -519,14 +520,22 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         document.getElementById('karta-svg').scrollLeft += 50;
     }
 
+    // Update Removed Node
+    function updateRemovedNode(d) {
+        d.parent.children = d.parent.children.filter(c => {
+            return c.id != d.id;
+        })
+        update(d.parent);
+    }
+
     // Export as image
     function exportAsImage(name) {
-        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 1, backgroundColor: "#FFFFFF", left: -(svgSize.width/2)});
+        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 1, backgroundColor: "#FFFFFF", left: -(width/2)});
     }
     // Export as pdf
     function exportAsPDF(name) {
         window.jsPDF = window.jspdf.jsPDF;
-        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(svgSize.width/2) }).then(uri => {
+        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2) }).then(uri => {
             let imageBase64 = uri.split(',')[1];
             let svgWidth = $("#karta-svg svg").width();
             let doc = new jsPDF('l', 'px', [svgWidth, 768]);
