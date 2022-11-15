@@ -51,6 +51,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     //   .size([height, width])
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
+    options.updateRemovedNode = updateRemovedNode;
     options.exportAsImage = exportAsImage;
     options.exportAsPDF = exportAsPDF;
     // options.buildOneKartaDivider = buildOneKartaDivider;
@@ -517,6 +518,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         update(parent);
         update(root);
         document.getElementById('karta-svg').scrollLeft += 50;
+    }
+
+    // Update Removed Node
+    function updateRemovedNode(d) {
+        d.parent.children = d.parent.children.filter(c => {
+            return c.id != d.id;
+        })
+        update(d.parent);
     }
 
     // Export as image

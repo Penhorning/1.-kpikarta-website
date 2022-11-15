@@ -68,9 +68,11 @@ export class EditKartaComponent implements OnInit {
           parentId: d.parent.id,
           phaseId: d.phaseId,
         };
-        this.updateNode('update_dragged_node', data, 'node_updated');
+        this.updateNode('parentId', d.parent.id, 'node_updated');
+        this.updateNode('phaseId', d.phaseId, 'node_updated');
       },
       nodeItem: (d: any) => {
+        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -390,7 +392,7 @@ export class EditKartaComponent implements OnInit {
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
                     this.updateNode('node_type', request , 'node_updated');
-                    // this.updateNode('achieved_value', total , 'node_updated');
+                    this.updateNode('achieved_value', total , 'node_updated');
                     this.updateNode('target', newTarget , 'node_updated');
                   },
                   (err) => {
@@ -770,7 +772,8 @@ export class EditKartaComponent implements OnInit {
         achieved_value: this.currentNodeAchievedValue,
         target: this.target,
       };
-      this.updateNode('achieved_value', data, 'node_updated');
+      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated');
+      this.updateNode('target', this.target, 'node_updated');
     }
   }
   // Change contributor
@@ -1039,9 +1042,7 @@ export class EditKartaComponent implements OnInit {
 
   // Update node
   updateNode(key: string, value: any, event: string = "unknown") {
-    let data;
-    if (key === 'achieved_value' || key === 'updateDraggedNode') data = value;
-    else data = { [key]: value };
+    let data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
         this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
@@ -1373,7 +1374,9 @@ export class EditKartaComponent implements OnInit {
               case "node_created":
                 this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
                   this.setKartaDimension();
-                  this.D3SVG.removeNode(x.data.data.kartaNodeId);
+                  console.log(x.data.data.event_options.created, 'x.data.data.event_options.created');
+                  
+                  this.D3SVG.updateRemovedNode(x.data.data.event_options.created);
                 });
                 break;
               case "node_updated":
