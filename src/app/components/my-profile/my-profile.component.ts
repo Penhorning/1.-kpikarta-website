@@ -144,7 +144,20 @@ export class MyProfileComponent implements OnInit {
         this.profileForm.controls["email"].disable();
         if (this.user.mobileVerified) this.numberType = "Change";
         else this.numberType = "Verify";
-        this.getCompanyProfile();
+
+        // Set company details
+        this.company = response.company;
+        this.companyForm.patchValue({
+          name: this.company.name,
+          job_title: this.company.job_title ? this.company.job_title : "",
+          departmentId: this.company.departmentId ? this.company.departmentId : "",
+          employeesRangeId: this.company.employeesRangeId ? this.company.employeesRangeId : ""
+        });
+        // Set company logo variables
+        this.companyLogo.oldImage = response.company.logo;
+        if (response.company.logo) {
+          this.companyLogo.fileImageUrl = `${this._commonService.MEDIA_URL}/company/${response.company.logo}`;
+        } else this.companyLogo.fileImageUrl = "assets/img/kpi-karta-logo.png";
       },
       (error: any) => {
         this.isLoading = false;
@@ -169,28 +182,28 @@ export class MyProfileComponent implements OnInit {
     );
   }
 
-  getCompanyProfile() {
-    let userId: "";
-    if (this.user.hasOwnProperty("addedBy")) userId = this.user.creatorId;
-    else userId = this.user.id;
-    this._profileService.getCompanyByUser(userId).subscribe(
-      (response: any) => {
-        this.company = response;
-        this.companyForm.patchValue({
-          name: this.company.name,
-          job_title: this.company.job_title ? this.company.job_title : "",
-          departmentId: this.company.departmentId ? this.company.departmentId : "",
-          employeesRangeId: this.company.employeesRangeId ? this.company.employeesRangeId : ""
-        });
-        // Set company logo variables
-        this.companyLogo.oldImage = response.logo;
-        if (response.logo) {
-          this.companyLogo.fileImageUrl = `${this._commonService.MEDIA_URL}/company/${response.logo}`;
-        } else this.companyLogo.fileImageUrl = "assets/img/kpi-karta-logo.png";
-      },
-      (error: any) => { }
-    );
-  }
+  // getCompanyProfile() {
+  //   let userId: "";
+  //   if (this.user.hasOwnProperty("addedBy")) userId = this.user.creatorId;
+  //   else userId = this.user.id;
+  //   this._profileService.getCompanyByUser(userId).subscribe(
+  //     (response: any) => {
+  //       this.company = response;
+  //       this.companyForm.patchValue({
+  //         name: this.company.name,
+  //         job_title: this.company.job_title ? this.company.job_title : "",
+  //         departmentId: this.company.departmentId ? this.company.departmentId : "",
+  //         employeesRangeId: this.company.employeesRangeId ? this.company.employeesRangeId : ""
+  //       });
+  //       // Set company logo variables
+  //       this.companyLogo.oldImage = response.logo;
+  //       if (response.logo) {
+  //         this.companyLogo.fileImageUrl = `${this._commonService.MEDIA_URL}/company/${response.logo}`;
+  //       } else this.companyLogo.fileImageUrl = "assets/img/kpi-karta-logo.png";
+  //     },
+  //     (error: any) => { }
+  //   );
+  // }
 
   resetCropModel(type: string, width: number, height: number) {
     this.cropperModel.type = type;
