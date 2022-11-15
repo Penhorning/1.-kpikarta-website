@@ -10,7 +10,7 @@ export class ProfileService {
 
 /*============================== API FUNCTIONS STARTS ==============================*/
   getProfile(userId: string) {
-    return this._httpService.GET_BY_ID('/users/', userId);
+    return this._httpService.GET(`/users/${userId}?filter[include]=company`);
   }
   getDepartments() {
     return this._httpService.GET('/departments/');
@@ -24,9 +24,9 @@ export class ProfileService {
   uploadFile(data: any, type: string) {
     return this._httpService.POST(`/Containers/${type}/upload`, data);
   }
-  getCompanyByUser(userId: string) {
-    return this._httpService.GET(`/companies/findOne?filter[where][userId]=${userId}`);
-  }
+  // getCompanyByUser(userId: string) {
+  //   return this._httpService.GET(`/companies/findOne?filter[where][userId]=${userId}`);
+  // }
   updateCompany(data: any, companyId: string) {
     return this._httpService.PATCH(`/companies/${companyId}`, data);
   }
