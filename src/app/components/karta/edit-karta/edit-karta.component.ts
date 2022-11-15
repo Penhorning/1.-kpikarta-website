@@ -1075,7 +1075,45 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.removeNode(param.id).subscribe((response: any) => {
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
-      // this.updateNode('kartaNodeId', param.id, 'node_removed');
+      let kpi_check_obj = {
+        target: "target",
+        achieved_value: 'achieved_value',
+        threshold_value: 'threshold_value',
+        is_achieved_modified: 'is_achieved_modified',
+        alert_type: 'alert_type',
+        alert_frequency: 'alert_frequency',
+        kpi_calc_period: 'kpi_calc_period'
+      };
+
+      let new_obj: any = {
+        kartaDetailId: this.kartaId,
+        phaseId: param.phaseId,
+        parentId: param.parentId,
+        name: param.name,
+        font_style: param.font_style,
+        alignment: param.alignment,
+        text_color: param.text_color,
+        weightage: param.weightage,
+      }
+
+      Object.keys(kpi_check_obj).forEach(x => {
+        if(param[x]){
+          new_obj[x] = param[x];
+        }
+      });
+
+      let history_data = {
+        event: 'node_removed',
+        eventValue: new_obj,
+        kartaNodeId: param.id,
+        userId: this._commonService.getUserId(),
+        versionId: this.versionId,
+        kartaId: this.kartaId,
+        historyType: 'main'
+      }
+      this._kartaService.addKartaHistoryObject(history_data).subscribe(
+        (response: any) => { }
+      );
     });
   }
 
@@ -1391,6 +1429,8 @@ export class EditKartaComponent implements OnInit {
                     })
                   }
                 );
+                break;
+              case "node_removed":
                 break;
             }
           }
