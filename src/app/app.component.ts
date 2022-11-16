@@ -68,12 +68,14 @@ export class AppComponent implements OnInit {
   checkUserStatus() {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this._commonService.getUserInfo().subscribe(
-          (response: any) => {
-            this._commonService.userRole = response.roles[0].name;
-            this._commonService.userLicense = response.license.name;
-          }
-        );
+        if (this._commonService.getSession().token) {
+          this._commonService.getUserInfo().subscribe(
+            (response: any) => {
+              this._commonService.userRole = response.roles[0].name;
+              this._commonService.userLicense = response.license.name;
+            }
+          );
+        }
       }
     });
   }
