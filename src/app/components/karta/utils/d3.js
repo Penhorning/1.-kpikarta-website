@@ -497,7 +497,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     function updateNode(d) {
         var nodeHtml = `
             <p class="py-1" id="nodeItem">
-                <span id="nodeItem" class="d-block" title="${d.name}">${d.name || ''}</span>
+                <span id="nodeItem" class="d-block short_text" title="${d.name}">${d.name || ''}</span>
                 <span class="font-weight-bold nodePercentage">${d.percentage || 0}%</span>
             </p>`;
         $(`.node-text[nodeid=${d.id}]`).html(nodeHtml);
