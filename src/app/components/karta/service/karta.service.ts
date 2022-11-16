@@ -53,6 +53,9 @@ export class KartaService {
   // deleteSharedKarta(id: any) {
   //   return this._httpService.POST('/karta/delete-shared-karta', id);
   // }
+  getNode(nodeId: any) {
+    return this._httpService.GET(`/karta_nodes/${nodeId}`);
+  }
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);
   }

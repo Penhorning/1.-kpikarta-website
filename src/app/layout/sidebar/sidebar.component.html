@@ -20,7 +20,7 @@
                 <span><img src="assets/img/kartas.png" alt="" /></span>
                 Kartas
             </a> -->
-            <a [routerLink]="['/karta/all-kartas']" routerLinkActive="active">
+            <a [routerLink]="['/karta/all']" routerLinkActive="active">
                 <span><img src="assets/img/kartas.png" alt="" /></span>
                 Kartas
             </a>
@@ -45,7 +45,7 @@
                 Market Place
             </a>
         </li>
-        <li>
+        <li *ngIf="_commonService.userRole === 'company_admin' || _commonService.userRole === 'department_admin'">
             <a [routerLink]="['/members']" routerLinkActive="active">
                 <span><img src="assets/img/members.png" alt="" /></span>
                 Members

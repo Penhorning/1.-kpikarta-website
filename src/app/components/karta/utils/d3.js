@@ -14,9 +14,9 @@ var getSVGSize = (tree, level = 0) => {
         levelDepth = [children.length * 100 || width2];
     } else {
         if (!levelDepth[level]) {
-            levelDepth[level] = children.length * 100
+            levelDepth[level] = children.length * 100;
         } else {
-            levelDepth[level] += children.length * 100
+            levelDepth[level] += children.length * 100;
         }
     }
     if ((level + 1) * 65 > levelHeight) {

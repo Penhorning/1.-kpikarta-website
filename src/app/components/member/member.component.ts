@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { CommonService } from '@app/shared/_services/common.service';
 import { MemberService } from './service/member.service';
+import { Router } from '@angular/router';
 
 declare const $: any;
 
@@ -13,6 +14,8 @@ declare const $: any;
 })
 export class MemberComponent implements OnInit {
 
+  user: any;
+  userRole: string = "";
   members: any = [];
   roles: any = [];
   departments: any = [];
@@ -22,6 +25,7 @@ export class MemberComponent implements OnInit {
   submitted: boolean = false;
   submitFlag = false;
   showDepartment: boolean = false;
+  showRole: boolean = false;
   hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
   viewMore_hide: boolean = true;
@@ -34,7 +38,7 @@ export class MemberComponent implements OnInit {
   pageSize: number = 10;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
-  loading = false;
+  loading = true;
 
   // ngx-intl-tel-input config
   separateDialCode = true;
@@ -56,14 +60,26 @@ export class MemberComponent implements OnInit {
   constructor(
     private _memberService: MemberService,
     private fb: FormBuilder,
-    private _commonService: CommonService
-  ) { }
+    private _commonService: CommonService,
+    private router: Router
+  ) {
+    
+  }
 
   ngOnInit(): void {
-    this.getAllMembers();
-    this.getRoles();
-    this.getDepartments();
-    this.getLicenses();
+    this._commonService.getUserInfo().subscribe(
+      (response: any) => {
+        this.user = response;
+        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'department_admin') {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.getAllMembers();
+          this.getRoles();
+          this.getDepartments();
+          this.getLicenses();
+        }
+      }
+    );
   }
 
   // Get all members users
@@ -72,7 +88,8 @@ export class MemberComponent implements OnInit {
       page: this.pageIndex + 1,
       limit: this.pageSize,
       userId: this._commonService.getUserId(),
-      searchQuery: this.search_text
+      searchQuery: this.search_text,
+      type: "members"
     }
     this.loading = true;
     this._memberService.getAllMembers(data).subscribe(
@@ -93,6 +110,7 @@ export class MemberComponent implements OnInit {
     this._memberService.getRoles().subscribe(
       (response: any) => {
         this.roles = response.data;
+        this.userRole = this.roles.filter((item: any) => item.name === 'user')[0].id;
       }
     );
   }
@@ -119,14 +137,29 @@ export class MemberComponent implements OnInit {
     this.checkFormType = type;
     this.currentUser = data;
     if (type == 'CREATE') {
-      this.inviteForm.patchValue({
-        fullName: "",
-        email: "",
-        licenseId: "",
-        mobile: "",
-        roleId: "",
-        departmentId: "",
-      });
+      if (this.user.roles[0].name === 'department_admin') {
+        this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+        this.showDepartment = true;
+        this.inviteForm.patchValue({
+          fullName: "",
+          email: "",
+          licenseId: "",
+          mobile: "",
+          roleId: this.userRole,
+          departmentId: this.user.departmentId
+        });
+        this.inviteForm.controls['roleId'].disable();
+        this.inviteForm.controls['departmentId'].disable();
+      } else {
+        this.inviteForm.patchValue({
+          fullName: "",
+          email: "",
+          licenseId: "",
+          mobile: "",
+          roleId: "",
+          departmentId: "",
+        });
+      }
     }
     else {
       if (!data.departmentId) {
@@ -137,7 +170,8 @@ export class MemberComponent implements OnInit {
         this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
         this.inviteForm.patchValue({
           departmentId: data.departmentId ? data.departmentId : ''
-        })
+        });
+        if (this.user.roles[0].name === 'department_admin') this.inviteForm.controls['departmentId'].disable();
       }
       this.inviteForm.patchValue({
         fullName: data.fullName ? data.fullName : '',
@@ -156,8 +190,8 @@ export class MemberComponent implements OnInit {
       this.inviteForm.removeControl("departmentId");
       this.inviteForm.value.departmentId = "";
     } else {
-      this.showDepartment = true;
       this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
+      this.showDepartment = true;
     }
   }
 
@@ -167,11 +201,12 @@ export class MemberComponent implements OnInit {
     if (this.inviteForm.valid) {
 
       this.submitFlag = true;
-      this.inviteForm.value.creatorId = this._commonService.getUserId();
+      let formData = this.inviteForm.getRawValue();
+      formData.creatorId = this._commonService.getUserId();
 
       // When new user create
       if (this.checkFormType === "CREATE") {
-        this._memberService.inviteMember({ data: this.inviteForm.value }).subscribe(
+        this._memberService.inviteMember({ data: formData }).subscribe(
           (response: any) => {
             this.resetFormModal();
             this.viewMore_hide = true;
@@ -186,9 +221,9 @@ export class MemberComponent implements OnInit {
       }
       // When update any existing user
       else if (this.checkFormType === "UPDATE") {
-        this.inviteForm.value.type = "invited_user";
-        this.inviteForm.value.userId = this.currentUser._id;
-        this._memberService.updateUser(this.inviteForm.value, this.currentUser._id).subscribe(
+        formData.type = "invited_user";
+        formData.userId = this.currentUser._id;
+        this._memberService.updateUser(formData, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
             this.viewMore_hide = true;
