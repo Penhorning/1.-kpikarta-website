@@ -1410,12 +1410,18 @@ export class EditKartaComponent implements OnInit {
 
             switch(x.data.data.event){
               case "node_created":
-                this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
-                  this.setKartaDimension();
+                this._kartaService.getNode(x.data.data.kartaNodeId).subscribe(y => {
                   console.log(x.data.data.event_options.created, 'x.data.data.event_options.created');
-                  
-                  this.D3SVG.updateRemovedNode(x.data.data.event_options.created);
-                });
+                  console.log(y, 'y');
+                  let newObj = {
+                    ...x.data.data.event_options.created,
+                    parent: x
+                  };
+                  this.D3SVG.updateRemovedNode(newObj);
+                })
+                // this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
+                //   this.setKartaDimension();
+                // });
                 break;
               case "node_updated":
                 this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
