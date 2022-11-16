@@ -142,6 +142,10 @@ export class EditKartaComponent implements OnInit {
   versionId: any = "";
   formulaError: string = "";
 
+  // Undo Redo
+  getRemovableNodeId: any = "";
+  getRemovableNode: any = null;
+
   constructor(
     private _kartaService: KartaService,
     private _commonService: CommonService,
@@ -980,7 +984,14 @@ export class EditKartaComponent implements OnInit {
         historyType: 'main'
       };
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
-        (result: any) => { }
+        (result: any) => {
+          this._kartaService.updateKarta(this.kartaId, {historyId: result.id}).subscribe(
+            (res: any) => {}
+          );
+          this._kartaService.syncKartaHistory({kartaId: this.kartaId, versionId: this.versionId}).subscribe(
+            (res: any) => {}
+          );
+        }
       );
     });
   }
@@ -1399,32 +1410,37 @@ export class EditKartaComponent implements OnInit {
   // Color setting ends
 
   // Undo Redo Functionality starts
+  returnChildNode(node: any) {
+    if(node.id == this.getRemovableNodeId){
+      this.getRemovableNode = node;
+      return;
+    } else {
+      if (node.children) {
+        for(let i = 0; i < node.children.length; i++){
+          if(this.getRemovableNode){
+            break;
+          }
+          this.returnChildNode(node.children[i]);
+        }
+      }
+    }
+  }
+
   undoKarta() {
     this._kartaService.undoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
-        if(x.message != "nothing"){
-          if(x.message != "final"){
-            const event_object = {
-              "node_created": "node_created",
-              "node_updated": "node_updated",
-              "node_removed": "node_removed",
-              "node_update_key_remove": "node_update_key_remove",
-            };
-
+        if(x.data.message != "nothing"){
+          if(x.data.message != "final"){
             switch(x.data.data.event){
               case "node_created":
-                this._kartaService.getNode(x.data.data.parentNodeId).subscribe(y => {
-                  console.log(x.data.data.event_options.created, 'x.data.data.event_options.created');
-                  console.log(y, 'y');
-                  let newObj = {
-                    ...x.data.data.event_options.created,
-                    parent: x
-                  };
-                  this.D3SVG.updateRemovedNode(newObj);
-                })
-                // this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
-                //   this.setKartaDimension();
-                // });
+                if(x.data.data){
+                  this.getRemovableNodeId = x.data.data.kartaNodeId;
+                  this.returnChildNode(this.karta.node);
+                  this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                  this.setKartaDimension();
+                  this.getRemovableNode = null;
+                  this.getRemovableNodeId = "";
+                }
                 break;
               case "node_updated":
                 this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
