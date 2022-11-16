@@ -35,11 +35,15 @@ export class CommonService {
     </div>
   `;
 
+  // Form validation variables
   formValidation: any  = {
     blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
     email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
     password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
   }
+  // User variables
+  userRole: string = "";
+  userLicense: string = "";
 
   // Datepicker config
   maxDate: any = moment();
@@ -117,6 +121,10 @@ export class CommonService {
   }
   resetPassword(data: any, accessToken: string) {
     return this._httpService.POST(`/users/reset-password?access_token=${accessToken}`, data);
+  }
+  // Get user info and set user role and license and based on that we will hide or show members tab in sidebar
+  getUserInfo() {
+    return this._httpService.GET(`/users/${this.getUserId()}?filter[include]=roles&filter[include]=license`);
   }
   // Common apis
 /*============================== API FUNCTIONS ENDS ==============================*/

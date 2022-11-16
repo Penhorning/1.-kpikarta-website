@@ -9,9 +9,9 @@ const routes: Routes = [
   { path: '', redirectTo:'/dashboard', pathMatch: 'full' },
   { path: '', component: KartaComponent,
     children: [
-      { path: 'all-kartas', component: AllKartasComponent, data: { title: 'All Kartas - KPI Karta'} },
-      { path: 'create-karta', component: CreateKartaComponent, data: { title: 'Create Karta - KPI Karta'} },
-      { path: 'edit-karta/:id', component: EditKartaComponent, data: { title: 'Edit Karta - KPI Karta'} }
+      { path: 'all', component: AllKartasComponent, data: { title: 'All Kartas - KPI Karta'} },
+      { path: 'create', component: CreateKartaComponent, data: { title: 'Create Karta - KPI Karta'} },
+      { path: 'edit/:id', component: EditKartaComponent, data: { title: 'Edit Karta - KPI Karta'} }
     ]
   }
 ];
