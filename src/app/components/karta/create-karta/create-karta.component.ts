@@ -39,7 +39,7 @@ export class CreateKartaComponent implements OnInit {
       this.kartaForm.value.userId = this._commonService.getUserId();
       this._kartaService.createKarta(this.kartaForm.value).subscribe(
         (response: any) => {
-          this.router.navigate(['/karta/edit-karta', response.id]);
+          this.router.navigate(['/karta/edit', response.id]);
         },
         (error: any) => {
           this.submitFlag = false;

@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit {
 
   // Navigate to create karta
   navigateToKarta() {
-    this.router.navigate(['/karta/create-karta']);
+    this.router.navigate(['/karta/create']);
   }
 
   // Get all kartas
