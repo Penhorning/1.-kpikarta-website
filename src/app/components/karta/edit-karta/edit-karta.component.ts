@@ -1107,6 +1107,7 @@ export class EditKartaComponent implements OnInit {
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
         kartaId: this.kartaId,
+        parentNodeId: this.currentNode.parent.id,
         historyType: 'main'
       }
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
