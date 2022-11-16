@@ -64,12 +64,10 @@ export class EditKartaComponent implements OnInit {
       // },
       updateDraggedNode: (d: any) => {
         this.currentNode = d;
-        let data = {
-          parentId: d.parent.id,
-          phaseId: d.phaseId,
-        };
-        this.updateNode('parentId', d.parent.id, 'node_updated');
-        this.updateNode('phaseId', d.phaseId, 'node_updated');
+        if(d.parent.id && d.phaseId) {
+          this.updateNode('parentId', d.parent.id, 'node_updated');
+          this.updateNode('phaseId', d.phaseId, 'node_updated');
+        }
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -1060,6 +1058,7 @@ export class EditKartaComponent implements OnInit {
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
           kartaId: this.kartaId,
+          parentNodeId: this.currentNode.parent.id,
           historyType: 'main'
         }
         this._kartaService.addKartaHistoryObject(history_data).subscribe(
@@ -1108,6 +1107,7 @@ export class EditKartaComponent implements OnInit {
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
         kartaId: this.kartaId,
+        parentNodeId: this.currentNode.parent.id,
         historyType: 'main'
       }
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
@@ -1413,12 +1413,18 @@ export class EditKartaComponent implements OnInit {
 
             switch(x.data.data.event){
               case "node_created":
-                this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
-                  this.setKartaDimension();
+                this._kartaService.getNode(x.data.data.parentNodeId).subscribe(y => {
                   console.log(x.data.data.event_options.created, 'x.data.data.event_options.created');
-                  
-                  this.D3SVG.updateRemovedNode(x.data.data.event_options.created);
-                });
+                  console.log(y, 'y');
+                  let newObj = {
+                    ...x.data.data.event_options.created,
+                    parent: x
+                  };
+                  this.D3SVG.updateRemovedNode(newObj);
+                })
+                // this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
+                //   this.setKartaDimension();
+                // });
                 break;
               case "node_updated":
                 this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
