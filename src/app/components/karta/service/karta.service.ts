@@ -62,6 +62,9 @@ export class KartaService {
   addKartaHistory(data: any) {
     return this._httpService.POST('/karta_histories', data);
   }
+  syncKartaHistory(data: any) {
+    return this._httpService.POST('/karta_histories/sync-history', data);
+  }
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
   }
