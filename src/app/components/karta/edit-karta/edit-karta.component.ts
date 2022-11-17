@@ -65,8 +65,9 @@ export class EditKartaComponent implements OnInit {
       updateDraggedNode: (d: any) => {
         this.currentNode = d;
         if(d.parent.id && d.phaseId) {
-          this.updateNode('parentId', d.parent.id, 'node_updated');
-          this.updateNode('phaseId', d.phaseId, 'node_updated');
+          let nodeId = this.currentNode.id;
+          this.updateNode('parentId', d.parent.id, 'node_updated', nodeId);
+          this.updateNode('phaseId', d.phaseId, 'node_updated', nodeId);
         }
       },
       nodeItem: (d: any) => {
@@ -391,9 +392,10 @@ export class EditKartaComponent implements OnInit {
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
-                    this.updateNode('node_type', request , 'node_updated');
-                    this.updateNode('achieved_value', total , 'node_updated');
-                    this.updateNode('target', newTarget , 'node_updated');
+                    let nodeId = this.currentNode.id;
+                    this.updateNode('node_type', request , 'node_updated', nodeId);
+                    this.updateNode('achieved_value', total , 'node_updated', nodeId);
+                    this.updateNode('target', newTarget , 'node_updated', nodeId);
                   },
                   (err) => {
                     console.log(err);
@@ -595,16 +597,17 @@ export class EditKartaComponent implements OnInit {
 
   // Measure calculation section
   setTarget(type: string, e: any, index: any) {
+    let node = this.currentNode;
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
-      if (index === 0 && this.currentNode.hasOwnProperty("start_date")) this.setDueDate(this.currentNode.start_date);
-      this.updateNode('target', this.target, 'node_updated');
+      if (index === 0 && node.hasOwnProperty("start_date")) this.setDueDate(node.start_date);
+      this.updateNode('target', this.target, 'node_updated', node.id);
     }
     else {
-      let percentage = (this.currentNode.achieved_value / e.target.value) * 100;
+      let percentage = (node.achieved_value / e.target.value) * 100;
       this.target[index].percentage = Math.round(percentage);
       this.target[index].value = parseInt(e.target.value);
-      this.updateNode('target', this.target, 'node_updated');
+      this.updateNode('target', this.target, 'node_updated', node.id);
       
     }
   }
@@ -617,7 +620,8 @@ export class EditKartaComponent implements OnInit {
   }
   removeTarget(index: number) {
     this.target.splice(index, 1);
-    this.updateNode('target', this.target, 'node_update_key_remove');
+    let nodeId = this.currentNode.id;
+    this.updateNode('target', this.target, 'node_update_key_remove', nodeId);
   }
 
   // Find phase index
@@ -697,68 +701,78 @@ export class EditKartaComponent implements OnInit {
   // Set due date
   setDueDate(start_date: any) {
     let due_date: any;
-    if (this.currentNode.target[0].frequency === "weekly") {
+    let node = this.currentNode;
+    if (node.target[0].frequency === "weekly") {
       due_date = moment(start_date).add(1, 'weeks');
-    } else if (this.currentNode.target[0].frequency === "monthly") {
+    } else if (node.target[0].frequency === "monthly") {
       due_date = moment(start_date).add(1, 'months');
-    } else if (this.currentNode.target[0].frequency === "quarterly") {
+    } else if (node.target[0].frequency === "quarterly") {
       due_date = moment(start_date).add(3, 'months');
-    } else if (this.currentNode.target[0].frequency === "annually") {
+    } else if (node.target[0].frequency === "annually") {
       due_date = moment(start_date).add(1, 'years');
     }
-    this.updateNode('due_date', due_date, 'node_updated');
+    this.updateNode('due_date', due_date, 'node_updated', node.id);
   }
 
   // Change node name
   changeNodeName() {
     if (this.currentNodeName !== "") {
-      this.updateNode('name', this.currentNodeName, 'node_updated');
+      let nodeId = this.currentNode.id;
+      this.updateNode('name', this.currentNodeName, 'node_updated', nodeId);
     }
   }
   // Change weightage
   changeWeightage() {
+    let node = this.currentNode;
     if (this.currentNodeWeight < 0 || !this.currentNodeWeight) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
     else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weightage cannot be greator than 100!");
     else {
-      let sum = this.currentNode.parent.children
-        .filter((item: any) => item.id !== this.currentNode.id)
+      let sum = node.parent.children
+        .filter((item: any) => item.id !== node.id)
         .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weightage of all the nodes cannot be greator than 100!");
-      } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated');
+      } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node.id);
     }
   }
   // Change alignment
   changeAlignment(value: string) {
     this.selectedAlignment = value;
-    this.updateNode('alignment', value, 'node_updated');
+    let nodeId = this.currentNode.id;
+    this.updateNode('alignment', value, 'node_updated', nodeId);
   }
   // Change start date
   changeStartDate(el: any) {
     this.setDueDate(el.target.value);
-    this.updateNode('start_date', el.target.value, 'node_updated');
+    let nodeId = this.currentNode.id;
+    this.updateNode('start_date', el.target.value, 'node_updated', nodeId);
   }
   // Change days to calculate
   changeDaysToCalculate(el: any) {
-    this.updateNode('days_to_calculate', el.target.value, 'node_updated');
+    let nodeId = this.currentNode.id;
+    this.updateNode('days_to_calculate', el.target.value, 'node_updated', nodeId);
   }
   // Change fiscal year start date
   changeFiscalStartDate(el: any) {
-    this.updateNode('fiscal_year_start_date', el.target.value, 'node_updated');
+    let nodeId = this.currentNode.id;
+    this.updateNode('fiscal_year_start_date', el.target.value, 'node_updated', nodeId);
   }
   // Change fiscal year end date
   changeFiscalEndDate(el: any) {
-    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated');
+    let nodeId = this.currentNode.id;
+    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated', nodeId);
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
     this.karta.node.percentage = Math.round(
       this.calculatePercentage(this.karta.node)
     );
-    this.updateNode('kpi_calc_period', el.target.value, 'node_updated');
+    let nodeId = this.currentNode.id;
+    this.updateNode('kpi_calc_period', el.target.value, 'node_updated', nodeId);
   }
   // Change achieved value
   changeAchievedValue() {
+    let nodeId = this.currentNode.id;
     if (this.currentNodeAchievedValue < 0 || this.currentNodeAchievedValue === null) this._commonService.errorToaster("Please enter positive value!");
     else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greator than 9999!");
     else {
@@ -768,34 +782,39 @@ export class EditKartaComponent implements OnInit {
         return (element.percentage = Math.round(percentage));
       });
       // Submit updated achieved value
-      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated');
-      this.updateNode('target', this.target, 'node_updated');
+      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', nodeId);
+      this.updateNode('target', this.target, 'node_updated', nodeId);
     }
   }
   // Change contributor
   changeContributor(userId: string) {
-    this.updateNode('contributorId', userId, 'node_updated');
+    let nodeId = this.currentNode.id;
+    this.updateNode('contributorId', userId, 'node_updated', nodeId);
   }
   // Set notify user
   setNotifyUser() {
+    let node = this.currentNode;
     if (this.notifyType === "owner") {
-      this.updateNode('notifyUserId', this.currentNode.contributorId, 'node_updated');
-      this.currentNode.notifyUserId = this.currentNode.contributorId;
-    } else this.currentNode.notifyUserId = undefined;
+      this.updateNode('notifyUserId', node.contributorId, 'node_updated', node.id);
+      node.notifyUserId = node.contributorId;
+    } else node.notifyUserId = undefined;
   }
   selectNotifyUser(userId: string) {
-    this.updateNode('notifyUserId', userId, 'node_updated');
-    this.currentNode.notifyUserId = userId;
+    let node = this.currentNode;
+    this.updateNode('notifyUserId', userId, 'node_updated', node.id);
+    node.notifyUserId = userId;
   }
   // Change alert type
   changeAlertType(e: any) {
-    this.updateNode('alert_type', e.target.value, 'node_updated');
-    this.currentNode.alert_type = e.target.value;
+    let node = this.currentNode;
+    this.updateNode('alert_type', e.target.value, 'node_updated', node.id);
+    node.alert_type = e.target.value;
   }
   // Change alert frequency
   changeAlertFrequency(e: any) {
-    this.updateNode('alert_frequency', e.target.value, 'node_updated');
-    this.currentNode.alert_frequency = e.target.value;
+    let node = this.currentNode;
+    this.updateNode('alert_frequency', e.target.value, 'node_updated', node.id);
+    node.alert_frequency = e.target.value;
   }
 
   // Calculate each node percentage
@@ -1045,9 +1064,9 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown") {
+  updateNode(key: string, value: any, event: string = "unknown", nodeId?: any) {
     let data = { [key]: value }
-    this._kartaService.updateNode(this.currentNode.id, data).subscribe(
+    this._kartaService.updateNode(nodeId? nodeId: this.currentNode.id, data).subscribe(
       (response: any) => {
         let oldValue = {
           [key]: this.currentNode[key]
@@ -1448,7 +1467,7 @@ export class EditKartaComponent implements OnInit {
                     Object.keys(x.data.data.old_options).forEach(y => {
                       this.currentNode[y] = x.data.data.old_options[y];
                       this.D3SVG.updateNode(this.currentNode);
-                      if (y === "achieved_value" || y === "target" || y === "weightage") {
+                      if (y === "achieved_value" || y === "target" || y === "weightage" || y === "contributorId") {
                         this.updateNewPercentage();
                       }
                     })
@@ -1458,6 +1477,70 @@ export class EditKartaComponent implements OnInit {
               case "node_removed":
                 if(x.data.data) {
 
+                }
+                break;
+            }
+          }
+          else {
+            this._commonService.warningToaster("Undo reached..!!");
+          }
+        }
+      }
+    )
+  }
+
+  async redoKarta() {
+    this._kartaService.redoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
+      (x: any) => {
+        if(x.data.message != "nothing"){
+          if(x.data.message != "final"){
+            switch(x.data.data.event){
+              case "node_created":
+                if(x.data.data){
+                  // if( x.data.data.parentNodeId ) {
+                  //   let newObj = {
+                  //       ...x.data.data.event_options.created,
+                  //       parentId: x.data.data.parentNodeId
+                  //   }
+                  //   let newKartaNodeChild = await Kartahistory.app.models.karta_node.create( newObj );
+                  //   await Kartahistory.app.models.karta_history.update({ "parentNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "parentNodeId": newKartaNodeChild.id });
+                  //   await Kartahistory.app.models.karta_history.update({ "kartaNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "kartaNodeId": newKartaNodeChild.id });
+                  //   await Kartahistory.app.models.karta_history.update({ "id": finalHistoryData[j].id, kartaId, versionId }, { event_options: { "created": newObj, "updated": null, "removed": null } });
+                  //   let tempHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'temp', "undoCheck" : false }}); 
+                  //   let mainHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'main', "undoCheck" : false }});
+                  //   finalHistoryData = tempHistoryData.concat(mainHistoryData);
+                  // }
+                  // else {
+                  //     let newKartaNode = await Kartahistory.app.models.karta_node.create( finalHistoryData[j].event_options.created );
+                  //     await Kartahistory.app.models.karta_history.update({ "parentNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { parentNodeId: newKartaNode.id });
+                  //     await Kartahistory.app.models.karta_history.update({ "kartaNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { kartaNodeId: newKartaNode.id });
+                  //     let tempHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'temp', "undoCheck" : false }}); 
+                  //     let mainHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'main', "undoCheck" : false }});
+                  //     finalHistoryData = tempHistoryData.concat(mainHistoryData);
+                  // }
+                }
+                break;
+              case "node_updated":
+                this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
+                  (response: any) => {
+                    Object.keys(x.data.data.event_options.updated).forEach(y => {
+                      this.currentNode[y] = x.data.data.event_options.updated[y];
+                      this.D3SVG.updateNode(this.currentNode);
+                      if (y === "achieved_value" || y === "target" || y === "weightage" || y === "contributorId") {
+                        this.updateNewPercentage();
+                      }
+                    })
+                  }
+                );
+                break;
+              case "node_removed":
+                if(x.data.data) {
+                  this.getRemovableNodeId = x.data.data.kartaNodeId;
+                  this.returnChildNode(this.karta.node);
+                  this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                  this.setKartaDimension();
+                  this.getRemovableNode = null;
+                  this.getRemovableNodeId = "";
                 }
                 break;
             }
