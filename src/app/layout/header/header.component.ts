@@ -25,7 +25,6 @@ export class HeaderComponent implements OnInit {
       (response: any) => {},
       (error: any) => { }
     ).add(() => this._commonService.deleteSession() );
-    history.go(-(history.length - 2));
   }
 
 }

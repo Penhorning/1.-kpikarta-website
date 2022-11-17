@@ -14,9 +14,9 @@ var getSVGSize = (tree, level = 0) => {
         levelDepth = [children.length * 100 || width2];
     } else {
         if (!levelDepth[level]) {
-            levelDepth[level] = children.length * 100
+            levelDepth[level] = children.length * 100;
         } else {
-            levelDepth[level] += children.length * 100
+            levelDepth[level] += children.length * 100;
         }
     }
     if ((level + 1) * 65 > levelHeight) {
@@ -497,7 +497,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     function updateNode(d) {
         var nodeHtml = `
             <p class="py-1" id="nodeItem">
-                <span id="nodeItem" class="d-block" title="${d.name}">${d.name || ''}</span>
+                <span id="nodeItem" class="d-block short_text" title="${d.name}">${d.name || ''}</span>
                 <span class="font-weight-bold nodePercentage">${d.percentage || 0}%</span>
             </p>`;
         $(`.node-text[nodeid=${d.id}]`).html(nodeHtml);

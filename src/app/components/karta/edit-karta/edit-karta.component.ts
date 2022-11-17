@@ -64,12 +64,10 @@ export class EditKartaComponent implements OnInit {
       // },
       updateDraggedNode: (d: any) => {
         this.currentNode = d;
-        let data = {
-          parentId: d.parent.id,
-          phaseId: d.phaseId,
-        };
-        this.updateNode('parentId', d.parent.id, 'node_updated');
-        this.updateNode('phaseId', d.phaseId, 'node_updated');
+        if(d.parent.id && d.phaseId) {
+          this.updateNode('parentId', d.parent.id, 'node_updated');
+          this.updateNode('phaseId', d.phaseId, 'node_updated');
+        }
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -171,8 +169,6 @@ export class EditKartaComponent implements OnInit {
     $(document).on('click', '.right_sidebar_overlay', function () {
       that.closeRightSidebar();
     });
-    // Get color settings
-    this.getColorSettingsByKarta();
     // Get all members
     this.getAllMembers();
     // Get versions
@@ -934,6 +930,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getColorSettingsByKarta(data).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
+        this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
         this.getPhases();
       }
     );
@@ -1061,6 +1058,7 @@ export class EditKartaComponent implements OnInit {
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
           kartaId: this.kartaId,
+          parentNodeId: this.currentNode.parent.id,
           historyType: 'main'
         }
         this._kartaService.addKartaHistoryObject(history_data).subscribe(
@@ -1109,6 +1107,7 @@ export class EditKartaComponent implements OnInit {
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
         kartaId: this.kartaId,
+        parentNodeId: this.currentNode.parent.id,
         historyType: 'main'
       }
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
@@ -1276,7 +1275,6 @@ export class EditKartaComponent implements OnInit {
   onShare(param: any) {
     delete param.node
     this.selectedSharedUsers = [];
-    this.emails = [];
     this.sharingKarta = param;
     if (param.sharedTo) this.sharingKartaCount = param.sharedTo.length;
     else this.sharingKartaCount = 0;
@@ -1297,15 +1295,16 @@ export class EditKartaComponent implements OnInit {
   }
 
   shareKarta() {
+    let email_array: any = [];
     this.selectedSharedUsers.forEach((element: any) => {
       if (element.email == this._commonService.getEmailId()) {
         alert("You can not share karta to your self.");
-      } else this.emails.push(element.email);
+      } else email_array.push(element.email);
     });
-    if (this.emails.length > 0) {
+    if (email_array.length > 0) {
       let data = {
         karta: this.sharingKarta,
-        emails: this.emails
+        emails: email_array
       }
       this.sharedSubmitFlag = true;
 
@@ -1313,7 +1312,9 @@ export class EditKartaComponent implements OnInit {
         (response: any) => {
           this._commonService.successToaster("Your have shared karta successfully");
           $('#shareLinkModal').modal('hide');
-          this.getKartaInfo();
+          email_array.forEach((element: any) => {
+            this.karta.sharedTo.push({ email: element });
+          });
         },
         (error: any) => { console.log(error) }
       ).add(() => this.sharedSubmitFlag = false);
@@ -1369,8 +1370,9 @@ export class EditKartaComponent implements OnInit {
         if (this.colorSettings.hasOwnProperty("userId") && this.colorSettings.hasOwnProperty("kartaId")) {
           this._kartaService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
             (response: any) => {
+              this.colorSettings = response;
+              this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              this.getColorSettingsByKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         } else {
@@ -1381,8 +1383,9 @@ export class EditKartaComponent implements OnInit {
           }
           this._kartaService.createColorSetting(settingData).subscribe(
             (response: any) => {
+              this.colorSettings = response;
+              this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              this.getColorSettingsByKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         }
@@ -1410,12 +1413,18 @@ export class EditKartaComponent implements OnInit {
 
             switch(x.data.data.event){
               case "node_created":
-                this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
-                  this.setKartaDimension();
+                this._kartaService.getNode(x.data.data.parentNodeId).subscribe(y => {
                   console.log(x.data.data.event_options.created, 'x.data.data.event_options.created');
-                  
-                  this.D3SVG.updateRemovedNode(x.data.data.event_options.created);
-                });
+                  console.log(y, 'y');
+                  let newObj = {
+                    ...x.data.data.event_options.created,
+                    parent: x
+                  };
+                  this.D3SVG.updateRemovedNode(newObj);
+                })
+                // this._kartaService.removeNode(x.data.data.kartaNodeId).subscribe((response: any) => {
+                //   this.setKartaDimension();
+                // });
                 break;
               case "node_updated":
                 this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
