@@ -15,10 +15,11 @@ export class MyKpiComponent implements OnInit {
 
   karta: any = [];
   kpis: any = [];
+  totalAssignedKPIs: number = 0;
   colorSettings: any = [];
   members: any = [];
   creators: any = [];
-  loading: boolean = false;
+  loading: boolean = true;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
   currentNode: any;
@@ -26,7 +27,6 @@ export class MyKpiComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   length: number = 0;
-  viewMore_hide: boolean = true;
   lastEditSelectedDates: any;
   dateRequiredSelectedDates: any;
   dueDateSelectedDates: any;
@@ -214,8 +214,9 @@ export class MyKpiComponent implements OnInit {
       this._myKpiService.updateNode(this.currentNode, { node_type: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
         (response) => {
           if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
-        $('#editActualValueModal').modal('hide');
+          $('#editActualValueModal').modal('hide');
           this.getMyKPIsList();
+          this.getKpiStats();
         },
         (err) => {
           console.log(err); this._commonService.errorToaster('Something went wrong!');
@@ -244,6 +245,7 @@ export class MyKpiComponent implements OnInit {
         if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
         this.getMyKPIsList();
+        this.getKpiStats();
       },
       (err) => {
         console.log(err); this._commonService.errorToaster('Something went wrong!');
@@ -286,11 +288,10 @@ export class MyKpiComponent implements OnInit {
     this.loading = true;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        if (response.kpi_nodes[0]?.data.length > 0) {
-          this.kpis = response.kpi_nodes[0].data;
-          console.log(this.kpis, 'this.kpis');
-          
-        } else this.kpis = [];
+        this.kpis = response.kpi_nodes[0].data;
+        if (response.kpi_nodes[0].metadata.length > 0) {
+          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total; 
+        } else this.totalAssignedKPIs = 0;
       }
     ).add(() => this.loading = false );
   }
@@ -458,7 +459,8 @@ export class MyKpiComponent implements OnInit {
   // Sort by
   onSortBy(item: any) {
     this.sortBy = item;
-    this.getMyKPIsList()
+    this.pageIndex = 0;
+    this.getMyKPIsList();
   }
 
   // Target type select check uncheck
@@ -520,7 +522,7 @@ export class MyKpiComponent implements OnInit {
 
   // View more button
   viewMore() {
-    this.pageIndex++
+    this.pageIndex++;
     let data = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
@@ -531,11 +533,10 @@ export class MyKpiComponent implements OnInit {
     this.loading = true;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        if (response) {
-          this.kpis.push(...response.kpi_nodes[0].data);
-          // this.totalData = response.members[0].metadata[0].total;
-          if (response.kpi_nodes[0].metadata[0].total == this.kpis.length) this.viewMore_hide = !this.viewMore_hide;
-        }
+        this.kpis.push(...response.kpi_nodes[0].data);
+        if (response.kpi_nodes[0].metadata.length > 0) {
+          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total; 
+        } else this.totalAssignedKPIs = 0;
       }).add(() => this.loading = false);
   }
 
@@ -595,7 +596,7 @@ export class MyKpiComponent implements OnInit {
   filterByStatus(status: string) {
     this.kpiType = 'assigned'
     this.pageIndex = 0;
-    this.statusType = status
+    this.statusType = status;
     this.getMyKPIsList();
     $('#assigned_tab').trigger('click')
   }

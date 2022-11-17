@@ -55,6 +55,7 @@
                   <th>Role</th>
                   <th>Department</th>
                   <th>Licence</th>
+                  <th>Status</th>
                   <th>Date added</th>
                   <th>Action</th>
                 </tr>
@@ -66,6 +67,10 @@
                   <td>{{ user?.Role.name.replace('_', ' ') | titlecase }}</td>
                   <td>{{ user?.department?.name ? user?.department?.name : 'N/A' }}</td>
                   <td>{{ user?.license?.name }}</td>
+                  <td>
+                    <span *ngIf="user.active" class="table_btn_status bg-success">Active</span>
+                    <span *ngIf="!user.active" class="table_btn_status bg-danger">Inactive</span>
+                  </td>
                   <td>{{ user?.createdAt | date }}</td>
                   <td>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -97,7 +102,6 @@
               <div [innerHtml]="noDataAvailable"></div>
             </ng-container>
             <div class="text-center" *ngIf="!loading && totalData > 10 && members.length > 9 && viewMore_hide">
-
               <p class="view_more" (click)="viewMore()">View More..</p>
             </div>
           </div>
