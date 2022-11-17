@@ -601,13 +601,13 @@ export class EditKartaComponent implements OnInit {
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
       if (index === 0 && node.hasOwnProperty("start_date")) this.setDueDate(node.start_date);
-      this.updateNode('target', this.target, 'node_updated', node.id);
+      this.updateNode('target', this.target, 'node_updated', node);
     }
     else {
       let percentage = (node.achieved_value / e.target.value) * 100;
       this.target[index].percentage = Math.round(percentage);
       this.target[index].value = parseInt(e.target.value);
-      this.updateNode('target', this.target, 'node_updated', node.id);
+      this.updateNode('target', this.target, 'node_updated', node);
       
     }
   }
@@ -711,7 +711,7 @@ export class EditKartaComponent implements OnInit {
     } else if (node.target[0].frequency === "annually") {
       due_date = moment(start_date).add(1, 'years');
     }
-    this.updateNode('due_date', due_date, 'node_updated', node.id);
+    this.updateNode('due_date', due_date, 'node_updated', node);
   }
 
   // Change node name
@@ -732,14 +732,24 @@ export class EditKartaComponent implements OnInit {
         .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weightage of all the nodes cannot be greator than 100!");
-      } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node.id);
+      } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
     }
+  }
+  // Change font style
+  changeFontStyle() {
+    let node = this.currentNode;
+    this.updateNode('font_style', this.selectedFont, 'node_updated', node);
   }
   // Change alignment
   changeAlignment(value: string) {
     this.selectedAlignment = value;
     let node = this.currentNode;
     this.updateNode('alignment', value, 'node_updated', node);
+  }
+  // Change text color
+  changeTextColor() {
+    let node = this.currentNode;
+    this.updateNode('text_color', this.selectedColor, 'node_updated', node);
   }
   // Change start date
   changeStartDate(el: any) {
@@ -795,25 +805,25 @@ export class EditKartaComponent implements OnInit {
   setNotifyUser() {
     let node = this.currentNode;
     if (this.notifyType === "owner") {
-      this.updateNode('notifyUserId', node.contributorId, 'node_updated', node.id);
+      this.updateNode('notifyUserId', node.contributorId, 'node_updated', node);
       node.notifyUserId = node.contributorId;
     } else node.notifyUserId = undefined;
   }
   selectNotifyUser(userId: string) {
     let node = this.currentNode;
-    this.updateNode('notifyUserId', userId, 'node_updated', node.id);
+    this.updateNode('notifyUserId', userId, 'node_updated', node);
     node.notifyUserId = userId;
   }
   // Change alert type
   changeAlertType(e: any) {
     let node = this.currentNode;
-    this.updateNode('alert_type', e.target.value, 'node_updated', node.id);
+    this.updateNode('alert_type', e.target.value, 'node_updated', node);
     node.alert_type = e.target.value;
   }
   // Change alert frequency
   changeAlertFrequency(e: any) {
     let node = this.currentNode;
-    this.updateNode('alert_frequency', e.target.value, 'node_updated', node.id);
+    this.updateNode('alert_frequency', e.target.value, 'node_updated', node);
     node.alert_frequency = e.target.value;
   }
 
