@@ -759,7 +759,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Change achieved value
   changeAchievedValue() {
-    if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
+    if (this.currentNodeAchievedValue < 0 || this.currentNodeAchievedValue === null) this._commonService.errorToaster("Please enter positive value!");
     else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greator than 9999!");
     else {
       // Calculate new percentage
@@ -768,10 +768,6 @@ export class EditKartaComponent implements OnInit {
         return (element.percentage = Math.round(percentage));
       });
       // Submit updated achieved value
-      let data = {
-        achieved_value: this.currentNodeAchievedValue,
-        target: this.target,
-      };
       this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated');
       this.updateNode('target', this.target, 'node_updated');
     }
@@ -1053,10 +1049,13 @@ export class EditKartaComponent implements OnInit {
     let data = { [key]: value }
     this._kartaService.updateNode(this.currentNode.id, data).subscribe(
       (response: any) => {
-        this.currentNode[key] = key === 'achieved_value' ? value.achieved_value : value;
+        let oldValue = {
+          [key]: this.currentNode[key]
+        };
+        this.currentNode[key] = value;
         this.D3SVG.updateNode(this.currentNode);
         // Calculate new percentage when any achieved, target and weightage value changes
-        if (key === "achieved_value" || key === "target" || key === "weightage") {
+        if (key === "achieved_value" || key === "target" || key === "weightage" || key == "contributorId") {
           this.updateNewPercentage();
         }
         // Save the karta update history
@@ -1065,11 +1064,12 @@ export class EditKartaComponent implements OnInit {
           eventValue: {
             [key]: value
           },
+          oldValue,
           kartaNodeId: this.currentNode.id,
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
           kartaId: this.kartaId,
-          parentNodeId: this.currentNode.parent.id,
+          parentNodeId: this.currentNode.parentId,
           historyType: 'main'
         }
         this._kartaService.addKartaHistoryObject(history_data).subscribe(
@@ -1443,10 +1443,10 @@ export class EditKartaComponent implements OnInit {
                 }
                 break;
               case "node_updated":
-                this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
+                this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.old_options).subscribe(
                   (response: any) => {
-                    Object.keys(x.data.data.event_options.updated).forEach(y => {
-                      this.currentNode[y] = x.data.data.event_options.updated[y];
+                    Object.keys(x.data.data.old_options).forEach(y => {
+                      this.currentNode[y] = x.data.data.old_options[y];
                       this.D3SVG.updateNode(this.currentNode);
                       if (y === "achieved_value" || y === "target" || y === "weightage") {
                         this.updateNewPercentage();
@@ -1456,6 +1456,9 @@ export class EditKartaComponent implements OnInit {
                 );
                 break;
               case "node_removed":
+                if(x.data.data) {
+
+                }
                 break;
             }
           }
