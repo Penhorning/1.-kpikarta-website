@@ -759,7 +759,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Change achieved value
   changeAchievedValue() {
-    if (this.currentNodeAchievedValue < 0 || this.currentNodeAchievedValue === null) this._commonService.errorToaster("Please enter positive value!");
+    if (this.currentNodeAchievedValue < 0 || !this.currentNodeAchievedValue) this._commonService.errorToaster("Please enter positive value!");
     else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greator than 9999!");
     else {
       // Calculate new percentage
