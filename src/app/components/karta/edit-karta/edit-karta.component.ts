@@ -65,9 +65,9 @@ export class EditKartaComponent implements OnInit {
       updateDraggedNode: (d: any) => {
         this.currentNode = d;
         if(d.parent.id && d.phaseId) {
-          let nodeId = this.currentNode.id;
-          this.updateNode('parentId', d.parent.id, 'node_updated', nodeId);
-          this.updateNode('phaseId', d.phaseId, 'node_updated', nodeId);
+          let node = this.currentNode;
+          this.updateNode('parentId', d.parent.id, 'node_updated', node);
+          this.updateNode('phaseId', d.phaseId, 'node_updated', node);
         }
       },
       nodeItem: (d: any) => {
@@ -392,10 +392,10 @@ export class EditKartaComponent implements OnInit {
                     this.formulaError = "";
                     let scrollValue = this.getScrollPosition();
                     this.updateNodeProperties(x, scrollValue);
-                    let nodeId = this.currentNode.id;
-                    this.updateNode('node_type', request , 'node_updated', nodeId);
-                    this.updateNode('achieved_value', total , 'node_updated', nodeId);
-                    this.updateNode('target', newTarget , 'node_updated', nodeId);
+                    let node = this.currentNode;
+                    this.updateNode('node_type', request , 'node_updated', node);
+                    this.updateNode('achieved_value', total , 'node_updated', node);
+                    this.updateNode('target', newTarget , 'node_updated', node);
                   },
                   (err) => {
                     console.log(err);
@@ -620,8 +620,8 @@ export class EditKartaComponent implements OnInit {
   }
   removeTarget(index: number) {
     this.target.splice(index, 1);
-    let nodeId = this.currentNode.id;
-    this.updateNode('target', this.target, 'node_update_key_remove', nodeId);
+    let node = this.currentNode;
+    this.updateNode('target', this.target, 'node_update_key_remove', node);
   }
 
   // Find phase index
@@ -717,8 +717,8 @@ export class EditKartaComponent implements OnInit {
   // Change node name
   changeNodeName() {
     if (this.currentNodeName !== "") {
-      let nodeId = this.currentNode.id;
-      this.updateNode('name', this.currentNodeName, 'node_updated', nodeId);
+      let node = this.currentNode;
+      this.updateNode('name', this.currentNodeName, 'node_updated', node);
     }
   }
   // Change weightage
@@ -738,41 +738,41 @@ export class EditKartaComponent implements OnInit {
   // Change alignment
   changeAlignment(value: string) {
     this.selectedAlignment = value;
-    let nodeId = this.currentNode.id;
-    this.updateNode('alignment', value, 'node_updated', nodeId);
+    let node = this.currentNode;
+    this.updateNode('alignment', value, 'node_updated', node);
   }
   // Change start date
   changeStartDate(el: any) {
     this.setDueDate(el.target.value);
-    let nodeId = this.currentNode.id;
-    this.updateNode('start_date', el.target.value, 'node_updated', nodeId);
+    let node = this.currentNode;
+    this.updateNode('start_date', el.target.value, 'node_updated', node);
   }
   // Change days to calculate
   changeDaysToCalculate(el: any) {
-    let nodeId = this.currentNode.id;
-    this.updateNode('days_to_calculate', el.target.value, 'node_updated', nodeId);
+    let node = this.currentNode;
+    this.updateNode('days_to_calculate', el.target.value, 'node_updated', node);
   }
   // Change fiscal year start date
   changeFiscalStartDate(el: any) {
-    let nodeId = this.currentNode.id;
-    this.updateNode('fiscal_year_start_date', el.target.value, 'node_updated', nodeId);
+    let node = this.currentNode;
+    this.updateNode('fiscal_year_start_date', el.target.value, 'node_updated', node);
   }
   // Change fiscal year end date
   changeFiscalEndDate(el: any) {
-    let nodeId = this.currentNode.id;
-    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated', nodeId);
+    let node = this.currentNode;
+    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated', node);
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
     this.karta.node.percentage = Math.round(
       this.calculatePercentage(this.karta.node)
     );
-    let nodeId = this.currentNode.id;
-    this.updateNode('kpi_calc_period', el.target.value, 'node_updated', nodeId);
+    let node = this.currentNode;
+    this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
   }
   // Change achieved value
   changeAchievedValue() {
-    let nodeId = this.currentNode.id;
+    let node = this.currentNode;
     if (this.currentNodeAchievedValue < 0 || this.currentNodeAchievedValue === null) this._commonService.errorToaster("Please enter positive value!");
     else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greator than 9999!");
     else {
@@ -782,14 +782,14 @@ export class EditKartaComponent implements OnInit {
         return (element.percentage = Math.round(percentage));
       });
       // Submit updated achieved value
-      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', nodeId);
-      this.updateNode('target', this.target, 'node_updated', nodeId);
+      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', node);
+      this.updateNode('target', this.target, 'node_updated', node);
     }
   }
   // Change contributor
   changeContributor(userId: string) {
-    let nodeId = this.currentNode.id;
-    this.updateNode('contributorId', userId, 'node_updated', nodeId);
+    let node = this.currentNode;
+    this.updateNode('contributorId', userId, 'node_updated', node);
   }
   // Set notify user
   setNotifyUser() {
@@ -1064,15 +1064,15 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", nodeId?: any) {
+  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any) {
     let data = { [key]: value }
-    this._kartaService.updateNode(nodeId? nodeId: this.currentNode.id, data).subscribe(
+    this._kartaService.updateNode(updatingNode.id? updatingNode.id: this.currentNode.id, data).subscribe(
       (response: any) => {
         let oldValue = {
-          [key]: this.currentNode[key]
+          [key]: updatingNode[key]
         };
-        this.currentNode[key] = value;
-        this.D3SVG.updateNode(this.currentNode);
+        updatingNode[key] = value;
+        this.D3SVG.updateNode(updatingNode);
         // Calculate new percentage when any achieved, target and weightage value changes
         if (key === "achieved_value" || key === "target" || key === "weightage" || key == "contributorId") {
           this.updateNewPercentage();
@@ -1084,11 +1084,11 @@ export class EditKartaComponent implements OnInit {
             [key]: value
           },
           oldValue,
-          kartaNodeId: this.currentNode.id,
+          kartaNodeId: updatingNode.id,
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
           kartaId: this.kartaId,
-          parentNodeId: this.currentNode.parentId,
+          parentNodeId: updatingNode.parentId,
           historyType: 'main'
         }
         this._kartaService.addKartaHistoryObject(history_data).subscribe(
