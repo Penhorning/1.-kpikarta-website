@@ -535,7 +535,7 @@
                             </div>
                           </td>
                           <td>{{ kpi?.updatedAt | date }}</td>
-                          <td>{{ kpi?.due_date | date }}</td>
+                          <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                               class="bi bi-arrow-repeat" viewBox="0 0 16 16">
@@ -598,8 +598,8 @@
                     <ng-container *ngIf="!loading && kpis.length === 0">
                         <div [innerHtml]="noDataAvailable"></div>
                     </ng-container>
-                    <div class="text-center" *ngIf="!loading && kpis.length > 9 && viewMore_hide">
-                      <p style="cursor: pointer; color: #007bff;" (click)="viewMore()">View More..</p>
+                    <div class="text-center" *ngIf="!loading && totalAssignedKPIs > kpis.length">
+                      <p class="view_more" (click)="viewMore()">View More..</p>
                     </div>
                   </div>
                 </div>
@@ -1008,7 +1008,7 @@
                           </td>
                           <td style="padding-left: 20px;"><span>{{ kpi?.achieved_value }}</span></td>
                           <td>{{ kpi?.updatedAt | date }}</td>
-                          <td>{{ kpi?.due_date | date }}</td>
+                          <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                               class="bi bi-arrow-repeat" viewBox="0 0 16 16">
@@ -1063,7 +1063,7 @@
                     <ng-container *ngIf="!loading && kpis.length === 0">
                         <div [innerHtml]="noDataAvailable"></div>
                     </ng-container>
-                    <div class="text-center" *ngIf="!loading && kpis.length > 9 && viewMore_hide">
+                    <div class="text-center" *ngIf="!loading && totalAssignedKPIs > kpis.length">
                       <p class="view_more" (click)="viewMore()">View More..</p>
                     </div>
                   </div>
