@@ -1496,29 +1496,23 @@ export class EditKartaComponent implements OnInit {
           if(x.data.message != "final"){
             switch(x.data.data.event){
               case "node_created":
-                if(x.data.data){
-                  // if( x.data.data.parentNodeId ) {
-                  //   let newObj = {
-                  //       ...x.data.data.event_options.created,
-                  //       parentId: x.data.data.parentNodeId
-                  //   }
-                  //   let newKartaNodeChild = await Kartahistory.app.models.karta_node.create( newObj );
-                  //   await Kartahistory.app.models.karta_history.update({ "parentNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "parentNodeId": newKartaNodeChild.id });
-                  //   await Kartahistory.app.models.karta_history.update({ "kartaNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "kartaNodeId": newKartaNodeChild.id });
-                  //   await Kartahistory.app.models.karta_history.update({ "id": finalHistoryData[j].id, kartaId, versionId }, { event_options: { "created": newObj, "updated": null, "removed": null } });
-                  //   let tempHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'temp', "undoCheck" : false }}); 
-                  //   let mainHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'main', "undoCheck" : false }});
-                  //   finalHistoryData = tempHistoryData.concat(mainHistoryData);
-                  // }
-                  // else {
-                  //     let newKartaNode = await Kartahistory.app.models.karta_node.create( finalHistoryData[j].event_options.created );
-                  //     await Kartahistory.app.models.karta_history.update({ "parentNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { parentNodeId: newKartaNode.id });
-                  //     await Kartahistory.app.models.karta_history.update({ "kartaNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { kartaNodeId: newKartaNode.id });
-                  //     let tempHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'temp', "undoCheck" : false }}); 
-                  //     let mainHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'main', "undoCheck" : false }});
-                  //     finalHistoryData = tempHistoryData.concat(mainHistoryData);
-                  // }
-                }
+                // if(x.data.data){
+                //   let newObj = {
+                //     ...x.data.data.event_options.created
+                //   };
+                //   if( x.data.data.parentNodeId ) {
+                //     newObj['parentId'] = x.data.data.parentNodeId;
+                //   }
+                //   this._kartaService.addNode(newObj).subscribe((res: any) => {
+
+                //   })
+                //   await Kartahistory.app.models.karta_history.update({ "parentNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "parentNodeId": newKartaNodeChild.id });
+                //   await Kartahistory.app.models.karta_history.update({ "kartaNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "kartaNodeId": newKartaNodeChild.id });
+                //   await Kartahistory.app.models.karta_history.update({ "id": finalHistoryData[j].id, kartaId, versionId }, { event_options: { "created": newObj, "updated": null, "removed": null } });
+                //   let tempHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'temp', "undoCheck" : false }}); 
+                //   let mainHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'main', "undoCheck" : false }});
+                //   finalHistoryData = tempHistoryData.concat(mainHistoryData);
+                // }
                 break;
               case "node_updated":
                 this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
