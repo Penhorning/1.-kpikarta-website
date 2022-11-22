@@ -857,10 +857,10 @@ export class EditKartaComponent implements OnInit {
         //   targetValue = element.target.find((item: any) => item.frequency === 'annually').value;
         //   targetValue = todayDay * (targetValue / totalDays);
         // }
-          const totalDays = moment().daysInMonth();
-          const todayDay = moment().date();
-          targetValue = element.target[0].value;
-          targetValue = todayDay * (targetValue / totalDays);
+        const totalDays = moment().daysInMonth();
+        const todayDay = moment().date();
+        targetValue = element.target[0].value;
+        targetValue = todayDay * (targetValue / totalDays);
         let current_percentage= (element.achieved_value/targetValue) * 100;
         element.percentage = Math.round(current_percentage);
         element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);
@@ -1576,7 +1576,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Undo reached..!!");
+            this._commonService.warningToaster("Redo reached..!!");
           }
         }
       }
