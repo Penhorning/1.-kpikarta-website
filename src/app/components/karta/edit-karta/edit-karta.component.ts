@@ -400,7 +400,7 @@ export class EditKartaComponent implements OnInit {
                     this.updateNodeProperties(x, scrollValue);
                     let node = this.currentNode;
                     this.updateNode('node_type', request , 'node_updated', node);
-                    this.updateNode('achieved_value', total , 'node_updated', node);
+                    this.updateNode('achieved_value', total , 'node_updated', node, "metrics");
                     this.updateNode('target', newTarget , 'node_updated', node);
                   },
                   (err) => {
@@ -798,7 +798,7 @@ export class EditKartaComponent implements OnInit {
         return (element.percentage = Math.round(percentage));
       });
       // Submit updated achieved value
-      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', node);
+      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', node, "measure");
       this.updateNode('target', this.target, 'node_updated', node);
     }
   }
@@ -1080,8 +1080,11 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any) {
+  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any, typeValue?: any) {
     let data = { [key]: value }
+    if( key == "achieved_value" ) {
+      data["type_value"] = typeValue
+    };
     this._kartaService.updateNode(updatingNode.id? updatingNode.id: this.currentNode.id, data).subscribe(
       (response: any) => {
         let oldValue = {
