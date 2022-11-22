@@ -178,6 +178,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             dragStarted = true;
             nodes = tree.nodes(d);
             d3.event.sourceEvent.stopPropagation();
+            options.events.onDragStart(d);
             // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
         }).on("drag", function (d) {
             if (d == root) {
