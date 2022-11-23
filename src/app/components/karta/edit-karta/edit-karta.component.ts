@@ -111,6 +111,7 @@ export class EditKartaComponent implements OnInit {
   selectedAlignment: any = '';
   // Kpi Type
   kpiType: string = 'measure';
+  kpiPercentage: number = 0;
   showKPICalculation: boolean = false;
   kpiCalculationPeriod = 'month-to-date';
   target: any = [{ frequency: 'weekly', value: 0, percentage: 0 }];
@@ -780,11 +781,20 @@ export class EditKartaComponent implements OnInit {
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
-    this.karta.node.percentage = Math.round(
-      this.calculatePercentage(this.karta.node)
-    );
     let node = this.currentNode;
-    this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
+    if (el.target.value === "month-to-date" || el.target.value === "year-to-date") {
+      this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+      this.D3SVG.updateNode(this.karta.node);
+      this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
+    } else {
+      this._kartaService.getKPICalculation({ "nodeId": node.id, "type": el.target.value }).subscribe(
+        (response: any) => {
+          this.kpiPercentage = response.data.percentage;
+          this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+          this.D3SVG.updateNode(this.karta.node);
+        }
+      );
+    }
   }
   // Change achieved value
   changeAchievedValue() {
@@ -845,28 +855,44 @@ export class EditKartaComponent implements OnInit {
       // Check if current element is a kpi node or not
       if (element.phase.name === "KPI") {
         let targetValue = 0;
+        const todayDate = moment().date();
+        const currentYear = moment().year();
+        const dayOfYear = moment().dayOfYear();
+        const daysInMonth = moment().daysInMonth();
+        const daysInYear = moment([currentYear]).isLeapYear() ? 366 : 365;
+
+        function findTarget(type: string) {
+          return element.target.find((item: any) => item.frequency === type);
+        }
         // Set target value according to month to date
-        // if (this.kpiCalculationPeriod === "month-to-date") {
-        //   const totalDays = moment().daysInMonth();
-        //   const todayDay = moment().date();
-        //   targetValue = element.target.find((item: any) => item.frequency === 'monthly').value;
-        //   targetValue = todayDay * (targetValue / totalDays);
-        // }
-        // // Set target value according to year to date
-        // else if (this.kpiCalculationPeriod === "year-to-date") {
-        //   const currentYear = moment().year();
-        //   const totalDays = moment([currentYear]).isLeapYear() ? 366 : 365;
-        //   const todayDay = moment().date();
-        //   targetValue = element.target.find((item: any) => item.frequency === 'annually').value;
-        //   targetValue = todayDay * (targetValue / totalDays);
-        // }
-        const totalDays = moment().daysInMonth();
-        const todayDay = moment().date();
-        targetValue = element.target[0].value;
-        targetValue = todayDay * (targetValue / totalDays);
-        let current_percentage= (element.achieved_value/targetValue) * 100;
-        element.percentage = Math.round(current_percentage);
-        element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);
+        if (element.kpi_calc_period === "month-to-date") {
+          if (findTarget('monthly')) targetValue = findTarget('monthly').value;
+          else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
+          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 3;
+          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
+          targetValue = todayDate * (targetValue / daysInMonth);
+        }
+        // Set target value according to year to date
+        else if (element.kpi_calc_period === "year-to-date") {
+          if (findTarget('annually')) targetValue = findTarget('annually').value;
+          else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
+          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
+          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
+          targetValue = dayOfYear * (targetValue / daysInYear);
+        }
+        // Set percentage for month-over-month and year-over-year
+        else if (element.kpi_calc_period === "month-over-month" || element.kpi_calc_period === "year-over-year") {
+          element.percentage = this.kpiPercentage;
+        }
+        // const totalDays = moment().daysInMonth();
+        // const todayDay = moment().date();
+        // targetValue = element.target[0].value;
+        // targetValue = todayDay * (targetValue / totalDays);
+        if (element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") {
+          let current_percentage= (element.achieved_value/targetValue) * 100;
+          element.percentage = Math.round(current_percentage);
+          element.percentage = element.percentage === Infinity ? 0 : element.percentage;
+        }
         // if (element.percentage > 100) {
         //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
         //   element.border_color = colorSetting[0]?.color || 'black';

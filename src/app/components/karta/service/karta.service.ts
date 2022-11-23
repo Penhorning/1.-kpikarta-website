@@ -59,6 +59,9 @@ export class KartaService {
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);
   }
+  getKPICalculation(data: any) {
+    return this._httpService.POST('/karta_nodes/calculation-period', data);
+  }
   addKartaHistory(data: any) {
     return this._httpService.POST('/karta_histories', data);
   }
