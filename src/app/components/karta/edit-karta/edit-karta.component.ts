@@ -52,6 +52,7 @@ export class EditKartaComponent implements OnInit {
   });
 
   // D3 karta events
+  previousDraggedNodeParentId: any;
   D3SVG: any = {
     // subPhases: (() => this.subPhases),
     phases: () => this.phases,
@@ -66,9 +67,14 @@ export class EditKartaComponent implements OnInit {
         this.currentNode = d;
         if(d.parent.id && d.phaseId) {
           let node = this.currentNode;
-          this.updateNode('parentId', d.parent.id, 'node_updated', node);
-          this.updateNode('phaseId', d.phaseId, 'node_updated', node);
+          if(this.previousDraggedNodeParentId !== d.parent.id) {
+            this.updateNode('parentId', d.parent.id, 'node_updated', node);
+            this.updateNode('phaseId', d.phaseId, 'node_updated', node);
+          }
         }
+      },
+      onDragStart: (d: any) => {
+        this.previousDraggedNodeParentId = d.parent.id;
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -394,7 +400,7 @@ export class EditKartaComponent implements OnInit {
                     this.updateNodeProperties(x, scrollValue);
                     let node = this.currentNode;
                     this.updateNode('node_type', request , 'node_updated', node);
-                    this.updateNode('achieved_value', total , 'node_updated', node);
+                    this.updateNode('achieved_value', total , 'node_updated', node, "metrics");
                     this.updateNode('target', newTarget , 'node_updated', node);
                   },
                   (err) => {
@@ -792,7 +798,7 @@ export class EditKartaComponent implements OnInit {
         return (element.percentage = Math.round(percentage));
       });
       // Submit updated achieved value
-      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', node);
+      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', node, "measure");
       this.updateNode('target', this.target, 'node_updated', node);
     }
   }
@@ -854,13 +860,13 @@ export class EditKartaComponent implements OnInit {
         //   targetValue = element.target.find((item: any) => item.frequency === 'annually').value;
         //   targetValue = todayDay * (targetValue / totalDays);
         // }
-          const totalDays = moment().daysInMonth();
-          const todayDate = moment().date();
-          targetValue = element.target[0].value;
-          targetValue = todayDate * (targetValue / totalDays);
-          let current_percentage= (element.achieved_value/targetValue) * 100;
-          element.percentage = Math.round(current_percentage);
-          element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);
+        const totalDays = moment().daysInMonth();
+        const todayDay = moment().date();
+        targetValue = element.target[0].value;
+        targetValue = todayDay * (targetValue / totalDays);
+        let current_percentage= (element.achieved_value/targetValue) * 100;
+        element.percentage = Math.round(current_percentage);
+        element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);
         // if (element.percentage > 100) {
         //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
         //   element.border_color = colorSetting[0]?.color || 'black';
@@ -1077,8 +1083,11 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any) {
+  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any, typeValue?: any) {
     let data = { [key]: value }
+    if( key == "achieved_value" ) {
+      data["type_value"] = typeValue
+    };
     this._kartaService.updateNode(updatingNode.id? updatingNode.id: this.currentNode.id, data).subscribe(
       (response: any) => {
         let oldValue = {
@@ -1150,7 +1159,7 @@ export class EditKartaComponent implements OnInit {
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
         kartaId: this.kartaId,
-        parentNodeId: this.currentNode.parent.id,
+        parentNodeId: param.parentId,
         historyType: 'main'
       }
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
@@ -1475,21 +1484,39 @@ export class EditKartaComponent implements OnInit {
                 }
                 break;
               case "node_updated":
-                this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.old_options).subscribe(
-                  (response: any) => {
-                    Object.keys(x.data.data.old_options).forEach(y => {
-                      this.currentNode[y] = x.data.data.old_options[y];
-                      this.D3SVG.updateNode(this.currentNode);
-                      if (y === "achieved_value" || y === "target" || y === "weightage" || y === "contributorId") {
-                        this.updateNewPercentage();
-                      }
-                    })
-                  }
-                );
+                if(x.data.data){
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.showSVG = true;
+                    this.isRtNodDrgingFrmSide = false;
+                    this.updateNodeProperties(kartaNode);
+                    this.D3SVG.updateNode(this.currentNode);
+                  },
+                  (err) => {
+                    console.log(err);
+                  });
+                }
                 break;
               case "node_removed":
                 if(x.data.data) {
-
+                  if(x.data.data){
+                    this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                      let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                      kartaNode.phase = phase;
+                      this.showSVG = true;
+                      this.isRtNodDrgingFrmSide = false;
+                      this.updateNodeProperties(kartaNode);
+                      // Will think below line's alternative
+                      this.getKartaInfo();
+                      setTimeout(() => {
+                        $('#karta-svg').children("svg").eq(1).remove();
+                      }, 2000);
+                    },
+                    (err) => {
+                      console.log(err);
+                    });
+                  }
                 }
                 break;
             }
@@ -1510,44 +1537,40 @@ export class EditKartaComponent implements OnInit {
             switch(x.data.data.event){
               case "node_created":
                 if(x.data.data){
-                  // if( x.data.data.parentNodeId ) {
-                  //   let newObj = {
-                  //       ...x.data.data.event_options.created,
-                  //       parentId: x.data.data.parentNodeId
-                  //   }
-                  //   let newKartaNodeChild = await Kartahistory.app.models.karta_node.create( newObj );
-                  //   await Kartahistory.app.models.karta_history.update({ "parentNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "parentNodeId": newKartaNodeChild.id });
-                  //   await Kartahistory.app.models.karta_history.update({ "kartaNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { "kartaNodeId": newKartaNodeChild.id });
-                  //   await Kartahistory.app.models.karta_history.update({ "id": finalHistoryData[j].id, kartaId, versionId }, { event_options: { "created": newObj, "updated": null, "removed": null } });
-                  //   let tempHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'temp', "undoCheck" : false }}); 
-                  //   let mainHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'main', "undoCheck" : false }});
-                  //   finalHistoryData = tempHistoryData.concat(mainHistoryData);
-                  // }
-                  // else {
-                  //     let newKartaNode = await Kartahistory.app.models.karta_node.create( finalHistoryData[j].event_options.created );
-                  //     await Kartahistory.app.models.karta_history.update({ "parentNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { parentNodeId: newKartaNode.id });
-                  //     await Kartahistory.app.models.karta_history.update({ "kartaNodeId": finalHistoryData[j].kartaNodeId, kartaId, versionId }, { kartaNodeId: newKartaNode.id });
-                  //     let tempHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'temp', "undoCheck" : false }}); 
-                  //     let mainHistoryData = await Kartahistory.find({ where: { versionId, kartaId, historyType: 'main', "undoCheck" : false }});
-                  //     finalHistoryData = tempHistoryData.concat(mainHistoryData);
-                  // }
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.showSVG = true;
+                    this.isRtNodDrgingFrmSide = false;
+                    this.updateNodeProperties(kartaNode);
+                    // Will think below line's alternative
+                    this.getKartaInfo();
+                    setTimeout(() => {
+                      $('#karta-svg').children("svg").eq(1).remove();
+                    }, 2000);
+                  },
+                  (err) => {
+                    console.log(err);
+                  });
                 }
                 break;
               case "node_updated":
-                this._kartaService.updateNode(x.data.data.kartaNodeId, x.data.data.event_options.updated).subscribe(
-                  (response: any) => {
-                    Object.keys(x.data.data.event_options.updated).forEach(y => {
-                      this.currentNode[y] = x.data.data.event_options.updated[y];
-                      this.D3SVG.updateNode(this.currentNode);
-                      if (y === "achieved_value" || y === "target" || y === "weightage" || y === "contributorId") {
-                        this.updateNewPercentage();
-                      }
-                    })
-                  }
-                );
+                if(x.data.data){
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.showSVG = true;
+                    this.isRtNodDrgingFrmSide = false;
+                    this.updateNodeProperties(kartaNode);
+                    this.D3SVG.updateNode(this.currentNode);
+                  },
+                  (err) => {
+                    console.log(err);
+                  });
+                }
                 break;
               case "node_removed":
-                if(x.data.data) {
+                if(x.data.data){
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
                   this.D3SVG.updateRemovedNode(this.getRemovableNode);
@@ -1559,7 +1582,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Undo reached..!!");
+            this._commonService.warningToaster("Redo reached..!!");
           }
         }
       }
