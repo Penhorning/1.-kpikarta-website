@@ -240,13 +240,14 @@
             </div>
             <div class="col-lg-4 p-0">
               <div class="icon-karta">
+                <!-- Share karta -->
                 <a href="#" data-toggle="modal" data-target="#shareLinkModal" (click)="onShare(sharedKartaStr)"><img
                     src="assets/img/share-icon.svg"></a>
-                <a href="#"><img src="assets/img/download-icon.svg"></a>
+                <!-- Export Karta -->
                 <div class="dropdown show">
                   <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="assets/img/export.svg">
+                    <img src="assets/img/download-icon.svg">
                   </a>
                   <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
@@ -261,7 +262,7 @@
                     </a>
                   </div>
                 </div>
-
+                <!-- Filter Karta -->
                 <div class="dropdown filter-option m-0">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
                     id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
@@ -791,7 +792,7 @@
             <!-- Fiscal Year -->
             <div class="row mt-3">
               <div class="col-lg-12">
-                <h5>Fiscal year</h5>
+                <h5>Fiscal Year</h5>
                 <div class="row">
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
@@ -987,7 +988,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="selct-option-side-r">
-                <label>Person to notify</label>
+                <label>Person to Notify</label>
                 <select class="form-control" (change)="setNotifyUser()" [(ngModel)]="notifyType">
                   <option value="" selected>Select</option>
                   <option value="owner">KPI Owner</option>
@@ -1025,7 +1026,7 @@
             </div>
             <div class="col-lg-6">
               <div class="selct-option-side-r">
-                <label>Type {{currentNode.alert_type}}</label>
+                <label>Type</label>
                 <select class="form-control" [(ngModel)]="currentNode.alert_type" (change)="changeAlertType($event)">
                   <option value="" selected>Select type</option>
                   <option value="notification">Notify at login</option>

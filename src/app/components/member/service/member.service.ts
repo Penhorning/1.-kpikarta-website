@@ -29,5 +29,14 @@ export class MemberService {
   sendCredentials(data: any) {
     return this._httpService.POST('/users/send-credentials', data);
   }
+  activateUser(data: any) {
+    return this._httpService.PUT('/users/unblock', data);
+  }
+  deactivateUser(data: any) {
+    return this._httpService.PUT('/users/block', data);
+  }
+  deleteUser(data: any) {
+    return this._httpService.PUT('/users/block', data);
+  }
   /*============================== API FUNCTIONS ENDS ==============================*/
 }

@@ -805,8 +805,11 @@ export class EditKartaComponent implements OnInit {
   setNotifyUser() {
     let node = this.currentNode;
     if (this.notifyType === "owner") {
-      this.updateNode('notifyUserId', node.contributorId, 'node_updated', node);
-      node.notifyUserId = node.contributorId;
+      this.updateNode('notifyUserId', this.karta.userId, 'node_updated', node);
+      node.notifyUserId = this.karta.userId;
+    } else if (this.notifyType === "") {
+      this.updateNode('notifyUserId', "", 'node_updated', node);
+      node.notifyUserId = "";
     } else node.notifyUserId = undefined;
   }
   selectNotifyUser(userId: string) {
@@ -852,12 +855,12 @@ export class EditKartaComponent implements OnInit {
         //   targetValue = todayDay * (targetValue / totalDays);
         // }
           const totalDays = moment().daysInMonth();
-          const todayDay = moment().date();
+          const todayDate = moment().date();
           targetValue = element.target[0].value;
-          targetValue = todayDay * (targetValue / totalDays);
-        let current_percentage= (element.achieved_value/targetValue) * 100;
-        element.percentage = Math.round(current_percentage);
-        element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);
+          targetValue = todayDate * (targetValue / totalDays);
+          let current_percentage= (element.achieved_value/targetValue) * 100;
+          element.percentage = Math.round(current_percentage);
+          element.percentage = element.percentage === Infinity ? 0 : Math.round(current_percentage);
         // if (element.percentage > 100) {
         //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
         //   element.border_color = colorSetting[0]?.color || 'black';
@@ -976,7 +979,7 @@ export class EditKartaComponent implements OnInit {
     if (phase.name === "KPI") {
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
-      data.threshold_value = 70;
+      // data.threshold_value = 70;
       data.is_achieved_modified = false;
       data.alert_type = "";
       data.alert_frequency = "";
