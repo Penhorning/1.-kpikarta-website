@@ -1503,10 +1503,15 @@ export class EditKartaComponent implements OnInit {
                 if(x.data.data){
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
-                  this.D3SVG.updateRemovedNode(this.getRemovableNode);
-                  this.setKartaDimension();
-                  this.getRemovableNode = null;
-                  this.getRemovableNodeId = "";
+                  this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
+                    this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.setKartaDimension();
+                    this.updateNodeProperties(kartaNode);
+                    this.getRemovableNode = null;
+                    this.getRemovableNodeId = "";
+                  });
                 }
                 break;
               case "node_updated":
@@ -1599,10 +1604,15 @@ export class EditKartaComponent implements OnInit {
                 if(x.data.data){
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
-                  this.D3SVG.updateRemovedNode(this.getRemovableNode);
-                  this.setKartaDimension();
-                  this.getRemovableNode = null;
-                  this.getRemovableNodeId = "";
+                  this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
+                    this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.setKartaDimension();
+                    this.updateNodeProperties(kartaNode);
+                    this.getRemovableNode = null;
+                    this.getRemovableNodeId = "";
+                  });
                 }
                 break;
             }
