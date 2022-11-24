@@ -645,7 +645,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="goal-name mt-3">
-                <h6>Weightage</h6>
+                <h6>Weighting</h6>
               </div>
             </div>
           </div>
@@ -655,8 +655,8 @@
                 <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                   [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
                 <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please
-                  enter weightage!</div>
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than
+                  enter weighting!</div>
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weighting cannot be greator than
                   100!</div>
               </div>
             </div>

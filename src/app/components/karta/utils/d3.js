@@ -2,6 +2,16 @@
 
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js").default;
 
+let currentNode;
+const contextMenuItems = [
+    {
+        title: 'Save',
+        action: function(elm, d, i) {
+            options.events.saveNode(currentNode);
+        }
+    }
+]
+
 var levelDepth = [];
 var levelHeight = 0;
 let width2, height2;
@@ -338,7 +348,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
                 //   });
-            }).on("click", nodeclick);
+            }).on("click", nodeclick)
+            .on("contextmenu", d3.contextMenu(contextMenuItems, function(d) {
+                currentNode = d;
+            }));
+            
         nodeEnter
             .append("foreignObject")
             .attr("class", "mindmap-node")
@@ -538,9 +552,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         window.jsPDF = window.jspdf.jsPDF;
         svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2) }).then(uri => {
             let imageBase64 = uri.split(',')[1];
+            // let svgWidth = $("#karta-svg svg").width();
+            // let doc = new jsPDF('l', 'px', [svgWidth, 768]);
+            // doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, 768);
             let svgWidth = $("#karta-svg svg").width();
-            let doc = new jsPDF('l', 'px', [svgWidth, 768]);
-            doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, 768);
+            let doc = new jsPDF('1', 'px', [width2, 455]);
+            doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, height2);
             doc.save(`${name}.pdf`);
         });
     }

@@ -76,6 +76,9 @@ export class EditKartaComponent implements OnInit {
       onDragStart: (d: any) => {
         this.previousDraggedNodeParentId = d.parent.id;
       },
+      saveNode: (d: any) => {
+        // this.saveNode
+      },
       nodeItem: (d: any) => {
         console.log(d);
         this.updateNodeProperties(d);
@@ -732,13 +735,13 @@ export class EditKartaComponent implements OnInit {
   changeWeightage() {
     let node = this.currentNode;
     if (this.currentNodeWeight < 0 || !this.currentNodeWeight) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
-    else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weightage cannot be greator than 100!");
+    else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weighting cannot be greator than 100!");
     else {
       let sum = node.parent.children
         .filter((item: any) => item.id !== node.id)
         .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
       if (sum + this.currentNodeWeight > 100) {
-        this._commonService.errorToaster("Your aggregate weightage of all the nodes cannot be greator than 100!");
+        this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greator than 100!");
       } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
     }
   }
