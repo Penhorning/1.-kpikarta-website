@@ -4,7 +4,7 @@ d3.contextMenu = function (menu, openCallback) {
 	d3.selectAll('.d3-context-menu').data([1])
 		.enter()
 		.append('div')
-		.attr('class', 'd3-context-menu');
+		.attr('class', 'd3-context-menu shadow');
 
 	// close menu
 	d3.select('body').on('click.d3-context-menu', function() {

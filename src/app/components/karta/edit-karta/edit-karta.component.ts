@@ -76,8 +76,9 @@ export class EditKartaComponent implements OnInit {
       onDragStart: (d: any) => {
         this.previousDraggedNodeParentId = d.parent.id;
       },
-      saveNode: (d: any) => {
-        // this.saveNode
+      onNodeRightClick: (d: any) => {
+        $("#saveNodeModal").modal('show');
+        this.catalogForm.patchValue({ node: d });
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -166,6 +167,15 @@ export class EditKartaComponent implements OnInit {
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
   }
+
+  catalogSubmitted: boolean = false;
+  catalogSubmitFlag: boolean = false;
+  catalogForm = this.fb.group({
+    name: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
+    node: [null],
+    thumbnail: ['']
+  });
+  get catalog() { return this.catalogForm.controls; }
 
   ngOnInit(): void {
     const that = this;
@@ -1106,7 +1116,7 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.karta = response;
         this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-        this.D3SVG.updateNode(this.karta.node);
+        this.D3SVG.updateNode(this.karta.node, true);
       }
     );
   }
@@ -1147,6 +1157,33 @@ export class EditKartaComponent implements OnInit {
         );
       }
     );
+  }
+
+  onCatalogSubmit  = async () => {
+    
+    this.catalogSubmitted = true;
+
+    if (this.catalogForm.valid) {
+      // Highlight nodes
+      this.D3SVG.hightlightNode(this.catalogForm.value.node);
+      // Get base64 image of highlighted nodes
+      this.D3SVG.getBase64Image(this.catalogForm.value.node, (base64Image: string) => {
+        // Set thumbnail
+        this.catalogForm.patchValue({ thumbnail: base64Image });
+        this.catalogForm.value.userId = this._commonService.getUserId();
+        
+        this.catalogForm.value.node = "ag"
+        this.catalogSubmitFlag = true;
+        this._kartaService.addNodeInCatalog(this.catalogForm.value).subscribe(
+          (response: any) => {
+            this._commonService.successToaster("Node saved successfully!");
+            $("#saveNodeModal").modal('hide');
+            this.catalogForm.reset();
+            this.catalogSubmitted = false;
+          }
+        ).add(() => this.catalogSubmitFlag = false );
+      })
+    }
   }
 
   // Remove node from karta
@@ -1392,7 +1429,7 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
           this._commonService.successToaster("Your have shared karta successfully");
-          $('#shareLinkModal').modal('hide');
+          $('#shareKartaModal').modal('hide');
           email_array.forEach((element: any) => {
             this.karta.sharedTo.push({ email: element });
           });
