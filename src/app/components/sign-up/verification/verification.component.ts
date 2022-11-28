@@ -35,13 +35,9 @@ export class VerificationComponent implements OnInit {
 
   // On submit
   onSubmit() {
-
     this.submitted = true;
-
     if (this.verificationForm.valid) {
-
       this.submitFlag = true;
-
       this._signupService.verification(this.verificationForm.value).subscribe(
         (response: any) => {
           this._commonService.successToaster("Email is verified successfully");
