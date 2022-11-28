@@ -36,7 +36,7 @@ export class MemberService {
     return this._httpService.PUT('/users/block', data);
   }
   deleteUser(data: any) {
-    return this._httpService.PUT('/users/block', data);
+    return this._httpService.PUT('/users/delete', data);
   }
   /*============================== API FUNCTIONS ENDS ==============================*/
 }

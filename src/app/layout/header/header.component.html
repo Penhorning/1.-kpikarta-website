@@ -45,8 +45,12 @@
                           class="mr-2"> My Profile</a>
                       <a class="dropdown-item" [routerLink]="['/my-suggestion']"><img src="assets/img/Suggestion.svg"
                           class="mr-2"> My Suggestion</a>
-                      <a class="dropdown-item" [routerLink]="['/billing']"><img src="assets/img/plan.svg" class="mr-2">
-                        Billing</a>
+                      <a class="dropdown-item" *ngIf="_commonService.userRole === 'company_admin' || _commonService.userRole === 'billing_staff'" [routerLink]="['/billing']">
+                        <img src="assets/img/plan.svg" class="mr-2">
+                        Billing
+                      </a>
+                      <a class="dropdown-item" [routerLink]="['/settings']"><img src="assets/img/settings.png" class="mr-2">
+                        Settings</a>
                       <a class="dropdown-item logout-custom" href="javascript:void(0);" (click)="logout()">
                         <img src="assets/img/logout.svg" class="mr-1"> Log Out
                       </a>
