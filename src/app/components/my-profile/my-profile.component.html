@@ -27,9 +27,9 @@
     
                     <!-- Settings Tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus active" data-toggle="tab"
+                        <li class="nav-item nav-item-cus" [ngStyle]="{'width': _commonService.userRole === 'company_admin' ? '50%' : '100%'}"> <a class="nav-link nav-link-cus active" data-toggle="tab"
                                 href="#tabs-1" role="tab">Personal Details</a> </li>
-                        <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus" data-toggle="tab" href="#tabs-2"
+                        <li class="nav-item nav-item-cus" *ngIf="_commonService.userRole === 'company_admin'"> <a class="nav-link nav-link-cus" data-toggle="tab" href="#tabs-2"
                                 role="tab">Company Details</a> </li>
     
                     </ul>
@@ -45,10 +45,10 @@
                                     <div class="col-md-12">
                                         <div class="d-flex jumbotron justify-content-between mng-logo-import py-3">
                                             <div class="align-self-center">
-                                                <img [src]="profileImage.fileImageUrl" class="rounded-circle profile_logo" alt="" />
+                                                <img [src]="profileImage.fileImageUrl" class="profile_logo" alt="" />
                                             </div>
                                             <div class="align-self-center">
-                                                <button type="button" class="btn btn-secondary" (click)="resetCropModel('user', 300, 300)" data-toggle="modal" data-target="#cropperModal">Upload</button>
+                                                <button type="button" class="btn btn-secondary my-0" (click)="resetCropModel('user', 300, 300)" data-toggle="modal" data-target="#cropperModal">Upload</button>
                                             </div>
                                         </div>
                                     </div>
@@ -194,7 +194,7 @@
                         <!--End Tab Personal Details-->
     
                         <!--Company Details-->
-                        <div class="tab-pane" id="tabs-2" role="tabpanel">
+                        <div class="tab-pane" id="tabs-2" role="tabpanel" *ngIf="_commonService.userRole === 'company_admin'">
                             <form [formGroup]="companyForm" (ngSubmit)="onCompanySubmit()">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -203,7 +203,7 @@
                                                 <img [src]="companyLogo.fileImageUrl" class="navbar_logo" alt="" />
                                             </div>
                                             <div class="align-self-center">
-                                                <button type="button" class="btn btn-secondary" (click)="resetCropModel('company', 394, 91)" data-toggle="modal" data-target="#cropperModal">Upload</button>
+                                                <button type="button" class="btn btn-secondary my-0" (click)="resetCropModel('company', 394, 91)" data-toggle="modal" data-target="#cropperModal">Upload</button>
                                             </div>
                                         </div>
                                     </div>
@@ -242,10 +242,10 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="employeesRangeId">Number of Employees </label>
-                                            <select class="form-control" id="employeesRangeId" formControlName="employeesRangeId">
+                                            <label for="employeeRangeId">Number of Employees </label>
+                                            <select class="form-control" id="employeeRangeId" formControlName="employeeRangeId">
                                                 <option selected="" value="">Select employees</option>
-                                                <option *ngFor="let employee_range of employeesRanges" [value]="employee_range.id">{{employee_range.range}}</option>
+                                                <option *ngFor="let employee_range of employeeRanges" [value]="employee_range.id">{{employee_range.range}}</option>
                                             </select>
                                         </div>
                                     </div>

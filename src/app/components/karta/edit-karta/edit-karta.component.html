@@ -206,7 +206,7 @@
 
     <div class="karta-edit-header">
       <div class="row no-gutters">
-        <div class="col-lg-6">
+        <div class="col-lg-7">
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
@@ -221,14 +221,21 @@
                 </select>
               </div>
             </div>
-            <div class="col-lg-6 p-0">
+            <div class="col-lg-2 align-self-center undo_redo_btn">
+              <a href="javascript:void(0);" title="Undo" (click)="undoKarta()"><img src="assets/img/Undo.svg"
+                  class="img-fluid"></a>
+              <a href="javascript:void(0);" title="Redo" (click)="redoKarta()"><img src="assets/img/Redo.svg"
+                  class="img-fluid"></a>
+              <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
+            </div>
+            <div class="col-lg-4 p-0">
               <div class="time-select-karta">
                 <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'medium'}}</span>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-5">
           <div class="row no-gutters">
             <div class="col-lg-4">
               <div class="select-karta-name">
@@ -240,13 +247,14 @@
             </div>
             <div class="col-lg-4 p-0">
               <div class="icon-karta">
-                <a href="#" data-toggle="modal" data-target="#shareLinkModal" (click)="onShare(sharedKartaStr)"><img
+                <!-- Share karta -->
+                <a href="#" data-toggle="modal" data-target="#shareKartaModal" (click)="onShare(sharedKartaStr)"><img
                     src="assets/img/share-icon.svg"></a>
-                <a href="#"><img src="assets/img/download-icon.svg"></a>
+                <!-- Export Karta -->
                 <div class="dropdown show">
-                  <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="assets/img/export.svg">
+                  <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <img src="assets/img/download-icon.svg">
                   </a>
                   <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
@@ -261,7 +269,7 @@
                     </a>
                   </div>
                 </div>
-
+                <!-- Filter Karta -->
                 <div class="dropdown filter-option m-0">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
                     id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
@@ -588,14 +596,14 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-lg-12 text-center">
             <div class="zooming-section">
 
               <div class="row">
                 <div class="col-3">
-                  <a href="javascript:void(0);"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
-                  <a href="javascript:void(0);"><img src="assets/img/Redo.svg" class="img-fluid ml-1"></a>
+                  <a href="javascript:void(0);" (click)="undoKarta()"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
+                  <a href="javascript:void(0);" (click)="redoKarta()"><img src="assets/img/Redo.svg" class="img-fluid ml-1"></a>
                 </div>
 
                 <div class="col-lg-6">
@@ -612,7 +620,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
 
@@ -644,7 +652,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="goal-name mt-3">
-                <h6>Weightage</h6>
+                <h6>Weighting</h6>
               </div>
             </div>
           </div>
@@ -654,8 +662,8 @@
                 <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                   [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
                 <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please
-                  enter weightage!</div>
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than
+                  enter weighting!</div>
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weighting cannot be greator than
                   100!</div>
               </div>
             </div>
@@ -702,8 +710,7 @@
             <h6 class="pt-2">Font Style</h6>
           </div>
           <div class="col-lg-7">
-            <select class="form-control font-style" [(ngModel)]="selectedFont"
-              (change)="updateNode('font_style', selectedFont, 'node_updated')">
+            <select class="form-control font-style" [(ngModel)]="selectedFont" (change)="changeFontStyle()">
               <option value="system-ui">System-UI</option>
               <option value="sans-serif">Sans-Serif</option>
               <option value="monospace">Monospace</option>
@@ -744,7 +751,7 @@
           <div class="col-lg-7">
             <div class="color-picker">
               <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor"
-                (change)="updateNode('text_color', selectedColor, 'node_updated')" style="cursor: pointer;">
+                (change)="changeTextColor()" style="cursor: pointer;">
             </div>
           </div>
         </div>
@@ -791,7 +798,7 @@
             <!-- Fiscal Year -->
             <div class="row mt-3">
               <div class="col-lg-12">
-                <h5>Fiscal year</h5>
+                <h5>Fiscal Year</h5>
                 <div class="row">
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
@@ -870,7 +877,7 @@
               <div class="col-lg-12">
                 <div class="selct-option-side-r">
                   <label>KPI Calculation Periods</label>
-                  <select class="form-control" [value]="currentNode.kpi_calc_period" [(ngModel)]="kpiCalculationPeriod"
+                  <select class="form-control" [(ngModel)]="currentNode.kpi_calc_period"
                     (change)="changeKPIPeriods($event)">
                     <option value="month-to-date">Month to date</option>
                     <option value="year-to-date">Year to date</option>
@@ -987,7 +994,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="selct-option-side-r">
-                <label>Person to notify</label>
+                <label>Person to Notify</label>
                 <select class="form-control" (change)="setNotifyUser()" [(ngModel)]="notifyType">
                   <option value="" selected>Select</option>
                   <option value="owner">KPI Owner</option>
@@ -1025,7 +1032,7 @@
             </div>
             <div class="col-lg-6">
               <div class="selct-option-side-r">
-                <label>Type {{currentNode.alert_type}}</label>
+                <label>Type</label>
                 <select class="form-control" [(ngModel)]="currentNode.alert_type" (change)="changeAlertType($event)">
                   <option value="" selected>Select type</option>
                   <option value="notification">Notify at login</option>
@@ -1037,8 +1044,8 @@
         </div>
       </div>
 
-      <!-- share-link-model -->
-      <div class="modal fade shara-link" id="shareLinkModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+      <!-- Share karta modal -->
+      <div class="modal fade shara-link" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content p-4">
@@ -1089,6 +1096,47 @@
                       </div>
                     </span>
                   </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save karta modal -->
+      <div class="modal fade shara-link" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-4">
+            <div class="modal-header">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">Save {{ catalogForm?.value?.node_type | titlecase }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                (click)="selectedSharedUsers = undefined">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="share-link-model mt-3">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <form [formGroup]="catalogForm" (ngSubmit)="onCatalogSubmit()">
+                      <div class="form-group">
+                        <label for="name" class="font-weight-bold">Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Enter name" formControlName="name" [maxlength]="50"
+                        [ngClass]="{ 'is-invalid': (catalogSubmitted || catalog.name.touched) && catalog.name.errors }">
+                        <div *ngIf="(catalogSubmitted || catalog.name.touched) && catalog.name.errors" class="invalid-feedback">
+                          <div *ngIf="catalog.name.errors.required">Name is required!</div>
+                          <div *ngIf="catalog.name.errors.pattern">Blank space is not allowed!</div>
+                        </div>
+                      </div>
+                      <button class="send-btn" [disabled]="catalogSubmitFlag">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="catalogSubmitFlag">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <ng-container *ngIf="!catalogSubmitFlag">SAVE</ng-container>
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

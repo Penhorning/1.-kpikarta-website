@@ -547,45 +547,45 @@ export class MyKpiComponent implements OnInit {
     } else {
       this.sortDir = 1;
     }
-    this.sortArr(col, index);
+    this.sortHeader(col, index);
   }
 
-  sortArr(colName: any, index: number) {
+  sortHeader(colName: any, index: number) {
     this.arrow_icon = !this.arrow_icon;
     this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
-    this.kpis.sort((a: any, b: any) => {
+    this.kpis.sort((node_1: any, node_2: any) => {
       if (colName == 'percentage') {
-        a = a['target'][0][colName]
-        b = b['target'][0][colName]
+        node_1 = node_1['target'][0][colName]
+        node_2 = node_2['target'][0][colName]
         if (this.sortOrder == 'asc') {
-          return a - b;
+          return node_1 - node_2;
         } else {
-          return b - a;
+          return node_2 - node_1;
         }
       } else if (colName == 'fullName') {
-        a = a['karta']['user'][colName].toLowerCase();
-        b = b['karta']['user'][colName].toLowerCase();
-        return a.localeCompare(b) * this.sortDir;
+        node_1 = node_1['karta']['user'][colName].toLowerCase();
+        node_2 = node_2['karta']['user'][colName].toLowerCase();
+        return node_1.localeCompare(node_2) * this.sortDir;
       } else if (colName == 'achieved_value') {
-        a = a[colName]
-        b = b[colName]
+        node_1 = node_1[colName]
+        node_2 = node_2[colName]
         if (this.sortOrder == 'asc') {
-          return a - b;
+          return node_1 - node_2;
         } else {
-          return b - a;
+          return node_2 - node_1;
         }
       } else if (colName == 'value') {
-        a = a['target'][0][colName]
-        b = b['target'][0][colName]
+        node_1 = node_1['target'][0][colName]
+        node_2 = node_2['target'][0][colName]
         if (this.sortOrder == 'asc') {
-          return a - b;
+          return node_1 - node_2;
         } else {
-          return b - a;
+          return node_2 - node_1;
         }
       } else {
-        a = a[colName].toLowerCase();
-        b = b[colName].toLowerCase();
-        return a.localeCompare(b) * this.sortDir;
+        node_1 = node_1[colName].toLowerCase();
+        node_2 = node_2[colName].toLowerCase();
+        return node_1.localeCompare(node_2) * this.sortDir;
       }
     });
     if (colName == 'percentage' || 'achieved_value' || 'value') this.sortOrder == 'asc' ? this.sortOrder = 'dsc' : this.sortOrder = 'asc';
