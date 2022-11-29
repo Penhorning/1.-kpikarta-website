@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
 import { SubscriptionPlanService } from '@app/components/subscription-plan/service/subscription-plan.service';
 
+declare const $: any;
+
 @Component({
   selector: 'app-subscription-plan',
   templateUrl: './subscription-plan.component.html',
@@ -22,13 +24,16 @@ export class SubscriptionPlanComponent implements OnInit {
 
   selectPlan(type: string) {
     this.submitFlag = true;
-    this._subscriptionPlanService.assignPlan({ plan: type }).subscribe(
+    const plantype = $('#buytype').attr('aria-pressed') ? "yearly" : "monthly";
+    this._subscriptionPlanService.assignPlan({ plan: plantype }).subscribe(
       (response: any) => {
-        this.router.navigate(['/thank-you']);
         this._signupService.updateSignUpSession(3);
+        this.router.navigate(['/sign-up/payment-method']);
       },
-      (error: any) => {}
+      (error: any) => {
+        console.log(error);
+        this.submitFlag = false
+      }
     ).add(() => this.submitFlag = false);
   }
-
 }

@@ -7,12 +7,14 @@ import { SignUpComponent } from './sign-up.component';
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
 import { VerificationComponent } from './verification/verification.component';
+import { AddPaymentMethodComponent } from './add-payment-method/add-payment-method.component';
 
 
 @NgModule({
   declarations: [
     SignUpComponent,
-    VerificationComponent
+    VerificationComponent,
+    AddPaymentMethodComponent
   ],
   imports: [
     CommonModule,
