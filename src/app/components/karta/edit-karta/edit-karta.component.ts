@@ -1520,10 +1520,11 @@ export class EditKartaComponent implements OnInit {
                   this.returnChildNode(this.karta.node);
                   this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
                     this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                    this.currentNode.phase = "";
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
                     this.setKartaDimension();
-                    this.updateNodeProperties(kartaNode);
+                    // this.updateNodeProperties(kartaNode);
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
                   });
@@ -1537,6 +1538,7 @@ export class EditKartaComponent implements OnInit {
                     this.showSVG = true;
                     this.isRtNodDrgingFrmSide = false;
                     this.updateNodeProperties(kartaNode);
+                    this.currentNode.phase = "";
                     this.D3SVG.updateNode(this.currentNode);
                   },
                   (err) => {
@@ -1550,10 +1552,10 @@ export class EditKartaComponent implements OnInit {
                     this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
                       let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                       kartaNode.phase = phase;
+                      this.currentNode.phase = "";
                       this.showSVG = true;
                       this.isRtNodDrgingFrmSide = false;
-                      this.updateNodeProperties(kartaNode);
-                      // Will think below line's alternative
+                      // this.updateNodeProperties(kartaNode);
                       this.getKartaInfo();
                       setTimeout(() => {
                         $('#karta-svg').children("svg").eq(1).remove();
@@ -1584,12 +1586,12 @@ export class EditKartaComponent implements OnInit {
               case "node_created":
                 if(x.data.data){
                   this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    this.currentNode.phase = "";
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
                     this.showSVG = true;
                     this.isRtNodDrgingFrmSide = false;
-                    this.updateNodeProperties(kartaNode);
-                    // Will think below line's alternative
+                    // this.updateNodeProperties(kartaNode);
                     this.getKartaInfo();
                     setTimeout(() => {
                       $('#karta-svg').children("svg").eq(1).remove();
@@ -1621,10 +1623,11 @@ export class EditKartaComponent implements OnInit {
                   this.returnChildNode(this.karta.node);
                   this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
                     this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                    this.currentNode.phase = "";
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
                     this.setKartaDimension();
-                    this.updateNodeProperties(kartaNode);
+                    // this.updateNodeProperties(kartaNode);
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
                   });
