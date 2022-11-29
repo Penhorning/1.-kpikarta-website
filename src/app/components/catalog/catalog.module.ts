@@ -7,6 +7,10 @@ import { CatalogComponent } from './catalog.component';
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
 
+// Third party module
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
+
 
 @NgModule({
   declarations: [
@@ -15,7 +19,9 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
   imports: [
     CommonModule,
     CatalogRoutingModule,
-    SharedModule
+    SharedModule,
+    NgSelectModule,
+    NgOptionHighlightModule
   ]
 })
 export class CatalogModule { }

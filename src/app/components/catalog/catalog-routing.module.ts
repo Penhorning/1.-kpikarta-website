@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CatalogComponent } from './catalog.component';
 
 const routes: Routes = [
-  { path: '', component: CatalogComponent, data: { title: "Catalogs - KPI Karta" } }
+  { path: '', component: CatalogComponent, data: { title: "Inventory - KPI Karta" } }
 ];
 
 @NgModule({

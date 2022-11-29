@@ -5,6 +5,7 @@ import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
+import * as jqueryFunctions from '../utils/jqueryOperations.js';
 import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 
@@ -76,9 +77,9 @@ export class EditKartaComponent implements OnInit {
       onDragStart: (d: any) => {
         this.previousDraggedNodeParentId = d.parent.id;
       },
-      onNodeRightClick: (d: any) => {
-        $("#saveNodeModal").modal('show');
-        this.catalogForm.patchValue({ node: d });
+      onRightClick: (d: any, node_type: string) => {
+        jqueryFunctions.showModal('saveNodeModal');
+        this.catalogForm.patchValue({ node: d, node_type });
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -173,12 +174,12 @@ export class EditKartaComponent implements OnInit {
   catalogForm = this.fb.group({
     name: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
     node: [null],
+    node_type: [''],
     thumbnail: ['']
   });
   get catalog() { return this.catalogForm.controls; }
 
   ngOnInit(): void {
-    const that = this;
     // Formula Fields
     this.formulaGroup = this.fb.group({
       calculatedValue: [0],
@@ -188,11 +189,11 @@ export class EditKartaComponent implements OnInit {
 
     // Toggle Left Sidebar
     $('#sidebarCollapse').on('click', function () {
-      that.togggleLeftSidebar();
+      jqueryFunctions.togggleLeftSidebar();
     });
     // Close right sidebar when click outside
     $(document).on('click', '.right_sidebar_overlay', function () {
-      that.closeRightSidebar();
+      jqueryFunctions.closeRightSidebar();
     });
     // Get all members
     this.getAllMembers();
@@ -503,47 +504,6 @@ export class EditKartaComponent implements OnInit {
   }
   // ---------FormArray Functions defined Above----------
 
-  // TOGGLE LEFT SIDEBAR
-  togggleLeftSidebar() {
-    $('#sidebar-two').toggleClass('active');
-    $('.sidebar_collapsible_btn').toggleClass('show');
-    if ($('#sidebar-two').hasClass('active')) {
-      $('.sidebar_collapsible_btn img').attr('src', 'assets/img/side-arrow-left.svg');
-    } else {
-      $('.sidebar_collapsible_btn img').attr('src', 'assets/img/side-arrow-right.svg')
-    }
-  }
-  // HIDE LEFT SIDEBAR
-  hideLeftSidebar() {
-    $('#sidebar-two').removeClass('active');
-    $('.sidebar_collapsible_btn').removeClass('show');
-  }
-  // CLOSE RIGHT SIDEBAR
-  closeRightSidebar() {
-    $('#rightSidebar, .right_sidebar_overlay').removeClass('open');
-    $('body').removeClass('rightSidebarOpened');
-  }
-  // OPEN RIGHT SIDEBAR
-  openRightSidebar(value?: any) {
-    $('#rightSidebar, .right_sidebar_overlay').addClass('open');
-    if(value && value !== 0){
-      $('#rightSidebar').scrollTop(value);
-    }
-    else {
-      $('#rightSidebar').scrollTop(0);
-    }
-    $('body').addClass('rightSidebarOpened');
-  }
-
-  // DISABLE CHART FUNCTIONS
-  disableChart() {
-    $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
-  }
-  // ENABLE CHART FUNCTIONS
-  enableChart() {
-    $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
-  }
-
   // EXPORT KARTA
   exportKarta(type: string) {
     if (type === 'image') this.D3SVG.exportAsImage(this.karta.name);
@@ -554,27 +514,28 @@ export class EditKartaComponent implements OnInit {
   // Set karta's div width
   setKartaDimension() {
     let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
-    karta_col_width = $('.karta_column').width();
+    karta_col_width = jqueryFunctions.getWidth('.karta_column');
     // karta_col_height = $('.karta_column').height();
     karta_col_height = 455;
-    svg_width = $('#karta-svg svg').width();
-    svg_height = $('#karta-svg svg').height();
+    svg_width = jqueryFunctions.getWidth('#karta-svg svg');
+    svg_height = jqueryFunctions.getHeight('#karta-svg svg');
 
     width = svg_width > karta_col_width ? svg_width : karta_col_width;
     // height = svg_height > karta_col_height ? svg_height : karta_col_height;
     height = 455;
 
-    $('#karta-svg').css('max-width', karta_col_width);
+    jqueryFunctions.setStyle('#karta-svg', 'max-width', karta_col_width);
+
     // $('#karta-svg').css("max-height", karta_col_height + 5);   // For multiple phases
-    $('#karta-svg').css('max-height', karta_col_height);
-    $('#karta-svg svg').attr('width', width);
-    $('#karta-svg svg').attr('height', height);
+    jqueryFunctions.setStyle('#karta-svg', 'max-height', karta_col_height);
+    jqueryFunctions.setAttribute('#karta-svg svg', 'width', width);
+    jqueryFunctions.setAttribute('#karta-svg svg', 'height', height);
   }
 
   // Change chart mode
   changeMode(e: any) {
-    if (e.target.value === "enable") this.enableChart();
-    else this.disableChart();
+    if (e.target.value === "enable") jqueryFunctions.enableChart();
+    else jqueryFunctions.disableChart();
   }
 
   // Get all users
@@ -697,9 +658,9 @@ export class EditKartaComponent implements OnInit {
 
     // Show properties right sidebar
     if(scroll && scroll !== 0){
-      this.openRightSidebar(scroll);
+      jqueryFunctions.openRightSidebar(scroll);
     } else {
-      this.openRightSidebar();
+      jqueryFunctions.openRightSidebar();
     }
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
@@ -957,7 +918,7 @@ export class EditKartaComponent implements OnInit {
   versionRollback(event: any){
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
-        $('#karta-svg svg').remove();
+        jqueryFunctions.removeElement('#karta-svg svg');
         this.getKartaInfo();
         this.recheckFormula();
       },
@@ -1122,10 +1083,10 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any, typeValue?: any) {
+  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any, type?: any) {
     let data = { [key]: value }
     if( key == "achieved_value" ) {
-      data["type_value"] = typeValue
+      data["type"] = type
     };
     this._kartaService.updateNode(updatingNode.id? updatingNode.id: this.currentNode.id, data).subscribe(
       (response: any) => {
@@ -1159,6 +1120,15 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
+  removeIds(node: any) {
+    node.forEach((item: any) => {
+      if (item.hasOwnProperty("id")) delete item.id;
+      if (item.hasOwnProperty("parent")) delete item.parent;
+      if (item.hasOwnProperty("children") && item.children.length > 0) this.removeIds(item.children);
+    });
+    return node;
+  }
+
   onCatalogSubmit  = async () => {
     
     this.catalogSubmitted = true;
@@ -1171,13 +1141,18 @@ export class EditKartaComponent implements OnInit {
         // Set thumbnail
         this.catalogForm.patchValue({ thumbnail: base64Image });
         this.catalogForm.value.userId = this._commonService.getUserId();
-        
-        this.catalogForm.value.node = "ag"
+        // remove parent object from every node to prevent circular json
+        let node = JSON.stringify(this.catalogForm.value.node, function(key, value) {
+          if(key == 'parent') return value.id;
+          return value;
+        });
+        this.catalogForm.value.node = JSON.parse(node);
+
         this.catalogSubmitFlag = true;
         this._kartaService.addNodeInCatalog(this.catalogForm.value).subscribe(
           (response: any) => {
             this._commonService.successToaster("Node saved successfully!");
-            $("#saveNodeModal").modal('hide');
+            jqueryFunctions.hideModal('saveNodeModal');
             this.catalogForm.reset();
             this.catalogSubmitted = false;
           }
@@ -1252,7 +1227,7 @@ export class EditKartaComponent implements OnInit {
 
   onDragOver(ev: any) {
     ev.preventDefault();
-    this.hideLeftSidebar();
+    jqueryFunctions.hideLeftSidebar();
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.add('selectedPhase');
   }
@@ -1429,7 +1404,7 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
           this._commonService.successToaster("Your have shared karta successfully");
-          $('#shareKartaModal').modal('hide');
+          jqueryFunctions.hideModal('shareKartaModal');
           email_array.forEach((element: any) => {
             this.karta.sharedTo.push({ email: element });
           });

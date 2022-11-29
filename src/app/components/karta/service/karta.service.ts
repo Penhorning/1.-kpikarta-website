@@ -24,8 +24,8 @@ export class KartaService {
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
-  getKartas(data: any) {
-    return this._httpService.POST('/karta/get-kartas', data);
+  getAllKartas(data: any) {
+    return this._httpService.POST('/karta/get-all', data);
   }
   getAllMembers(data: any) {
     return this._httpService.POST('/users/get-all-members', data);
@@ -36,8 +36,8 @@ export class KartaService {
   getKartaHistory(){
     return this._httpService.GET(`/karta_histories`);
   }
-  getSharedKartas(data: any) {
-    return this._httpService.POST('/karta/shared-kartas', data);
+  getAllSharedKartas(data: any) {
+    return this._httpService.POST('/karta/shared-all', data);
   }
 
   createKartaVersion(data: any){

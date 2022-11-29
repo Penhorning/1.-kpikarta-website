@@ -64,7 +64,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         {
             title: 'Save',
             action: function(elm, d, i) {
-                options.events.onNodeRightClick(d);
+                let node_type = "node";
+                if (d.hasOwnProperty("children") && d.children.length > 0) {
+                    node_type = "branch";
+                  } else if (d.phase.name === "KPI") {
+                    node_type = d.type;
+                  }
+                options.events.onRightClick(d, node_type);
             }
         }
     ]
@@ -549,6 +555,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         if (d.hasOwnProperty("children") && d.children.length > 0) {
             d.children.forEach(item => hightlightNode(item));
         }
+        
     }
     // Remove highlighted color from nodes
     function unHightlightNode(d) {
@@ -560,9 +567,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Get bas64Image of chart
     function getBase64Image(node, callback) {
         svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2) }).then(uri => {
-            let imageBase64 = uri.split(',')[1];
             unHightlightNode(node);
-            callback(imageBase64);
+            callback(uri);
         });
     }
 

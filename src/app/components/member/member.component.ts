@@ -94,13 +94,6 @@ export class MemberComponent implements OnInit {
     this.loading = true;
     this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
-        // if (response.members[0].data.length > 0) {
-        //   this.members = response.members[0].data;
-        //   this.totalData = response.members[0].metadata[0].total;
-        // } else {
-        //   this.members = [];
-        //   this.totalData = 0;
-        // }
         this.members = response.members[0].data;
         if (response.members[0].metadata.length > 0) {
           this.totalMembers = response.members[0].metadata[0].total; 
@@ -217,7 +210,7 @@ export class MemberComponent implements OnInit {
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-              this._commonService.errorToaster("Email is already registered, please try with a different one");
+              this._commonService.errorToaster("Email is already registered, please try a different one");
             }
           }
         ).add(() => this.submitFlag = false);
@@ -233,7 +226,7 @@ export class MemberComponent implements OnInit {
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-              this._commonService.errorToaster("Email is already registered, please try with a different one");
+              this._commonService.errorToaster("Email is already registered, please try a different one");
             }
           }
         ).add(() => this.submitFlag = false);
