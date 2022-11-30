@@ -919,7 +919,7 @@
                               *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"
                                 class="img-fluid edit-btn-r"></a>
                           </div>
-                          <input type="number" class="form-control" placeholder="" (blur)="recheckFormula()"
+                          <input type="number" class="form-control" placeholder="" (blur)="metricOperations.recheckFormula()"
                             formControlName="fieldValue"
                             [ngClass]="{ 'is-invalid': formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched) }" />
                           <div class="invalid-feedback d-block"

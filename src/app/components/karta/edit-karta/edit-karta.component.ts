@@ -7,6 +7,7 @@ import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
+import * as MetricOperations from '../utils/metricFormulaOperations';
 
 
 declare const $: any;
@@ -133,6 +134,7 @@ export class EditKartaComponent implements OnInit {
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
+  metricOperations: any = MetricOperations;
 
   // Person notify
   notifyType: string = "";
@@ -210,55 +212,42 @@ export class EditKartaComponent implements OnInit {
         fieldValue: [0, Validators.min(0)],
       })
       this.fields.push(fieldForm);
-      this.recheckFormula();
+      MetricOperations.recheckFormula();
     }
     else {
       this._commonService.warningToaster("Can't add more than 5 fields");
     }
   }
 
-  //Deleting a particular FormulaField Group
+  // Deleting a particular FormulaField Group
   deleteFormulaGroup(fieldIndex: number) {
-    if (this.currentNode.node_type) {
-      this.fields.removeAt(fieldIndex);
-      let newArr = [];
-      for (let i = 0; i < this.fields.length; i++) {
+    this.fields.removeAt(fieldIndex);
+    let newArr = [];
+    for (let i = 0; i < this.fields.length; i++) {
+      this.currentNode.node_type ? (
         newArr.push({
-          ...this.formulaGroup.controls['fields']['controls'][i]
-        });
-      }
-      this.formulaGroup.patchValue({
-        fields: newArr,
-      });
-      this.recheckFormula();
-    }
-    else {
-      this.fields.removeAt(fieldIndex);
-      let newArr = [];
-      for (let i = 0; i < this.fields.length; i++) {
+        ...this.formulaGroup.controls['fields']['controls'][i]
+        })
+      ) : (
         newArr.push({
-          ...this.formulaGroup.controls['fields']['controls'][i],
-          fieldName: this.currentNode.node_type
-            ? this.currentNode.node_type.fields[i].fieldName
-            : `Field${i + 1}`,
-          // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
-        });
-      }
-      this.formulaGroup.patchValue({
-        fields: newArr,
-      });
-      this.recheckFormula();
+        ...this.formulaGroup.controls['fields']['controls'][i],
+        fieldName: this.currentNode.node_type
+          ? this.currentNode.node_type.fields[i].fieldName
+          : `Field${i + 1}`,
+        })
+      )
     }
+    this.formulaGroup.patchValue({
+      fields: newArr,
+    });
+    MetricOperations.recheckFormula();
   }
 
   // Enable/Disable Readonly value of Formula Fields
   editFieldStatus(id: number, value: boolean) {
-    let dom: any = document.getElementById('fd' + id);
-    dom.innerHTML = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
-    dom.innerText = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
-    this.formulagroupDefaultValues[id] = dom.innerText;
-    $('#fd' + id).attr('contenteditable', value);
-    $('#fd' + id).focus();
+    let fieldName = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
+    let dom = MetricOperations.editFieldStatus(id, value, fieldName);
+    this.formulagroupDefaultValues[id] = dom?.innerText;
   }
 
   // Limiting length for Content Editable
@@ -268,11 +257,7 @@ export class EditKartaComponent implements OnInit {
 
   // Check Field Value for ReadOnly
   checkFieldStatus(id: any) {
-    let element: any = document.getElementById(id);
-    if (element) {
-      return JSON.parse(element.contentEditable);
-    }
-    return false;
+    return MetricOperations.checkFieldStatus(id);
   }
 
   // Getting the FormArray values
@@ -316,14 +301,6 @@ export class EditKartaComponent implements OnInit {
     $('#formula-field').blur();
   }
 
-  // Change formula value of each input blur
-  recheckFormula() {
-    if ($('#formula-field').val()) {
-      $('#formula-field').focus();
-      $('#formula-field').blur();
-    }
-  }
-
   @HostListener('window:scroll', ['$event']) 
   getScrollPosition() {
     return $('#rightSidebar').scrollTop();
@@ -362,7 +339,6 @@ export class EditKartaComponent implements OnInit {
             }
           }
         });
-        
 
         if (this.formulaGroup.valid && originalValue) {
           if (checkFrag) {
@@ -501,6 +477,7 @@ export class EditKartaComponent implements OnInit {
       return;
     }
   }
+
   // ---------FormArray Functions defined Above----------
 
   // TOGGLE LEFT SIDEBAR
@@ -959,7 +936,7 @@ export class EditKartaComponent implements OnInit {
       (data) => {
         $('#karta-svg svg').remove();
         this.getKartaInfo();
-        this.recheckFormula();
+        MetricOperations.recheckFormula();
       },
       (err) => console.log(err)
     );
@@ -1670,4 +1647,3 @@ export class EditKartaComponent implements OnInit {
   // Undo Redo Functionality ends
 
 }
-
