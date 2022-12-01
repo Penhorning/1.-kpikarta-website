@@ -161,7 +161,7 @@ export class DashboardComponent implements OnInit {
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
           this._commonService.successToaster("You have shared Karta successfully!");
-          $('#shareLinkModal').modal('hide');
+          $('#shareKartaModal').modal('hide');
           this.getAllKartas();
           this.getAllSharedKartas();
         },

@@ -226,7 +226,7 @@
                   class="img-fluid"></a>
               <a href="javascript:void(0);" title="Redo" (click)="redoKarta()"><img src="assets/img/Redo.svg"
                   class="img-fluid"></a>
-              <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
+              <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
             </div>
             <div class="col-lg-4 p-0">
               <div class="time-select-karta">
@@ -779,7 +779,7 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
+                  <input type="date" class="form-control" [min]="maxStartDate | date:'yyyy-MM-dd'" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
                     (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
                   <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                 </div>
@@ -803,7 +803,7 @@
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
-                      <input type="date" class="form-control"
+                      <input type="date" class="form-control"  [min]="maxFiscalStartDate"
                         [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'"
                         (change)="changeFiscalStartDate($event)">
                     </div>
@@ -824,13 +824,20 @@
             <ng-container *ngFor="let t of target; let i = index">
               <div class="row mt-3">
                 <div class="col-lg-5 pr-0">
-                  <div class="selct-option-side-r">
-                    <label class="text-nowrap" style="margin-bottom: 6px;">Target Value</label>
-                    <select class="form-control" [value]="t.frequency" (change)="setTarget('frequency', $event, i)">
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="quarterly">Quarterly</option>
-                      <option value="annually">Annually</option>
+                  <div class="selct-option-side-r target_select">
+                    <label class="text-nowrap">Target Value</label>
+                    <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
+                      <!-- <option *ngFor="let tO of targetOptions" [value]="tO.value" [disabled]="tO.disabled">
+                        {{ tO.name }}
+                      </option> -->
+                      <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
+                      <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
+                      <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
+                      <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
+                      <!-- <option [value]="targetOptions[0].value" [disabled]="targetOptions[0].disabled">{{ targetOptions[0].name }}</option>
+                      <option [value]="targetOptions[1].value" [disabled]="targetOptions[1].disabled">{{ targetOptions[1].name }}</option>
+                      <option [value]="targetOptions[2].value" [disabled]="targetOptions[2].disabled">{{ targetOptions[2].name }}</option>
+                      <option [value]="targetOptions[3].value" [disabled]="targetOptions[3].disabled">{{ targetOptions[3].name }}</option> -->
                     </select>
                   </div>
                 </div>
@@ -844,12 +851,10 @@
                   </div>
                 </div>
                 <div class="col-lg-3 d-flex px-2">
-                  <ng-container *ngIf="target.length > 1">
-                    <div class="add-btn-side-r" style="cursor: pointer;" (click)="removeTarget(i)">
-                      <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
-                    </div>
-                  </ng-container>
-                  <div class="add-btn-side-r" style="cursor: pointer;" (click)="addMoreTarget()">
+                  <div class="target_action_btn cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
+                    <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
+                  </div>
+                  <div class="target_action_btn cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
                     <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
                   </div>
                 </div>
@@ -1103,7 +1108,7 @@
         </div>
       </div>
 
-      <!-- Save karta modal -->
+      <!-- Save catalog modal -->
       <div class="modal fade shara-link" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

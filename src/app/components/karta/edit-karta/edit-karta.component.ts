@@ -107,6 +107,8 @@ export class EditKartaComponent implements OnInit {
   }
 
   /* Node properties */
+  maxStartDate: any = new Date();
+  maxFiscalStartDate: any = `${new Date().getFullYear()}-01-01`;
   currentNodeName: string = '';
   currentNodeWeight: number = 0;
   currentNodeAchievedValue: number = 0;
@@ -119,7 +121,14 @@ export class EditKartaComponent implements OnInit {
   kpiPercentage: number = 0;
   showKPICalculation: boolean = false;
   kpiCalculationPeriod = 'month-to-date';
-  target: any = [{ frequency: 'weekly', value: 0, percentage: 0 }];
+  previousTargetFrequency: string = "";
+  targetOptions: any = [
+    { name: "Weekly", value: "weekly", disabled: false },
+    { name: "Monthly", value: "monthly", disabled: false },
+    { name: "Quarterly", value: "quarterly", disabled: false },
+    { name: "Yearly", value: "yearly", disabled: false }
+  ]
+  target: any = [];
   // Contributors
   disabled = false;
   ShowFilter = false;
@@ -576,11 +585,25 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
-  // Measure calculation section
+  // Target functions
+  disableTargetOption(value: string) {
+    let index = this.targetOptions.findIndex((item: any) => item.value === value);
+    this.targetOptions[index].disabled = true;
+  }
+  enableTargetOption(value: string) {
+    let index = this.targetOptions.findIndex((item: any) => item.value === value);
+    this.targetOptions[index].disabled = false;
+  }
+  previousTarget(e: any) {
+    this.previousTargetFrequency = e.target.value;
+  }
   setTarget(type: string, e: any, index: any) {
     let node = this.currentNode;
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
+      this.disableTargetOption(e.target.value);
+      this.enableTargetOption(this.previousTargetFrequency);
+      this.previousTargetFrequency = e.target.value;
       if (index === 0 && node.hasOwnProperty("start_date")) this.setDueDate(node.start_date);
       this.updateNode('target', this.target, 'node_updated', node);
     }
@@ -593,13 +616,16 @@ export class EditKartaComponent implements OnInit {
     }
   }
   addMoreTarget() {
+    let remainingTargetOptions = this.targetOptions.filter((item: any) => item.disabled === false);
     this.target.push({
-      frequency: 'monthly',
+      frequency: remainingTargetOptions[0].value,
       value: 0,
       percentage: 0,
     });
+    this.disableTargetOption(remainingTargetOptions[0].value);
   }
   removeTarget(index: number) {
+    this.enableTargetOption(this.target[index].frequency);
     this.target.splice(index, 1);
     let node = this.currentNode;
     this.updateNode('target', this.target, 'node_update_key_remove', node);
@@ -668,15 +694,20 @@ export class EditKartaComponent implements OnInit {
     if (this.currentNode.phase.name === 'KPI') {
       this.showKPICalculation = true;
       // Set target
-      if (param.target) this.target = param.target;
-      else this.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
+      this.target = param.target;
+      // Disable the target option that is already defined
+      this.target.forEach((element: any) => {
+        this.disableTargetOption(element.frequency);
+      });
       // Set due date, if available
       if (this.currentNode.due_date)
         this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
+      // Set notify user
+      if (this.currentNode.notifyUserId) {
+        if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
+        else this.notifyType = "specific";
+      } else this.notifyType = "";
     }
-
-    if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
-    else if (this.currentNode.notifyUserId) this.notifyType = "specific";
   }
 
   // Set due date
