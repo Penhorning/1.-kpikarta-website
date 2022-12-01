@@ -83,7 +83,7 @@
                                             <input type="tel" class="form-control form-control" id="telephone" formControlName="telephone">
                                             <div *ngIf="(submitted || form.telephone.touched) && form.telephone.errors" class="invalid-feedback d-block">
                                                 <div *ngIf="form.telephone.errors.pattern">Telephone number is not valid!</div>
-                                                <div *ngIf="form.telephone.errors.minlength || form.telephone.errors.maxlength">Telephone number must of 10 digits!</div>
+                                                <div *ngIf="!form.telephone.errors.pattern && (form.telephone.errors.minlength || form.telephone.errors.maxlength)">Telephone number must of 10 digits!</div>
                                             </div>
                                         </div>
                                     </div>
