@@ -24,6 +24,9 @@ export class KartaService {
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
+  getPreviousKarta(data: any) {
+    return this._httpService.POST("/karta/view-karta-details", data);
+  }
   getAllKartas(data: any) {
     return this._httpService.POST('/karta/get-all', data);
   }

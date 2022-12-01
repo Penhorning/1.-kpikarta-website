@@ -65,3 +65,7 @@ export function setAttribute(element, property, value) {
 export function removeElement(element) {
     $(element).remove();
 }
+// Remove karta
+export function removeKarta() {
+    $('#karta-svg').children("svg").eq(1).remove();
+}

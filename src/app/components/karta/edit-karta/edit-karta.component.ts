@@ -178,6 +178,7 @@ export class EditKartaComponent implements OnInit {
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
   }
 
+  // Catalog variables
   catalogSubmitted: boolean = false;
   catalogSubmitFlag: boolean = false;
   catalogForm = this.fb.group({
@@ -187,6 +188,80 @@ export class EditKartaComponent implements OnInit {
     thumbnail: ['']
   });
   get catalog() { return this.catalogForm.controls; }
+  // View karta variables
+  viewKartaNumbers: any = [];
+  showViewKartaNumber: boolean = false;
+  viewKartaSubmitted: boolean = false;
+  viewKartaSubmitFlag: boolean = false;
+  viewKartaForm = this.fb.group({
+    type: ['', [Validators.required]]
+  });
+  get viewKarta() { return this.viewKartaForm.controls; }
+
+  viewKartaType(e: any) {
+    console.log(e.target.value);
+    if (e.target.value === "month") {
+      this.viewKartaNumbers = [
+        { name: "January", value: 1 },
+        { name: "February", value: 2 },
+        { name: "March", value: 3 },
+        { name: "April", value: 4 },
+        { name: "May", value: 5 },
+        { name: "June", value: 6 },
+        { name: "July", value: 7 },
+        { name: "August", value: 8 },
+        { name: "September", value: 9 },
+        { name: "October", value: 10 },
+        { name: "November", value: 11 },
+        { name: "December", value: 12 }
+      ]
+    } else if (e.target.value === "week") {
+      const no_of_weeks = moment().week() - (moment().month()*4);
+      this.viewKartaNumbers = [
+        { name: "1st Week", value: 1 },
+        { name: "2nd Week", value: 2 },
+        { name: "3rd Week", value: 3 },
+        { name: "4th Week", value: 4 }
+      ]
+      if (no_of_weeks > 4) {
+        for (let i=5; i<=no_of_weeks; i++) this.viewKartaNumbers.push({ name: `${i}th Week`, value: i });
+      }
+    }
+    if (e.target.value === "quarter") {
+      this.viewKartaNumbers = [
+        { name: "1st Quarter", value: 1 },
+        { name: "2nd Quarter", value: 2 },
+        { name: "3rd Quarter", value: 3 },
+        { name: "4th Quarter", value: 4 }
+      ]
+    }
+    this.showViewKartaNumber = true;
+    this.viewKartaForm.addControl("number", this.fb.control('', [Validators.required]));
+  }
+
+  onViewKartaSubmit() {
+    this.viewKartaForm.value.kartaId = this.kartaId;
+    this.viewKartaForm.value.number = parseInt(this.viewKartaForm.value.number);
+    this.viewKartaForm.value.kartaData = this.karta;
+    this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
+      (response: any) => {
+        if (response.data) {
+          this.karta = response;
+          this.versionId = response.versionId;
+          if (this.karta.node) {
+            this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+            jqueryFunctions.removeKarta();
+            BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+            this.setKartaDimension();
+            jqueryFunctions.disableChart();
+            $("#chartMode").val("disable");
+            this.showSVG = true;
+            jqueryFunctions.hideModal('viewKartaModal');
+          }
+        }
+      }
+    );
+  }
 
   ngOnInit(): void {
     // Formula Fields
@@ -868,6 +943,14 @@ export class EditKartaComponent implements OnInit {
 
         function findTarget(type: string) {
           return element.target.find((item: any) => item.frequency === type);
+        }
+        // Set target value according to monthly
+        if (element.kpi_calc_period === "monthly") {
+          if (findTarget('monthly')) targetValue = findTarget('monthly').value;
+          else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
+          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 3;
+          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
+          targetValue = todayDate * (targetValue / daysInMonth);
         }
         // Set target value according to month to date
         if (element.kpi_calc_period === "month-to-date") {
@@ -1589,7 +1672,7 @@ export class EditKartaComponent implements OnInit {
                       // this.updateNodeProperties(kartaNode);
                       this.getKartaInfo();
                       setTimeout(() => {
-                        $('#karta-svg').children("svg").eq(1).remove();
+                        jqueryFunctions.removeKarta();
                       }, 2000);
                     },
                     (err) => {
@@ -1625,7 +1708,7 @@ export class EditKartaComponent implements OnInit {
                     // this.updateNodeProperties(kartaNode);
                     this.getKartaInfo();
                     setTimeout(() => {
-                      $('#karta-svg').children("svg").eq(1).remove();
+                      jqueryFunctions.removeKarta();
                     }, 2000);
                   },
                   (err) => {
