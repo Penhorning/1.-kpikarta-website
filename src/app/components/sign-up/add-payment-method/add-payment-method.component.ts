@@ -15,6 +15,7 @@ export class AddPaymentMethodComponent implements OnInit {
     name: "",
     userId: "",
     email: "",
+    plan: "",
     accessToken: "",
   }
 
@@ -35,9 +36,9 @@ export class AddPaymentMethodComponent implements OnInit {
     // Initializing FormGroup
     this.paymentMethodForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
-      cardNumber: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), Validators.minLength(16), this.numberValidation]], // Validtion for blank space
+      cardNumber: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), Validators.minLength(14), Validators.maxLength(16), this.numberValidation]], // Validtion for blank space
       expirationDate: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), this.expirationDateValidation ]], // Validtion for blank space
-      cvv: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), Validators.minLength(3), this.numberValidation]], // Validtion for blank space
+      cvc: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), Validators.minLength(3), Validators.maxLength(4), this.numberValidation]], // Validtion for blank space
     });
   }
 
@@ -45,6 +46,7 @@ export class AddPaymentMethodComponent implements OnInit {
     this.user.userId = this.route.snapshot.queryParamMap.get("userId") || "";
     this.user.accessToken = this.route.snapshot.queryParamMap.get("access_token") || "";
     this.user.email = this.route.snapshot.queryParamMap.get("email") || "";
+    this.user.plan = this.route.snapshot.params.data || "";
   }
 
   get form() { return this.paymentMethodForm.controls; }
@@ -84,17 +86,39 @@ export class AddPaymentMethodComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     if (this.paymentMethodForm.valid) {
-      // this.submitFlag = true;
-      // this._subscriptionPlanService.assignPlan(this.paymentMethodForm.value).subscribe(
-      //   (response: any) => {
-      //     this._signupService.updateSignUpSession(3);
-      //     this.router.navigate(['/thank-you']);
-      //   },
-      //   (error: any) => {
-      //     console.log(error);
-      //     this.submitFlag = false
-      //   }
-      // ).add(() => this.submitFlag = false);
+      const user = this._signupService.getSignUpSession(); 
+      this.submitFlag = true;
+      this._signupService.getUserByEmail(user.email).subscribe(data => {
+        if(data.length > 0) {
+          let userId = data[0].id;
+          let requestObj = {
+            plan: this.user.plan,
+            userId,
+            ...this.paymentMethodForm.value
+          };
+
+          this._signupService.saveCard(requestObj).subscribe(
+            (response: any) => {
+              this._signupService.paymentVerification().subscribe(
+                (data) => {
+                  this._signupService.updateSignUpSession(3);
+                  this.router.navigate(['/thank-you']);
+                },
+                (err) => {
+                  console.log(err);
+                }
+              )
+            },
+            (err) => {
+              console.log(err);
+            }
+          )
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+      ).add(() => this.submitFlag = false);
     }
   }
 

@@ -22,18 +22,22 @@ export class SubscriptionPlanComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  selectPlan(type: string) {
-    this.submitFlag = true;
-    const plantype = $('#buytype').attr('aria-pressed') ? "yearly" : "monthly";
-    this._subscriptionPlanService.assignPlan({ plan: plantype }).subscribe(
-      (response: any) => {
-        this._signupService.updateSignUpSession(3);
-        this.router.navigate(['/sign-up/payment-method']);
-      },
-      (error: any) => {
-        console.log(error);
-        this.submitFlag = false
-      }
-    ).add(() => this.submitFlag = false);
+  selectPlan() {
+    // this.submitFlag = true;
+    // const plantype = $('#buytype').attr('aria-pressed') ? "yearly" : "monthly";
+    // this._subscriptionPlanService.assignPlan({ plan: plantype }).subscribe(
+    //   (response: any) => {
+    //     this._signupService.updateSignUpSession(3);
+    //     this.router.navigate(['/sign-up/payment-method']);
+    //   },
+    //   (error: any) => {
+    //     console.log(error);
+    //     this.submitFlag = false
+    //   }
+    // ).add(() => this.submitFlag = false);
+
+    const plantype = $('#buytype').attr('aria-pressed') == 'true' ? "yearly" : "monthly";
+    this._signupService.updateSignUpSession(3);
+    this.router.navigate(['/sign-up/payment-method', { data: plantype } ]);
   }
 }

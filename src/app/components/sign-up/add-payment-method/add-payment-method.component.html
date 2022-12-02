@@ -24,13 +24,14 @@
 
                             <div class="form-group">
                                 <label for="cardNumber">Credit Card Number <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="cardNumber" formControlName="cardNumber" min="0" [maxlength]="16"
+                                <input type="text" class="form-control form-control1" id="cardNumber" formControlName="cardNumber" min="0" [minlength]="14" [maxlength]="16"
                                     [ngClass]="{ 'is-invalid': (submitted || form.cardNumber.touched) && form.cardNumber.errors }">
                                 <div *ngIf="(submitted || form.cardNumber.touched) && form.cardNumber.errors"
                                     class="invalid-feedback">
                                     <div *ngIf="form.cardNumber.errors.required">Credit card number is required!</div>
                                     <div *ngIf="form.cardNumber.errors.pattern">Blank space is not allowed!</div>
-                                    <div *ngIf="form.cardNumber.errors.minlength">Credit card number should be of 16 digits!</div>
+                                    <div *ngIf="form.cardNumber.errors.minlength">Credit card number should be of 14 digits!</div>
+                                    <div *ngIf="form.cardNumber.errors.maxlength">Credit card number should be of 16 digits!</div>
                                     <div *ngIf="form.cardNumber.errors.numerror">Credit card number should be a digit value!</div>
                                 </div>
                             </div>
@@ -48,15 +49,16 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="cvv">CVV <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="cvv" formControlName="cvv" min="0" [maxlength]="3"
-                                    [ngClass]="{ 'is-invalid': (submitted || form.cvv.touched) && form.cvv.errors }">
-                                <div *ngIf="(submitted || form.cvv.touched) && form.cvv.errors"
+                                <label for="cvc">CVC <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1" id="cvc" formControlName="cvc" min="0" [minlength]="3" [maxlength]="4"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.cvc.touched) && form.cvc.errors }">
+                                <div *ngIf="(submitted || form.cvc.touched) && form.cvc.errors"
                                     class="invalid-feedback">
-                                    <div *ngIf="form.cvv.errors.required">CVV is required!</div>
-                                    <div *ngIf="form.cvv.errors.pattern">Blank space is not allowed!</div>
-                                    <div *ngIf="form.cvv.errors.minlength">CVV should be of 3 digits!</div>
-                                    <div *ngIf="form.cvv.errors.numerror">CVV should be a digit value!</div>
+                                    <div *ngIf="form.cvc.errors.required">CVC is required!</div>
+                                    <div *ngIf="form.cvc.errors.pattern">Blank space is not allowed!</div>
+                                    <div *ngIf="form.cvc.errors.minlength">CVC should be of 3 digits!</div>
+                                    <div *ngIf="form.cvc.errors.maxlength">CVC should be of 4 digits!</div>
+                                    <div *ngIf="form.cvc.errors.numerror">CVC should be a digit value!</div>
                                 </div>
                             </div>
 

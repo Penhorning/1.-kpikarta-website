@@ -41,7 +41,7 @@ export class VerificationComponent implements OnInit {
       this._signupService.verification(this.verificationForm.value).subscribe(
         (response: any) => {
           this._commonService.successToaster("Email is verified successfully");
-          this._signupService.updateSignUpSession(2);
+          this._signupService.updateSignUpSession(2, response.id);
           this.router.navigate(['/subscription-plan']);
         },
         (error: any) => { }
