@@ -243,12 +243,11 @@ export class EditKartaComponent implements OnInit {
   onViewKartaSubmit() {
     this.viewKartaForm.value.kartaId = this.kartaId;
     this.viewKartaForm.value.number = parseInt(this.viewKartaForm.value.number);
-    this.viewKartaForm.value.kartaData = this.karta;
     this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
       (response: any) => {
         if (response.data) {
-          this.karta = response;
-          this.versionId = response.versionId;
+          this.karta = response.data.data.node;
+          this.versionId = response.data.data.versionId;
           if (this.karta.node) {
             this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
             jqueryFunctions.removeKarta();
