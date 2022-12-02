@@ -8,8 +8,9 @@ import { CatalogComponent } from './catalog.component';
 import { SharedModule } from '@app/shared/_modules/shared.module';
 
 // Third party module
-import { NgSelectModule } from '@ng-select/ng-select';
-import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
+// import { NgSelectModule } from '@ng-select/ng-select';
+// import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 @NgModule({
@@ -20,8 +21,9 @@ import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
     CommonModule,
     CatalogRoutingModule,
     SharedModule,
-    NgSelectModule,
-    NgOptionHighlightModule
+    // NgSelectModule,
+    // NgOptionHighlightModule,
+    NgMultiSelectDropDownModule.forRoot()
   ]
 })
 export class CatalogModule { }

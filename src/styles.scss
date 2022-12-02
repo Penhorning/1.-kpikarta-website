@@ -38,6 +38,9 @@ input[type=number]::-webkit-outer-spin-button {
     appearance: none; 
 }
 
+.cursor_default {
+    cursor: default;
+}
 .cursor_pointer {
     cursor: pointer;
 }

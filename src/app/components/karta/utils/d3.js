@@ -64,12 +64,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         {
             title: 'Save',
             action: function(elm, d, i) {
-                let node_type = "node";
-                if (d.hasOwnProperty("children") && d.children.length > 0) {
-                    node_type = "branch";
-                  } else if (d.phase.name === "KPI") {
-                    node_type = d.type;
-                  }
+                // let node_type = "node";
+                // if (d.hasOwnProperty("children") && d.children.length > 0) {
+                //     node_type = "branch";
+                //   } else if (d.phase.name === "KPI") {
+                //     node_type = d.type;
+                //   }
+                let node_type = "branch";
+                if (d.phase.name === "KPI") node_type = d.type;
                 options.events.onRightClick(d, node_type);
             }
         }
