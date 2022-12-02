@@ -246,17 +246,18 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
       (response: any) => {
         if (response.data.data) {
-          this.karta = response.data.data.node;
+          this.karta = response.data.data;
           this.versionId = response.data.data.versionId;
           if (this.karta.node) {
             this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-            jqueryFunctions.removeKarta();
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
             this.setKartaDimension();
             jqueryFunctions.disableChart();
             $("#chartMode").val("disable");
+            $("#chartMode").val("disable");
             this.showSVG = true;
             jqueryFunctions.hideModal('viewKartaModal');
+            jqueryFunctions.removeKarta();
           }
         }
       }
