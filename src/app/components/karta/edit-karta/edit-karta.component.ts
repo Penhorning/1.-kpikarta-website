@@ -245,7 +245,7 @@ export class EditKartaComponent implements OnInit {
     this.viewKartaForm.value.number = parseInt(this.viewKartaForm.value.number);
     this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
       (response: any) => {
-        if (response.data) {
+        if (response.data.data) {
           this.karta = response.data.data.node;
           this.versionId = response.data.data.versionId;
           if (this.karta.node) {
