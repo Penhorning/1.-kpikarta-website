@@ -254,7 +254,7 @@ export class EditKartaComponent implements OnInit {
             this.setKartaDimension();
             jqueryFunctions.disableChart();
             jqueryFunctions.setValue("#chartMode", "disable");
-            jqueryFunctions.setAttribute("#chartMode", "disable", true);
+            jqueryFunctions.setAttribute("#chartMode", "disabled", true);
             this.showSVG = true;
             jqueryFunctions.hideModal('viewKartaModal');
             jqueryFunctions.removeKarta();
