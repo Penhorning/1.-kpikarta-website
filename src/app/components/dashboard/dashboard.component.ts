@@ -37,9 +37,9 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getKartas();
+    this.getAllKartas();
     this.getAllMembers();
-    this.getSharedKartas();
+    this.getAllSharedKartas();
   }
 
   // Navigate to create karta
@@ -48,14 +48,14 @@ export class DashboardComponent implements OnInit {
   }
 
   // Get all kartas
-  getKartas() {
+  getAllKartas() {
     let data = {
       page: 1,
       limit: 3,
       userId: this._commonService.getUserId(),
     };
     this.loadingKartas = true;
-    this._kartaService.getKartas(data).subscribe((response: any) => {
+    this._kartaService.getAllKartas(data).subscribe((response: any) => {
       if (response) {
         this.kartas = response.kartas[0].data;
       } else this.kartas = [];
@@ -75,14 +75,14 @@ export class DashboardComponent implements OnInit {
   }
 
   // Get shared kartas
-  getSharedKartas() {
+  getAllSharedKartas() {
     let data = {
       page: 1,
       limit: 6,
       email: this._commonService.getEmailId(),
     };
     this.loadingSharedKartas = true;
-    this._kartaService.getSharedKartas(data).subscribe((response: any) => {
+    this._kartaService.getAllSharedKartas(data).subscribe((response: any) => {
       if (response) {
         this.sharedKartas = response.kartas[0].data;
       } else this.sharedKartas = [];
@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit {
       this._kartaService.deleteKarta({ kartaId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta deleted successfully!");
-          this.getKartas();
+          this.getAllKartas();
         });
     }
   }
@@ -115,7 +115,7 @@ export class DashboardComponent implements OnInit {
   //     this._kartaService.deleteSharedKarta({kartaId:_id}).subscribe(
   //       (response: any) => {
   //         this._commonService.successToaster("Karta deleted successfully");
-  //         this.getSharedKartas();
+  //         this.getAllSharedKartas();
   //       }
   //     );
   //   }
@@ -161,9 +161,9 @@ export class DashboardComponent implements OnInit {
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
           this._commonService.successToaster("You have shared Karta successfully!");
-          $('#shareLinkModal').modal('hide');
-          this.getKartas();
-          this.getSharedKartas();
+          $('#shareKartaModal').modal('hide');
+          this.getAllKartas();
+          this.getAllSharedKartas();
         },
         (error: any) => { }
       ).add(() => this.sharedSubmitFlag = false);
@@ -177,7 +177,7 @@ export class DashboardComponent implements OnInit {
       this._kartaService.copyKarta({ kartaId: id, userId: this._commonService.getUserId() }).subscribe(
         (response: any) => {
           this._commonService.successToaster('Karta copy created successfully!');
-          this.getKartas();
+          this.getAllKartas();
         });
     }
   }

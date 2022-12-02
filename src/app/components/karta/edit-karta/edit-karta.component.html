@@ -206,14 +206,14 @@
 
     <div class="karta-edit-header">
       <div class="row no-gutters">
-        <div class="col-lg-7">
+        <div class="col-lg-6">
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
                 <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
               </div>
             </div>
-            <div class="col-lg-3 pl-0">
+            <div class="col-lg-2 pl-0">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta" (change)="versionRollback($event)"
                   [(ngModel)]="versionId">
@@ -226,7 +226,7 @@
                   class="img-fluid"></a>
               <a href="javascript:void(0);" title="Redo" (click)="redoKarta()"><img src="assets/img/Redo.svg"
                   class="img-fluid"></a>
-              <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
+              <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
             </div>
             <div class="col-lg-4 p-0">
               <div class="time-select-karta">
@@ -235,9 +235,9 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-5">
+        <div class="col-lg-6">
           <div class="row no-gutters">
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta-mode" id="chartMode" (change)="changeMode($event)">
                   <option value="enable">Editor Mode</option>
@@ -245,7 +245,10 @@
                 </select>
               </div>
             </div>
-            <div class="col-lg-4 p-0">
+            <div class="col-lg-2 text-center">
+              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" (click)="onShare(sharedKartaStr)">View</button>
+            </div>
+            <div class="col-lg-3 p-0">
               <div class="icon-karta">
                 <!-- Share karta -->
                 <a href="#" data-toggle="modal" data-target="#shareKartaModal" (click)="onShare(sharedKartaStr)"><img
@@ -779,7 +782,7 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
+                  <input type="date" class="form-control" [min]="maxStartDate | date:'yyyy-MM-dd'" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
                     (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
                   <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                 </div>
@@ -803,7 +806,7 @@
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
-                      <input type="date" class="form-control"
+                      <input type="date" class="form-control"  [min]="maxFiscalStartDate"
                         [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'"
                         (change)="changeFiscalStartDate($event)">
                     </div>
@@ -824,13 +827,20 @@
             <ng-container *ngFor="let t of target; let i = index">
               <div class="row mt-3">
                 <div class="col-lg-5 pr-0">
-                  <div class="selct-option-side-r">
-                    <label class="text-nowrap" style="margin-bottom: 6px;">Target Value</label>
-                    <select class="form-control" [value]="t.frequency" (change)="setTarget('frequency', $event, i)">
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="quarterly">Quarterly</option>
-                      <option value="annually">Annually</option>
+                  <div class="selct-option-side-r target_select">
+                    <label class="text-nowrap">Target Value</label>
+                    <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
+                      <!-- <option *ngFor="let tO of targetOptions" [value]="tO.value" [disabled]="tO.disabled">
+                        {{ tO.name }}
+                      </option> -->
+                      <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
+                      <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
+                      <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
+                      <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
+                      <!-- <option [value]="targetOptions[0].value" [disabled]="targetOptions[0].disabled">{{ targetOptions[0].name }}</option>
+                      <option [value]="targetOptions[1].value" [disabled]="targetOptions[1].disabled">{{ targetOptions[1].name }}</option>
+                      <option [value]="targetOptions[2].value" [disabled]="targetOptions[2].disabled">{{ targetOptions[2].name }}</option>
+                      <option [value]="targetOptions[3].value" [disabled]="targetOptions[3].disabled">{{ targetOptions[3].name }}</option> -->
                     </select>
                   </div>
                 </div>
@@ -844,12 +854,10 @@
                   </div>
                 </div>
                 <div class="col-lg-3 d-flex px-2">
-                  <ng-container *ngIf="target.length > 1">
-                    <div class="add-btn-side-r" style="cursor: pointer;" (click)="removeTarget(i)">
-                      <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
-                    </div>
-                  </ng-container>
-                  <div class="add-btn-side-r" style="cursor: pointer;" (click)="addMoreTarget()">
+                  <div class="target_action_btn cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
+                    <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
+                  </div>
+                  <div class="target_action_btn cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
                     <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
                   </div>
                 </div>
@@ -879,6 +887,7 @@
                   <label>KPI Calculation Periods</label>
                   <select class="form-control" [(ngModel)]="currentNode.kpi_calc_period"
                     (change)="changeKPIPeriods($event)">
+                    <option value="monthly">Onet-time monthly target</option>
                     <option value="month-to-date">Month to date</option>
                     <option value="year-to-date">Year to date</option>
                     <option value="month-over-month">Month over month</option>
@@ -1045,7 +1054,7 @@
       </div>
 
       <!-- Share karta modal -->
-      <div class="modal fade shara-link" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+      <div class="modal fade" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content p-4">
@@ -1103,15 +1112,14 @@
         </div>
       </div>
 
-      <!-- Save karta modal -->
-      <div class="modal fade shara-link" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+      <!-- Save catalog modal -->
+      <div class="modal fade" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content p-4">
             <div class="modal-header">
-              <h5 class="modal-title pt-0" id="staticBackdropLabel">Save Node</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                (click)="selectedSharedUsers = undefined">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">Save {{ catalogForm?.value?.node_type | titlecase }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -1134,6 +1142,70 @@
                           <span class="sr-only">Loading...</span>
                         </div>
                         <ng-container *ngIf="!catalogSubmitFlag">SAVE</ng-container>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vew karta modal -->
+      <div class="modal fade" id="viewKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-4">
+            <div class="modal-header">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">View Karta</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="share-link-model mt-3">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <form [formGroup]="viewKartaForm" (ngSubmit)="onViewKartaSubmit()">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="form-group">
+                            <label>Type <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select-option" formControlName="type" (change)="viewKartaType($event)"
+                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors }">
+                              <option value="" selected>Select</option>
+                              <option value="month">Month</option>
+                              <option value="week">Week</option>
+                              <option value="quarter">Quarter</option>
+                            </select>
+                            <div *ngIf="(viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors"
+                              class="invalid-feedback">
+                              <div *ngIf="viewKarta.type.errors.required">Type is required!</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6" *ngIf="showViewKartaNumber">
+                          <div class="form-group">
+                            <label>Number <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select-option" formControlName="number"
+                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors }">
+                              <option value="" selected>Select</option>
+                              <option *ngFor="let number of viewKartaNumbers" [value]="number.value">{{ number?.name }}
+                              </option>
+                            </select>
+                            <div *ngIf="(viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors"
+                              class="invalid-feedback">
+                              <div *ngIf="viewKarta.number.errors.required">Number is required!</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button class="send-btn" [disabled]="viewKartaSubmitFlag">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="viewKartaSubmitFlag">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <ng-container *ngIf="!viewKartaSubmitFlag">SUBMIT</ng-container>
                       </button>
                     </form>
                   </div>

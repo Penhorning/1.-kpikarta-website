@@ -4,16 +4,16 @@ import { CommonModule } from '@angular/common';
 import { KartaRoutingModule } from './karta-routing.module';
 import { KartaComponent } from './karta.component';
 import { CreateKartaComponent } from './create-karta/create-karta.component';
+import { EditKartaComponent } from './edit-karta/edit-karta.component';
+import { AllKartasComponent } from './all-kartas/all-kartas.component';
 
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
-import { EditKartaComponent } from './edit-karta/edit-karta.component';
-import { NgSelectModule } from '@ng-select/ng-select';
-import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AllKartasComponent } from './all-kartas/all-kartas.component';
+
 // Third party module
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
 
 @NgModule({
   declarations: [
@@ -26,11 +26,9 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
     CommonModule,
     KartaRoutingModule,
     SharedModule,
+    NgxSliderModule,
     NgSelectModule,
-    NgOptionHighlightModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgxSliderModule
+    NgOptionHighlightModule
   ]
 })
 export class KartaModule { }
