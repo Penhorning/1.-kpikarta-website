@@ -8,6 +8,7 @@ import * as BuildKPIKarta from '../utils/d3.js';
 import * as jqueryFunctions from '../utils/jqueryOperations.js';
 import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
+import * as MetricOperations from '../utils/metricFormulaOperations';
 
 declare const $: any;
 
@@ -143,6 +144,7 @@ export class EditKartaComponent implements OnInit {
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
+  metricOperations: any = MetricOperations;
 
   // Person notify
   notifyType: string = "";
@@ -199,7 +201,6 @@ export class EditKartaComponent implements OnInit {
   get viewKarta() { return this.viewKartaForm.controls; }
 
   viewKartaType(e: any) {
-    console.log(e.target.value);
     if (e.target.value === "month") {
       this.viewKartaNumbers = [
         { name: "January", value: 1 },
@@ -242,12 +243,11 @@ export class EditKartaComponent implements OnInit {
   onViewKartaSubmit() {
     this.viewKartaForm.value.kartaId = this.kartaId;
     this.viewKartaForm.value.number = parseInt(this.viewKartaForm.value.number);
-    this.viewKartaForm.value.kartaData = this.karta;
     this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
       (response: any) => {
-        if (response.data) {
-          this.karta = response;
-          this.versionId = response.versionId;
+        if (response.data.data) {
+          this.karta = response.data.data.node;
+          this.versionId = response.data.data.versionId;
           if (this.karta.node) {
             this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
             jqueryFunctions.removeKarta();
@@ -317,55 +317,42 @@ export class EditKartaComponent implements OnInit {
         fieldValue: [0, Validators.min(0)],
       })
       this.fields.push(fieldForm);
-      this.recheckFormula();
+      MetricOperations.recheckFormula();
     }
     else {
       this._commonService.warningToaster("Can't add more than 5 fields");
     }
   }
 
-  //Deleting a particular FormulaField Group
+  // Deleting a particular FormulaField Group
   deleteFormulaGroup(fieldIndex: number) {
-    if (this.currentNode.node_type) {
-      this.fields.removeAt(fieldIndex);
-      let newArr = [];
-      for (let i = 0; i < this.fields.length; i++) {
+    this.fields.removeAt(fieldIndex);
+    let newArr = [];
+    for (let i = 0; i < this.fields.length; i++) {
+      this.currentNode.node_type ? (
         newArr.push({
-          ...this.formulaGroup.controls['fields']['controls'][i]
-        });
-      }
-      this.formulaGroup.patchValue({
-        fields: newArr,
-      });
-      this.recheckFormula();
-    }
-    else {
-      this.fields.removeAt(fieldIndex);
-      let newArr = [];
-      for (let i = 0; i < this.fields.length; i++) {
+          ...this.fields['controls'][i].value
+        })
+      ) : (
         newArr.push({
-          ...this.formulaGroup.controls['fields']['controls'][i],
-          fieldName: this.currentNode.node_type
-            ? this.currentNode.node_type.fields[i].fieldName
-            : `Field${i + 1}`,
-          // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
-        });
-      }
-      this.formulaGroup.patchValue({
-        fields: newArr,
-      });
-      this.recheckFormula();
+          ...this.fields['controls'][i].value,
+          fieldName: this.fields['controls'][i].value.fieldName != `Field${i + 1}` && this.fields['controls'][i].value.fieldName != `Field${i + 2}` ? 
+          this.fields['controls'][i].value.fieldName : 
+          `Field${i + 1}`,
+        })
+      )
     }
+    this.formulaGroup.patchValue({
+      fields: newArr,
+    });
+    MetricOperations.recheckFormula();
   }
 
   // Enable/Disable Readonly value of Formula Fields
   editFieldStatus(id: number, value: boolean) {
-    let dom: any = document.getElementById('fd' + id);
-    dom.innerHTML = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
-    dom.innerText = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
-    this.formulagroupDefaultValues[id] = dom.innerText;
-    $('#fd' + id).attr('contenteditable', value);
-    $('#fd' + id).focus();
+    let fieldName = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
+    let dom = MetricOperations.editFieldStatus(id, value, fieldName);
+    this.formulagroupDefaultValues[id] = dom?.innerText;
   }
 
   // Limiting length for Content Editable
@@ -375,11 +362,7 @@ export class EditKartaComponent implements OnInit {
 
   // Check Field Value for ReadOnly
   checkFieldStatus(id: any) {
-    let element: any = document.getElementById(id);
-    if (element) {
-      return JSON.parse(element.contentEditable);
-    }
-    return false;
+    return MetricOperations.checkFieldStatus(id);
   }
 
   // Getting the FormArray values
@@ -396,39 +379,22 @@ export class EditKartaComponent implements OnInit {
   // Set Temporary Field Value to FormArray
   setFieldValues(id: number) {
     let domElem: any = document.getElementById('fd' + id);
-    if (domElem.innerText.length == 0) {
-      domElem.innerText = this.formulagroupDefaultValues[id];
-      domElem.innerHTML = this.formulagroupDefaultValues[id];
-    }
-    else {
-      let checkVal = this.fields['controls'].filter((x: any) => {
-        return x.value.fieldName == domElem.innerText;
+    let fieldValue = this.formulagroupDefaultValues[id];
+    let checkValue = this.fields['controls'].filter((x: any) => {
+      return x.value.fieldName == domElem.innerText;
+    });
+    let data = MetricOperations.setFieldValues(id, fieldValue, checkValue);
+    if(data){
+      this.formulaGroup.controls['fields']['controls'][id].patchValue({
+        fieldName: this.formulagroupDefaultValues[id],
       });
-      
-      if(checkVal.length > 0){
-        domElem.innerText = this.formulagroupDefaultValues[id];
-        domElem.innerHTML = this.formulagroupDefaultValues[id];
-      }
-      else {
-        this.formulaGroup.controls['fields']['controls'][id].patchValue({
-          fieldName: this.formulagroupDefaultValues[id],
-        });
-        if (this.formulagroupDefaultValues[id]) {
-          delete this.formulagroupDefaultValues[id];
-        }
+      if (this.formulagroupDefaultValues[id]) {
+        delete this.formulagroupDefaultValues[id];
       }
     }
     this.editFieldStatus(id, false);
     $('#formula-field').focus();
     $('#formula-field').blur();
-  }
-
-  // Change formula value of each input blur
-  recheckFormula() {
-    if ($('#formula-field').val()) {
-      $('#formula-field').focus();
-      $('#formula-field').blur();
-    }
   }
 
   @HostListener('window:scroll', ['$event']) 
@@ -442,72 +408,27 @@ export class EditKartaComponent implements OnInit {
       clearTimeout(this.timer);
       this.timer = null;
     }
-    this.timer =
-      this.formulaFieldSuggestions.length == 0 &&
+    this.timer = this.formulaFieldSuggestions.length == 0 &&
       setTimeout(() => {
         let tempObj: any = {};
-        let originalValue = event.target.value.trim();
-        let newValue = '';
-        let value = event.target.value.trim().split(/[\s() */%+-]+/g);
-
-        let total: any = 0;
-        let checkFrag = false;
-
+        let suggesionsLength = this.formulaFieldSuggestions.length;
+        let formValidation = this.formulaGroup.valid;
+        let formValues = this.formulaGroup.value;
+        let targetValues = this.target;
         this.fields.controls.forEach((x: any) => {
           tempObj[x['controls']['fieldName'].value] =
             x['controls']['fieldValue'].value;
         });
-
-        value.forEach((y: any) => {
-          if (y) {
-            if (tempObj[y] || tempObj[y] == 0) {
-              newValue = newValue
-                ? newValue.replace(y, tempObj[y])
-                : originalValue.replace(y, tempObj[y]);
-            } else {
-              checkFrag = true;
-            }
-          }
-        });
-        
-
-        if (this.formulaGroup.valid && originalValue) {
-          if (checkFrag) {
-            $('#formula-field').addClass('is-invalid');
-            $('#formula-field').removeClass('is-valid');
+        let response: any = MetricOperations.calculateFormula(event, suggesionsLength, tempObj, formValidation, formValues, targetValues);
+        if(response) {
+          if( !response.data ) {
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
-            this.formulaError = "Invalid Formula!";
+            this.formulaError = response.message;
           } else {
-            total = eval(newValue);
-            this.formulaGroup.patchValue({
-              calculatedValue: total,
-            });
-
-            if(total < 0) {
-              $('#formula-field').addClass('is-invalid');
-              $('#formula-field').removeClass('is-valid');
-              this.formulaError = "Achieved value can't be a negative value..!!";
-            }
-            else {
-              $('#formula-field').removeClass('is-invalid');
               this.formulaError = "";
-              let request = {
-                ...this.formulaGroup.value,
-                metrics: true,
-              };
-              delete request['calculatedValue'];
-  
-              let newTarget = this.target.map((obj: any) => {
-                let percentage = (total / obj.value) * 100;
-                return {
-                  ...obj,
-                  percentage: Math.round(percentage),
-                  value: obj.value
-                }
-              });
-              
+              let [total, newTarget, request] = response.data;
               this.currentNode.achieved_value = total;
               this.currentNode.target = newTarget;
               this._kartaService
@@ -529,7 +450,6 @@ export class EditKartaComponent implements OnInit {
                     this._commonService.errorToaster('Something went wrong..!!');
                   }
               );
-            }
           }
         }
       }, 1000);
@@ -537,77 +457,26 @@ export class EditKartaComponent implements OnInit {
 
   //Show Dropdown suggestions for Formula Fields
   filterFieldSuggestions(event: any) {
-    $('#formula-field').removeClass('is-invalid');
-    $('#formula-field').removeClass('is-valid');
-    let value = event.target.value.trim().toLowerCase();
-    let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
-    let findLastIndex = null;
-
-    for (let i = value.length - 1; i >= 0; i--) {
-      if (mathOperators.includes(value[i])) {
-        findLastIndex = value.lastIndexOf(value[i]);
-        break;
-      }
-    }
-
-    if (!value) {
-      this.formulaFieldSuggestions = [];
-      return;
-    }
-
-    if (findLastIndex != -1 || findLastIndex) {
-      let replaceValue = value.slice(findLastIndex + 1, value.length).trim();
-      if (replaceValue) {
-        let data = this.formulaGroup.value.fields.filter((x: any) => {
-          return x.fieldName.toLocaleLowerCase().includes(replaceValue.trim());
-        });
-        return (this.formulaFieldSuggestions = data);
-      } else {
-        this.formulaFieldSuggestions = [];
-        return;
-      }
-    } else {
+    let value = MetricOperations.filterFieldSuggestions(event);
+    if( typeof value == 'string' ) {
       let data = this.formulaGroup.value.fields.filter((x: any) => {
         return x.fieldName.toLocaleLowerCase().includes(value.trim());
       });
-      return (this.formulaFieldSuggestions = data);
+      this.formulaFieldSuggestions = data;
+    } else {
+      this.formulaFieldSuggestions = value;
     }
   }
 
   // Concatenate Value on click of Dropdown values with Input Value
   concatenateFieldValue(data: any) {
-    let addValue = data.fieldName.trim();
-    let inputValue: any = document.getElementById('formula-field');
-    let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
-    let findLastIndex = -1;
-
-    for (let i = inputValue.value.length; i > 0; i--) {
-      if (mathOperators.includes(inputValue.value[i])) {
-        findLastIndex = inputValue.value.lastIndexOf(inputValue.value[i]);
-        break;
-      }
-    }
-
-    if (findLastIndex != -1) {
-      let concatValue = inputValue.value.slice(0, findLastIndex + 1).trim();
-      let finalString = concatValue + addValue;
-      inputValue.value = finalString;
-      this.formulaGroup.patchValue({
-        formula: finalString,
-      });
-      this.formulaFieldSuggestions = [];
-      inputValue.focus();
-      return;
-    } else {
-      inputValue.value = addValue;
-      this.formulaGroup.patchValue({
-        formula: addValue,
-      });
-      this.formulaFieldSuggestions = [];
-      inputValue.focus();
-      return;
-    }
+    let value = MetricOperations.concatenateFieldValue(data);
+    this.formulaGroup.patchValue({
+      formula: value,
+    });
+    this.formulaFieldSuggestions = [];
   }
+
   // ---------FormArray Functions defined Above----------
 
   // EXPORT KARTA
@@ -1056,7 +925,7 @@ export class EditKartaComponent implements OnInit {
       (data) => {
         jqueryFunctions.removeElement('#karta-svg svg');
         this.getKartaInfo();
-        this.recheckFormula();
+        MetricOperations.recheckFormula();
       },
       (err) => console.log(err)
     );
@@ -1653,7 +1522,6 @@ export class EditKartaComponent implements OnInit {
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
                     this.setKartaDimension();
-                    // this.updateNodeProperties(kartaNode);
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
                   });
@@ -1684,7 +1552,6 @@ export class EditKartaComponent implements OnInit {
                       this.currentNode.phase = "";
                       this.showSVG = true;
                       this.isRtNodDrgingFrmSide = false;
-                      // this.updateNodeProperties(kartaNode);
                       this.getKartaInfo();
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
@@ -1774,4 +1641,3 @@ export class EditKartaComponent implements OnInit {
   // Undo Redo Functionality ends
 
 }
-
