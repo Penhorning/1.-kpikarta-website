@@ -9,6 +9,9 @@ export class KartaService {
   constructor(private _httpService: HttpService) { }
 
 /*============================== API FUNCTIONS STARTS ==============================*/
+  getInventories(data: any) {
+    return this._httpService.POST('/karta_catalogs/get-all', data);
+  }
   getPhases() {
     return this._httpService.GET('/karta_phases');
   }

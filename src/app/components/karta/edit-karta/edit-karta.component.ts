@@ -10,8 +10,8 @@ import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 import * as MetricOperations from '../utils/metricFormulaOperations';
 
-
 declare const $: any;
+
 
 @Component({
   selector: 'app-edit-karta',
@@ -253,8 +253,8 @@ export class EditKartaComponent implements OnInit {
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
             this.setKartaDimension();
             jqueryFunctions.disableChart();
-            $("#chartMode").val("disable");
-            $("#chartMode").val("disable");
+            jqueryFunctions.setValue("#chartMode", "disable");
+            jqueryFunctions.setAttribute("#chartMode", "disable", true);
             this.showSVG = true;
             jqueryFunctions.hideModal('viewKartaModal');
             jqueryFunctions.removeKarta();
@@ -284,6 +284,28 @@ export class EditKartaComponent implements OnInit {
     this.getAllMembers();
     // Get versions
     this.getAllVersion();
+    // Get all inventories
+    this.getInventories();
+  }
+
+  // Get all inventories
+  inventories: any = [];
+  getInventories() {
+    let data = {
+      // page: this.pageIndex + 1,
+      // limit: this.pageSize,
+      userId: this._commonService.getUserId(),
+      // searchQuery: this.search_text
+    }
+    // this.loading = true;
+    this._kartaService.getInventories(data).subscribe(
+      (response: any) => {
+        this.inventories = response.catalogs[0].data;
+        // if (response.catalogs[0].metadata.length > 0) {
+        //   this.totalCatalogs = response.catalogs[0].metadata[0].total; 
+        // } else this.totalCatalogs = 0;
+      }
+    ).add(() => this.loading = false);
   }
 
   // ---------FormArray Functions defined Below----------
@@ -1104,15 +1126,6 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
-  removeIds(node: any) {
-    node.forEach((item: any) => {
-      if (item.hasOwnProperty("id")) delete item.id;
-      if (item.hasOwnProperty("parent")) delete item.parent;
-      if (item.hasOwnProperty("children") && item.children.length > 0) this.removeIds(item.children);
-    });
-    return node;
-  }
-
   onCatalogSubmit  = async () => {
     
     this.catalogSubmitted = true;
@@ -1135,7 +1148,9 @@ export class EditKartaComponent implements OnInit {
         this.catalogSubmitFlag = true;
         this._kartaService.addNodeInCatalog(this.catalogForm.value).subscribe(
           (response: any) => {
-            this._commonService.successToaster("Node saved successfully!");
+            let node_type = this.catalogForm.value.node_type;
+            node_type = node_type.charAt(0).toUpperCase() + node_type.slice(1);
+            this._commonService.successToaster(`${node_type} saved successfully!`);
             jqueryFunctions.hideModal('saveNodeModal');
             this.catalogForm.reset();
             this.catalogSubmitted = false;
