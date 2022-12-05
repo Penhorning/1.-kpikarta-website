@@ -64,12 +64,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         {
             title: 'Save',
             action: function(elm, d, i) {
-                let node_type = "node";
-                if (d.hasOwnProperty("children") && d.children.length > 0) {
-                    node_type = "branch";
-                  } else if (d.phase.name === "KPI") {
-                    node_type = d.type;
-                  }
+                // let node_type = "node";
+                // if (d.hasOwnProperty("children") && d.children.length > 0) {
+                //     node_type = "branch";
+                //   } else if (d.phase.name === "KPI") {
+                //     node_type = d.type;
+                //   }
+                let node_type = "branch";
+                if (d.phase.name === "KPI") node_type = d.type;
                 options.events.onRightClick(d, node_type);
             }
         }
@@ -373,9 +375,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // .style("background", "red")
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
+                console.log("mouseover ", node);
                 overCircle(node);
             })
             .on("mouseout", function (node) {
+                console.log("mouseout ", node);
                 outCircle(node);
             });
         //.attr("r", 10)

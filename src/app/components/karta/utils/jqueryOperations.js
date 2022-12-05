@@ -53,6 +53,10 @@ export function getWidth(element) {
 export function getHeight(element) {
     $(element).height();
 }
+// Set value
+export function setValue(element, value) {
+    $(element).val(value);
+}
 // Set style
 export function setStyle(element, property, value) {
     $(element).css(property, value);

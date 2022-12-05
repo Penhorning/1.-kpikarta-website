@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
-import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
+
 declare const $: any;
+
 @Component({
   selector: 'app-my-kpi',
   templateUrl: './my-kpi.component.html',

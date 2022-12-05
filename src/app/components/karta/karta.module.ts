@@ -14,13 +14,19 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
+import { EditKartaPropertyComponent } from './edit-karta-property/edit-karta-property.component';
+import { EditKartaInventoryComponent } from './edit-karta-inventory/edit-karta-inventory.component';
+import { EditKartaHeaderComponent } from './edit-karta-header/edit-karta-header.component';
 
 @NgModule({
   declarations: [
     KartaComponent,
     CreateKartaComponent,
     EditKartaComponent,
-    AllKartasComponent
+    AllKartasComponent,
+    EditKartaPropertyComponent,
+    EditKartaInventoryComponent,
+    EditKartaHeaderComponent
   ],
   imports: [
     CommonModule,

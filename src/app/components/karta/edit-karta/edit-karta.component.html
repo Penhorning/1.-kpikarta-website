@@ -55,7 +55,7 @@
                 <h5 class="mb-0">
                   <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
                     aria-controls="collapseOne">
-                    Nodes
+                    Branches
                   </button>
                   <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
                     aria-expanded="true" aria-controls="collapseOne">
@@ -251,12 +251,12 @@
             <div class="col-lg-3 p-0">
               <div class="icon-karta">
                 <!-- Share karta -->
-                <a href="#" data-toggle="modal" data-target="#shareKartaModal" (click)="onShare(sharedKartaStr)"><img
+                <a href="#" data-toggle="modal" data-target="#shareKartaModal" title="Share" (click)="onShare(sharedKartaStr)"><img
                     src="assets/img/share-icon.svg"></a>
                 <!-- Export Karta -->
                 <div class="dropdown show">
                   <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
+                    aria-haspopup="true" aria-expanded="false" title="Export">
                     <img src="assets/img/download-icon.svg">
                   </a>
                   <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
@@ -275,7 +275,7 @@
                 <!-- Filter Karta -->
                 <div class="dropdown filter-option m-0">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Filter">
                     <img src="assets/img/filter.svg" class="">
                   </button>
                   <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
@@ -354,13 +354,13 @@
               <div class="save-setting-btn">
                 <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
                 <div class="dropdown">
-                  <button (click)="colorFunctionDropDown()" class="dropbtn"><img src="assets/img/settings.svg"></button>
+                  <button (click)="colorFunctionDropDown()" class="dropbtn" title="Settings"><img src="assets/img/settings.svg"></button>
                   <div id="colorDropdown" class="dropdown-content custom-drop">
 
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
                     <div class="fillter-inner-white-box p-2">
                       <div class="row ">
-                        <div class="col-6">
+                        <div class="col-6"> 
                           <div class="pl-1">
                             <p>Help Text</p>
                           </div>
@@ -468,96 +468,7 @@
                     </div>
                   </div>
                 </div>
-
-
-
-
-
-                <!-- <div class="dropdown filter-option m-0"> 
-                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                    <a href="#"><img src="assets/img/settings.svg"></a>
-                  </button>
-                  <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
-                    <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
-                    <div class="fillter-inner-white-box p-2">
-                      <div class="row ">
-                        <div class="col-6">
-                          <div class="pl-1">
-                            <p>Help Text</p>
-                          </div>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="toggle-tab-karta-edit ">
-                            <label class="switch" for="checkbox">
-                              <input type="checkbox" id="checkbox">
-                              <div class="slider round karta-edit"></div>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <hr>
-                      <div class="row">
-                        <div class="col-lg-8">
-                          <div class="pl-1">
-                            <p>Color Settings</p>
-                          </div>
-                        </div>
-                        <div class="col-lg-4 text-right">
-                          <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                            id="rangeDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                            <img src="assets/img/plus-btn.svg" class="img-fluid" alt="">
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="rangeDropdownMenuButton">
-                            Test
-                          </div>
-
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="color-box-plus-min">
-                            <ng-container *ngFor="let setting of editColorSettings?.settings; let i = index">
-                              <div class="row" [ngClass]="{'mt-2' : i > 0}">
-                                <div class="col-lg-6">
-                                  <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
-                                    <h6>100%+</h6>
-                                  </ng-container>
-                                  <ng-template #not100>
-                                    <h6>{{setting.min}}-{{setting.max}}%</h6>
-                                  </ng-template>
-                                </div>
-                                <div class="col-lg-6 text-right">
-                                  <div class="float-right d-flex">
-                                    <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"
-                                        [style.background]="selectedColor2"></div>
-                                      <div class="plus-minus above100">
-                                        <label for="colorPicker2"><img src="assets/img/edit.png"></label>
-                                        <input type="color" id="colorPicker2" value="#000000"
-                                          [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
-                                      </div>
-                                    </ng-container>
-                                    <ng-template #not100Color>
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
-                                      <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
-                                        <img src="assets/img/minus.png">
-                                      </div>
-                                    </ng-template>
-                                  </div>
-                                </div>
-                              </div>
-                            </ng-container>
-                          </div>
-
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
-
-                <a href="#"><img src="assets/img/information.svg"></a>
+                <a href="javascript:void(0);" title="Info"><img src="assets/img/information.svg"></a>
               </div>
             </div>
           </div>
@@ -824,11 +735,11 @@
             </div>
             <hr>
             <!-- Target Value -->
+            <label class="text-nowrap">Target Value</label>
             <ng-container *ngFor="let t of target; let i = index">
-              <div class="row mt-3">
+              <div class="row mt-2 mb-4">
                 <div class="col-lg-5 pr-0">
-                  <div class="selct-option-side-r target_select">
-                    <label class="text-nowrap">Target Value</label>
+                  <div class="selct-option-side-r">
                     <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
                       <!-- <option *ngFor="let tO of targetOptions" [value]="tO.value" [disabled]="tO.disabled">
                         {{ tO.name }}
@@ -845,7 +756,7 @@
                   </div>
                 </div>
                 <div class="col-lg-4 px-2">
-                  <div class="custom-input-side-r">
+                  <div class="custom-input-side-r-flow">
                     <input type="number" class="form-control" [value]="t.value" (input)="setTarget('value', $event, i)">
                     <!-- <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                     [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
@@ -854,10 +765,10 @@
                   </div>
                 </div>
                 <div class="col-lg-3 d-flex px-2">
-                  <div class="target_action_btn cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
+                  <div class="cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
                     <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
                   </div>
-                  <div class="target_action_btn cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
+                  <div class="cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
                     <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
                   </div>
                 </div>

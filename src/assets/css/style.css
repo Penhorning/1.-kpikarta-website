@@ -1752,6 +1752,10 @@ img.img-fluid.edit-btn-r {
   margin-top: 2.3rem;
 }
 
+.custom-input-side-r-flow input {
+  height: 33px;
+}
+
 .custom-input-side-r input {
   margin-top: 1.7rem;
   height: 33px;
@@ -1947,7 +1951,7 @@ button.Apply-btn.karta-edit {
   padding: 15px;
   /* height: 900px; */
   top: 72px;
-  width: 20%;
+  width: 23%;
   right: -100%;
   z-index: 995;
   transition: right 0.2s ease-in-out;

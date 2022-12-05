@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CommonService } from '@app/shared/_services/common.service';
 import { ProfileService } from './service/profile.service';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
-import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { ImageCroppedEvent, ImageTransform } from 'ngx-image-cropper';
 import { ActivatedRoute } from '@angular/router';
 
 declare const $: any;
@@ -205,6 +205,13 @@ export class MyProfileComponent implements OnInit {
   //   );
   // }
 
+  transform: ImageTransform = {}
+  onScale(e: any) {
+    this.transform = {
+      ...this.transform,
+      scale: e.target.value
+    }
+  }
   resetCropModel(type: string, width: number, height: number) {
     this.cropperModel.type = type;
     this.cropperModel.staticWidth = width;
