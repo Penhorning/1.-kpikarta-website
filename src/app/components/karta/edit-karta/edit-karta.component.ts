@@ -251,6 +251,7 @@ export class EditKartaComponent implements OnInit {
           if (this.karta.node) {
             this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+            this.D3SVG.updateNode(this.karta.node, true);
             this.setKartaDimension();
             jqueryFunctions.disableChart();
             jqueryFunctions.setValue("#chartMode", "disable");
