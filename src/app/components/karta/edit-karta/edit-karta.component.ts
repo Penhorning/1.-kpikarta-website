@@ -1567,7 +1567,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Undo reached..!!");
+            this._commonService.warningToaster("Maximum Undo limit has reached..!!");
           }
         }
       }
@@ -1633,7 +1633,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Redo reached..!!");
+            this._commonService.warningToaster("Maximum Redo limit has reached..!!");
           }
         }
       }
