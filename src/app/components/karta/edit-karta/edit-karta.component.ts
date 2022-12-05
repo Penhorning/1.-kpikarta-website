@@ -982,10 +982,26 @@ export class EditKartaComponent implements OnInit {
   // Add node
   addNode(param: any) {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
+    let weightage = 0, isWeightageDivided = false;
+    if (param.hasOwnProperty("children") && param.children.length > 0) {
+      let haveFurtherChildren = false;
+      param.children.forEach((element: any) => {
+        if (element.hasOwnProperty("children") && element.children.length > 0 && element.phaseId === phase.id) {
+          weightage = 0;
+          haveFurtherChildren = true;
+        }
+      });
+      if (!haveFurtherChildren) {
+        weightage = Math.round(100 / (param.children.length + 1));
+        isWeightageDivided = true;
+      }
+    }
+    else weightage = 100;
     let data: any = {
       kartaDetailId: this.kartaId,
       phaseId: phase.id,
-      parentId: param.id
+      parentId: param.id,
+      weightage
     }
     if (phase.name === "KPI") {
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
@@ -1025,10 +1041,16 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => {
           this._kartaService.updateKarta(this.kartaId, {historyId: result.id}).subscribe(
-            (res: any) => {}
+            (response: any) => {}
           );
           this._kartaService.syncKartaHistory({kartaId: this.kartaId, versionId: this.versionId}).subscribe(
-            (res: any) => {}
+            (response: any) => {
+              if (isWeightageDivided) {
+                param.children.forEach((element: any) => {
+                  this.updateNode('weightage', weightage, 'node_updated', element);
+                });
+              }
+            }
           );
         }
       );

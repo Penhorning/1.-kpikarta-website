@@ -134,7 +134,7 @@
                                      <div class="col-lg-12 text-center">
                                         <div class="mt-3">
                                            <div class="d-flex justify-content-center align-items-center">
-                                              <h5 class="short_text" [id]="'kt'+i"
+                                              <h5 class="short_text line_height_1_3" [id]="'kt'+i"
                                               (keypress)="setLimitForContentEditable($event)"
                                               contenteditable="false" [title]="karta.name">
                                               {{karta?.name}}</h5>
@@ -240,7 +240,7 @@
           <div class="modal-body">
              <div class="share-link-model mt-3">
                 <div class="form-group">
-                   <label class="short_text" style="max-width: 500px;">{{sharingKarta?.name}}</label>
+                   <label class="font-weight-bold short_text" style="max-width: 500px;">{{sharingKarta?.name}}</label>
                    <div class="row">
                       <div class="col-lg-12">
                          <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"

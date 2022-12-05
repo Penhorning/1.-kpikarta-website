@@ -45,11 +45,14 @@ input[type=number]::-webkit-outer-spin-button {
     cursor: pointer;
 }
 
+.line_height_1_3 {
+    line-height: 1.3;
+}
+
 .short_text {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    line-height: 1.3;
 }
 
 .view_more {
