@@ -12,7 +12,7 @@
       </div>
       <div class="col-md-6">
         <div class="search-bar">
-          <form action="" class="search-form">
+          <form class="search-form">
             <div class="form-group search-filed inventory m-0">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
                 style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
@@ -52,9 +52,9 @@
                 <tr>
                   <th>Full Name</th>
                   <th>Email ID</th>
+                  <th>Licence</th>
                   <th>Role</th>
                   <th>Department</th>
-                  <th>Licence</th>
                   <th>Status</th>
                   <th>Date added</th>
                   <th>Action</th>
@@ -64,9 +64,9 @@
                 <tr *ngFor="let user of members">
                   <td class="short_text" style="max-width: 100px;">{{ user?.fullName }}</td>
                   <td>{{ user?.email }}</td>
+                  <td>{{ user?.license?.name }}</td>
                   <td>{{ user?.Role.name.replace('_', ' ') | titlecase }}</td>
                   <td>{{ user?.department?.name ? user?.department?.name : 'N/A' }}</td>
-                  <td>{{ user?.license?.name }}</td>
                   <td>
                     <span *ngIf="user.active" class="table_btn_status bg-success">Active</span>
                     <span *ngIf="!user.active" class="table_btn_status bg-danger">Inactive</span>
@@ -79,7 +79,7 @@
                       <path
                         d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
                     </svg>
-                    <span *ngIf="!sendingCredentials || (currentSendingUserId !== user._id)" title="Send Credentials" class="ml-1" style="cursor: pointer;" (click)="sendCredential(user._id)">
+                    <span *ngIf="!sendingCredentials || (currentSendingUserId !== user._id)" title="Send Credentials" class="ml-1 cursor_pointer" (click)="sendCredential(user._id)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16.059" viewBox="0 0 16 16.059">
                         <g id="Group_8497" data-name="Group 8497" transform="translate(-14116.767 -3543)">
                           <path id="Path_38517" data-name="Path 38517"
@@ -88,9 +88,31 @@
                         </g>
                       </svg>
                     </span>
-                    <div class="spinner-border spinner-grow-sm" role="status" *ngIf="sendingCredentials && (currentSendingUserId === user._id)">
+                    <div class="spinner-border spinner-grow-sm ml-1" role="status" *ngIf="sendingCredentials && (currentSendingUserId === user._id)">
                       <span class="sr-only">Loading...</span>
                     </div>
+                    <span *ngIf="!user?.active" title="Activate" class="ml-1" style="cursor: pointer;" (click)="activateUser(user._id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18.667" viewBox="0 0 16 18.667">
+                        <path id="noun-unlock-1926243" d="M154.663,41.667h-1.333V40.333A5.323,5.323,0,0,0,142.851,39h2.093a3.332,3.332,0,0,1,6.385,1.333v1.333h-10A1.334,1.334,0,0,0,140,43v9.333a1.334,1.334,0,0,0,1.333,1.333h13.333A1.334,1.334,0,0,0,156,52.333V43a1.334,1.334,0,0,0-1.333-1.333ZM148,48.333A1.333,1.333,0,1,1,149.329,47,1.334,1.334,0,0,1,148,48.333Z" transform="translate(-139.996 -35)"/>
+                      </svg>                                            
+                    </span>
+                    <span *ngIf="user?.active" title="Deactivate" class="ml-1" style="cursor: pointer;" (click)="DeactivateUser(user._id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                        <g id="Group_8509" data-name="Group 8509" transform="translate(-23443.762 -2449)">
+                          <path id="Path_38523" data-name="Path 38523" d="M229.668,167.668A7.977,7.977,0,1,0,224,165.332,8,8,0,0,0,229.668,167.668Zm0-1.454a6.205,6.205,0,0,1-4.073-1.454l9.164-9.164a6.615,6.615,0,0,1,1.454,4.073,6.518,6.518,0,0,1-6.546,6.546Zm0-13.092a6.2,6.2,0,0,1,4.073,1.454l-9.164,9.164a6.615,6.615,0,0,1-1.454-4.073,6.518,6.518,0,0,1,6.545-6.549Z" transform="translate(23222.094 2297.332)"/>
+                        </g>
+                      </svg>
+                    </span>
+                    <span title="Delete" class="ml-1" style="cursor: pointer;" (click)="deleteUser(user._id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19.556" viewBox="0 0 16 19.556">
+                        <g id="noun-delete-4810783" transform="translate(-139.996 -23.332)">
+                          <path id="Path_38518" data-name="Path 38518" d="M257.686,25.37H263.8a1.019,1.019,0,0,0,0-2.038h-6.115a1.019,1.019,0,0,0,0,2.038Z" transform="translate(-112.747)"/>
+                          <path id="Path_38519" data-name="Path 38519" d="M155.108,116.67H140.886a.9.9,0,0,0-.77.43.836.836,0,0,0,0,.86.9.9,0,0,0,.77.43v9.459a4.23,4.23,0,0,0,1.3,3.04,4.522,4.522,0,0,0,3.143,1.259h5.333a4.522,4.522,0,0,0,3.143-1.259,4.23,4.23,0,0,0,1.3-3.04V118.39a.9.9,0,0,0,.77-.43.836.836,0,0,0,0-.86.9.9,0,0,0-.77-.43Zm-1.778,11.179a2.537,2.537,0,0,1-.781,1.824,2.712,2.712,0,0,1-1.886.756H145.33a2.712,2.712,0,0,1-1.886-.756,2.537,2.537,0,0,1-.781-1.824V118.39H153.33Z" transform="translate(0 -89.261)"/>
+                          <path id="Path_38520" data-name="Path 38520" d="M281.017,241.489a1.019,1.019,0,0,0,1.019-1.019v-6.115a1.019,1.019,0,0,0-2.038,0v6.115a1.019,1.019,0,0,0,1.019,1.019Z" transform="translate(-134.765 -202.673)"/>
+                          <path id="Path_38521" data-name="Path 38521" d="M374.353,241.489a1.019,1.019,0,0,0,1.019-1.019v-6.115a1.019,1.019,0,0,0-2.038,0v6.115a1.019,1.019,0,0,0,1.019,1.019Z" transform="translate(-224.611 -202.673)"/>
+                        </g>
+                      </svg>                      
+                    </span>
                   </td>
                 </tr>
               </tbody>
@@ -101,7 +123,7 @@
             <ng-container *ngIf="!loading && members.length === 0">
               <div [innerHtml]="noDataAvailable"></div>
             </ng-container>
-            <div class="text-center" *ngIf="!loading && totalData > 10 && members.length > 9 && viewMore_hide">
+            <div class="text-center" *ngIf="!loading && totalMembers > members.length">
               <p class="view_more" (click)="viewMore()">View More..</p>
             </div>
           </div>

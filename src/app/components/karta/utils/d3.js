@@ -52,11 +52,30 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
     options.updateRemovedNode = updateRemovedNode;
+    options.hightlightNode = hightlightNode;
+    options.getBase64Image = getBase64Image;
     options.exportAsImage = exportAsImage;
     options.exportAsPDF = exportAsPDF;
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
+    // Context menu
+    const contextMenuItems = [
+        {
+            title: 'Save',
+            action: function(elm, d, i) {
+                // let node_type = "node";
+                // if (d.hasOwnProperty("children") && d.children.length > 0) {
+                //     node_type = "branch";
+                //   } else if (d.phase.name === "KPI") {
+                //     node_type = d.type;
+                //   }
+                let node_type = "branch";
+                if (d.phase.name === "KPI") node_type = d.type;
+                options.events.onRightClick(d, node_type);
+            }
+        }
+    ]
     // Get depth of nested child
     function getDepth(node) {
         let depth = 0;
@@ -338,7 +357,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
                 //   });
-            }).on("click", nodeclick);
+            }).on("click", nodeclick)
+            .on("contextmenu", d3.contextMenu(contextMenuItems));
+            
         nodeEnter
             .append("foreignObject")
             .attr("class", "mindmap-node")
@@ -354,9 +375,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // .style("background", "red")
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
+                console.log("mouseover ", node);
                 overCircle(node);
             })
             .on("mouseout", function (node) {
+                console.log("mouseout ", node);
                 outCircle(node);
             });
         //.attr("r", 10)
@@ -495,7 +518,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // });
 
     // Update node properties
-    function updateNode(d) {
+    function updateNode(d, isRoot = false) {
+        if (isRoot === true) root = d;
         var nodeHtml = `
             <p class="py-1" id="nodeItem">
                 <span id="nodeItem" class="d-block short_text" title="${d.name}">${d.name || ''}</span>
@@ -529,18 +553,44 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         update(d.parent);
     }
 
+    // Hightlight nodes, while saving in catalog
+    function hightlightNode(d) {
+        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#a8beed96");
+        if (d.hasOwnProperty("children") && d.children.length > 0) {
+            d.children.forEach(item => hightlightNode(item));
+        }
+        
+    }
+    // Remove highlighted color from nodes
+    function unHightlightNode(d) {
+        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#fff");
+        if (d.hasOwnProperty("children") && d.children.length > 0) {
+            d.children.forEach(item => unHightlightNode(item));
+        }
+    }
+    // Get bas64Image of chart
+    function getBase64Image(node, callback) {
+        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2) }).then(uri => {
+            unHightlightNode(node);
+            callback(uri);
+        });
+    }
+
     // Export as image
     function exportAsImage(name) {
-        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 1, backgroundColor: "#FFFFFF", left: -(width/2)});
+        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2)});
     }
     // Export as pdf
     function exportAsPDF(name) {
         window.jsPDF = window.jspdf.jsPDF;
         svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2) }).then(uri => {
             let imageBase64 = uri.split(',')[1];
+            // let svgWidth = $("#karta-svg svg").width();
+            // let doc = new jsPDF('l', 'px', [svgWidth, 768]);
+            // doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, 768);
             let svgWidth = $("#karta-svg svg").width();
-            let doc = new jsPDF('l', 'px', [svgWidth, 768]);
-            doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, 768);
+            let doc = new jsPDF('1', 'px', [width2, 455]);
+            doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, height2);
             doc.save(`${name}.pdf`);
         });
     }

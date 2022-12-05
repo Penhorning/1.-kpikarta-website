@@ -38,6 +38,21 @@ input[type=number]::-webkit-outer-spin-button {
     appearance: none; 
 }
 
+.font_weight_500 {
+    font-weight: 500;
+}
+
+.cursor_default {
+    cursor: default;
+}
+.cursor_pointer {
+    cursor: pointer;
+}
+
+.line_height_1_3 {
+    line-height: 1.3;
+}
+
 .short_text {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -59,8 +74,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 // D3 Styles
 .node {
-    cursor: pointer;
-        
+    cursor: pointer; 
 }
 
 .node-text {

@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CommonService } from '@app/shared/_services/common.service';
 import { ProfileService } from './service/profile.service';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
-import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { ImageCroppedEvent, ImageTransform } from 'ngx-image-cropper';
 import { ActivatedRoute } from '@angular/router';
 
 declare const $: any;
@@ -69,7 +69,7 @@ export class MyProfileComponent implements OnInit {
   // Company form
 
   departments: any = [];
-  employeesRanges: any = [];
+  employeeRanges: any = [];
   companySubmitted: boolean = false;
   companySubmitFlag: boolean = false;
 
@@ -78,7 +78,7 @@ export class MyProfileComponent implements OnInit {
     job_title: ['', [Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
     logo: [''],
     departmentId: [''],
-    employeesRangeId: ['']
+    employeeRangeId: ['']
   });
   get comp_form() { return this.companyForm.controls; }
 
@@ -151,7 +151,7 @@ export class MyProfileComponent implements OnInit {
           name: this.company.name,
           job_title: this.company.job_title ? this.company.job_title : "",
           departmentId: this.company.departmentId ? this.company.departmentId : "",
-          employeesRangeId: this.company.employeesRangeId ? this.company.employeesRangeId : ""
+          employeeRangeId: this.company.employeeRangeId ? this.company.employeeRangeId : ""
         });
         // Set company logo variables
         this.companyLogo.oldImage = response.company.logo;
@@ -176,7 +176,7 @@ export class MyProfileComponent implements OnInit {
   getEmployeesRanges() {
     this._profileService.getEmployeesRanges().subscribe(
       (response: any) => {
-        this.employeesRanges = response;
+        this.employeeRanges = response;
       },
       (error: any) => { }
     );
@@ -193,7 +193,7 @@ export class MyProfileComponent implements OnInit {
   //         name: this.company.name,
   //         job_title: this.company.job_title ? this.company.job_title : "",
   //         departmentId: this.company.departmentId ? this.company.departmentId : "",
-  //         employeesRangeId: this.company.employeesRangeId ? this.company.employeesRangeId : ""
+  //         employeeRangeId: this.company.employeeRangeId ? this.company.employeeRangeId : ""
   //       });
   //       // Set company logo variables
   //       this.companyLogo.oldImage = response.logo;
@@ -205,6 +205,13 @@ export class MyProfileComponent implements OnInit {
   //   );
   // }
 
+  transform: ImageTransform = {}
+  onScale(e: any) {
+    this.transform = {
+      ...this.transform,
+      scale: e.target.value
+    }
+  }
   resetCropModel(type: string, width: number, height: number) {
     this.cropperModel.type = type;
     this.cropperModel.staticWidth = width;

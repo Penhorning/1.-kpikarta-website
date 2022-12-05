@@ -42,11 +42,10 @@ right: 13px !important;
     color: #aaa;
 }
 
-.search_input .search_cross_btn {
+.clear_search {
     cursor: pointer;
-    position: absolute;
-    right: 6px;
-    font-size: 20px;
+    margin-right: 30px;
+    margin-top: 3px;
 }
 
 ::ng-deep .theme-green .bs-datepicker-head {
@@ -173,7 +172,7 @@ a.nav-link-cus {
     margin-top: 12px !important;
 }
 
-.shara-link{
+.share_link {
     overflow-y: hidden !important;
 }
 
@@ -224,4 +223,9 @@ a.nav-link-cus {
 }
 select.form-select.form-select-lg.short-dropdown-custom {
     text-align: left !important;
+}
+.sort_dropdown {
+    height:35px;
+    margin-top:3px;
+    font-weight: 700;
 }

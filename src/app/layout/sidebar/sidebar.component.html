@@ -1,46 +1,30 @@
 <aside id="sidebar" class="sidebar">
     <ul>
-        <li>
+        <li *ngIf="_commonService.userLicense === 'Creator'">
             <a [routerLink]="['/dashboard']" routerLinkActive="active">
                 <span><img src="assets/img/home.png" alt="" /></span>
                 Home
             </a>
         </li>
-        <li>
-            <!-- <a [routerLink]="['/catalogs']" routerLinkActive="active">
+        <li *ngIf="_commonService.userLicense === 'Creator'">
+            <a [routerLink]="['/inventory']" routerLinkActive="active">
                 <span><img src="assets/img/catalogs.png" alt="" /></span>
-                Catalogs
-            </a> -->
-            <a href="javascript:void(0);">
-                <span><img src="assets/img/catalogs.png" alt="" /></span>
-                Catalogs
+                Inventory
             </a>
-        <li>
-            <!-- <a [routerLink]="['/kartas']" routerLinkActive="active">
-                <span><img src="assets/img/kartas.png" alt="" /></span>
-                Kartas
-            </a> -->
+        <li *ngIf="_commonService.userLicense === 'Creator'">
             <a [routerLink]="['/karta/all']" routerLinkActive="active">
                 <span><img src="assets/img/kartas.png" alt="" /></span>
                 Kartas
             </a>
         </li>
-        <li>
-            <!-- <a [routerLink]="['/my-kpi']" routerLinkActive="active">
-                <span><img src="assets/img/mykpi.png" alt="" /></span>
-                My KPI
-            </a> -->
+        <li *ngIf="_commonService.userLicense === 'Creator' || _commonService.userLicense === 'Champion'">
             <a [routerLink]="['/my-kpi']" routerLinkActive="active">
                 <span><img src="assets/img/mykpi.png" alt="" /></span>
-                My KPI
+                My KPIs
             </a>
         </li>
         <li>
-            <!-- <a [routerLink]="['/market-place']" routerLinkActive="active">
-                <span><img src="assets/img/market_place.png" alt="" /></span>
-                Market Place
-            </a> -->
-            <a href="javascript:void(0);">
+            <a [routerLink]="['/marketplace']" routerLinkActive="active">
                 <span><img src="assets/img/market_place.png" alt="" /></span>
                 Market Place
             </a>
@@ -49,12 +33,6 @@
             <a [routerLink]="['/members']" routerLinkActive="active">
                 <span><img src="assets/img/members.png" alt="" /></span>
                 Members
-            </a>
-        </li>
-        <li>
-            <a [routerLink]="['/settings']" routerLinkActive="active">
-                <span><img src="assets/img/settings.png" alt="" /></span>
-                Settings
             </a>
         </li>
     </ul>

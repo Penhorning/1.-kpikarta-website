@@ -21,9 +21,7 @@ export class SubscriptionPlanComponent implements OnInit {
   }
 
   selectPlan(type: string) {
-
     this.submitFlag = true;
-
     this._subscriptionPlanService.assignPlan({ plan: type }).subscribe(
       (response: any) => {
         this.router.navigate(['/thank-you']);

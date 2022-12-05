@@ -10,7 +10,7 @@
                 <div class="mng_col">
                     <div class="login_form">
                         <h2 class="text-white text-center pb-2">Verify Your Account</h2>
-                        <p class="text-white text-center mb-5">We have sent a verification code to your registered email.</p>
+                        <p class="text-white text-center mb-5">We have sent a verification code to {{ _signupService?.getSignUpSession()?.email }}</p>
 
                         <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">
@@ -21,6 +21,7 @@
                                 <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">
                                     <span class="sr-only">Loading...</span>
                                 </div>
+                                <span class="d-block text-white">(Don’t forget to check your Spam folder!)</span>
                                 <div *ngIf="(submitted || form.code.touched) && form.code.errors" class="invalid-feedback">
                                     <div *ngIf="form.code.errors.required">Verification code is required!</div>
                                     <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>

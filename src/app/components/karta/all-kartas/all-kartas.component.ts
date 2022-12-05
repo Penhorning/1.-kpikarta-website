@@ -5,6 +5,7 @@ import { KartaService } from '../service/karta.service';
 
 declare const $: any;
 
+
 @Component({
   selector: 'app-all-kartas',
   templateUrl: './all-kartas.component.html',
@@ -14,34 +15,35 @@ export class AllKartasComponent implements OnInit {
 
   kartas: any = [];
   members: any = [];
+  kartaType: string = "owned";
+
+  // Share var
   sharingKarta: any;
   shareSubmitFlag: boolean = false;
-  sharedKartas: any = [];
-  search_text: string = "";
-  // Share var
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
   emails: any = [];
   // Page var
   pageIndex: number = 0;
   pageSize: number = 8;
-  sharedPageIndex: number = 0;
-  sharePageSize: number = 8;
+  totalKartas: number = 0;
+  search_text: string = "";
   // Loding var
   loading: boolean = false;
-  loadingShared: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
-  viewMoreAssign_hide: boolean = true;
-  viewMoreShared_hide: boolean = true;
 
 
-  constructor(private _kartaService: KartaService, private _commonService: CommonService, private router: Router, private route: ActivatedRoute) { }
+  constructor(
+    private _kartaService: KartaService,
+    private _commonService: CommonService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-    this.getKartas();
+    this.getAllKartas();
     this.getAllMembers();
-    this.getSharedKartas();
 
     this.route.fragment.subscribe(f => {
       if (f === "tabs-2") $("#shared_tab").click();
@@ -54,37 +56,23 @@ export class AllKartasComponent implements OnInit {
   }
 
   // Get all kartas
-  getKartas() {
+  getAllKartas() {
     let data = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
-      userId: this._commonService.getUserId(),
-      searchQuery: this.search_text
+      findBy: this.kartaType === 'owned' ? this._commonService.getUserId() : this._commonService.getEmailId(),
+      searchQuery: this.search_text,
+      type: this.kartaType
     }
     this.loading = true;
-    this._kartaService.getKartas(data).subscribe(
+    this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
-        if (response) this.kartas = response.kartas[0].data;
-        else this.kartas = [];
+        this.kartas = response.kartas[0].data;
+        if (response.kartas[0].metadata.length > 0) {
+          this.totalKartas = response.kartas[0].metadata[0].total; 
+        } else this.totalKartas = 0;
       }
     ).add(() => this.loading = false);
-  }
-
-  getSharedKartas() {
-    let data = {
-      page: this.sharedPageIndex + 1,
-      limit: this.sharePageSize,
-      email: this._commonService.getEmailId(),
-      searchQuery: this.search_text
-    }
-    this.loadingShared = true;
-    this._kartaService.getSharedKartas(data).subscribe(
-      (response: any) => {
-        if (response) {
-          this.sharedKartas = response.kartas[0].data;
-        } else this.sharedKartas = [];
-      }
-    ).add(() => this.loadingShared = false);
   }
 
   // Update karta
@@ -103,7 +91,7 @@ export class AllKartasComponent implements OnInit {
       this._kartaService.deleteKarta({ kartaId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta deleted successfully!");
-          this.getKartas();
+          this.getAllKartas();
         }
       );
     }
@@ -139,8 +127,7 @@ export class AllKartasComponent implements OnInit {
       (response: any) => {
         this._commonService.successToaster("Your have shared karta successfully!");
         $('#shareLinkModal').modal('hide');
-        this.getKartas();
-        this.getSharedKartas();
+        this.getAllKartas();
       },
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);
@@ -182,89 +169,52 @@ export class AllKartasComponent implements OnInit {
       this._kartaService.copyKarta({ kartaId: id, userId: this._commonService.getUserId() }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta copy created successfully!");
-          this.getKartas();
+          this.getAllKartas();
         }
       );
     }
   }
 
-  // View more assign
-  assignViewMore() {
+  // View more
+  viewMore() {
     this.pageIndex++;
     let data = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
-      userId: this._commonService.getUserId()
+      findBy: this.kartaType === 'owned' ? this._commonService.getUserId() : this._commonService.getEmailId()
     }
     this.loading = true;
-    this._kartaService.getKartas(data).subscribe(
+    this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
         if (response) {
           this.kartas.push(...response.kartas[0].data);
-          if (response.kartas[0].metadata[0].total == this.kartas.length) this.viewMoreAssign_hide = !this.viewMoreAssign_hide;
+          if (response.kartas[0].metadata.length > 0) {
+            this.totalKartas = response.kartas[0].metadata[0].total; 
+          } else this.totalKartas = 0;
         }
       }
     ).add(() => this.loading = false);
   }
 
-  // View more shared
-  sharedViewMore() {
-    this.sharedPageIndex++;
-    let data = {
-      page: this.sharedPageIndex + 1,
-      limit: this.sharePageSize,
-      email: this._commonService.getEmailId()
-    }
-    this.loadingShared = true;
-    this._kartaService.getSharedKartas(data).subscribe(
-      (response: any) => {
-        if (response) {
-          this.sharedKartas.push(...response.kartas[0].data);
-          if (response.kartas[0].metadata[0].total == this.sharedKartas.length) this.viewMoreShared_hide = !this.viewMoreShared_hide;
-        }
-      }
-    ).add(() => this.loadingShared = false);
-  }
-
-  // Tab switch assign
-  onTabSwitchAssign() {
+  // Tab switch
+  onTabSwitch(type: string) {
     this.pageIndex = 0;
     this.search_text = "";
     this.kartas = [];
-    this.getKartas();
-  }
-
-  // Tab switch shared
-  onTabSwitchShared() {
-    this.sharedPageIndex = 0;
-    this.search_text = "";
-    this.sharedKartas = [];
-    this.getSharedKartas();
+    this.kartaType = type;
+    this.getAllKartas();
   }
 
   search() {
     if (this.search_text) {
       this.pageIndex = 0;
-      this.getKartas();
-      this.getSharedKartas();
+      this.getAllKartas();
     }
   }
   clearSearch() {
     this.search_text = "";
-    this.getKartas();
-    this.getSharedKartas();
+    this.getAllKartas();
   }
-
-  getCountOfKarta(val: number){
-    if(val > 100){
-   let totalcount = '100+'
-   return totalcount;
-    }else if(val > 1){
-     let totalcount = val - 1
-     return totalcount;
-    }
-    return '';
- }
 
    // Rename karta
    changeEditStatus(id: number) {
@@ -282,26 +232,17 @@ export class AllKartasComponent implements OnInit {
   }
   renameKarta(id: string, index: number) {
     let value = document.getElementById('kt' + index)?.innerHTML;
-    if(value?.length == 0){
+    if (value?.length == 0) {
       this.ngOnInit();
-    return  this._commonService.errorToaster('Karta name should not be blank!');
+      return  this._commonService.errorToaster('Karta name should not be blank!');
     }
     this._kartaService.updateKarta(id, { name: value }).subscribe(
-      (x) => {
-        if (x) {
-          $('#kt' + index).attr('contenteditable', false);
-          this.ngOnInit();
-          this._commonService.successToaster(
-            'Karta name updated successfully!'
-          );
-        }
-      },
-      (err) => {
-        console.log(err);
-        this._commonService.errorToaster('Error while updating name!');
+      (response: any) => {
+        $('#kt' + index).attr('contenteditable', false);
+        this.ngOnInit();
+        this._commonService.successToaster('Karta name updated successfully!');
       }
     );
   }
-  
 
 }
