@@ -121,7 +121,7 @@ export class EditKartaComponent implements OnInit {
   kpiType: string = 'measure';
   kpiPercentage: number = 0;
   showKPICalculation: boolean = false;
-  kpiCalculationPeriod = 'month-to-date';
+  kpiCalculationPeriod = 'monthly';
   previousTargetFrequency: string = "";
   targetOptions: any = [
     { name: "Weekly", value: "weekly", disabled: false },
@@ -754,11 +754,11 @@ export class EditKartaComponent implements OnInit {
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
-    this.currentNode.kpi_calc_period = el.target.value;
+    this.kpiCalculationPeriod = el.target.value;
     let node = this.currentNode;
     if (el.target.value === "monthly" || el.target.value === "month-to-date" || el.target.value === "year-to-date") {
-      this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-      this.D3SVG.updateNode(this.karta.node);
+      // this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+      // this.D3SVG.updateNode(this.karta.node);
       this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
     } else {
       this._kartaService.getKPICalculation({ "nodeId": node.id, "type": el.target.value }).subscribe(
@@ -1126,7 +1126,8 @@ export class EditKartaComponent implements OnInit {
         updatingNode[key] = value;
         this.D3SVG.updateNode(updatingNode);
         // Calculate new percentage when any achieved, target and weightage value changes
-        if (key === "achieved_value" || key === "target" || key === "weightage" || key == "contributorId") {
+        if (key === "achieved_value" || key === "target" || key === "weightage" || key == "contributorId" || 
+        (this.kpiCalculationPeriod === "monthly" || this.kpiCalculationPeriod === "month-to-date" || this.kpiCalculationPeriod === "year-to-date")) {
           this.updateNewPercentage();
         }
         // Save the karta update history
