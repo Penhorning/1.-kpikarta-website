@@ -11,7 +11,9 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { DatepickerModule, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { FilterPipe } from './filter.pipe';
+
+// Filter pipe
+import { FilterPipe } from '../../shared/_pipes/filter.pipe';
 
 @NgModule({
   declarations: [

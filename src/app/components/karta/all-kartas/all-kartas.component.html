@@ -1,405 +1,285 @@
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-2">
-                <div class="page-heading">
-                    <h4 class="pt-2">Kartas</h4>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="search-bar">
-                    <form action="" class="search-form">
-                        <div class="form-group search-filed inventory m-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-search" style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                            </svg>
-                            <input type="text" class="form-control mt-0" name="search" [(ngModel)]="search_text"
-                                id="search" placeholder="Search...">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-x-lg" viewBox="0 0 16 16"
-                                style="cursor: pointer; margin-right: 30px; margin-top: 4px;" *ngIf="search_text"
-                                (click)="clearSearch()">
-                                <path
-                                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                            </svg>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-lg-4 text-right">
-                <button class="karta-btn mt-2" (click)="navigateToKarta()"><img src="assets/img/add-karata.svg"
-                        class="mr-2"> Create a Karta</button>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-lg-12">
-                <div class="KPI-dash-tab inventory">
-
-                    <!-- KPI Tabs -->
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item nav-item-cus inventory" (click)="onTabSwitchAssign()"> <a
-                                class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1"
-                                role="tab">Assigned to me</a> </li>
-                        <li class="nav-item nav-item-cus inventory" (click)="onTabSwitchShared()"> <a
-                                class="nav-link nav-link-cus pl-0" id="shared_tab" data-toggle="tab" href="#tabs-2"
-                                role="tab">Shared with me</a> </li>
-
-                    </ul>
-                    <!-- Tab panes -->
-                    <div class="tab-content tab-content-cus inventory">
-                        <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
-                            <div class="row mt-4">
-                                <!-- card-one -->
-                                <ng-container *ngFor="let karta of kartas; let i = index">
-                                    <div class="col-lg-3">
-                                        <div class="karata-card">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <div class="own d-flex">
-                                                        <img src="assets/img/own-icon.svg">
-                                                        <p class="short_text">{{karta?.user?.fullName}}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-right">
-                                                    <div class="dropdown show">
-                                                        <a class=" dropdown-toggle three-dots" href="#" role="button"
-                                                            id="dropdownMenuLink" data-toggle="dropdown"
-                                                            aria-haspopup="true" aria-expanded="false">
-                                                            <img src="assets/img/dots.svg" class="">
-                                                        </a>
-                                                        <div class="dropdown-menu three-dots-drop"
-                                                            aria-labelledby="dropdownMenuLink">
-                                                            <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                                                            <a class="dropdown-item share" href="javascript:void(0);"
-                                                                data-toggle="modal" data-target="#shareLinkModal"
-                                                                (click)="onShare(karta)">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                    height="16" fill="currentColor"
-                                                                    class="bi bi-share-fill mr-2" viewBox="0 0 16 16">
-                                                                    <path
-                                                                        d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
-                                                                </svg>
-                                                                Share
-                                                            </a>
-                                                            <a class="dropdown-item" style="cursor: pointer;"
-                                                                (click)="copyKarta(karta._id)"><img
-                                                                    src="assets/img/copy.svg" class="mr-3"> Copy</a>
-                                                            <a class="dropdown-item" style="cursor: pointer;"
-                                                                (click)="changeEditStatus(i)"><img
-                                                                    src="assets/img/rename.png"
-                                                                    class="mr-3 karta-icon-rename">Rename</a>
-                                                            <a class="dropdown-item" href="#"><img
-                                                                    src="assets/img/used.svg" class="mr-2"> Used <span>
-                                                                    (5)</span></a>
-                                                            <a class="dropdown-item Delete" href="javascript:void(0);"
-                                                                (click)="deleteKarta(karta._id)">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                    height="16" fill="currentColor"
-                                                                    class="bi bi-trash3-fill mr-2" viewBox="0 0 16 16">
-                                                                    <path
-                                                                        d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z" />
-                                                                </svg>
-                                                                Delete</a>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12 text-center">
-                                                    <div class="edit-btn-img">
-                                                        <a [routerLink]="['/karta/edit', karta._id]">
-                                                            <img src="assets/img/edit--icon-blue.svg" class="">
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12 text-center">
-                                                    <div class="mt-3">
-                                                        <div class="d-flex justify-content-center align-items-center">
-                                                            <h5 class="short_text" [id]="'kt'+i"
-                                                                (keypress)="setLimitForContentEditable($event)"
-                                                                contenteditable="false" [title]="karta.name">
-                                                                {{karta?.name}}</h5>
-                                                            <img class="ml-2 img-fluid-tick"
-                                                                (click)="renameKarta(karta._id, i)"
-                                                                *ngIf="checkEditStatus(i) != false"
-                                                                src="assets/img/check_icon.png" />
-                                                        </div>
-                                                        <p>{{karta?.createdAt | date:'mediumDate'}}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-lg-6 text-left">
-                                                    <div class="dropdown show">
-                                                        <a class=" dropdown-toggle three-dots change-acc text-body"
-                                                            href="#" role="button" id="dropdownMenuLink"
-                                                            data-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                            Change access <img src="assets/img/down-arrow.svg"
-                                                                class="ml-2">
-                                                        </a>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                            <a class="dropdown-item" href="javascript:void(0);"
-                                                                (click)="updateKarta('private', karta?._id, i)">Private</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);"
-                                                                (click)="updateKarta('public', karta?._id, i)">Public</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="private d-flex">
-                                                        <p class="text-capitalize">{{karta?.type}}</p>
-                                                        <img src="assets/img/{{karta?.type}}-icon.svg" class="ml-2">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="Shared-with">
-                                                        <h5>Shared with:</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="d-flex">
-                                                        <ng-container *ngIf="karta?.sharedTo?.length > 0">
-                                                            <div class="user-img">
-                                                                <img src="assets/img/user-placeholder.svg">
-                                                            </div>
-                                                            <div class="user-counter">
-                                                                <p>{{ karta?.sharedTo?.length > 100 ? '100+':
-                                                                    karta?.sharedTo?.length }}</p>
-                                                            </div>
-                                                        </ng-container>
-                                                    </div>
-                                                </div>
-                                            </div>
+       <div class="row">
+          <div class="col-lg-2">
+             <div class="page-heading">
+                <h4 class="pt-2">Kartas</h4>
+             </div>
+          </div>
+          <div class="col-lg-6">
+             <div class="search-bar">
+                <form action="" class="search-form">
+                   <div class="form-group search-filed inventory m-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-search" style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
+                         <path
+                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                      </svg>
+                      <input type="text" class="form-control mt-0" name="search" [(ngModel)]="search_text"
+                      id="search" placeholder="Search...">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-x-lg" viewBox="0 0 16 16"
+                      style="cursor: pointer; margin-right: 30px; margin-top: 4px;" *ngIf="search_text"
+                      (click)="clearSearch()">
+                      <path
+                         d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                      </svg>
+                   </div>
+                </form>
+             </div>
+          </div>
+          <div class="col-lg-4 text-right">
+             <button class="karta-btn mt-2" (click)="navigateToKarta()"><img src="assets/img/add-karata.svg"
+                class="mr-2"> Create a Karta</button>
+          </div>
+       </div>
+       <div class="row mt-4">
+          <div class="col-lg-12">
+             <div class="KPI-dash-tab inventory">
+                <!-- KPI Tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                   <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('owned')">
+                      <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1"
+                         role="tab">Assigned to me</a> 
+                   </li>
+                   <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('shared')"> <a
+                      class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-1"
+                      role="tab">Shared with me</a> </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content tab-content-cus inventory">
+                   <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
+                      <div class="row mt-4">
+                         <!-- card-one -->
+                         <ng-container *ngFor="let karta of kartas; let i = index">
+                            <div class="col-lg-3">
+                               <div class="karata-card">
+                                  <div class="row">
+                                     <div class="col-8">
+                                        <div class="own d-flex">
+                                           <img src="assets/img/own-icon.svg">
+                                           <ng-container *ngIf="kartaType === 'owned'; else nameShared">
+                                              <p>Own</p>
+                                           </ng-container>
+                                           <ng-template #nameShared>
+                                              <p class="short_text" [title]="karta?.user?.fullName">
+                                                 {{ karta?.user?.fullName }}
+                                              </p>
+                                           </ng-template>
                                         </div>
-                                    </div>
-                                </ng-container>
-
-                                <div class="col-lg-12">
-                                    <ng-container *ngIf="loading">
-                                        <div [innerHtml]="loader"></div>
-                                    </ng-container>
-                                    <ng-container *ngIf="!loading && kartas.length === 0">
-                                        <div [innerHtml]="noDataAvailable"></div>
-                                    </ng-container>
-                                    <div class="text-center"
-                                        *ngIf="!loading && kartas.length > 8 && viewMoreAssign_hide">
-                                        <p style="cursor: pointer; color: #007bff;" (click)="assignViewMore()">View
-                                            More..</p>
-                                    </div>
-                                </div>
-                                <!-- end-card-one -->
-                            </div>
-                        </div>
-                        <div class="tab-pane p-3" id="tabs-2" role="tabpanel">
-                            <div class="row mt-4">
-                                <!-- card-one -->
-                                <ng-container *ngFor="let karta of sharedKartas; let i = index">
-                                    <div class="col-lg-3">
-                                        <div class="karata-card">
-                                            <div class="row">
-                                                <div class="col-8">
-                                                    <div class="own d-flex">
-                                                        <img src="assets/img/own-icon.svg">
-                                                        <p class="short_text" [title]="karta?.user?.fullName">
-                                                            {{ karta?.user?.fullName }}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 text-right">
-                                                    <div class="dropdown show">
-                                                        <a class=" dropdown-toggle three-dots" href="#" role="button"
-                                                            id="dropdownMenuLink" data-toggle="dropdown"
-                                                            aria-haspopup="true" aria-expanded="false">
-                                                            <img src="assets/img/dots.svg" class="">
-                                                        </a>
-                                                        <div class="dropdown-menu three-dots-drop"
-                                                            aria-labelledby="dropdownMenuLink">
-                                                            <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                                                            <!-- <a class="dropdown-item share" href="javascript:void(0);"
+                                     </div>
+                                     <div class="col-4 text-right">
+                                        <div class="dropdown show">
+                                           <a class=" dropdown-toggle three-dots" href="#" role="button"
+                                              id="dropdownMenuLink" data-toggle="dropdown"
+                                              aria-haspopup="true" aria-expanded="false">
+                                           <img src="assets/img/dots.svg" class="">
+                                           </a>
+                                           <div class="dropdown-menu three-dots-drop"
+                                              aria-labelledby="dropdownMenuLink">
+                                              <img src="assets/img/drop-arrow.svg" class="drop-arrow">
+                                              <ng-container *ngIf="kartaType === 'owned'; else optionShared">
+                                                 <a class="dropdown-item share" href="javascript:void(0);"
                                                     data-toggle="modal" data-target="#shareLinkModal"
                                                     (click)="onShare(karta)">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                        fill="currentColor" class="bi bi-share-fill mr-2"
-                                                        viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                       height="16" fill="currentColor"
+                                                       class="bi bi-share-fill mr-2" viewBox="0 0 16 16">
+                                                       <path
+                                                          d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
                                                     </svg>
                                                     Share
-                                                </a> -->
-                                                            <!-- <a class="dropdown-item" style="cursor: pointer;" (click)="copyKarta(karta.id)"><img
-                                                        src="assets/img/copy.svg" class="mr-3"> Copy</a> -->
-                                                            <a class="dropdown-item" href="javascript:void(0);"><img
-                                                                    src="assets/img/used.svg" class="mr-2"> Used <span>
-                                                                    (5)</span></a>
-
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12 text-center">
-                                                    <div class="edit-btn-img">
-                                                        <a [routerLink]="['/karta/edit', karta._id]">
-                                                            <img src="assets/img/edit--icon-blue.svg" class="">
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12 text-center">
-                                                    <div class="mt-3">
-                                                        <h5 class="short_text">{{karta?.name}}</h5>
-                                                        <p>{{karta?.createdAt | date:'mediumDate'}}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-lg-6 text-left">
-                                                    <div class="dropdown show">
-                                                        <a class=" dropdown-toggle three-dots change-acc text-body"
-                                                            href="javascript:void(0);" role="button"
-                                                            style="cursor: default;">
-                                                            Change access <img src="assets/img/down-arrow.svg"
-                                                                class="ml-2">
-                                                        </a>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                            <a class="dropdown-item" href="javascript:void(0);"
-                                                                (click)="updateKarta('private', karta?._id, i)">Private</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);"
-                                                                (click)="updateKarta('public', karta?._id, i)">Public</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="private d-flex">
-                                                        <p class="text-capitalize">{{karta?.type}}</p>
-                                                        <img src="assets/img/{{karta?.type}}-icon.svg" class="ml-2">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-6">
-                                                    <div class="Shared-with">
-                                                        <h5>Shared with:</h5>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <div class="d-flex">
-                                                        <ng-container *ngIf="karta?.sharedTo?.length > 0">
-                                                            <div class="user-img">
-                                                                <img src="assets/img/user-placeholder.svg">
-                                                            </div>
-                                                            <div class="user-counter">
-                                                                <p>{{ karta?.sharedTo?.length > 100 ? '100+':
-                                                                    karta?.sharedTo?.length }}</p>
-                                                            </div>
-                                                        </ng-container>
-                                                    </div>
-
-                                                    <!-- <ng-container *ngIf="sharingKartaCount">
-                                            <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-                                            <span class="ml-2" *ngIf="sharingKartaCount > 1">
-                                                <div class="user-counter">
-                                                    <p>+{{ sharingKartaCount - 1 }}</p>
-                                                </div>
-                                            </span>
-                                        </ng-container> -->
-                                                </div>
-                                            </div>
+                                                 </a>
+                                                 <a class="dropdown-item" style="cursor: pointer;"
+                                                    (click)="copyKarta(karta._id)"><img
+                                                    src="assets/img/copy.svg" class="mr-3"> Copy</a>
+                                                 <a class="dropdown-item" style="cursor: pointer;"
+                                                    (click)="changeEditStatus(i)"><img
+                                                    src="assets/img/rename.png"
+                                                    class="mr-3 karta-icon-rename">Rename</a>
+                                                 <a class="dropdown-item" href="#"><img
+                                                    src="assets/img/used.svg" class="mr-2"> Used <span>
+                                                 (5)</span></a>
+                                                 <a class="dropdown-item Delete" href="javascript:void(0);"
+                                                    (click)="deleteKarta(karta._id)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                                       height="16" fill="currentColor"
+                                                       class="bi bi-trash3-fill mr-2" viewBox="0 0 16 16">
+                                                       <path
+                                                          d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z" />
+                                                    </svg>
+                                                    Delete
+                                                 </a>
+                                              </ng-container>
+                                              <ng-template #optionShared>
+                                                 <a class="dropdown-item" href="javascript:void(0);">
+                                                 <img src="assets/img/used.svg" class="mr-2">
+                                                 Used <span>(5)</span>
+                                                 </a>
+                                              </ng-template>
+                                           </div>
                                         </div>
-                                    </div>
-                                </ng-container>
-                                <div class="col-lg-12">
-                                    <ng-container *ngIf="loadingShared">
-                                        <div [innerHtml]="loader"></div>
-                                    </ng-container>
-                                    <ng-container *ngIf="!loadingShared && sharedKartas.length === 0">
-                                        <div [innerHtml]="noDataAvailable"></div>
-                                    </ng-container>
-                                    <div class="text-center"
-                                        *ngIf="!loadingShared && sharedKartas.length > 8 && viewMoreShared_hide">
-                                        <p style="cursor: pointer; color: #007bff;" (click)="sharedViewMore()">View
-                                            More..</p>
-                                    </div>
-                                </div>
-                                <!-- end-card-one -->
+                                     </div>
+                                  </div>
+                                  <div class="row">
+                                     <div class="col-lg-12 text-center">
+                                        <div class="edit-btn-img">
+                                           <a [routerLink]="['/karta/edit', karta._id]">
+                                           <img src="assets/img/edit--icon-blue.svg" class="">
+                                           </a>
+                                        </div>
+                                     </div>
+                                  </div>
+                                  <div class="row">
+                                     <div class="col-lg-12 text-center">
+                                        <div class="mt-3">
+                                           <div class="d-flex justify-content-center align-items-center">
+                                              <h5 class="short_text" [id]="'kt'+i"
+                                              (keypress)="setLimitForContentEditable($event)"
+                                              contenteditable="false" [title]="karta.name">
+                                              {{karta?.name}}</h5>
+                                              <img class="ml-2 img-fluid-tick"
+                                              (click)="renameKarta(karta._id, i)"
+                                              *ngIf="checkEditStatus(i) != false"
+                                              src="assets/img/check_icon.png" />
+                                           </div>
+                                           <p>{{karta?.createdAt | date:'mediumDate'}}</p>
+                                        </div>
+                                     </div>
+                                  </div>
+                                  <hr>
+                                  <div class="row">
+                                     <div class="col-lg-6 text-left">
+                                        <div class="dropdown show">
+                                           <ng-container *ngIf="kartaType === 'owned'; else actionShared">
+                                              <a class="dropdown-toggle three-dots change-acc text-body"
+                                                 href="#" role="button" id="dropdownMenuLink"
+                                                 data-toggle="dropdown" aria-haspopup="true"
+                                                 aria-expanded="false">
+                                              Change access 
+                                              <img src="assets/img/down-arrow.svg" class="ml-2">
+                                              </a>
+                                           </ng-container>
+                                           <ng-template #actionShared>
+                                              <a class="dropdown-toggle three-dots change-acc text-body cursor_default"
+                                                 href="javascript:void(0);" role="button">
+                                              Change access <img src="assets/img/down-arrow.svg" class="ml-2">
+                                              </a>
+                                           </ng-template>
+                                           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                              <a class="dropdown-item" href="javascript:void(0);"
+                                                 (click)="updateKarta('private', karta?._id, i)">Private</a>
+                                              <a class="dropdown-item" href="javascript:void(0);"
+                                                 (click)="updateKarta('public', karta?._id, i)">Public</a>
+                                           </div>
+                                        </div>
+                                     </div>
+                                     <div class="col-lg-6">
+                                        <div class="private d-flex">
+                                           <p class="text-capitalize">{{karta?.type}}</p>
+                                           <img src="assets/img/{{karta?.type}}-icon.svg" class="ml-2">
+                                        </div>
+                                     </div>
+                                  </div>
+                                  <div class="row">
+                                     <div class="col-lg-6">
+                                        <div class="Shared-with">
+                                           <h5>Shared with:</h5>
+                                        </div>
+                                     </div>
+                                     <div class="col-lg-6">
+                                        <div class="d-flex">
+                                           <ng-container *ngIf="karta?.sharedTo?.length > 0">
+                                              <div class="user-img">
+                                                 <img src="assets/img/user-placeholder.svg">
+                                              </div>
+                                              <div class="user-counter">
+                                                 <p>{{ karta?.sharedTo?.length > 100 ? '100+':
+                                                    karta?.sharedTo?.length }}
+                                                 </p>
+                                              </div>
+                                           </ng-container>
+                                        </div>
+                                     </div>
+                                  </div>
+                               </div>
                             </div>
-                        </div>
-                    </div>
+                         </ng-container>
+                         <!-- Pagination -->
+                         <div class="col-md-12">
+                            <ng-container *ngIf="loading">
+                               <div class="p-5" [innerHtml]="loader"></div>
+                            </ng-container>
+                            <ng-container *ngIf="!loading && kartas.length === 0">
+                               <div [innerHtml]="noDataAvailable"></div>
+                            </ng-container>
+                            <div class="text-center" *ngIf="!loading && totalKartas > kartas.length">
+                               <p class="view_more" (click)="viewMore()">View More..</p>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
                 </div>
-            </div>
-        </div>
+             </div>
+          </div>
+       </div>
     </div>
-</div>
-
-
-<!-- share-link-model -->
-<div class="modal fade" id="shareLinkModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+ </div>
+ <!-- share-link-modal -->
+ <div class="modal fade" id="shareLinkModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content p-4">
-            <div class="modal-header">
-                <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Link</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                    (click)="selectedUsers = undefined">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="share-link-model mt-3">
-                    <div class="form-group">
-                        <label class="short_text" style="max-width: 500px;">{{sharingKarta?.name}}</label>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
-                                    [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers">
-                                    <ng-template ng-tag-tmp let-search="searchTerm">
-                                        <b>Add new email</b>: {{search}}
-                                    </ng-template>
-                                </ng-select>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="border-color: unset;" data-dismiss="" aria-label="">
-                        <span aria-hidden="true">
-                            <button type="button" class="send-btn" (click)="shareKarta()"
-                                [disabled]="selectedUsers?.length < 1  || shareSubmitFlag">
-                                <div class="spinner-border text-light align-top" role="status" *ngIf="shareSubmitFlag">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                                <ng-container *ngIf="!shareSubmitFlag">SEND</ng-container>
-                            </button>
-                        </span>
-                    </div>
+       <div class="modal-content p-4">
+          <div class="modal-header">
+             <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Link</h5>
+             <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                (click)="selectedUsers = undefined">
+             <span aria-hidden="true">&times;</span>
+             </button>
+          </div>
+          <div class="modal-body">
+             <div class="share-link-model mt-3">
+                <div class="form-group">
+                   <label class="short_text" style="max-width: 500px;">{{sharingKarta?.name}}</label>
+                   <div class="row">
+                      <div class="col-lg-12">
+                         <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
+                         [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers">
+                         <ng-template ng-tag-tmp let-search="searchTerm">
+                            <b>Add new email</b>: {{search}}
+                         </ng-template>
+                         </ng-select>
+                      </div>
+                   </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12 text-left">
-                    <div class="shared-with" style="display:flex;">
-                        <span>Shared with:</span>
-                        <ng-container *ngIf="sharingKartaCount">
-                            <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-                            <span class="ml-2">
-                                <div class="user-counter">
-                                    <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
-                                </div>
-                            </span>
-                        </ng-container>
-                    </div>
+                <div style="border-color: unset;" data-dismiss="" aria-label="">
+                   <span aria-hidden="true">
+                      <button type="button" class="send-btn" (click)="shareKarta()"
+                      [disabled]="selectedUsers?.length < 1  || shareSubmitFlag">
+                      <div class="spinner-border text-light align-top" role="status" *ngIf="shareSubmitFlag">
+                         <span class="sr-only">Loading...</span>
+                      </div>
+                      <ng-container *ngIf="!shareSubmitFlag">SEND</ng-container>
+                      </button>
+                   </span>
                 </div>
-            </div>
-        </div>
+             </div>
+          </div>
+          <div class="row">
+             <div class="col-lg-12 text-left">
+                <div class="shared-with" style="display:flex;">
+                   <span>Shared with:</span>
+                   <ng-container *ngIf="sharingKartaCount">
+                      <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
+                      <span class="ml-2">
+                         <div class="user-counter">
+                            <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
+                         </div>
+                      </span>
+                   </ng-container>
+                </div>
+             </div>
+          </div>
+       </div>
     </div>
-</div>
+ </div>
