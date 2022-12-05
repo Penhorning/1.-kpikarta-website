@@ -20,7 +20,6 @@ export class CatalogComponent implements OnInit {
   // Filter var
   nodeTypeFilter: any = [];
   filterOptions: any = [
-    { name: "Nodes", value: "node" },
     { name: "Branches", value: "branch" },
     { name: "Measures", value: "measure" },
     { name: "Metrics", value: "metrics" }

@@ -52,7 +52,7 @@ export class DashboardComponent implements OnInit {
     let data = {
       page: 1,
       limit: 3,
-      userId: this._commonService.getUserId(),
+      findBy: this._commonService.getUserId(),
     };
     this.loadingKartas = true;
     this._kartaService.getAllKartas(data).subscribe((response: any) => {
@@ -79,10 +79,11 @@ export class DashboardComponent implements OnInit {
     let data = {
       page: 1,
       limit: 6,
-      email: this._commonService.getEmailId(),
+      findBy: this._commonService.getEmailId(),
+      type: "shared"
     };
     this.loadingSharedKartas = true;
-    this._kartaService.getAllSharedKartas(data).subscribe((response: any) => {
+    this._kartaService.getAllKartas(data).subscribe((response: any) => {
       if (response) {
         this.sharedKartas = response.kartas[0].data;
       } else this.sharedKartas = [];

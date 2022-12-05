@@ -10,7 +10,7 @@
                 <div class="mng_col">
                     <div class="login_form">
                         <h2 class="text-white text-center pb-2">Verify Your Account</h2>
-                        <p class="text-white text-center mb-5">We have sent a verification code to {{ _signupService?.getSignUpSession()?.email }}.</p>
+                        <p class="text-white text-center mb-5">We have sent a verification code to {{ _signupService?.getSignUpSession()?.email }}</p>
 
                         <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">

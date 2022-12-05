@@ -375,9 +375,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // .style("background", "red")
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
+                console.log("mouseover ", node);
                 overCircle(node);
             })
             .on("mouseout", function (node) {
+                console.log("mouseout ", node);
                 outCircle(node);
             });
         //.attr("r", 10)

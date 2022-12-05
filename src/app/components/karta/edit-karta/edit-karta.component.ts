@@ -754,7 +754,7 @@ export class EditKartaComponent implements OnInit {
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
     let node = this.currentNode;
-    if (el.target.value === "month-to-date" || el.target.value === "year-to-date") {
+    if (el.target.value === "monthly" || el.target.value === "month-to-date" || el.target.value === "year-to-date") {
       this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
       this.D3SVG.updateNode(this.karta.node);
       this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
@@ -840,15 +840,15 @@ export class EditKartaComponent implements OnInit {
         if (element.kpi_calc_period === "monthly") {
           if (findTarget('monthly')) targetValue = findTarget('monthly').value;
           else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 3;
+          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
-          targetValue = todayDate * (targetValue / daysInMonth);
+          targetValue = targetValue;
         }
         // Set target value according to month to date
         if (element.kpi_calc_period === "month-to-date") {
           if (findTarget('monthly')) targetValue = findTarget('monthly').value;
           else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 3;
+          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
           targetValue = todayDate * (targetValue / daysInMonth);
         }
@@ -868,7 +868,7 @@ export class EditKartaComponent implements OnInit {
         // const todayDay = moment().date();
         // targetValue = element.target[0].value;
         // targetValue = todayDay * (targetValue / totalDays);
-        if (element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") {
+        if (element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") {
           let current_percentage= (element.achieved_value/targetValue) * 100;
           element.percentage = Math.round(current_percentage);
           element.percentage = element.percentage === Infinity ? 0 : element.percentage;

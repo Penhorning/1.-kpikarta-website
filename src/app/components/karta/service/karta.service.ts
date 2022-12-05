@@ -42,9 +42,6 @@ export class KartaService {
   getKartaHistory(){
     return this._httpService.GET(`/karta_histories`);
   }
-  getAllSharedKartas(data: any) {
-    return this._httpService.POST('/karta/shared-all', data);
-  }
 
   createKartaVersion(data: any){
     return this._httpService.POST('/karta_versions', data);
