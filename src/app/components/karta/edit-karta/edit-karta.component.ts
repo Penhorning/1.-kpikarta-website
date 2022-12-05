@@ -754,6 +754,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
+    this.currentNode.kpi_calc_period = el.target.value;
     let node = this.currentNode;
     if (el.target.value === "monthly" || el.target.value === "month-to-date" || el.target.value === "year-to-date") {
       this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
@@ -1012,7 +1013,7 @@ export class EditKartaComponent implements OnInit {
       data.is_achieved_modified = false;
       data.alert_type = "";
       data.alert_frequency = "";
-      data.kpi_calc_period = 'month-to-date';
+      data.kpi_calc_period = 'monthly';
     }
     this._kartaService.addNode(data).subscribe((response: any) => {
       response.phase = phase;
