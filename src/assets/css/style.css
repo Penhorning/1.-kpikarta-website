@@ -1752,6 +1752,10 @@ img.img-fluid.edit-btn-r {
   margin-top: 2.3rem;
 }
 
+.custom-input-side-r-flow input {
+  height: 33px;
+}
+
 .custom-input-side-r input {
   margin-top: 1.7rem;
   height: 33px;

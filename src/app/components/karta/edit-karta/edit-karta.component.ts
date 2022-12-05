@@ -246,17 +246,19 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
       (response: any) => {
         if (response.data.data) {
-          this.karta = response.data.data.node;
+          this.karta = response.data.data;
           this.versionId = response.data.data.versionId;
           if (this.karta.node) {
             this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-            jqueryFunctions.removeKarta();
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+            this.D3SVG.updateNode(this.karta.node, true);
             this.setKartaDimension();
             jqueryFunctions.disableChart();
             jqueryFunctions.setValue("#chartMode", "disable");
+            jqueryFunctions.setAttribute("#chartMode", "disabled", true);
             this.showSVG = true;
             jqueryFunctions.hideModal('viewKartaModal');
+            jqueryFunctions.removeKarta();
           }
         }
       }
@@ -1588,7 +1590,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Undo reached..!!");
+            this._commonService.warningToaster("Maximum Undo limit has reached..!!");
           }
         }
       }
@@ -1654,7 +1656,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Redo reached..!!");
+            this._commonService.warningToaster("Maximum Redo limit has reached..!!");
           }
         }
       }
