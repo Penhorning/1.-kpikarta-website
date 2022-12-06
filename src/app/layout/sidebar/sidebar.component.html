@@ -7,9 +7,9 @@
             </a>
         </li>
         <li *ngIf="_commonService.userLicense === 'Creator'">
-            <a [routerLink]="['/catalogs']" routerLinkActive="active">
+            <a [routerLink]="['/inventory']" routerLinkActive="active">
                 <span><img src="assets/img/catalogs.png" alt="" /></span>
-                Catalogs
+                Inventory
             </a>
         <li *ngIf="_commonService.userLicense === 'Creator'">
             <a [routerLink]="['/karta/all']" routerLinkActive="active">

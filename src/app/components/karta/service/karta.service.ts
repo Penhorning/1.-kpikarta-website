@@ -9,6 +9,9 @@ export class KartaService {
   constructor(private _httpService: HttpService) { }
 
 /*============================== API FUNCTIONS STARTS ==============================*/
+  getInventories(data: any) {
+    return this._httpService.POST('/karta_catalogs/get-all', data);
+  }
   getPhases() {
     return this._httpService.GET('/karta_phases');
   }
@@ -24,8 +27,11 @@ export class KartaService {
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
-  getKartas(data: any) {
-    return this._httpService.POST('/karta/get-kartas', data);
+  getPreviousKarta(data: any) {
+    return this._httpService.POST("/karta/view-karta-details", data);
+  }
+  getAllKartas(data: any) {
+    return this._httpService.POST('/karta/get-all', data);
   }
   getAllMembers(data: any) {
     return this._httpService.POST('/users/get-all-members', data);
@@ -35,9 +41,6 @@ export class KartaService {
   }
   getKartaHistory(){
     return this._httpService.GET(`/karta_histories`);
-  }
-  getSharedKartas(data: any) {
-    return this._httpService.POST('/karta/shared-kartas', data);
   }
 
   createKartaVersion(data: any){

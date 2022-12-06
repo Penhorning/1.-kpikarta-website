@@ -5,11 +5,13 @@ import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
+import * as jqueryFunctions from '../utils/jqueryOperations.js';
 import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
-
+import * as MetricOperations from '../utils/metricFormulaOperations';
 
 declare const $: any;
+
 
 @Component({
   selector: 'app-edit-karta',
@@ -76,9 +78,9 @@ export class EditKartaComponent implements OnInit {
       onDragStart: (d: any) => {
         this.previousDraggedNodeParentId = d.parent.id;
       },
-      onNodeRightClick: (d: any) => {
-        $("#saveNodeModal").modal('show');
-        this.catalogForm.patchValue({ node: d });
+      onRightClick: (d: any, node_type: string) => {
+        jqueryFunctions.showModal('saveNodeModal');
+        this.catalogForm.patchValue({ node: d, node_type });
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -106,6 +108,8 @@ export class EditKartaComponent implements OnInit {
   }
 
   /* Node properties */
+  maxStartDate: any = new Date();
+  maxFiscalStartDate: any = `${new Date().getFullYear()}-01-01`;
   currentNodeName: string = '';
   currentNodeWeight: number = 0;
   currentNodeAchievedValue: number = 0;
@@ -117,8 +121,15 @@ export class EditKartaComponent implements OnInit {
   kpiType: string = 'measure';
   kpiPercentage: number = 0;
   showKPICalculation: boolean = false;
-  kpiCalculationPeriod = 'month-to-date';
-  target: any = [{ frequency: 'weekly', value: 0, percentage: 0 }];
+  kpiCalculationPeriod = 'monthly';
+  previousTargetFrequency: string = "";
+  targetOptions: any = [
+    { name: "Weekly", value: "weekly", disabled: false },
+    { name: "Monthly", value: "monthly", disabled: false },
+    { name: "Quarterly", value: "quarterly", disabled: false },
+    { name: "Yearly", value: "yearly", disabled: false }
+  ]
+  target: any = [];
   // Contributors
   disabled = false;
   ShowFilter = false;
@@ -133,6 +144,7 @@ export class EditKartaComponent implements OnInit {
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
+  metricOperations: any = MetricOperations;
 
   // Person notify
   notifyType: string = "";
@@ -168,17 +180,92 @@ export class EditKartaComponent implements OnInit {
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
   }
 
+  // Catalog variables
   catalogSubmitted: boolean = false;
   catalogSubmitFlag: boolean = false;
   catalogForm = this.fb.group({
     name: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
     node: [null],
+    node_type: [''],
     thumbnail: ['']
   });
   get catalog() { return this.catalogForm.controls; }
+  // View karta variables
+  viewKartaNumbers: any = [];
+  showViewKartaNumber: boolean = false;
+  viewKartaSubmitted: boolean = false;
+  viewKartaSubmitFlag: boolean = false;
+  viewKartaForm = this.fb.group({
+    type: ['', [Validators.required]]
+  });
+  get viewKarta() { return this.viewKartaForm.controls; }
+
+  viewKartaType(e: any) {
+    if (e.target.value === "month") {
+      this.viewKartaNumbers = [
+        { name: "January", value: 1 },
+        { name: "February", value: 2 },
+        { name: "March", value: 3 },
+        { name: "April", value: 4 },
+        { name: "May", value: 5 },
+        { name: "June", value: 6 },
+        { name: "July", value: 7 },
+        { name: "August", value: 8 },
+        { name: "September", value: 9 },
+        { name: "October", value: 10 },
+        { name: "November", value: 11 },
+        { name: "December", value: 12 }
+      ]
+    } else if (e.target.value === "week") {
+      const no_of_weeks = moment().week() - (moment().month()*4);
+      this.viewKartaNumbers = [
+        { name: "1st Week", value: 1 },
+        { name: "2nd Week", value: 2 },
+        { name: "3rd Week", value: 3 },
+        { name: "4th Week", value: 4 }
+      ]
+      if (no_of_weeks > 4) {
+        for (let i=5; i<=no_of_weeks; i++) this.viewKartaNumbers.push({ name: `${i}th Week`, value: i });
+      }
+    }
+    if (e.target.value === "quarter") {
+      this.viewKartaNumbers = [
+        { name: "1st Quarter", value: 1 },
+        { name: "2nd Quarter", value: 2 },
+        { name: "3rd Quarter", value: 3 },
+        { name: "4th Quarter", value: 4 }
+      ]
+    }
+    this.showViewKartaNumber = true;
+    this.viewKartaForm.addControl("number", this.fb.control('', [Validators.required]));
+  }
+
+  onViewKartaSubmit() {
+    this.viewKartaForm.value.kartaId = this.kartaId;
+    this.viewKartaForm.value.number = parseInt(this.viewKartaForm.value.number);
+    this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
+      (response: any) => {
+        if (response.data.data) {
+          this.karta = response.data.data;
+          this.versionId = response.data.data.versionId;
+          if (this.karta.node) {
+            this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+            BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+            this.D3SVG.updateNode(this.karta.node, true);
+            this.setKartaDimension();
+            jqueryFunctions.disableChart();
+            jqueryFunctions.setValue("#chartMode", "disable");
+            jqueryFunctions.setAttribute("#chartMode", "disabled", true);
+            this.showSVG = true;
+            jqueryFunctions.hideModal('viewKartaModal');
+            jqueryFunctions.removeKarta();
+          }
+        }
+      }
+    );
+  }
 
   ngOnInit(): void {
-    const that = this;
     // Formula Fields
     this.formulaGroup = this.fb.group({
       calculatedValue: [0],
@@ -188,16 +275,38 @@ export class EditKartaComponent implements OnInit {
 
     // Toggle Left Sidebar
     $('#sidebarCollapse').on('click', function () {
-      that.togggleLeftSidebar();
+      jqueryFunctions.togggleLeftSidebar();
     });
     // Close right sidebar when click outside
     $(document).on('click', '.right_sidebar_overlay', function () {
-      that.closeRightSidebar();
+      jqueryFunctions.closeRightSidebar();
     });
     // Get all members
     this.getAllMembers();
     // Get versions
     this.getAllVersion();
+    // Get all inventories
+    this.getInventories();
+  }
+
+  // Get all inventories
+  inventories: any = [];
+  getInventories() {
+    let data = {
+      // page: this.pageIndex + 1,
+      // limit: this.pageSize,
+      userId: this._commonService.getUserId(),
+      // searchQuery: this.search_text
+    }
+    // this.loading = true;
+    this._kartaService.getInventories(data).subscribe(
+      (response: any) => {
+        this.inventories = response.catalogs[0].data;
+        // if (response.catalogs[0].metadata.length > 0) {
+        //   this.totalCatalogs = response.catalogs[0].metadata[0].total; 
+        // } else this.totalCatalogs = 0;
+      }
+    ).add(() => this.loading = false);
   }
 
   // ---------FormArray Functions defined Below----------
@@ -210,55 +319,42 @@ export class EditKartaComponent implements OnInit {
         fieldValue: [0, Validators.min(0)],
       })
       this.fields.push(fieldForm);
-      this.recheckFormula();
+      MetricOperations.recheckFormula();
     }
     else {
       this._commonService.warningToaster("Can't add more than 5 fields");
     }
   }
 
-  //Deleting a particular FormulaField Group
+  // Deleting a particular FormulaField Group
   deleteFormulaGroup(fieldIndex: number) {
-    if (this.currentNode.node_type) {
-      this.fields.removeAt(fieldIndex);
-      let newArr = [];
-      for (let i = 0; i < this.fields.length; i++) {
+    this.fields.removeAt(fieldIndex);
+    let newArr = [];
+    for (let i = 0; i < this.fields.length; i++) {
+      this.currentNode.node_type ? (
         newArr.push({
-          ...this.formulaGroup.controls['fields']['controls'][i]
-        });
-      }
-      this.formulaGroup.patchValue({
-        fields: newArr,
-      });
-      this.recheckFormula();
-    }
-    else {
-      this.fields.removeAt(fieldIndex);
-      let newArr = [];
-      for (let i = 0; i < this.fields.length; i++) {
+          ...this.fields['controls'][i].value
+        })
+      ) : (
         newArr.push({
-          ...this.formulaGroup.controls['fields']['controls'][i],
-          fieldName: this.currentNode.node_type
-            ? this.currentNode.node_type.fields[i].fieldName
-            : `Field${i + 1}`,
-          // fieldName: this.formulaGroup.controls['fields']['controls'][i].controls.fieldName ? (this.currentNode.node_type ? this.currentNode.node_type.fields[i].fieldName : this.formulaGroup.controls['fields']['controls'][i].controls.fieldName.value) : `Field${i + 1}`,
-        });
-      }
-      this.formulaGroup.patchValue({
-        fields: newArr,
-      });
-      this.recheckFormula();
+          ...this.fields['controls'][i].value,
+          fieldName: this.fields['controls'][i].value.fieldName != `Field${i + 1}` && this.fields['controls'][i].value.fieldName != `Field${i + 2}` ? 
+          this.fields['controls'][i].value.fieldName : 
+          `Field${i + 1}`,
+        })
+      )
     }
+    this.formulaGroup.patchValue({
+      fields: newArr,
+    });
+    MetricOperations.recheckFormula();
   }
 
   // Enable/Disable Readonly value of Formula Fields
   editFieldStatus(id: number, value: boolean) {
-    let dom: any = document.getElementById('fd' + id);
-    dom.innerHTML = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
-    dom.innerText = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
-    this.formulagroupDefaultValues[id] = dom.innerText;
-    $('#fd' + id).attr('contenteditable', value);
-    $('#fd' + id).focus();
+    let fieldName = this.formulaGroup.controls['fields'].controls[id].controls['fieldName'].value;
+    let dom = MetricOperations.editFieldStatus(id, value, fieldName);
+    this.formulagroupDefaultValues[id] = dom?.innerText;
   }
 
   // Limiting length for Content Editable
@@ -268,11 +364,7 @@ export class EditKartaComponent implements OnInit {
 
   // Check Field Value for ReadOnly
   checkFieldStatus(id: any) {
-    let element: any = document.getElementById(id);
-    if (element) {
-      return JSON.parse(element.contentEditable);
-    }
-    return false;
+    return MetricOperations.checkFieldStatus(id);
   }
 
   // Getting the FormArray values
@@ -289,39 +381,22 @@ export class EditKartaComponent implements OnInit {
   // Set Temporary Field Value to FormArray
   setFieldValues(id: number) {
     let domElem: any = document.getElementById('fd' + id);
-    if (domElem.innerText.length == 0) {
-      domElem.innerText = this.formulagroupDefaultValues[id];
-      domElem.innerHTML = this.formulagroupDefaultValues[id];
-    }
-    else {
-      let checkVal = this.fields['controls'].filter((x: any) => {
-        return x.value.fieldName == domElem.innerText;
+    let fieldValue = this.formulagroupDefaultValues[id];
+    let checkValue = this.fields['controls'].filter((x: any) => {
+      return x.value.fieldName == domElem.innerText;
+    });
+    let data = MetricOperations.setFieldValues(id, fieldValue, checkValue);
+    if(data){
+      this.formulaGroup.controls['fields']['controls'][id].patchValue({
+        fieldName: this.formulagroupDefaultValues[id],
       });
-      
-      if(checkVal.length > 0){
-        domElem.innerText = this.formulagroupDefaultValues[id];
-        domElem.innerHTML = this.formulagroupDefaultValues[id];
-      }
-      else {
-        this.formulaGroup.controls['fields']['controls'][id].patchValue({
-          fieldName: this.formulagroupDefaultValues[id],
-        });
-        if (this.formulagroupDefaultValues[id]) {
-          delete this.formulagroupDefaultValues[id];
-        }
+      if (this.formulagroupDefaultValues[id]) {
+        delete this.formulagroupDefaultValues[id];
       }
     }
     this.editFieldStatus(id, false);
     $('#formula-field').focus();
     $('#formula-field').blur();
-  }
-
-  // Change formula value of each input blur
-  recheckFormula() {
-    if ($('#formula-field').val()) {
-      $('#formula-field').focus();
-      $('#formula-field').blur();
-    }
   }
 
   @HostListener('window:scroll', ['$event']) 
@@ -335,72 +410,27 @@ export class EditKartaComponent implements OnInit {
       clearTimeout(this.timer);
       this.timer = null;
     }
-    this.timer =
-      this.formulaFieldSuggestions.length == 0 &&
+    this.timer = this.formulaFieldSuggestions.length == 0 &&
       setTimeout(() => {
         let tempObj: any = {};
-        let originalValue = event.target.value.trim();
-        let newValue = '';
-        let value = event.target.value.trim().split(/[\s() */%+-]+/g);
-
-        let total: any = 0;
-        let checkFrag = false;
-
+        let suggesionsLength = this.formulaFieldSuggestions.length;
+        let formValidation = this.formulaGroup.valid;
+        let formValues = this.formulaGroup.value;
+        let targetValues = this.target;
         this.fields.controls.forEach((x: any) => {
           tempObj[x['controls']['fieldName'].value] =
             x['controls']['fieldValue'].value;
         });
-
-        value.forEach((y: any) => {
-          if (y) {
-            if (tempObj[y] || tempObj[y] == 0) {
-              newValue = newValue
-                ? newValue.replace(y, tempObj[y])
-                : originalValue.replace(y, tempObj[y]);
-            } else {
-              checkFrag = true;
-            }
-          }
-        });
-        
-
-        if (this.formulaGroup.valid && originalValue) {
-          if (checkFrag) {
-            $('#formula-field').addClass('is-invalid');
-            $('#formula-field').removeClass('is-valid');
+        let response: any = MetricOperations.calculateFormula(event, suggesionsLength, tempObj, formValidation, formValues, targetValues);
+        if(response) {
+          if( !response.data ) {
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
-            this.formulaError = "Invalid Formula!";
+            this.formulaError = response.message;
           } else {
-            total = eval(newValue);
-            this.formulaGroup.patchValue({
-              calculatedValue: total,
-            });
-
-            if(total < 0) {
-              $('#formula-field').addClass('is-invalid');
-              $('#formula-field').removeClass('is-valid');
-              this.formulaError = "Achieved value can't be a negative value..!!";
-            }
-            else {
-              $('#formula-field').removeClass('is-invalid');
               this.formulaError = "";
-              let request = {
-                ...this.formulaGroup.value,
-                metrics: true,
-              };
-              delete request['calculatedValue'];
-  
-              let newTarget = this.target.map((obj: any) => {
-                let percentage = (total / obj.value) * 100;
-                return {
-                  ...obj,
-                  percentage: Math.round(percentage),
-                  value: obj.value
-                }
-              });
-              
+              let [total, newTarget, request] = response.data;
               this.currentNode.achieved_value = total;
               this.currentNode.target = newTarget;
               this._kartaService
@@ -422,7 +452,6 @@ export class EditKartaComponent implements OnInit {
                     this._commonService.errorToaster('Something went wrong..!!');
                   }
               );
-            }
           }
         }
       }, 1000);
@@ -430,119 +459,27 @@ export class EditKartaComponent implements OnInit {
 
   //Show Dropdown suggestions for Formula Fields
   filterFieldSuggestions(event: any) {
-    $('#formula-field').removeClass('is-invalid');
-    $('#formula-field').removeClass('is-valid');
-    let value = event.target.value.trim().toLowerCase();
-    let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
-    let findLastIndex = null;
-
-    for (let i = value.length - 1; i >= 0; i--) {
-      if (mathOperators.includes(value[i])) {
-        findLastIndex = value.lastIndexOf(value[i]);
-        break;
-      }
-    }
-
-    if (!value) {
-      this.formulaFieldSuggestions = [];
-      return;
-    }
-
-    if (findLastIndex != -1 || findLastIndex) {
-      let replaceValue = value.slice(findLastIndex + 1, value.length).trim();
-      if (replaceValue) {
-        let data = this.formulaGroup.value.fields.filter((x: any) => {
-          return x.fieldName.toLocaleLowerCase().includes(replaceValue.trim());
-        });
-        return (this.formulaFieldSuggestions = data);
-      } else {
-        this.formulaFieldSuggestions = [];
-        return;
-      }
-    } else {
+    let value = MetricOperations.filterFieldSuggestions(event);
+    if( typeof value == 'string' ) {
       let data = this.formulaGroup.value.fields.filter((x: any) => {
         return x.fieldName.toLocaleLowerCase().includes(value.trim());
       });
-      return (this.formulaFieldSuggestions = data);
+      this.formulaFieldSuggestions = data;
+    } else {
+      this.formulaFieldSuggestions = value;
     }
   }
 
   // Concatenate Value on click of Dropdown values with Input Value
   concatenateFieldValue(data: any) {
-    let addValue = data.fieldName.trim();
-    let inputValue: any = document.getElementById('formula-field');
-    let mathOperators = ['+', '-', '/', '*', '(', ')', '%'];
-    let findLastIndex = -1;
-
-    for (let i = inputValue.value.length; i > 0; i--) {
-      if (mathOperators.includes(inputValue.value[i])) {
-        findLastIndex = inputValue.value.lastIndexOf(inputValue.value[i]);
-        break;
-      }
-    }
-
-    if (findLastIndex != -1) {
-      let concatValue = inputValue.value.slice(0, findLastIndex + 1).trim();
-      let finalString = concatValue + addValue;
-      inputValue.value = finalString;
-      this.formulaGroup.patchValue({
-        formula: finalString,
-      });
-      this.formulaFieldSuggestions = [];
-      inputValue.focus();
-      return;
-    } else {
-      inputValue.value = addValue;
-      this.formulaGroup.patchValue({
-        formula: addValue,
-      });
-      this.formulaFieldSuggestions = [];
-      inputValue.focus();
-      return;
-    }
+    let value = MetricOperations.concatenateFieldValue(data);
+    this.formulaGroup.patchValue({
+      formula: value,
+    });
+    this.formulaFieldSuggestions = [];
   }
+
   // ---------FormArray Functions defined Above----------
-
-  // TOGGLE LEFT SIDEBAR
-  togggleLeftSidebar() {
-    $('#sidebar-two').toggleClass('active');
-    $('.sidebar_collapsible_btn').toggleClass('show');
-    if ($('#sidebar-two').hasClass('active')) {
-      $('.sidebar_collapsible_btn img').attr('src', 'assets/img/side-arrow-left.svg');
-    } else {
-      $('.sidebar_collapsible_btn img').attr('src', 'assets/img/side-arrow-right.svg')
-    }
-  }
-  // HIDE LEFT SIDEBAR
-  hideLeftSidebar() {
-    $('#sidebar-two').removeClass('active');
-    $('.sidebar_collapsible_btn').removeClass('show');
-  }
-  // CLOSE RIGHT SIDEBAR
-  closeRightSidebar() {
-    $('#rightSidebar, .right_sidebar_overlay').removeClass('open');
-    $('body').removeClass('rightSidebarOpened');
-  }
-  // OPEN RIGHT SIDEBAR
-  openRightSidebar(value?: any) {
-    $('#rightSidebar, .right_sidebar_overlay').addClass('open');
-    if(value && value !== 0){
-      $('#rightSidebar').scrollTop(value);
-    }
-    else {
-      $('#rightSidebar').scrollTop(0);
-    }
-    $('body').addClass('rightSidebarOpened');
-  }
-
-  // DISABLE CHART FUNCTIONS
-  disableChart() {
-    $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
-  }
-  // ENABLE CHART FUNCTIONS
-  enableChart() {
-    $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
-  }
 
   // EXPORT KARTA
   exportKarta(type: string) {
@@ -554,27 +491,28 @@ export class EditKartaComponent implements OnInit {
   // Set karta's div width
   setKartaDimension() {
     let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
-    karta_col_width = $('.karta_column').width();
+    karta_col_width = jqueryFunctions.getWidth('.karta_column');
     // karta_col_height = $('.karta_column').height();
     karta_col_height = 455;
-    svg_width = $('#karta-svg svg').width();
-    svg_height = $('#karta-svg svg').height();
+    svg_width = jqueryFunctions.getWidth('#karta-svg svg');
+    svg_height = jqueryFunctions.getHeight('#karta-svg svg');
 
     width = svg_width > karta_col_width ? svg_width : karta_col_width;
     // height = svg_height > karta_col_height ? svg_height : karta_col_height;
     height = 455;
 
-    $('#karta-svg').css('max-width', karta_col_width);
+    jqueryFunctions.setStyle('#karta-svg', 'max-width', karta_col_width);
+
     // $('#karta-svg').css("max-height", karta_col_height + 5);   // For multiple phases
-    $('#karta-svg').css('max-height', karta_col_height);
-    $('#karta-svg svg').attr('width', width);
-    $('#karta-svg svg').attr('height', height);
+    jqueryFunctions.setStyle('#karta-svg', 'max-height', karta_col_height);
+    jqueryFunctions.setAttribute('#karta-svg svg', 'width', width);
+    jqueryFunctions.setAttribute('#karta-svg svg', 'height', height);
   }
 
   // Change chart mode
   changeMode(e: any) {
-    if (e.target.value === "enable") this.enableChart();
-    else this.disableChart();
+    if (e.target.value === "enable") jqueryFunctions.enableChart();
+    else jqueryFunctions.disableChart();
   }
 
   // Get all users
@@ -615,11 +553,25 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
-  // Measure calculation section
+  // Target functions
+  disableTargetOption(value: string) {
+    let index = this.targetOptions.findIndex((item: any) => item.value === value);
+    this.targetOptions[index].disabled = true;
+  }
+  enableTargetOption(value: string) {
+    let index = this.targetOptions.findIndex((item: any) => item.value === value);
+    this.targetOptions[index].disabled = false;
+  }
+  previousTarget(e: any) {
+    this.previousTargetFrequency = e.target.value;
+  }
   setTarget(type: string, e: any, index: any) {
     let node = this.currentNode;
     if (type === 'frequency') {
       this.target[index].frequency = e.target.value;
+      this.disableTargetOption(e.target.value);
+      this.enableTargetOption(this.previousTargetFrequency);
+      this.previousTargetFrequency = e.target.value;
       if (index === 0 && node.hasOwnProperty("start_date")) this.setDueDate(node.start_date);
       this.updateNode('target', this.target, 'node_updated', node);
     }
@@ -632,13 +584,16 @@ export class EditKartaComponent implements OnInit {
     }
   }
   addMoreTarget() {
+    let remainingTargetOptions = this.targetOptions.filter((item: any) => item.disabled === false);
     this.target.push({
-      frequency: 'monthly',
+      frequency: remainingTargetOptions[0].value,
       value: 0,
       percentage: 0,
     });
+    this.disableTargetOption(remainingTargetOptions[0].value);
   }
   removeTarget(index: number) {
+    this.enableTargetOption(this.target[index].frequency);
     this.target.splice(index, 1);
     let node = this.currentNode;
     this.updateNode('target', this.target, 'node_update_key_remove', node);
@@ -697,9 +652,9 @@ export class EditKartaComponent implements OnInit {
 
     // Show properties right sidebar
     if(scroll && scroll !== 0){
-      this.openRightSidebar(scroll);
+      jqueryFunctions.openRightSidebar(scroll);
     } else {
-      this.openRightSidebar();
+      jqueryFunctions.openRightSidebar();
     }
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
@@ -707,15 +662,20 @@ export class EditKartaComponent implements OnInit {
     if (this.currentNode.phase.name === 'KPI') {
       this.showKPICalculation = true;
       // Set target
-      if (param.target) this.target = param.target;
-      else this.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
+      this.target = param.target;
+      // Disable the target option that is already defined
+      this.target.forEach((element: any) => {
+        this.disableTargetOption(element.frequency);
+      });
       // Set due date, if available
       if (this.currentNode.due_date)
         this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
+      // Set notify user
+      if (this.currentNode.notifyUserId) {
+        if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
+        else this.notifyType = "specific";
+      } else this.notifyType = "";
     }
-
-    if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
-    else if (this.currentNode.notifyUserId) this.notifyType = "specific";
   }
 
   // Set due date
@@ -794,10 +754,11 @@ export class EditKartaComponent implements OnInit {
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
+    this.kpiCalculationPeriod = el.target.value;
     let node = this.currentNode;
-    if (el.target.value === "month-to-date" || el.target.value === "year-to-date") {
-      this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-      this.D3SVG.updateNode(this.karta.node);
+    if (el.target.value === "monthly" || el.target.value === "month-to-date" || el.target.value === "year-to-date") {
+      // this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+      // this.D3SVG.updateNode(this.karta.node);
       this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
     } else {
       this._kartaService.getKPICalculation({ "nodeId": node.id, "type": el.target.value }).subscribe(
@@ -877,11 +838,19 @@ export class EditKartaComponent implements OnInit {
         function findTarget(type: string) {
           return element.target.find((item: any) => item.frequency === type);
         }
+        // Set target value according to monthly
+        if (element.kpi_calc_period === "monthly") {
+          if (findTarget('monthly')) targetValue = findTarget('monthly').value;
+          else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
+          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
+          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
+          targetValue = targetValue;
+        }
         // Set target value according to month to date
         if (element.kpi_calc_period === "month-to-date") {
           if (findTarget('monthly')) targetValue = findTarget('monthly').value;
           else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 3;
+          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
           targetValue = todayDate * (targetValue / daysInMonth);
         }
@@ -901,7 +870,7 @@ export class EditKartaComponent implements OnInit {
         // const todayDay = moment().date();
         // targetValue = element.target[0].value;
         // targetValue = todayDay * (targetValue / totalDays);
-        if (element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") {
+        if (element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") {
           let current_percentage= (element.achieved_value/targetValue) * 100;
           element.percentage = Math.round(current_percentage);
           element.percentage = element.percentage === Infinity ? 0 : element.percentage;
@@ -957,9 +926,9 @@ export class EditKartaComponent implements OnInit {
   versionRollback(event: any){
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
-        $('#karta-svg svg').remove();
+        jqueryFunctions.removeElement('#karta-svg svg');
         this.getKartaInfo();
-        this.recheckFormula();
+        MetricOperations.recheckFormula();
       },
       (err) => console.log(err)
     );
@@ -1016,10 +985,26 @@ export class EditKartaComponent implements OnInit {
   // Add node
   addNode(param: any) {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
+    let weightage = 0, isWeightageDivided = false;
+    if (param.hasOwnProperty("children") && param.children.length > 0) {
+      let haveFurtherChildren = false;
+      param.children.forEach((element: any) => {
+        if (element.hasOwnProperty("children") && element.children.length > 0 && element.phaseId === phase.id) {
+          weightage = 0;
+          haveFurtherChildren = true;
+        }
+      });
+      if (!haveFurtherChildren) {
+        weightage = Math.round(100 / (param.children.length + 1));
+        isWeightageDivided = true;
+      }
+    }
+    else weightage = 100;
     let data: any = {
       kartaDetailId: this.kartaId,
       phaseId: phase.id,
-      parentId: param.id
+      parentId: param.id,
+      weightage
     }
     if (phase.name === "KPI") {
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
@@ -1028,7 +1013,7 @@ export class EditKartaComponent implements OnInit {
       data.is_achieved_modified = false;
       data.alert_type = "";
       data.alert_frequency = "";
-      data.kpi_calc_period = 'month-to-date';
+      data.kpi_calc_period = 'monthly';
     }
     this._kartaService.addNode(data).subscribe((response: any) => {
       response.phase = phase;
@@ -1059,10 +1044,16 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.addKartaHistoryObject(history_data).subscribe(
         (result: any) => {
           this._kartaService.updateKarta(this.kartaId, {historyId: result.id}).subscribe(
-            (res: any) => {}
+            (response: any) => {}
           );
           this._kartaService.syncKartaHistory({kartaId: this.kartaId, versionId: this.versionId}).subscribe(
-            (res: any) => {}
+            (response: any) => {
+              if (isWeightageDivided) {
+                param.children.forEach((element: any) => {
+                  this.updateNode('weightage', weightage, 'node_updated', element);
+                });
+              }
+            }
           );
         }
       );
@@ -1122,10 +1113,10 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any, typeValue?: any) {
+  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any, type?: any) {
     let data = { [key]: value }
     if( key == "achieved_value" ) {
-      data["type_value"] = typeValue
+      data["type"] = type
     };
     this._kartaService.updateNode(updatingNode.id? updatingNode.id: this.currentNode.id, data).subscribe(
       (response: any) => {
@@ -1135,7 +1126,8 @@ export class EditKartaComponent implements OnInit {
         updatingNode[key] = value;
         this.D3SVG.updateNode(updatingNode);
         // Calculate new percentage when any achieved, target and weightage value changes
-        if (key === "achieved_value" || key === "target" || key === "weightage" || key == "contributorId") {
+        if (key === "achieved_value" || key === "target" || key === "weightage" || key == "contributorId" || 
+        (this.kpiCalculationPeriod === "monthly" || this.kpiCalculationPeriod === "month-to-date" || this.kpiCalculationPeriod === "year-to-date")) {
           this.updateNewPercentage();
         }
         // Save the karta update history
@@ -1171,13 +1163,20 @@ export class EditKartaComponent implements OnInit {
         // Set thumbnail
         this.catalogForm.patchValue({ thumbnail: base64Image });
         this.catalogForm.value.userId = this._commonService.getUserId();
-        
-        this.catalogForm.value.node = "ag"
+        // remove parent object from every node to prevent circular json
+        let node = JSON.stringify(this.catalogForm.value.node, function(key, value) {
+          if(key == 'parent') return value.id;
+          return value;
+        });
+        this.catalogForm.value.node = JSON.parse(node);
+
         this.catalogSubmitFlag = true;
         this._kartaService.addNodeInCatalog(this.catalogForm.value).subscribe(
           (response: any) => {
-            this._commonService.successToaster("Node saved successfully!");
-            $("#saveNodeModal").modal('hide');
+            let node_type = this.catalogForm.value.node_type;
+            node_type = node_type.charAt(0).toUpperCase() + node_type.slice(1);
+            this._commonService.successToaster(`${node_type} saved successfully!`);
+            jqueryFunctions.hideModal('saveNodeModal');
             this.catalogForm.reset();
             this.catalogSubmitted = false;
           }
@@ -1252,7 +1251,7 @@ export class EditKartaComponent implements OnInit {
 
   onDragOver(ev: any) {
     ev.preventDefault();
-    this.hideLeftSidebar();
+    jqueryFunctions.hideLeftSidebar();
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.add('selectedPhase');
   }
@@ -1429,7 +1428,7 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
           this._commonService.successToaster("Your have shared karta successfully");
-          $('#shareKartaModal').modal('hide');
+          jqueryFunctions.hideModal('shareKartaModal');
           email_array.forEach((element: any) => {
             this.karta.sharedTo.push({ email: element });
           });
@@ -1549,7 +1548,6 @@ export class EditKartaComponent implements OnInit {
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
                     this.setKartaDimension();
-                    // this.updateNodeProperties(kartaNode);
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
                   });
@@ -1580,10 +1578,9 @@ export class EditKartaComponent implements OnInit {
                       this.currentNode.phase = "";
                       this.showSVG = true;
                       this.isRtNodDrgingFrmSide = false;
-                      // this.updateNodeProperties(kartaNode);
                       this.getKartaInfo();
                       setTimeout(() => {
-                        $('#karta-svg').children("svg").eq(1).remove();
+                        jqueryFunctions.removeKarta();
                       }, 2000);
                     },
                     (err) => {
@@ -1595,7 +1592,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Undo reached..!!");
+            this._commonService.warningToaster("Maximum Undo limit has reached..!!");
           }
         }
       }
@@ -1619,7 +1616,7 @@ export class EditKartaComponent implements OnInit {
                     // this.updateNodeProperties(kartaNode);
                     this.getKartaInfo();
                     setTimeout(() => {
-                      $('#karta-svg').children("svg").eq(1).remove();
+                      jqueryFunctions.removeKarta();
                     }, 2000);
                   },
                   (err) => {
@@ -1661,7 +1658,7 @@ export class EditKartaComponent implements OnInit {
             }
           }
           else {
-            this._commonService.warningToaster("Redo reached..!!");
+            this._commonService.warningToaster("Maximum Redo limit has reached..!!");
           }
         }
       }
@@ -1670,4 +1667,3 @@ export class EditKartaComponent implements OnInit {
   // Undo Redo Functionality ends
 
 }
-

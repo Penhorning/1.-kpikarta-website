@@ -39,7 +39,7 @@ export class CommonService {
   formValidation: any  = {
     blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
     email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-    password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+    password: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()+=\?;,./{}|\":<>\[\]\\\' ~_-`]).{8,}/
   }
   // User variables
   userRole: string = "";

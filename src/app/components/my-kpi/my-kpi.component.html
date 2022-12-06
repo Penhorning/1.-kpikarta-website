@@ -10,7 +10,7 @@
       </div>
       <div class="col-lg-2 pr-2 pl-2">
         <div class="all-section">
-          <div class="row" style="cursor: pointer;" (click)="filterByStatus('')">
+          <div class="row cursor_pointer" (click)="filterByStatus('')">
             <div class="col-4">
               <img src="assets/img/future.svg">
             </div>
@@ -25,7 +25,7 @@
       </div>
       <div class="col-lg-2 pr-2 pl-2">
         <div class="all-section">
-          <div class="row" class="row" style="cursor: pointer;" (click)="filterByStatus('in_progress')">
+          <div class="row cursor_pointer" (click)="filterByStatus('in_progress')">
             <div class="col-4">
               <img src="assets/img/current.svg">
             </div>
@@ -40,7 +40,7 @@
       </div>
       <div class="col-lg-2 pr-2 pl-2">
         <div class="all-section">
-          <div class="row" class="row" style="cursor: pointer;" (click)="filterByStatus('completed')">
+          <div class="row cursor_pointer" (click)="filterByStatus('completed')">
             <div class="col-4">
               <img src="assets/img/past.svg">
             </div>
@@ -59,14 +59,13 @@
             <div class="form-group search-filed m-0">
               <input type="text" class="form-control" name="search" [(ngModel)]="search_text" id="search"
                 placeholder="Search...">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg"
-                viewBox="0 0 16 16" style="cursor: pointer; margin-right: 30px; margin-top: 3px;" *ngIf="search_text"
-                (click)="clearSearch()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg clear_search"
+                viewBox="0 0 16 16" *ngIf="search_text" (click)="clearSearch()">
                 <path
                   d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
               </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
-                style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search cursor_pointer"
+                viewBox="0 0 16 16" (click)="search()">
                 <path
                   d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
               </svg>
@@ -81,9 +80,7 @@
           <div class="dropdown sort-drop">
             <div>
               <form>
-                
-                <select #id (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom"
-                  style="height:35px; margin-top:3px; font-weight: 700;">
+                <select #id (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom sort_dropdown">
                   <option hidden>Sort by</option>
                   <option value="worst">Worst to Best Performing</option>
                   <option value="best">Best to Worst Performing</option>
@@ -1081,7 +1078,7 @@
 
 <!-- share-link-modal -->
 
-<div class="modal fade shara-link" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+<div class="modal fade share_link" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
   aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content p-4">

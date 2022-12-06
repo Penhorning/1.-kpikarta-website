@@ -55,7 +55,7 @@
                 <h5 class="mb-0">
                   <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
                     aria-controls="collapseOne">
-                    Nodes
+                    Branches
                   </button>
                   <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
                     aria-expanded="true" aria-controls="collapseOne">
@@ -206,14 +206,14 @@
 
     <div class="karta-edit-header">
       <div class="row no-gutters">
-        <div class="col-lg-7">
+        <div class="col-lg-6">
           <div class="row">
             <div class="col-lg-3 pr-0">
               <div class="karta-name">
                 <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
               </div>
             </div>
-            <div class="col-lg-3 pl-0">
+            <div class="col-lg-2 pl-0">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta" (change)="versionRollback($event)"
                   [(ngModel)]="versionId">
@@ -226,7 +226,7 @@
                   class="img-fluid"></a>
               <a href="javascript:void(0);" title="Redo" (click)="redoKarta()"><img src="assets/img/Redo.svg"
                   class="img-fluid"></a>
-              <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
+              <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
             </div>
             <div class="col-lg-4 p-0">
               <div class="time-select-karta">
@@ -235,9 +235,9 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-5">
+        <div class="col-lg-6">
           <div class="row no-gutters">
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta-mode" id="chartMode" (change)="changeMode($event)">
                   <option value="enable">Editor Mode</option>
@@ -245,15 +245,18 @@
                 </select>
               </div>
             </div>
-            <div class="col-lg-4 p-0">
+            <div class="col-lg-2 text-center">
+              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" (click)="onShare(sharedKartaStr)">View</button>
+            </div>
+            <div class="col-lg-3 p-0">
               <div class="icon-karta">
                 <!-- Share karta -->
-                <a href="#" data-toggle="modal" data-target="#shareKartaModal" (click)="onShare(sharedKartaStr)"><img
+                <a href="#" data-toggle="modal" data-target="#shareKartaModal" title="Share" (click)="onShare(sharedKartaStr)"><img
                     src="assets/img/share-icon.svg"></a>
                 <!-- Export Karta -->
                 <div class="dropdown show">
                   <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
+                    aria-haspopup="true" aria-expanded="false" title="Export">
                     <img src="assets/img/download-icon.svg">
                   </a>
                   <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
@@ -272,7 +275,7 @@
                 <!-- Filter Karta -->
                 <div class="dropdown filter-option m-0">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Filter">
                     <img src="assets/img/filter.svg" class="">
                   </button>
                   <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
@@ -351,13 +354,13 @@
               <div class="save-setting-btn">
                 <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
                 <div class="dropdown">
-                  <button (click)="colorFunctionDropDown()" class="dropbtn"><img src="assets/img/settings.svg"></button>
+                  <button (click)="colorFunctionDropDown()" class="dropbtn" title="Settings"><img src="assets/img/settings.svg"></button>
                   <div id="colorDropdown" class="dropdown-content custom-drop">
 
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
                     <div class="fillter-inner-white-box p-2">
                       <div class="row ">
-                        <div class="col-6">
+                        <div class="col-6"> 
                           <div class="pl-1">
                             <p>Help Text</p>
                           </div>
@@ -465,96 +468,7 @@
                     </div>
                   </div>
                 </div>
-
-
-
-
-
-                <!-- <div class="dropdown filter-option m-0"> 
-                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                    <a href="#"><img src="assets/img/settings.svg"></a>
-                  </button>
-                  <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
-                    <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
-                    <div class="fillter-inner-white-box p-2">
-                      <div class="row ">
-                        <div class="col-6">
-                          <div class="pl-1">
-                            <p>Help Text</p>
-                          </div>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="toggle-tab-karta-edit ">
-                            <label class="switch" for="checkbox">
-                              <input type="checkbox" id="checkbox">
-                              <div class="slider round karta-edit"></div>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <hr>
-                      <div class="row">
-                        <div class="col-lg-8">
-                          <div class="pl-1">
-                            <p>Color Settings</p>
-                          </div>
-                        </div>
-                        <div class="col-lg-4 text-right">
-                          <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                            id="rangeDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                            <img src="assets/img/plus-btn.svg" class="img-fluid" alt="">
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="rangeDropdownMenuButton">
-                            Test
-                          </div>
-
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="color-box-plus-min">
-                            <ng-container *ngFor="let setting of editColorSettings?.settings; let i = index">
-                              <div class="row" [ngClass]="{'mt-2' : i > 0}">
-                                <div class="col-lg-6">
-                                  <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
-                                    <h6>100%+</h6>
-                                  </ng-container>
-                                  <ng-template #not100>
-                                    <h6>{{setting.min}}-{{setting.max}}%</h6>
-                                  </ng-template>
-                                </div>
-                                <div class="col-lg-6 text-right">
-                                  <div class="float-right d-flex">
-                                    <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"
-                                        [style.background]="selectedColor2"></div>
-                                      <div class="plus-minus above100">
-                                        <label for="colorPicker2"><img src="assets/img/edit.png"></label>
-                                        <input type="color" id="colorPicker2" value="#000000"
-                                          [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
-                                      </div>
-                                    </ng-container>
-                                    <ng-template #not100Color>
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
-                                      <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
-                                        <img src="assets/img/minus.png">
-                                      </div>
-                                    </ng-template>
-                                  </div>
-                                </div>
-                              </div>
-                            </ng-container>
-                          </div>
-
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
-
-                <a href="#"><img src="assets/img/information.svg"></a>
+                <a href="javascript:void(0);" title="Info"><img src="assets/img/information.svg"></a>
               </div>
             </div>
           </div>
@@ -779,7 +693,7 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
+                  <input type="date" class="form-control" [min]="maxStartDate | date:'yyyy-MM-dd'" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
                     (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
                   <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                 </div>
@@ -803,7 +717,7 @@
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
-                      <input type="date" class="form-control"
+                      <input type="date" class="form-control"  [min]="maxFiscalStartDate"
                         [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'"
                         (change)="changeFiscalStartDate($event)">
                     </div>
@@ -821,21 +735,28 @@
             </div>
             <hr>
             <!-- Target Value -->
+            <label class="text-nowrap font_weight_500">Target Value</label>
             <ng-container *ngFor="let t of target; let i = index">
-              <div class="row mt-3">
+              <div class="row mt-2 mb-4">
                 <div class="col-lg-5 pr-0">
-                  <div class="selct-option-side-r">
-                    <label class="text-nowrap" style="margin-bottom: 6px;">Target Value</label>
-                    <select class="form-control" [value]="t.frequency" (change)="setTarget('frequency', $event, i)">
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="quarterly">Quarterly</option>
-                      <option value="annually">Annually</option>
+                  <div class="target_select selct-option-side-r">
+                    <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
+                      <!-- <option *ngFor="let tO of targetOptions" [value]="tO.value" [disabled]="tO.disabled">
+                        {{ tO.name }}
+                      </option> -->
+                      <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
+                      <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
+                      <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
+                      <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
+                      <!-- <option [value]="targetOptions[0].value" [disabled]="targetOptions[0].disabled">{{ targetOptions[0].name }}</option>
+                      <option [value]="targetOptions[1].value" [disabled]="targetOptions[1].disabled">{{ targetOptions[1].name }}</option>
+                      <option [value]="targetOptions[2].value" [disabled]="targetOptions[2].disabled">{{ targetOptions[2].name }}</option>
+                      <option [value]="targetOptions[3].value" [disabled]="targetOptions[3].disabled">{{ targetOptions[3].name }}</option> -->
                     </select>
                   </div>
                 </div>
                 <div class="col-lg-4 px-2">
-                  <div class="custom-input-side-r">
+                  <div class="custom-input-side-r-flow">
                     <input type="number" class="form-control" [value]="t.value" (input)="setTarget('value', $event, i)">
                     <!-- <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                     [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
@@ -844,12 +765,10 @@
                   </div>
                 </div>
                 <div class="col-lg-3 d-flex px-2">
-                  <ng-container *ngIf="target.length > 1">
-                    <div class="add-btn-side-r" style="cursor: pointer;" (click)="removeTarget(i)">
-                      <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
-                    </div>
-                  </ng-container>
-                  <div class="add-btn-side-r" style="cursor: pointer;" (click)="addMoreTarget()">
+                  <div class="cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
+                    <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
+                  </div>
+                  <div class="cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
                     <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
                   </div>
                 </div>
@@ -859,7 +778,7 @@
             <div class="row mt-3" *ngIf="kpiType === 'measure' ">
               <div class="col-lg-12">
                 <div class="form-group">
-                  <label style="font-weight: 500;">Achieved Value</label>
+                  <label class="font_weight_500">Achieved Value</label>
                   <input type="number" class="form-control" [(ngModel)]="currentNodeAchievedValue"
                     (blur)="changeAchievedValue()"
                     [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null || currentNodeAchievedValue > 9999 }">
@@ -879,6 +798,7 @@
                   <label>KPI Calculation Periods</label>
                   <select class="form-control" [(ngModel)]="currentNode.kpi_calc_period"
                     (change)="changeKPIPeriods($event)">
+                    <option value="monthly">One-time monthly target</option>
                     <option value="month-to-date">Month to date</option>
                     <option value="year-to-date">Year to date</option>
                     <option value="month-over-month">Month over month</option>
@@ -919,7 +839,7 @@
                               *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"
                                 class="img-fluid edit-btn-r"></a>
                           </div>
-                          <input type="number" class="form-control" placeholder="" (blur)="recheckFormula()"
+                          <input type="number" class="form-control" placeholder="" min="0" (blur)="metricOperations.recheckFormula()"
                             formControlName="fieldValue"
                             [ngClass]="{ 'is-invalid': formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched) }" />
                           <div class="invalid-feedback d-block"
@@ -1045,7 +965,7 @@
       </div>
 
       <!-- Share karta modal -->
-      <div class="modal fade shara-link" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+      <div class="modal fade" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content p-4">
@@ -1103,15 +1023,14 @@
         </div>
       </div>
 
-      <!-- Save karta modal -->
-      <div class="modal fade shara-link" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+      <!-- Save catalog modal -->
+      <div class="modal fade" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content p-4">
             <div class="modal-header">
-              <h5 class="modal-title pt-0" id="staticBackdropLabel">Save Node</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                (click)="selectedSharedUsers = undefined">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">Save {{ catalogForm?.value?.node_type | titlecase }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -1134,6 +1053,70 @@
                           <span class="sr-only">Loading...</span>
                         </div>
                         <ng-container *ngIf="!catalogSubmitFlag">SAVE</ng-container>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vew karta modal -->
+      <div class="modal fade" id="viewKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-4">
+            <div class="modal-header">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">View Karta</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="share-link-model mt-3">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <form [formGroup]="viewKartaForm" (ngSubmit)="onViewKartaSubmit()">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="form-group">
+                            <label>Type <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select-option" formControlName="type" (change)="viewKartaType($event)"
+                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors }">
+                              <option value="" selected>Select</option>
+                              <option value="month">Month</option>
+                              <option value="week">Week</option>
+                              <option value="quarter">Quarter</option>
+                            </select>
+                            <div *ngIf="(viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors"
+                              class="invalid-feedback">
+                              <div *ngIf="viewKarta.type.errors.required">Type is required!</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6" *ngIf="showViewKartaNumber">
+                          <div class="form-group">
+                            <label>Number <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select-option" formControlName="number"
+                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors }">
+                              <option value="" selected>Select</option>
+                              <option *ngFor="let number of viewKartaNumbers" [value]="number.value">{{ number?.name }}
+                              </option>
+                            </select>
+                            <div *ngIf="(viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors"
+                              class="invalid-feedback">
+                              <div *ngIf="viewKarta.number.errors.required">Number is required!</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button class="send-btn" [disabled]="viewKartaSubmitFlag">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="viewKartaSubmitFlag">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <ng-container *ngIf="!viewKartaSubmitFlag">SUBMIT</ng-container>
                       </button>
                     </form>
                   </div>

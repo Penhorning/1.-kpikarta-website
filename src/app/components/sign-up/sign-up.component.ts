@@ -90,7 +90,7 @@ export class SignUpComponent implements OnInit {
             },
             (error: any) => {
               if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-                this._commonService.errorToaster("Email is already registered, please try with a different one");
+                this._commonService.errorToaster("Email is already registered, please try a different one");
               }
             }
           ).add(() => this.submitFlag = false );

@@ -7,6 +7,9 @@ import { CatalogComponent } from './catalog.component';
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
 
+// Third party module
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
 
 @NgModule({
   declarations: [
@@ -15,7 +18,8 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
   imports: [
     CommonModule,
     CatalogRoutingModule,
-    SharedModule
+    SharedModule,
+    NgMultiSelectDropDownModule.forRoot()
   ]
 })
 export class CatalogModule { }
