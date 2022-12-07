@@ -720,7 +720,7 @@ export class EditKartaComponent implements OnInit {
         .filter((item: any) => item.id !== node.id)
         .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
       if (sum + this.currentNodeWeight > 100) {
-        this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greator than 100!");
+        this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greater than 100!");
       } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
     }
   }
@@ -783,7 +783,7 @@ export class EditKartaComponent implements OnInit {
   changeAchievedValue() {
     let node = this.currentNode;
     if (this.currentNodeAchievedValue < 0 || this.currentNodeAchievedValue === null) this._commonService.errorToaster("Please enter positive value!");
-    else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greator than 9999!");
+    else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greater than 9999!");
     else {
       // Calculate new percentage
       this.target.forEach((element: any) => {
