@@ -1312,7 +1312,7 @@ export class EditKartaComponent implements OnInit {
       this.getKartaInfo();
       this.showSVG = true;
       this.isRtNodDrgingFrmSide = false;
-      this.updateNodeProperties(response);
+      // this.updateNodeProperties(response);
 
       let history_data = {
         event: "node_created",
