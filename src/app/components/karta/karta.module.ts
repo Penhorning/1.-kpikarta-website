@@ -6,6 +6,9 @@ import { KartaComponent } from './karta.component';
 import { CreateKartaComponent } from './create-karta/create-karta.component';
 import { EditKartaComponent } from './edit-karta/edit-karta.component';
 import { AllKartasComponent } from './all-kartas/all-kartas.component';
+import { EditKartaPropertyComponent } from './edit-karta-property/edit-karta-property.component';
+import { EditKartaInventoryComponent } from './edit-karta-inventory/edit-karta-inventory.component';
+import { EditKartaHeaderComponent } from './edit-karta-header/edit-karta-header.component';
 
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
@@ -14,9 +17,6 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
-import { EditKartaPropertyComponent } from './edit-karta-property/edit-karta-property.component';
-import { EditKartaInventoryComponent } from './edit-karta-inventory/edit-karta-inventory.component';
-import { EditKartaHeaderComponent } from './edit-karta-header/edit-karta-header.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +26,7 @@ import { EditKartaHeaderComponent } from './edit-karta-header/edit-karta-header.
     AllKartasComponent,
     EditKartaPropertyComponent,
     EditKartaInventoryComponent,
-    EditKartaHeaderComponent
+    EditKartaHeaderComponent,
   ],
   imports: [
     CommonModule,

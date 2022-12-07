@@ -64,12 +64,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         {
             title: 'Save',
             action: function(elm, d, i) {
-                // let node_type = "node";
-                // if (d.hasOwnProperty("children") && d.children.length > 0) {
-                //     node_type = "branch";
-                //   } else if (d.phase.name === "KPI") {
-                //     node_type = d.type;
-                //   }
                 let node_type = "branch";
                 if (d.phase.name === "KPI") node_type = d.type;
                 options.events.onRightClick(d, node_type);
@@ -180,11 +174,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         d3.select(domNode).attr('class', 'node');
         // now restore the mouseover event or we won't be able to drag a 2nd time
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
-        // updateTempConnector();
         if (draggingNode !== null) {
             update(root);
             options.events.updateDraggedNode(draggingNode);
-            // centerNode(draggingNode);
             draggingNode = null;
         }
     }
@@ -207,47 +199,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 domNode = this;
                 initiateDrag(d, domNode);
             }
-            // console.log(selectedNode)
-            // if (selectedNode != draggingNode && selectedNode !== null) {
-            //     console.log('if')
-            //     $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'blue');
-            // }
-            // d3.select(domNode).select('.ghostCircle').attr('pointer-events', 'none');
-            // d3.select(selectedNode).select('.ghostCircle').attr('class', 'ghostCircle show');
-
-            // get coords of mouseEvent relative to svg container to allow for panning
-            // relCoords = d3.mouse($('svg').get(0));
-            // if (relCoords[0] < panBoundary) {
-            //     panTimer = true;
-            //     pan(this, 'left');
-            // } else if (relCoords[0] > ($('svg').width() - panBoundary)) {
-
-            //     panTimer = true;
-            //     pan(this, 'right');
-            // } else if (relCoords[1] < panBoundary) {
-            //     panTimer = true;
-            //     pan(this, 'up');
-            // } else if (relCoords[1] > ($('svg').height() - panBoundary)) {
-            //     panTimer = true;
-            //     pan(this, 'down');
-            // } else {
-            //     try {
-            //         clearTimeout(panTimer);
-            //     } catch (e) {
-
-            //     }
-            // }
-
-            // For syncing the node position with mouse position
+            
             var dX = d3.event.x - 30;
             var dY = d3.event.y - 30;
             d3.select(this).attr("transform", "translate(" + dX + ", " + dY + ")");
-
-            // d.x0 += d3.event.dx;
-            // d.y0 += d3.event.dy;
-            // var node = d3.select(this);
-            // node.attr("transform", "translate(" + d.y0 + "," + d.x0 + ")");
-            // updateTempConnector();
         }).on("dragend", function (d) {
             if (d == root) {
                 return;
@@ -296,7 +251,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             }
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
         }
-        // updateTempConnector();
     };
     var outCircle = function (d) {
         if (selectedNode != draggingNode && selectedNode !== null)
@@ -356,9 +310,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // })
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
-                //   });
-            }).on("click", nodeclick)
-            .on("contextmenu", d3.contextMenu(contextMenuItems));
+            })
+            .on("click", nodeclick)
+            .on("contextmenu", d3.contextMenu(contextMenuItems))
+            // Drag and drop from inventory
+            .on("dragover", function(d) {
+                console.log("on drag over ", d)
+                // overCircle(d);
+            })
+            .on("dragleave", function(event) {
+                console.log("on drag leave ", event)
+            })
+            .on("drop", function(event) {
+                console.log("on drop ", event)
+            });
             
         nodeEnter
             .append("foreignObject")
@@ -371,19 +336,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr('class', 'ghostCircle')
             .attr("width", 93)
             .attr("height", 60)
-            // .attr("opacity", 0.2) // change this to zero to hide the target area
-            // .style("background", "red")
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
-                console.log("mouseover ", node);
                 overCircle(node);
             })
             .on("mouseout", function (node) {
-                console.log("mouseout ", node);
                 outCircle(node);
             });
-        //.attr("r", 10)
-        //.style("fill", "#fff");
         // Transition nodes to their new position.
         //horizontal tree
         var nodeUpdate = node.transition()
@@ -441,34 +400,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             d.y0 = d.y;
         });
     }
-
-    var updateTempConnector = function () {
-        var data = [];
-        if (draggingNode !== null && selectedNode !== null) {
-            // have to flip the source coordinates since we did this for the existing connectors on the original tree
-            data = [{
-                source: {
-                    x: selectedNode.y0,
-                    y: selectedNode.x0
-                },
-                target: {
-                    x: draggingNode.y0,
-                    y: draggingNode.x0
-                }
-            }];
-        }
-        // var connectorPointer = `M ${selectedNode.x0},${selectedNode.y0} h 10`;
-        var link = svg.selectAll(".templink").data(data);
-        link.enter().append("path")
-            .attr("class", "templink")
-            .attr("d", d3.svg.diagonal())
-
-            .attr('pointer-events', 'none');
-
-        link.attr("d", d3.svg.diagonal());
-
-        link.exit().remove();
-    };
 
     // Toggle children on click.
     function nodeclick(d) {
@@ -585,9 +516,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         window.jsPDF = window.jspdf.jsPDF;
         svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2) }).then(uri => {
             let imageBase64 = uri.split(',')[1];
-            // let svgWidth = $("#karta-svg svg").width();
-            // let doc = new jsPDF('l', 'px', [svgWidth, 768]);
-            // doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, 768);
             let svgWidth = $("#karta-svg svg").width();
             let doc = new jsPDF('1', 'px', [width2, 455]);
             doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, height2);
@@ -597,14 +525,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
 
     var events = {
-        addNode: (d) => {
-            // d.children = d.children || []
-            // d.children.push({
-            //     "name": "Child",
-            //     "children": []
-            // })
-            // update(d);
-        },
+        addNode: (d) => { },
         // addNodeRight: (d) => {
         // },
         removeNode: (d) => {

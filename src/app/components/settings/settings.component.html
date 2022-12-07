@@ -11,118 +11,17 @@
 
           <!-- Settings Tabs -->
           <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab"
-                href="#tabs-1" role="tab">Settings</a> </li>
-            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 text-nowrap" data-toggle="tab" href="#tabs-2"
-                role="tab" (click)="check2FAConfig()">Two Factor Authentication</a> </li>
+            <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0 active text-nowrap" data-toggle="tab" href="#tabs-2"
+                role="tab">Two Factor Authentication</a> </li>
             <li class="nav-item nav-item-cus"> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3"
                 role="tab">Change Password</a> </li>
           </ul>
           <!-- Tab panes -->
           <div class="tab-content tab-content-cus">
 
-            <!-- Color settings -->
-            <div class="tab-pane active" id="tabs-1" role="tabpanel">
-              <div class="settings-gray-section">
-                <h5>Color Settings</h5>
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="color-settings">
-                      <form [formGroup]="colorForm" (ngSubmit)="onColorSubmit()">
-                        <div class="color-box">
-                          <div class="row">
-                            <div class="col-lg-8">
-                              <div class="color-range">
-                                <p class="d-flex">
-                                  <span class="align-self-center">Color Range</span>
-                                  <input type="color" id="colorPicker" formControlName="color" style="cursor: pointer;">
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="container">
-                            <div class="row mt-4">
-                              <div class="col-sm-12">
-                                <ngx-slider
-                                  [options]="options"
-                                  [value]="minValue"
-                                  [highValue]="maxValue"
-                                  (valueChange)="onMinValueChange($event)"
-                                  (highValueChange)="onMaxValueChange($event)">
-                                </ngx-slider>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row mt-4">
-                            <div class="col-lg-12 text-right">
-                              <div class="add-btn">
-                                <button class="add-button">Add</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="color-box-plus-min">
-                      <ng-container *ngFor="let setting of colorSettings?.settings; let i = index">
-                        <div class="row" [ngClass]="{'mt-2' : i > 0}">
-                          <div class="col-lg-6">
-                            <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
-                              <h6>100%+</h6>
-                            </ng-container>
-                            <ng-template #not100>
-                              <h6>{{setting.min}}-{{setting.max}}%</h6>
-                            </ng-template>
-                          </div>
-                          <div class="col-lg-6 text-right">
-                            <div class="float-right d-flex">
-                              <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
-                                <div class="color-box-two" [ngStyle]="{'background-color': setting.color}" [style.background]="selectedColor2"></div>
-                                <div class="plus-minus above100">
-                                  <label for="colorPicker2"><img src="assets/img/edit.png"></label>
-                                  <input type="color" id="colorPicker2" value="#000000" [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
-                                </div>
-                              </ng-container>
-                              <ng-template #not100Color>
-                                <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
-                                <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
-                                  <img src="assets/img/minus.png">
-                                </div>
-                              </ng-template>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-container>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-12 text-center">
-                    <button class="btn btn-light btn_default max-270" (click)="saveColorSetting()" [disabled]="colorSubmitFlag">Save</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <!-- Multi factor authentication -->
-            <div class="tab-pane" id="tabs-2" role="tabpanel">
+            <div class="tab-pane active" id="tabs-2" role="tabpanel">
               <ng-container *ngIf="!_2fa.isChecking; else loading">
-                <!-- <div class="factor-cl" *ngIf="!_2fa.isSetup">
-                  <div class="row">
-                    <div class="col-8 align-self-center pt-1">
-                      <h5>Setup Two Factor Authentication</h5>
-                    </div>
-                    <div class="col-4 text-right">
-                      <div class="">
-                        <div class="form-check custom-box">
-                          <button class="btn btn-outline-dark my-0" (click)="navigateToProfile()">Set Up</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
                 <div class="factor-cl border-0">
                   <div class="row">
                     <div class="col-8">
@@ -131,9 +30,6 @@
                     <div class="col-4 text-right">
                       <div class="toggle-tab">
                         <label class="switch" for="checkbox">
-                          <!-- <input type="checkbox" id="checkbox" [checked]="_2fa.isEnabled" [disabled]="!_2fa.isSetup"
-                            (change)="toggle2FA($event)" />
-                          <div class="slider round" [ngStyle]="{'cursor': _2fa.isSetup ? 'pointer' : 'default'}"></div> -->
                           <input type="checkbox" id="checkbox" [checked]="_2fa.isEnabled" (change)="toggle2FA($event)" />
                           <div class="slider round"></div>
                         </label>
