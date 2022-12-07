@@ -25,7 +25,6 @@
               <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control form-control1" id="password" formControlName="password"
-                  maxlength="24"
                   [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
                 <div *ngIf="(submitted || form.password.touched) && form.password.errors" class="invalid-feedback">
                   <div *ngIf="form.password.errors.required">Password is required!</div>
