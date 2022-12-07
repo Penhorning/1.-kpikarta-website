@@ -168,6 +168,7 @@ export class EditKartaComponent implements OnInit {
   // Undo Redo
   getRemovableNodeId: any = "";
   getRemovableNode: any = null;
+  undoRedoFlag: boolean = false;
 
   constructor(
     private _kartaService: KartaService,
@@ -250,7 +251,7 @@ export class EditKartaComponent implements OnInit {
           if (this.karta.node) {
             this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
-            this.D3SVG.updateNode(this.karta.node, true);
+            // this.D3SVG.updateNode(this.karta.node, true);
             this.setKartaDimension();
             jqueryFunctions.disableChart();
             jqueryFunctions.setValue("#chartMode", "disable");
@@ -413,10 +414,19 @@ export class EditKartaComponent implements OnInit {
       this.timer = null;
     }
     this.timer = this.formulaFieldSuggestions.length == 0 &&
-      setTimeout(() => {
+    setTimeout(() => {
         let tempObj: any = {};
         let suggesionsLength = this.formulaFieldSuggestions.length;
         let formValidation = this.formulaGroup.valid;
+        let newArr = [];
+        for (let i = 0; i < this.fields.length; i++) {
+          newArr.push({
+            ...this.fields['controls'][i].value
+          });
+        };
+        this.formulaGroup.patchValue({
+          fields: newArr,
+        });
         let formValues = this.formulaGroup.value;
         let targetValues = this.target;
         this.fields.controls.forEach((x: any) => {
@@ -1552,6 +1562,7 @@ export class EditKartaComponent implements OnInit {
   }
 
   undoKarta() {
+    this.undoRedoFlag = true;
     this._kartaService.undoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
         if(x.data.message != "nothing"){
@@ -1569,6 +1580,7 @@ export class EditKartaComponent implements OnInit {
                     this.setKartaDimension();
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
+                    this.undoRedoFlag = false;
                   });
                 }
                 break;
@@ -1582,9 +1594,11 @@ export class EditKartaComponent implements OnInit {
                     this.updateNodeProperties(kartaNode);
                     this.currentNode.phase = "";
                     this.D3SVG.updateNode(this.currentNode);
+                    this.undoRedoFlag = false;
                   },
                   (err) => {
                     console.log(err);
+                    this.undoRedoFlag = false;
                   });
                 }
                 break;
@@ -1601,6 +1615,7 @@ export class EditKartaComponent implements OnInit {
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
                       }, 2000);
+                      this.undoRedoFlag = false;
                     },
                     (err) => {
                       console.log(err);
@@ -1612,6 +1627,7 @@ export class EditKartaComponent implements OnInit {
           }
           else {
             this._commonService.warningToaster("Maximum Undo limit has reached..!!");
+            this.undoRedoFlag = false;
           }
         }
       }
@@ -1619,6 +1635,7 @@ export class EditKartaComponent implements OnInit {
   }
 
   async redoKarta() {
+    this.undoRedoFlag = true;
     this._kartaService.redoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
         if(x.data.message != "nothing"){
@@ -1632,14 +1649,15 @@ export class EditKartaComponent implements OnInit {
                     kartaNode.phase = phase;
                     this.showSVG = true;
                     this.isRtNodDrgingFrmSide = false;
-                    // this.updateNodeProperties(kartaNode);
                     this.getKartaInfo();
                     setTimeout(() => {
                       jqueryFunctions.removeKarta();
                     }, 2000);
+                    this.undoRedoFlag = false;
                   },
                   (err) => {
                     console.log(err);
+                    this.undoRedoFlag = false;
                   });
                 }
                 break;
@@ -1652,9 +1670,11 @@ export class EditKartaComponent implements OnInit {
                     this.isRtNodDrgingFrmSide = false;
                     this.updateNodeProperties(kartaNode);
                     this.D3SVG.updateNode(this.currentNode);
+                    this.undoRedoFlag = false;
                   },
                   (err) => {
                     console.log(err);
+                    this.undoRedoFlag = false;
                   });
                 }
                 break;
@@ -1668,9 +1688,9 @@ export class EditKartaComponent implements OnInit {
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
                     this.setKartaDimension();
-                    // this.updateNodeProperties(kartaNode);
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
+                    this.undoRedoFlag = false;
                   });
                 }
                 break;
@@ -1678,6 +1698,7 @@ export class EditKartaComponent implements OnInit {
           }
           else {
             this._commonService.warningToaster("Maximum Redo limit has reached..!!");
+            this.undoRedoFlag = false;
           }
         }
       }

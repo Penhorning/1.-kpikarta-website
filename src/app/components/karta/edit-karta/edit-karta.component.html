@@ -189,10 +189,10 @@
               </div>
             </div>
             <div class="col-lg-2 align-self-center undo_redo_btn">
-              <a href="javascript:void(0);" title="Undo" (click)="undoKarta()"><img src="assets/img/Undo.svg"
-                  class="img-fluid"></a>
-              <a href="javascript:void(0);" title="Redo" (click)="redoKarta()"><img src="assets/img/Redo.svg"
-                  class="img-fluid"></a>
+              <a title="Undo" (click)="undoRedoFlag ? null : undoKarta()"><img src="assets/img/Undo.svg"
+                [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
+              <a title="Redo" (click)="undoRedoFlag ? null : redoKarta()"><img src="assets/img/Redo.svg"
+                  [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
               <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
             </div>
             <div class="col-lg-4 p-0">
@@ -213,7 +213,7 @@
               </div>
             </div>
             <div class="col-lg-2 text-center">
-              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" (click)="onShare(sharedKartaStr)">View</button>
+              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" disabled (click)="onShare(sharedKartaStr)">View</button>
             </div>
             <div class="col-lg-3 p-0">
               <div class="icon-karta">
@@ -799,7 +799,7 @@
                           <div class="d-flex justify-content-between align-items-center">
                             <label (keypress)="setLimitForContentEditable($event)" (blur)="setFieldValues(i)"
                               contenteditable="false" [id]="'fd'+i"
-                              [class]="checkFieldStatus('fd'+i) ? 'mb-2 border' : 'mb-2'"
+                              [class]="checkFieldStatus('fd'+i) ? 'mb-2 border label-width' : 'mb-2 label-width'"
                               (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
                             <a class="mb-2" role="button" (click)="editFieldStatus(i, true)"
                               *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"
