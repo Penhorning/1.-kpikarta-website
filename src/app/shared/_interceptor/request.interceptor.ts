@@ -38,7 +38,7 @@ export class RequestInterceptor implements HttpInterceptor {
           this._commonService.errorToaster('Please enter correct email address or password.');
         } else if (error.status === 400 || error.status === 404) {
           this._commonService.errorToaster(error.error.error.message ? error.error.error.message : error.statusText);
-        } else if (error.status >= 500 && error.status <= 505) {
+        } else if ((error.status >= 500 && error.status <= 505) || error.status === 0) {
           this._commonService.errorToaster('Error, Something went wrong');
         }
         return throwError(error);

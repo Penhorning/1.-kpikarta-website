@@ -15,7 +15,7 @@
                         <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
                             <div class="form-group">
                                 <label for="code">Verification Code <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="code" formControlName="code"
+                                <input type="text" class="form-control form-control1 mb-2" id="code" formControlName="code"
                                     [maxlength]="6" [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
                                 <a href="javascript:void(0);" (click)="resendCode()" class="text-white send-otp" *ngIf="!verificationFlag">Resend Code</a>
                                 <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">

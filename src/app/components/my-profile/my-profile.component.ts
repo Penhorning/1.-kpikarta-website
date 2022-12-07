@@ -256,7 +256,7 @@ export class MyProfileComponent implements OnInit {
       this.profileImage.fileUploading = true;
     }
     const base64ImageContent = this.croppedImage.replace(/^data:image\/(png|jpg);base64,/, "");
-    const blob = this.base64ToBlob(base64ImageContent, 'image/png');                
+    const blob = this.base64ToBlob(base64ImageContent, 'image/png');         
     const formData = new FormData();
     formData.append('photo', blob);
     this._profileService.uploadFile(formData, this.cropperModel.type).subscribe(
