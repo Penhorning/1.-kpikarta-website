@@ -460,7 +460,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         $(`.node-text[nodeid=${d.id}] p`).css('color', d.text_color);
         $(`.node-text[nodeid=${d.id}] p`).css('font-family', d.font_style);
         $(`.node-text[nodeid=${d.id}] p`).css('text-align', d.alignment);
-        update(d.parent);
+        if (d.parent) update(d.parent);
         if (d.hasOwnProperty("children") && d.children.length > 0) {
             d.children.forEach(item => updateNode(item));
         }
