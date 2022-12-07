@@ -3,6 +3,7 @@ import { Validators, FormBuilder, FormGroup, AbstractControl } from '@angular/fo
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '../service/signup.service';
+import { StripeDetails } from '../utils/stripe-details';
 
 @Component({
   selector: 'app-add-payment-method',
@@ -93,6 +94,7 @@ export class AddPaymentMethodComponent implements OnInit {
           let userId = data[0].id;
           let requestObj = {
             plan: this.user.plan,
+            priceId: this.user.plan == "monthly" ? StripeDetails.monthlyPriceId : StripeDetails.yearlyPriceId,
             userId,
             ...this.paymentMethodForm.value
           };
@@ -103,22 +105,26 @@ export class AddPaymentMethodComponent implements OnInit {
                 (data) => {
                   this._signupService.updateSignUpSession(3);
                   this.router.navigate(['/thank-you']);
+                  this.submitFlag = false;
                 },
                 (err) => {
                   console.log(err);
+                  this.submitFlag = false;
                 }
               )
             },
             (err) => {
               console.log(err);
+              this.submitFlag = false;
             }
           )
         }
       },
       (err) => {
         console.log(err);
+        this.submitFlag = false;
       }
-      ).add(() => this.submitFlag = false);
+      );
     }
   }
 
