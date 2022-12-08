@@ -64,12 +64,22 @@
     padding: 3px;
 }
 
-#target_input {
-    margin-top: 0px !important;
+.target_select label {
+    margin-bottom: 6px;
+}
+.target_select select option:disabled {
+    background-color: #80808030;
+}
+.target_action_btn {
+    margin-top: 27px;
 }
 
-#measure_select {
-    -webkit-appearance: auto !important;
+.label-width {
+    width: 100px;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed !important;
 }
 
 .formula-value {
@@ -95,16 +105,20 @@
 }
 
 ::ng-deep .multiselect-dropdown .dropdown-btn{
-height: 100px !important;
-overflow: auto;
+    height: 100px !important;
+    overflow: auto;
 }
 
 ::ng-deep .multiselect-dropdown .dropdown-btn .selected-item{
- margin-top: 4px!important;
+    margin-top: 4px!important;
 }
 
-.field-options {
-
+.undo_redo_btn img {
+    height: 15px;
+    cursor: pointer;
+}
+.undo_redo_btn a {
+    margin-right: 10px;
 }
 
 .field-options:hover {

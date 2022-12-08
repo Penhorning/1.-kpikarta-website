@@ -17,6 +17,7 @@ export class MemberComponent implements OnInit {
   user: any;
   userRole: string = "";
   members: any = [];
+  totalMembers: number = 0;
   roles: any = [];
   departments: any = [];
   licenses: any = [];
@@ -25,10 +26,10 @@ export class MemberComponent implements OnInit {
   submitted: boolean = false;
   submitFlag = false;
   showDepartment: boolean = false;
+  wasDepartment: boolean = false;
   showRole: boolean = false;
   hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
-  viewMore_hide: boolean = true;
   currentSendingUserId: string = "";
   sendingCredentials: boolean = false;
 
@@ -94,13 +95,10 @@ export class MemberComponent implements OnInit {
     this.loading = true;
     this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
-        if (response.members[0].data.length > 0) {
-          this.members = response.members[0].data;
-          this.totalData = response.members[0].metadata[0].total;
-        } else {
-          this.members = [];
-          this.totalData = 0;
-        }
+        this.members = response.members[0].data;
+        if (response.members[0].metadata.length > 0) {
+          this.totalMembers = response.members[0].metadata[0].total; 
+        } else this.totalMembers = 0;
       }
     ).add(() => this.loading = false);
   }
@@ -162,23 +160,25 @@ export class MemberComponent implements OnInit {
       }
     }
     else {
-      if (!data.departmentId) {
+      this.wasDepartment = false;
+      if (!data.hasOwnProperty("department")) {
         this.showDepartment = false;
         this.inviteForm.removeControl("departmentId");
       } else {
         this.showDepartment = true;
+        this.wasDepartment = true;
         this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
         this.inviteForm.patchValue({
-          departmentId: data.departmentId ? data.departmentId : ''
+          departmentId: data.department._id ? data.department._id : ''
         });
         if (this.user.roles[0].name === 'department_admin') this.inviteForm.controls['departmentId'].disable();
       }
       this.inviteForm.patchValue({
         fullName: data.fullName ? data.fullName : '',
         email: data.email ? data.email : '',
-        licenseId: data.licenseId ? data.licenseId : '',
+        licenseId: data.license._id ? data.license._id : '',
         mobile: data.mobile ? data.mobile : {},
-        roleId: data.roleId ? data.roleId : '',
+        roleId: data.Role._id ? data.Role._id : '',
       });
     }
   }
@@ -209,12 +209,11 @@ export class MemberComponent implements OnInit {
         this._memberService.inviteMember({ data: formData }).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.viewMore_hide = true;
             this._commonService.successToaster("Member invited successfully!");
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-              this._commonService.errorToaster("Email is already registered, please try with a different one");
+              this._commonService.errorToaster("Email is already registered, please try a different one");
             }
           }
         ).add(() => this.submitFlag = false);
@@ -223,15 +222,15 @@ export class MemberComponent implements OnInit {
       else if (this.checkFormType === "UPDATE") {
         formData.type = "invited_user";
         formData.userId = this.currentUser._id;
+        if (this.wasDepartment) formData.departmentId = "";
         this._memberService.updateUser(formData, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
-            this.viewMore_hide = true;
             this._commonService.successToaster("Member updated successfully!");
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-              this._commonService.errorToaster("Email is already registered, please try with a different one");
+              this._commonService.errorToaster("Email is already registered, please try a different one");
             }
           }
         ).add(() => this.submitFlag = false);
@@ -248,7 +247,6 @@ export class MemberComponent implements OnInit {
     if (type !== "normal") {
       this.members = [];
       this.pageIndex = 0;
-      this.viewMore_hide = !this.viewMore_hide;
       this.getAllMembers();
     }
   }
@@ -278,6 +276,7 @@ export class MemberComponent implements OnInit {
   }
   clearSearch() {
     this.search_text = "";
+    this.pageIndex = 0;
     this.members = [];
     this.getAllMembers();
   }
@@ -293,12 +292,51 @@ export class MemberComponent implements OnInit {
     this.loading = true;
     this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
-        if (response) {
-          this.members.push(...response.members[0].data);
-          if (response.members[0].metadata[0].total == this.members.length) 
-          this.viewMore_hide = !this.viewMore_hide;
-        }
+        this.members.push(...response.members[0].data);
+        if (response.members[0].metadata.length > 0) {
+          this.totalMembers = response.members[0].metadata[0].total; 
+        } else this.totalMembers = 0;
       }).add(() => this.loading = false);
+  }
+
+  // Activate user
+  activateUser(userId: string) {
+    const result = confirm("Are you sure, Do you want to Activate this user?");
+    if (result) {
+      this._memberService.activateUser({ userId }).subscribe(
+        (response: any) => {
+          this.pageIndex = 0;
+          this.getAllMembers();
+          this._commonService.successToaster("User activated successfully!");
+        }
+      );
+    }
+  }
+  // Deactivate user
+  deactivateUser(userId: string) {
+    const result = confirm("Are you sure, Do you want to Deactivate this user?");
+    if (result) {
+      this._memberService.deactivateUser({ userId }).subscribe(
+        (response: any) => {
+          this.pageIndex = 0;
+          this.getAllMembers();
+          this._commonService.successToaster("User deactivated successfully!");
+        }
+      );
+    }
+  }
+  // Delete user
+  deleteUser(userId: string) {
+    const result = confirm("Are you sure do you want to Delete this user?");
+    if (result) {
+      this._memberService.deleteUser({ userId }).subscribe(
+        (response: any) => {
+          this.pageIndex = 0;
+          this.getAllMembers();
+          this._commonService.successToaster("User deleted successfully!");
+        }
+      );
+    }
   }
 }
 

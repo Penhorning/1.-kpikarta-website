@@ -23,7 +23,7 @@ export class VerificationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private _commonService: CommonService,
-    private _signupService: SignupService,
+    public _signupService: SignupService,
     private router: Router
   ) {
     // Preventing back button in browser
@@ -35,13 +35,9 @@ export class VerificationComponent implements OnInit {
 
   // On submit
   onSubmit() {
-
     this.submitted = true;
-
     if (this.verificationForm.valid) {
-
       this.submitFlag = true;
-
       this._signupService.verification(this.verificationForm.value).subscribe(
         (response: any) => {
           this._commonService.successToaster("Email is verified successfully");
@@ -57,7 +53,7 @@ export class VerificationComponent implements OnInit {
     this.verificationFlag = true;
     this._signupService.resendVerification().subscribe(
       (response: any) => {
-        this._commonService.successToaster("Verification code resend successfully");
+        this._commonService.successToaster("Verification code resent successfully");
       },
       (error: any) => { }
     ).add(() => this.verificationFlag = false);

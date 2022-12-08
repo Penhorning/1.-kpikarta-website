@@ -1,205 +1,172 @@
 <!-- main-section -->
 <div class="wrapper">
+
+  <!-- <app-edit-karta-inventory
+    [kartaId]="kartaId"
+    [versionId]="versionId"
+    [showSVG]="showSVG"
+    [isRtNodDrgingFrmSide]="isRtNodDrgingFrmSide">
+  </app-edit-karta-inventory> -->
   <!-- Sidebar  -->
-  <nav id="sidebar-two">
-    <div class="box-inner">
-      <div class="row mt-3 mb-3">
+<nav id="sidebar-two">
+  <div class="box-inner">
+     <div class="row mt-3 mb-3">
         <div class="col-lg-12">
-          <div class="search-bar">
-            <form action="" class="search-form">
-              <div class="form-group search-filed side-bar-search m-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
-                  viewBox="0 0 16 16">
-                  <path
-                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
-                  </path>
-                </svg>
-                <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
-              </div>
-            </form>
-          </div>
+           <div class="search-bar">
+              <form class="search-form">
+                 <div class="form-group search-filed side-bar-search m-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                       viewBox="0 0 16 16">
+                       <path
+                          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                       </path>
+                    </svg>
+                    <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
+                 </div>
+              </form>
+           </div>
         </div>
-      </div>
-    </div>
-    <!-- <div class="row mb-3">
-        <div class="col-lg-6 text-left">
-          <div class="slider-top-text">
-            <p>Nodes</p>
-          </div>
-        </div>
-        <div class="col-lg-6 text-right">
-          <div class="slider-top-text">
-            <a href="javascript:void(0);">See All</a>
-          </div>
-        </div>
-      </div> -->
-
-    <!-- <div class="row">
-        <div class="col-lg-12">
-          <div class="item p-2">
-            <div class="card custom-card side-bar-card ">
-              <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
-                <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
-                <p class="pt-2">Empty</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-    <div class="row">
-      <div class="col-lg-12">
+     </div>
+  </div>
+  <!-- <div class="row mb-3">
+     <div class="col-lg-6 text-left">
+       <div class="slider-top-text">
+         <p>Nodes</p>
+       </div>
+     </div>
+     <div class="col-lg-6 text-right">
+       <div class="slider-top-text">
+         <a href="javascript:void(0);">See All</a>
+       </div>
+     </div>
+     </div> -->
+  <!-- <div class="row">
+     <div class="col-lg-12">
+       <div class="item p-2">
+         <div class="card custom-card side-bar-card ">
+           <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
+             <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
+             <p class="pt-2">Empty</p>
+           </div>
+         </div>
+       </div>
+     </div>
+     </div> -->
+  <div class="row">
+     <div class="col-lg-12">
         <div class="">
-          <div id="accordion">
-            <div class="card custom_accordion">
-              <div class="card-header accordion_header_custom" id="headingOne">
-                <h5 class="mb-0">
-                  <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-                    aria-controls="collapseOne">
-                    Nodes
-                  </button>
-                  <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
-                    aria-expanded="true" aria-controls="collapseOne">
-                    See All
-                  </button>
-                </h5>
+           <div id="accordion">
+              <div class="card custom_accordion">
+                 <div class="card-header accordion_header_custom" id="headingOne">
+                    <h5 class="mb-0">
+                       <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                          aria-controls="collapseOne">
+                       Branches
+                       </button>
+                       <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
+                          aria-expanded="true" aria-controls="collapseOne">
+                       See All
+                       </button>
+                    </h5>
+                 </div>
+                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                       <div class="row mt-3">
+                          <div class="col-lg-6" *ngIf="!showSVG">
+                             <div class="card custom-card side-bar-card">
+                                <div class="goal-img cursor_pointer" *ngIf="!showSVG" id="root" draggable="true"
+                                (dragstart)="onRootDragStart()">
+                                <img src="assets/img/tutorial-img.png" class="img-fluid">
+                                <p class="pt-2">Empty</p>
+                             </div>
+                          </div>
+                        </div>
+                       <ng-container *ngFor="let inventory of inventories; let i=index">
+                         <div class="col-lg-6" *ngIf="inventory.node_type === 'branch'">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
+                                  <img [src]="inventory.thumbnail" class="img-fluid">
+                                  <p class="pt-2">{{ inventory?.name }}</p>
+                               </div>
+                            </div>
+                         </div>
+                       </ng-container>
+                    </div>
+                 </div>
               </div>
-
-              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="card-body">
-                  <div class="row mt-3">
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card">
-                        <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true"
-                          (dragstart)="onDragStart($event)" style="cursor: pointer;">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
-                          <p class="pt-2">Empty</p>
-                        </div>
-                        <div class="goal-img" *ngIf="showSVG">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Goal</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card ">
-                        <div class="goal-img">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">CSF</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card ">
-                        <div class="goal-img">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Phase</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card ">
-                        <div class="goal-img">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Segment</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="line-slide-bar"></div>
-
-            <div class="card custom_accordion">
+           </div>
+           <div class="line-slide-bar"></div>
+           <div class="card custom_accordion">
               <div class="card-header accordion_header_custom" id="headingTwo">
-                <h5 class="mb-0">
-                  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="false" aria-controls="collapseTwo">
+                 <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                       aria-expanded="false" aria-controls="collapseTwo">
                     Measure
-                  </button>
-                  <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseOne">
+                    </button>
+                    <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseTwo"
+                       aria-expanded="true" aria-controls="collapseOne">
                     See All
-                  </button>
-                </h5>
+                    </button>
+                 </h5>
               </div>
               <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                <div class="card-body p-0">
-                  <div class="row mt-3">
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card ">
-                        <div class="goal-img">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Measure 1</p>
+                 <div class="card-body p-0">
+                    <div class="row mt-3">
+                       <ng-container *ngFor="let inventory of inventories; let i=index">
+                        <div class="col-lg-6" *ngIf="inventory.node_type === 'measure'">
+                           <div class="card custom-card side-bar-card ">
+                              <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
+                                 <img [src]="inventory.thumbnail" class="img-fluid">
+                                 <p class="pt-2">{{ inventory?.name }}</p>
+                              </div>
+                           </div>
                         </div>
-                      </div>
+                      </ng-container>
                     </div>
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card ">
-                        <div class="goal-img">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Measure 2</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 </div>
               </div>
-            </div>
-
-            <div class="line-slide-bar"></div>
-
-            <div class="card custom_accordion">
+           </div>
+           <div class="line-slide-bar"></div>
+           <div class="card custom_accordion">
               <div class="card-header accordion_header_custom" id="headingThree">
-                <h5 class="mb-0">
-                  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
-                    aria-expanded="false" aria-controls="collapseThree">
+                 <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                       aria-expanded="false" aria-controls="collapseThree">
                     Metric
-                  </button>
-                  <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseThree"
-                    aria-expanded="true" aria-controls="collapseOne">
+                    </button>
+                    <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseThree"
+                       aria-expanded="true" aria-controls="collapseOne">
                     See All
-                  </button>
-                </h5>
+                    </button>
+                 </h5>
               </div>
               <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                <div class="card-body p-0">
-                  <div class="row mt-3">
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card ">
-                        <div class="goal-img">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Metric 1</p>
+                 <div class="card-body p-0">
+                    <div class="row mt-3">
+                      <ng-container *ngFor="let inventory of inventories; let i=index">
+                        <div class="col-lg-6" *ngIf="inventory.node_type === 'metrics'">
+                           <div class="card custom-card side-bar-card ">
+                              <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
+                                 <img [src]="inventory.thumbnail" class="img-fluid">
+                                 <p class="pt-2">{{ inventory?.name }}</p>
+                              </div>
+                           </div>
                         </div>
-                      </div>
+                      </ng-container>
                     </div>
-                    <div class="col-lg-6">
-                      <div class="card custom-card side-bar-card ">
-                        <div class="goal-img">
-                          <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
-                          <p class="pt-2">Metric 2</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                 </div>
               </div>
-            </div>
-
-          </div>
+           </div>
         </div>
-      </div>
-    </div>
-    <div class="line-slide-bar"></div>
+     </div>
+  </div>
+  </div>
+  <div class="line-slide-bar"></div>
+</nav>
 
-
-  </nav>
-  <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle sidebar_collapsible_btn">
-    <img src="assets/img/side-arrow-right.svg" alt="">
-  </button>
+<button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle sidebar_collapsible_btn">
+<img src="assets/img/side-arrow-right.svg" alt="">
+</button>
 
   <!-- Page Content  -->
   <div id="content" class="karta-edit-contnet">
@@ -213,7 +180,7 @@
                 <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
               </div>
             </div>
-            <div class="col-lg-3 pl-0">
+            <div class="col-lg-2 pl-0">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta" (change)="versionRollback($event)"
                   [(ngModel)]="versionId">
@@ -221,7 +188,14 @@
                 </select>
               </div>
             </div>
-            <div class="col-lg-6 p-0">
+            <div class="col-lg-2 align-self-center undo_redo_btn">
+              <a title="Undo" (click)="undoRedoFlag ? null : undoKarta()"><img src="assets/img/Undo.svg"
+                [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
+              <a title="Redo" (click)="undoRedoFlag ? null : redoKarta()"><img src="assets/img/Redo.svg"
+                  [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
+              <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
+            </div>
+            <div class="col-lg-4 p-0">
               <div class="time-select-karta">
                 <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'medium'}}</span>
               </div>
@@ -230,7 +204,7 @@
         </div>
         <div class="col-lg-6">
           <div class="row no-gutters">
-            <div class="col-lg-4">
+            <div class="col-lg-3">
               <div class="select-karta-name">
                 <select class="form-control custom-select-karta-mode" id="chartMode" (change)="changeMode($event)">
                   <option value="enable">Editor Mode</option>
@@ -238,15 +212,19 @@
                 </select>
               </div>
             </div>
-            <div class="col-lg-4 p-0">
+            <div class="col-lg-2 text-center">
+              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" disabled (click)="onShare(sharedKartaStr)">View</button>
+            </div>
+            <div class="col-lg-3 p-0">
               <div class="icon-karta">
-                <a href="#" data-toggle="modal" data-target="#shareLinkModal" (click)="onShare(sharedKartaStr)"><img
+                <!-- Share karta -->
+                <a href="#" data-toggle="modal" data-target="#shareKartaModal" title="Share" (click)="onShare(sharedKartaStr)"><img
                     src="assets/img/share-icon.svg"></a>
-                <a href="#"><img src="assets/img/download-icon.svg"></a>
+                <!-- Export Karta -->
                 <div class="dropdown show">
-                  <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="assets/img/export.svg">
+                  <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false" title="Export">
+                    <img src="assets/img/download-icon.svg">
                   </a>
                   <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow">
@@ -261,10 +239,10 @@
                     </a>
                   </div>
                 </div>
-
+                <!-- Filter Karta -->
                 <div class="dropdown filter-option m-0">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Filter">
                     <img src="assets/img/filter.svg" class="">
                   </button>
                   <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
@@ -343,13 +321,13 @@
               <div class="save-setting-btn">
                 <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
                 <div class="dropdown">
-                  <button (click)="colorFunctionDropDown()" class="dropbtn"><img src="assets/img/settings.svg"></button>
+                  <button (click)="colorFunctionDropDown()" class="dropbtn" title="Settings"><img src="assets/img/settings.svg"></button>
                   <div id="colorDropdown" class="dropdown-content custom-drop">
 
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
                     <div class="fillter-inner-white-box p-2">
                       <div class="row ">
-                        <div class="col-6">
+                        <div class="col-6"> 
                           <div class="pl-1">
                             <p>Help Text</p>
                           </div>
@@ -386,8 +364,7 @@
                                           <div class="color-range">
                                             <p class="d-flex">
                                               <span class="align-self-center pr-4">Color Range</span>
-                                              <input type="color" id="colorPicker" formControlName="color"
-                                                style="cursor: pointer;">
+                                              <input type="color" class="cursor_pointer" id="colorPicker" formControlName="color">
                                             </p>
                                           </div>
                                         </div>
@@ -443,7 +420,7 @@
                                     </ng-container>
                                     <ng-template #not100Color>
                                       <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
-                                      <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
+                                      <div class="plus-minus cursor_pointer" (click)="removeColor(i)">
                                         <img src="assets/img/minus.png">
                                       </div>
                                     </ng-template>
@@ -457,96 +434,7 @@
                     </div>
                   </div>
                 </div>
-
-
-
-
-
-                <!-- <div class="dropdown filter-option m-0"> 
-                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                    <a href="#"><img src="assets/img/settings.svg"></a>
-                  </button>
-                  <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
-                    <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
-                    <div class="fillter-inner-white-box p-2">
-                      <div class="row ">
-                        <div class="col-6">
-                          <div class="pl-1">
-                            <p>Help Text</p>
-                          </div>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="toggle-tab-karta-edit ">
-                            <label class="switch" for="checkbox">
-                              <input type="checkbox" id="checkbox">
-                              <div class="slider round karta-edit"></div>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <hr>
-                      <div class="row">
-                        <div class="col-lg-8">
-                          <div class="pl-1">
-                            <p>Color Settings</p>
-                          </div>
-                        </div>
-                        <div class="col-lg-4 text-right">
-                          <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                            id="rangeDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                            <img src="assets/img/plus-btn.svg" class="img-fluid" alt="">
-                          </button>
-                          <div class="dropdown-menu" aria-labelledby="rangeDropdownMenuButton">
-                            Test
-                          </div>
-
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="color-box-plus-min">
-                            <ng-container *ngFor="let setting of editColorSettings?.settings; let i = index">
-                              <div class="row" [ngClass]="{'mt-2' : i > 0}">
-                                <div class="col-lg-6">
-                                  <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
-                                    <h6>100%+</h6>
-                                  </ng-container>
-                                  <ng-template #not100>
-                                    <h6>{{setting.min}}-{{setting.max}}%</h6>
-                                  </ng-template>
-                                </div>
-                                <div class="col-lg-6 text-right">
-                                  <div class="float-right d-flex">
-                                    <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"
-                                        [style.background]="selectedColor2"></div>
-                                      <div class="plus-minus above100">
-                                        <label for="colorPicker2"><img src="assets/img/edit.png"></label>
-                                        <input type="color" id="colorPicker2" value="#000000"
-                                          [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
-                                      </div>
-                                    </ng-container>
-                                    <ng-template #not100Color>
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
-                                      <div class="plus-minus" (click)="removeColor(i)" style="cursor: pointer;">
-                                        <img src="assets/img/minus.png">
-                                      </div>
-                                    </ng-template>
-                                  </div>
-                                </div>
-                              </div>
-                            </ng-container>
-                          </div>
-
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
-
-                <a href="#"><img src="assets/img/information.svg"></a>
+                <a href="javascript:void(0);" title="Info"><img src="assets/img/information.svg"></a>
               </div>
             </div>
           </div>
@@ -588,14 +476,14 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-lg-12 text-center">
             <div class="zooming-section">
 
               <div class="row">
                 <div class="col-3">
-                  <a href="javascript:void(0);"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
-                  <a href="javascript:void(0);"><img src="assets/img/Redo.svg" class="img-fluid ml-1"></a>
+                  <a href="javascript:void(0);" (click)="undoKarta()"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
+                  <a href="javascript:void(0);" (click)="redoKarta()"><img src="assets/img/Redo.svg" class="img-fluid ml-1"></a>
                 </div>
 
                 <div class="col-lg-6">
@@ -612,7 +500,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
 
@@ -644,7 +532,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="goal-name mt-3">
-                <h6>Weightage</h6>
+                <h6>Weighting</h6>
               </div>
             </div>
           </div>
@@ -654,8 +542,8 @@
                 <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                   [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
                 <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please
-                  enter weightage!</div>
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than
+                  enter weighting!</div>
+                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weighting cannot be greater than
                   100!</div>
               </div>
             </div>
@@ -702,8 +590,7 @@
             <h6 class="pt-2">Font Style</h6>
           </div>
           <div class="col-lg-7">
-            <select class="form-control font-style" [(ngModel)]="selectedFont"
-              (change)="updateNode('font_style', selectedFont, 'node_updated')">
+            <select class="form-control font-style" [(ngModel)]="selectedFont" (change)="changeFontStyle()">
               <option value="system-ui">System-UI</option>
               <option value="sans-serif">Sans-Serif</option>
               <option value="monospace">Monospace</option>
@@ -744,7 +631,7 @@
           <div class="col-lg-7">
             <div class="color-picker">
               <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor"
-                (change)="updateNode('text_color', selectedColor, 'node_updated')" style="cursor: pointer;">
+                (change)="changeTextColor()" style="cursor: pointer;">
             </div>
           </div>
         </div>
@@ -772,7 +659,7 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
+                  <input type="date" class="form-control" [min]="maxStartDate | date:'yyyy-MM-dd'" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
                     (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
                   <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                 </div>
@@ -791,12 +678,12 @@
             <!-- Fiscal Year -->
             <div class="row mt-3">
               <div class="col-lg-12">
-                <h5>Fiscal year</h5>
+                <h5>Fiscal Year</h5>
                 <div class="row">
                   <div class="col-lg-6">
                     <div class="selct-option-side-r">
                       <label>Start Date</label>
-                      <input type="date" class="form-control"
+                      <input type="date" class="form-control"  [min]="maxFiscalStartDate"
                         [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'"
                         (change)="changeFiscalStartDate($event)">
                     </div>
@@ -814,35 +701,40 @@
             </div>
             <hr>
             <!-- Target Value -->
+            <label class="text-nowrap font_weight_500">Target Value</label>
             <ng-container *ngFor="let t of target; let i = index">
-              <div class="row mt-3">
+              <div class="row mt-2 mb-4">
                 <div class="col-lg-5 pr-0">
-                  <div class="selct-option-side-r">
-                    <label class="text-nowrap" style="margin-bottom: 6px;">Target Value</label>
-                    <select class="form-control" [value]="t.frequency" (change)="setTarget('frequency', $event, i)">
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
-                      <option value="quarterly">Quarterly</option>
-                      <option value="annually">Annually</option>
+                  <div class="target_select selct-option-side-r">
+                    <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
+                      <!-- <option *ngFor="let tO of targetOptions" [value]="tO.value" [disabled]="tO.disabled">
+                        {{ tO.name }}
+                      </option> -->
+                      <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
+                      <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
+                      <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
+                      <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
+                      <!-- <option [value]="targetOptions[0].value" [disabled]="targetOptions[0].disabled">{{ targetOptions[0].name }}</option>
+                      <option [value]="targetOptions[1].value" [disabled]="targetOptions[1].disabled">{{ targetOptions[1].name }}</option>
+                      <option [value]="targetOptions[2].value" [disabled]="targetOptions[2].disabled">{{ targetOptions[2].name }}</option>
+                      <option [value]="targetOptions[3].value" [disabled]="targetOptions[3].disabled">{{ targetOptions[3].name }}</option> -->
                     </select>
                   </div>
                 </div>
                 <div class="col-lg-4 px-2">
-                  <div class="custom-input-side-r">
+                  <div class="custom-input-side-r-flow">
                     <input type="number" class="form-control" [value]="t.value" (input)="setTarget('value', $event, i)">
                     <!-- <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                     [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
                   <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please enter weightage!</div>
-                  <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greator than 100!</div> -->
+                  <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greater than 100!</div> -->
                   </div>
                 </div>
                 <div class="col-lg-3 d-flex px-2">
-                  <ng-container *ngIf="target.length > 1">
-                    <div class="add-btn-side-r" style="cursor: pointer;" (click)="removeTarget(i)">
-                      <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
-                    </div>
-                  </ng-container>
-                  <div class="add-btn-side-r" style="cursor: pointer;" (click)="addMoreTarget()">
+                  <div class="cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
+                    <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
+                  </div>
+                  <div class="cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
                     <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
                   </div>
                 </div>
@@ -852,7 +744,7 @@
             <div class="row mt-3" *ngIf="kpiType === 'measure' ">
               <div class="col-lg-12">
                 <div class="form-group">
-                  <label style="font-weight: 500;">Achieved Value</label>
+                  <label class="font_weight_500">Achieved Value</label>
                   <input type="number" class="form-control" [(ngModel)]="currentNodeAchievedValue"
                     (blur)="changeAchievedValue()"
                     [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null || currentNodeAchievedValue > 9999 }">
@@ -860,7 +752,7 @@
                     *ngIf="currentNodeAchievedValue < 0 || currentNodeAchievedValue === null">Please enter achieved
                     value!</div>
                   <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue > 9999">Achieved value cannot be
-                    greator than 9999!</div>
+                    greater than 9999!</div>
                 </div>
               </div>
             </div>
@@ -870,8 +762,9 @@
               <div class="col-lg-12">
                 <div class="selct-option-side-r">
                   <label>KPI Calculation Periods</label>
-                  <select class="form-control" [value]="currentNode.kpi_calc_period" [(ngModel)]="kpiCalculationPeriod"
+                  <select class="form-control" [(ngModel)]="currentNode.kpi_calc_period"
                     (change)="changeKPIPeriods($event)">
+                    <option value="monthly">One-time monthly target</option>
                     <option value="month-to-date">Month to date</option>
                     <option value="year-to-date">Year to date</option>
                     <option value="month-over-month">Month over month</option>
@@ -906,13 +799,13 @@
                           <div class="d-flex justify-content-between align-items-center">
                             <label (keypress)="setLimitForContentEditable($event)" (blur)="setFieldValues(i)"
                               contenteditable="false" [id]="'fd'+i"
-                              [class]="checkFieldStatus('fd'+i) ? 'mb-2 border' : 'mb-2'"
+                              [class]="checkFieldStatus('fd'+i) ? 'mb-2 border label-width' : 'mb-2 label-width'"
                               (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
                             <a class="mb-2" role="button" (click)="editFieldStatus(i, true)"
                               *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"
                                 class="img-fluid edit-btn-r"></a>
                           </div>
-                          <input type="number" class="form-control" placeholder="" (blur)="recheckFormula()"
+                          <input type="number" class="form-control" placeholder="" min="0" (blur)="metricOperations.recheckFormula()"
                             formControlName="fieldValue"
                             [ngClass]="{ 'is-invalid': formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched) }" />
                           <div class="invalid-feedback d-block"
@@ -987,7 +880,7 @@
           <div class="row">
             <div class="col-lg-12">
               <div class="selct-option-side-r">
-                <label>Person to notify</label>
+                <label>Person to Notify</label>
                 <select class="form-control" (change)="setNotifyUser()" [(ngModel)]="notifyType">
                   <option value="" selected>Select</option>
                   <option value="owner">KPI Owner</option>
@@ -1025,7 +918,7 @@
             </div>
             <div class="col-lg-6">
               <div class="selct-option-side-r">
-                <label>Type {{currentNode.alert_type}}</label>
+                <label>Type</label>
                 <select class="form-control" [(ngModel)]="currentNode.alert_type" (change)="changeAlertType($event)">
                   <option value="" selected>Select type</option>
                   <option value="notification">Notify at login</option>
@@ -1037,8 +930,8 @@
         </div>
       </div>
 
-      <!-- share-link-model -->
-      <div class="modal fade shara-link" id="shareLinkModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+      <!-- Share karta modal -->
+      <div class="modal fade" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content p-4">
@@ -1089,6 +982,110 @@
                       </div>
                     </span>
                   </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save catalog modal -->
+      <div class="modal fade" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-4">
+            <div class="modal-header">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">Save {{ catalogForm?.value?.node_type | titlecase }}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="share-link-model mt-3">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <form [formGroup]="catalogForm" (ngSubmit)="onCatalogSubmit()">
+                      <div class="form-group">
+                        <label for="name" class="font-weight-bold">Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Enter name" formControlName="name" [maxlength]="50"
+                        [ngClass]="{ 'is-invalid': (catalogSubmitted || catalog.name.touched) && catalog.name.errors }">
+                        <div *ngIf="(catalogSubmitted || catalog.name.touched) && catalog.name.errors" class="invalid-feedback">
+                          <div *ngIf="catalog.name.errors.required">Name is required!</div>
+                          <div *ngIf="catalog.name.errors.pattern">Blank space is not allowed!</div>
+                        </div>
+                      </div>
+                      <button class="send-btn" [disabled]="catalogSubmitFlag">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="catalogSubmitFlag">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <ng-container *ngIf="!catalogSubmitFlag">SAVE</ng-container>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vew karta modal -->
+      <div class="modal fade" id="viewKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-4">
+            <div class="modal-header">
+              <h5 class="modal-title pt-0" id="staticBackdropLabel">View Karta</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="share-link-model mt-3">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <form [formGroup]="viewKartaForm" (ngSubmit)="onViewKartaSubmit()">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="form-group">
+                            <label>Type <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select-option" formControlName="type" (change)="viewKartaType($event)"
+                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors }">
+                              <option value="" selected>Select</option>
+                              <option value="month">Month</option>
+                              <option value="week">Week</option>
+                              <option value="quarter">Quarter</option>
+                            </select>
+                            <div *ngIf="(viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors"
+                              class="invalid-feedback">
+                              <div *ngIf="viewKarta.type.errors.required">Type is required!</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6" *ngIf="showViewKartaNumber">
+                          <div class="form-group">
+                            <label>Number <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select-option" formControlName="number"
+                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors }">
+                              <option value="" selected>Select</option>
+                              <option *ngFor="let number of viewKartaNumbers" [value]="number.value">{{ number?.name }}
+                              </option>
+                            </select>
+                            <div *ngIf="(viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors"
+                              class="invalid-feedback">
+                              <div *ngIf="viewKarta.number.errors.required">Number is required!</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button class="send-btn" [disabled]="viewKartaSubmitFlag">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="viewKartaSubmitFlag">
+                          <span class="sr-only">Loading...</span>
+                        </div>
+                        <ng-container *ngIf="!viewKartaSubmitFlag">SUBMIT</ng-container>
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

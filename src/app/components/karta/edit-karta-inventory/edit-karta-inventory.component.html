@@ -1,0 +1,192 @@
+<!-- Sidebar  -->
+<nav id="sidebar-two">
+    <div class="box-inner">
+       <div class="row mt-3 mb-3">
+          <div class="col-lg-12">
+             <div class="search-bar">
+                <form class="search-form">
+                   <div class="form-group search-filed side-bar-search m-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
+                         viewBox="0 0 16 16">
+                         <path
+                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                         </path>
+                      </svg>
+                      <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
+                   </div>
+                </form>
+             </div>
+          </div>
+       </div>
+    </div>
+    <!-- <div class="row mb-3">
+       <div class="col-lg-6 text-left">
+         <div class="slider-top-text">
+           <p>Nodes</p>
+         </div>
+       </div>
+       <div class="col-lg-6 text-right">
+         <div class="slider-top-text">
+           <a href="javascript:void(0);">See All</a>
+         </div>
+       </div>
+       </div> -->
+    <!-- <div class="row">
+       <div class="col-lg-12">
+         <div class="item p-2">
+           <div class="card custom-card side-bar-card ">
+             <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
+               <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
+               <p class="pt-2">Empty</p>
+             </div>
+           </div>
+         </div>
+       </div>
+       </div> -->
+    <div class="row">
+       <div class="col-lg-12">
+          <div class="">
+             <div id="accordion">
+                <div class="card custom_accordion">
+                   <div class="card-header accordion_header_custom" id="headingOne">
+                      <h5 class="mb-0">
+                         <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                            aria-controls="collapseOne">
+                         Branches
+                         </button>
+                         <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
+                            aria-expanded="true" aria-controls="collapseOne">
+                         See All
+                         </button>
+                      </h5>
+                   </div>
+                   <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                      <div class="card-body">
+                         <div class="row mt-3">
+                            <div class="col-lg-6">
+                               <div class="card custom-card side-bar-card">
+                                  <div class="goal-img cursor_pointer" *ngIf="!showSVG" id="root" draggable="true"
+                                  (dragstart)="onDragStart($event)">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
+                                  <p class="pt-2">Empty</p>
+                               </div>
+                               <div class="goal-img" *ngIf="showSVG">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">Goal</p>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="col-lg-6">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">CSF</p>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="row mt-3">
+                         <div class="col-lg-6">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">Phase</p>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="col-lg-6">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">Segment</p>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+             <div class="line-slide-bar"></div>
+             <div class="card custom_accordion">
+                <div class="card-header accordion_header_custom" id="headingTwo">
+                   <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                         aria-expanded="false" aria-controls="collapseTwo">
+                      Measure
+                      </button>
+                      <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseTwo"
+                         aria-expanded="true" aria-controls="collapseOne">
+                      See All
+                      </button>
+                   </h5>
+                </div>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                   <div class="card-body p-0">
+                      <div class="row mt-3">
+                         <div class="col-lg-6">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">Measure 1</p>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="col-lg-6">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">Measure 2</p>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+             <div class="line-slide-bar"></div>
+             <div class="card custom_accordion">
+                <div class="card-header accordion_header_custom" id="headingThree">
+                   <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                         aria-expanded="false" aria-controls="collapseThree">
+                      Metric
+                      </button>
+                      <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseThree"
+                         aria-expanded="true" aria-controls="collapseOne">
+                      See All
+                      </button>
+                   </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                   <div class="card-body p-0">
+                      <div class="row mt-3">
+                         <div class="col-lg-6">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">Metric 1</p>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="col-lg-6">
+                            <div class="card custom-card side-bar-card ">
+                               <div class="goal-img">
+                                  <img src="assets/img/tutorial-img.png" class="img-fluid" alt="" draggable="false">
+                                  <p class="pt-2">Metric 2</p>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+    </div>
+    <div class="line-slide-bar"></div>
+ </nav>
+ 
+ <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle sidebar_collapsible_btn">
+ <img src="assets/img/side-arrow-right.svg" alt="">
+ </button>
