@@ -259,7 +259,7 @@ export class MyKpiComponent implements OnInit {
 
   // Get color settings
   getColorSettings() {
-    this._myKpiService.getColorSettingByUser({ userId: this._commonService.getUserId() }).subscribe(
+    this._myKpiService.getColorSettings().subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);

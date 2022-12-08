@@ -26,6 +26,7 @@ export class MemberComponent implements OnInit {
   submitted: boolean = false;
   submitFlag = false;
   showDepartment: boolean = false;
+  wasDepartment: boolean = false;
   showRole: boolean = false;
   hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
@@ -159,11 +160,13 @@ export class MemberComponent implements OnInit {
       }
     }
     else {
+      this.wasDepartment = false;
       if (!data.hasOwnProperty("department")) {
         this.showDepartment = false;
         this.inviteForm.removeControl("departmentId");
       } else {
         this.showDepartment = true;
+        this.wasDepartment = true;
         this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
         this.inviteForm.patchValue({
           departmentId: data.department._id ? data.department._id : ''
@@ -219,6 +222,7 @@ export class MemberComponent implements OnInit {
       else if (this.checkFormType === "UPDATE") {
         formData.type = "invited_user";
         formData.userId = this.currentUser._id;
+        if (this.wasDepartment) formData.departmentId = "";
         this._memberService.updateUser(formData, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
@@ -297,10 +301,11 @@ export class MemberComponent implements OnInit {
 
   // Activate user
   activateUser(userId: string) {
-    const result = confirm("Are you sure do you want to Activate this user?");
+    const result = confirm("Are you sure, Do you want to Activate this user?");
     if (result) {
       this._memberService.activateUser({ userId }).subscribe(
         (response: any) => {
+          this.pageIndex = 0;
           this.getAllMembers();
           this._commonService.successToaster("User activated successfully!");
         }
@@ -308,11 +313,12 @@ export class MemberComponent implements OnInit {
     }
   }
   // Deactivate user
-  DeactivateUser(userId: string) {
-    const result = confirm("Are you sure do you want to Deactivate this user?");
+  deactivateUser(userId: string) {
+    const result = confirm("Are you sure, Do you want to Deactivate this user?");
     if (result) {
       this._memberService.deactivateUser({ userId }).subscribe(
         (response: any) => {
+          this.pageIndex = 0;
           this.getAllMembers();
           this._commonService.successToaster("User deactivated successfully!");
         }
@@ -325,6 +331,7 @@ export class MemberComponent implements OnInit {
     if (result) {
       this._memberService.deleteUser({ userId }).subscribe(
         (response: any) => {
+          this.pageIndex = 0;
           this.getAllMembers();
           this._commonService.successToaster("User deleted successfully!");
         }
