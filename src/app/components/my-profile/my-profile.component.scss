@@ -37,6 +37,14 @@
 .phone_edit_icon, .verified_icon {
     height: 20px;
 }
+.phone_verify {
+    text-decoration: underline;
+    margin-left: .25rem;
+    align-self: center;
+    color: #dc3545 ;
+    cursor: pointer;
+    
+}
 .profile_name {
     line-break: anywhere;
 }

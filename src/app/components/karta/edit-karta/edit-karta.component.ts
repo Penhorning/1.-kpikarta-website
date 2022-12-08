@@ -665,6 +665,8 @@ export class EditKartaComponent implements OnInit {
     } else {
       jqueryFunctions.openRightSidebar();
     }
+    // Highlight node
+    $(`.node-text[nodeid=${param.id}]`).css('background-color', "#c1d2ef");
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
     // Show Measure and metrics when KPI's node selected
