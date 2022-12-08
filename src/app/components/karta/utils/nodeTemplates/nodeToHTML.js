@@ -4,7 +4,7 @@
  */
 export default (node, source) => {
   return `
-    <div id="nodeItem" nodeid=${node.id} class="align-self-center d-flex">
+    <div id="nodeItem" nodeid=${node.id} class="d-flex align-self-center">
       <div class="center-options">
         ${node.phase.name !== 'KPI' ? `<div class="option add-item"><i id="addNode" class="fa fa-plus-circle"></i></div>` : ''}
         ${node.phase.name !== 'Goal' ? `<div class="option remove-item"><i id="removeNode" class="fa fa-minus-circle"></i></div>` : ''}

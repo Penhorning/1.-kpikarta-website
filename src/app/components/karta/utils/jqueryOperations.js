@@ -65,6 +65,14 @@ export function setStyle(element, property, value) {
 export function setAttribute(element, property, value) {
     $(element).attr(property, value);
 }
+// Disable element
+export function disableElement(element) {
+    $(element).css("pointer-events", "none", "cursor", "default");
+}
+// Enable element
+export function enableElement(element) {
+    $(element).css("pointer-events", "all", "cursor", "pointer");
+}
 // Remove element
 export function removeElement(element) {
     $(element).remove();
