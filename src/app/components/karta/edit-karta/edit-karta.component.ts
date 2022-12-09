@@ -1569,6 +1569,7 @@ export class EditKartaComponent implements OnInit {
 
   undoKarta() {
     this.undoRedoFlag = true;
+    $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
     this._kartaService.undoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
         if(x.data.message != "nothing"){
@@ -1600,6 +1601,10 @@ export class EditKartaComponent implements OnInit {
                     this.updateNodeProperties(kartaNode);
                     this.currentNode.phase = "";
                     this.D3SVG.updateNode(this.currentNode);
+                    this.getKartaInfo();
+                    setTimeout(() => {
+                      jqueryFunctions.removeKarta();
+                    }, 2000);
                     this.undoRedoFlag = false;
                   },
                   (err) => {
@@ -1633,6 +1638,7 @@ export class EditKartaComponent implements OnInit {
           }
           else {
             this._commonService.warningToaster("Maximum Undo limit has reached..!!");
+            $("#UndoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
             this.undoRedoFlag = false;
           }
         }
@@ -1642,6 +1648,7 @@ export class EditKartaComponent implements OnInit {
 
   async redoKarta() {
     this.undoRedoFlag = true;
+    $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
     this._kartaService.redoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
         if(x.data.message != "nothing"){
@@ -1676,6 +1683,10 @@ export class EditKartaComponent implements OnInit {
                     this.isRtNodDrgingFrmSide = false;
                     this.updateNodeProperties(kartaNode);
                     this.D3SVG.updateNode(this.currentNode);
+                    this.getKartaInfo();
+                    setTimeout(() => {
+                      jqueryFunctions.removeKarta();
+                    }, 2000);
                     this.undoRedoFlag = false;
                   },
                   (err) => {
@@ -1704,6 +1715,7 @@ export class EditKartaComponent implements OnInit {
           }
           else {
             this._commonService.warningToaster("Maximum Redo limit has reached..!!");
+            $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
             this.undoRedoFlag = false;
           }
         }
