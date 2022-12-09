@@ -1294,8 +1294,8 @@ export class EditKartaComponent implements OnInit {
   onRootDragStart() {
     this.isRtNodDrgingFrmSide = true;
   }
-  onInventoryDragStart(node: any) {
-    console.log("invent drag node ", node);
+  onInventoryDragStart(param: any) {
+    this.D3SVG.inventoryDraggingNode(param.node);
   }
 
   onDrop(ev: any, type?: string) {

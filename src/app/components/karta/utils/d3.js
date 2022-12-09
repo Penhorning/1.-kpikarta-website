@@ -56,6 +56,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.getBase64Image = getBase64Image;
     options.exportAsImage = exportAsImage;
     options.exportAsPDF = exportAsPDF;
+    options.inventoryDraggingNode = inventoryDraggingNode;
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
@@ -316,7 +317,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .on("contextmenu", d3.contextMenu(contextMenuItems))
             // Drag and drop from inventory
             .on("dragover", function(d) {
-                console.log("on drag over ", d)
+                console.log("on drag over ", draggingNode)
                 // overCircle(d);
             })
             .on("dragleave", function(event) {
@@ -483,6 +484,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             return c.id != d.id;
         })
         update(d.parent);
+    }
+
+    // Dragging node from inventory
+    function inventoryDraggingNode(node) {
+        draggingNode = node;
     }
 
     // Hightlight nodes, while saving in catalog
