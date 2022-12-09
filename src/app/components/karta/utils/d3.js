@@ -56,6 +56,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.getBase64Image = getBase64Image;
     options.exportAsImage = exportAsImage;
     options.exportAsPDF = exportAsPDF;
+    options.inventoryDraggingNode = inventoryDraggingNode;
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
@@ -285,7 +286,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         nodes.forEach(function (d) {
             // if (d.depth >= options.phases().length) d.depth -= d.depth;
             // console.log("my depth ", d.depth)
-            d.phaseId = options.phases()[d.depth].id
+            d.phaseId = options.phases()[d.depth].id;
+            d.phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
         });
         // nodes.forEach(function (d) {
         //     let children = (d.parent || {children:[]}).children;
@@ -315,7 +317,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .on("contextmenu", d3.contextMenu(contextMenuItems))
             // Drag and drop from inventory
             .on("dragover", function(d) {
-                console.log("on drag over ", d)
+                console.log("on drag over ", draggingNode)
                 // overCircle(d);
             })
             .on("dragleave", function(event) {
@@ -484,17 +486,22 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         update(d.parent);
     }
 
+    // Dragging node from inventory
+    function inventoryDraggingNode(node) {
+        draggingNode = node;
+    }
+
     // Hightlight nodes, while saving in catalog
     function hightlightNode(d) {
-        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#a8beed96");
+        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#c1d2ef");
         if (d.hasOwnProperty("children") && d.children.length > 0) {
             d.children.forEach(item => hightlightNode(item));
         }
         
     }
-    // Remove highlighted color from nodes
+    // Remove color from highlighted nodes
     function unHightlightNode(d) {
-        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#fff");
+        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#FFFFFF");
         if (d.hasOwnProperty("children") && d.children.length > 0) {
             d.children.forEach(item => unHightlightNode(item));
         }
