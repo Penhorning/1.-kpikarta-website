@@ -277,6 +277,14 @@
                          </div>
                       </span>
                    </ng-container>
+                   <span class="mode-btn">
+                      <div class="select-karta-name">
+                         <select class="form-control custom-select-karta-mode" (change)="changeMode($event)" >
+                            <option value="view">View only</option>
+                            <option value="edit" [disabled]='changetype'>Edit only</option>
+                           </select>
+                        </div>
+                     </span>
                 </div>
              </div>
           </div>

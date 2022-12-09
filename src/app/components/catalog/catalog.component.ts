@@ -69,6 +69,7 @@ export class CatalogComponent implements OnInit {
 
     if (isChecked) this.nodeTypeFilter.push(value);
     else this.nodeTypeFilter = this.nodeTypeFilter.filter((item: any) => item !== value);
+    console.log("this.nodeTypeFilter", this.nodeTypeFilter)
     this.catalogs = [];
     this.getCatalogs();
   }
