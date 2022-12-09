@@ -715,7 +715,7 @@ export class EditKartaComponent implements OnInit {
   // Change weightage
   changeWeightage() {
     let node = this.currentNode;
-    if (this.currentNodeWeight < 0 || !this.currentNodeWeight) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
+    if (this.currentNodeWeight < 0 || this.currentNodeWeight === null || this.currentNodeWeight === undefined) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
     else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weighting cannot be greater than 100!");
     else {
       let sum = node.parent.children
@@ -996,6 +996,7 @@ export class EditKartaComponent implements OnInit {
   // Add node
   addNode(param: any) {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
+    let nextPhase = this.phases[this.phaseIndex(param.phaseId) + 2];
     // Weightage division starts
     // let weightage = 0, isWeightageDivided = false;
     // if (param.hasOwnProperty("children") && param.children.length > 0) {
@@ -1016,7 +1017,8 @@ export class EditKartaComponent implements OnInit {
     let data: any = {
       kartaDetailId: this.kartaId,
       phaseId: phase.id,
-      parentId: param.id
+      parentId: param.id,
+      nextPhaseId: nextPhase.id
     }
     if (phase.name === "KPI") {
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
