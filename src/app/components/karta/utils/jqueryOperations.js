@@ -17,16 +17,14 @@ export function hideLeftSidebar() {
 export function closeRightSidebar() {
     $('#rightSidebar, .right_sidebar_overlay').removeClass('open');
     $('body').removeClass('rightSidebarOpened');
+    // Remove color from highlighted node when properties closed
+    $(".node-text").css('background-color', "#ffffff");
 }
 // Open right sidebar
 export function openRightSidebar(value) {
     $('#rightSidebar, .right_sidebar_overlay').addClass('open');
-    if(value && value !== 0){
-      $('#rightSidebar').scrollTop(value);
-    }
-    else {
-      $('#rightSidebar').scrollTop(0);
-    }
+    if (value && value !== 0) $('#rightSidebar').scrollTop(value);
+    else $('#rightSidebar').scrollTop(0);
     $('body').addClass('rightSidebarOpened');
 }
 // Disable chart

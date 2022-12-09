@@ -285,7 +285,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         nodes.forEach(function (d) {
             // if (d.depth >= options.phases().length) d.depth -= d.depth;
             // console.log("my depth ", d.depth)
-            d.phaseId = options.phases()[d.depth].id
+            d.phaseId = options.phases()[d.depth].id;
+            d.phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
         });
         // nodes.forEach(function (d) {
         //     let children = (d.parent || {children:[]}).children;
@@ -486,15 +487,15 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     // Hightlight nodes, while saving in catalog
     function hightlightNode(d) {
-        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#a8beed96");
+        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#c1d2ef");
         if (d.hasOwnProperty("children") && d.children.length > 0) {
             d.children.forEach(item => hightlightNode(item));
         }
         
     }
-    // Remove highlighted color from nodes
+    // Remove color from highlighted nodes
     function unHightlightNode(d) {
-        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#fff");
+        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#FFFFFF");
         if (d.hasOwnProperty("children") && d.children.length > 0) {
             d.children.forEach(item => unHightlightNode(item));
         }
