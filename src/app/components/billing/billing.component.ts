@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
+import { BillingService } from './services/billing.service';
 
 @Component({
   selector: 'app-billing',
@@ -10,8 +11,10 @@ import { CommonService } from '@app/shared/_services/common.service';
 export class BillingComponent implements OnInit {
 
   user: any;
+  userId: string = this._commonService.getUserId();
+  cards: any = [];
 
-  constructor(private _commonService: CommonService, private router: Router) { }
+  constructor(private _commonService: CommonService, private router: Router, private _billingService: BillingService) { }
 
   ngOnInit(): void {
     this._commonService.getUserInfo().subscribe(
@@ -27,6 +30,17 @@ export class BillingComponent implements OnInit {
         }
       }
     );
+
+    this._billingService.getCards(this.userId).subscribe(
+      (response) => {
+        if (response.data && response.data.data.length > 0) {
+          this.cards = response.data.data;
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
   }
 
 }

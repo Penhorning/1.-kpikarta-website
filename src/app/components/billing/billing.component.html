@@ -113,7 +113,8 @@
               <div class="tab-pane mt-4" id="tabs-3" role="tabpanel">
                   <div class="row pt-3">
                       <div class="col-lg-12">
-                          <div class="img-card container p-0">
+                        <div class="row">
+                          <!-- <div class="col-lg-3 p-0">
                               <img class="img-responsive" src="assets/img/Card.png" alt="card">
                               <div class="overlay">
                                   <div class="icon-container">
@@ -125,7 +126,22 @@
                                       </a>
                                   </div>
                               </div>
+                          </div> -->
+                          <div class="col-lg-3 p-0" *ngFor="let card of cards">
+                            <div class="card-bg p-4 d-flex flex-column justify-content-between">
+                              <div>
+                                <h4 class="card-label">{{card.brand}}</h4>
+                                <h5 class="text-white">**** **** **** {{card.last4}}</h5>
+                              </div>
+                              <div class="d-flex justify-content-end">
+                                <div class="d-flex flex-column justify-content-end">
+                                  <p class="text-white p-0 m-0">Expiry date</p>
+                                  <p class="text-white p-0 m-0">{{card.exp_month}}/{{card.exp_year}}</p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
+                        </div>
                       </div>
                   </div>
               </div>
