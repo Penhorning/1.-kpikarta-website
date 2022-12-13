@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
+import { forkJoin } from 'rxjs';
 import { BillingService } from './services/billing.service';
 
 @Component({
@@ -12,7 +13,10 @@ export class BillingComponent implements OnInit {
 
   user: any;
   userId: string = this._commonService.getUserId();
+  noDataAvailable: any = this._commonService.noDataAvailable;
   cards: any = [];
+  overview: any;
+  invoices: any;
 
   constructor(private _commonService: CommonService, private router: Router, private _billingService: BillingService) { }
 
@@ -36,6 +40,24 @@ export class BillingComponent implements OnInit {
         if (response.data && response.data.data.length > 0) {
           this.cards = response.data.data;
         }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+
+    this._billingService.getSubscribedUsers(this.userId).subscribe(
+      (response) => {
+        this.overview = response.data;
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+
+    this._billingService.getInvoices(this.userId).subscribe(
+      (response) => {
+        this.invoices = response.data;
       },
       (err) => {
         console.log(err);

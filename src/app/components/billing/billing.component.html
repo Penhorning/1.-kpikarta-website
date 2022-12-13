@@ -19,42 +19,22 @@
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-              <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
+              <div class="tab-pane p-3 active" *ngIf="overview" id="tabs-1" role="tabpanel">
                   <div class="row">
                       <div class="col-lg-12">
                           <div class="overview mt-4">
                               <div class="heading">
                                   <h5 class="m-0">Member Information</h5>
-                                  <button type="button" class="btn overview-btn">Monthly</button>
+                                  <button type="button" class="btn overview-btn">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
                               </div>
-                              <div class="creators">
+                              <div class="creators" *ngFor="let user of overview.userDetails">
                                   <div class="creaters-header">
-                                      <h6>Creators</h6>
-                                      <p>10 members</p>
+                                      <h6>{{ user.user ? (user.user | titlecase) : "N/A" }}</h6>
+                                      <p>{{ user.quantity ? (user.quantity) : "0" }} {{ user.quantity == 1 ? 'member' : 'members'}}</p>
                                   </div>
                                   <div class="creaters-info text-right">
-                                      <h6>$190.00</h6>
-                                      <p>$19.00 per Member</p>
-                                  </div>
-                              </div>
-                              <div class="creators">
-                                  <div class="creaters-header">
-                                      <h6>Champions</h6>
-                                      <p>24 members</p>
-                                  </div>
-                                  <div class="creaters-info text-right">
-                                      <h6>$216.00</h6>
-                                      <p>$9.00 per Member</p>
-                                  </div>
-                              </div>
-                              <div class="creators">
-                                  <div class="creaters-header">
-                                      <h6>Spectators</h6>
-                                      <p>55 members</p>
-                                  </div>
-                                  <div class="creaters-info text-right">
-                                      <h6>Free</h6>
-                                      <p>$20.00 per Member</p>
+                                      <h6>{{user.total_amount == "Free" ? null : "$"}}{{ user.total_amount ? (user.total_amount) : "0.00" }}</h6>
+                                      <p>${{ user.unit_amount ? (user.unit_amount) : "0.00" }} per Member</p>
                                   </div>
                               </div>
                           </div>
@@ -62,11 +42,11 @@
                   </div>
               </div>
               <!--overview end-->
-              <div class="tab-pane tab-content-cus mt-3" id="tabs-2" role="tabpanel">
+              <div class="tab-pane tab-content-cus mt-3" *ngIf="invoices" id="tabs-2" role="tabpanel">
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="KPI-custom-table">
-                      <table class="table">
+                      <table class="table" *ngIf="invoices.data && invoices.data.length > 0">
                         <thead class="thead">
                           <tr>
                             <th scope="col">Period</th>
@@ -75,36 +55,18 @@
                             <th scope="col">Invoice Date</th>
                           </tr>
                         </thead>
-                        <tbody> 
+                        <tbody *ngFor="let invoice of invoices.data"> 
                           <tr>
-                            <td>July 01 2022 - Oct 07 2022</td>
-                            <td>$755.00</td>
-                            <td class="paid">Paid</td>
-                            <td>July 07 2022</td>
+                            <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td>
+                            <td>${{invoice.amount_paid}}</td>
+                            <td class="paid">{{invoice.status | titlecase}}</td>
+                            <td>{{invoice.created * 1000 | date}}</td>
                           </tr>
-                       
-                        </tbody>
-                        <tbody class="thead-dark-custom thead">
-                          <tr>
-                              <td>July 01 2022 - Oct 07 2022</td>
-                              <td>$755.00</td>
-                              <td class="paid">Paid</td>
-                              <td>July 07 2022</td>
-                          </tr>
-                       
-                        </tbody>
-                        <tbody class="thead">
-                          <tr>
-                              <td>July 01 2022 - Oct 07 2022</td>
-                              <td>$755.00</td>
-                              <td class="paid">Paid</td>
-                              <td>July 07 2022</td>
-                          </tr>
-                       
                         </tbody>
                       </table>
-                      
-                      
+                      <div *ngIf="!invoices.data || invoices.data.length == 0" class="py-5">
+                        <div [innerHtml]="noDataAvailable"></div>
+                      </div>
                     </div>
                   </div>
                 </div>

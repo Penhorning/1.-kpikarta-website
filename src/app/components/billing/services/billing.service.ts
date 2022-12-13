@@ -11,4 +11,14 @@ export class BillingService {
   getCards(userId: string) {
     return this._httpService.POST(`/subscriptions/get-cards`, { userId });
   }
+
+  getSubscribedUsers(userId: string) {
+    return this._httpService.POST(`/subscriptions/get-subscription-users`, { userId });
+  }
+
+  getInvoices(userId?: string) {
+    const query: any = {};
+    userId ? query['userId'] = userId : {};
+    return this._httpService.POST(`/subscriptions/get-invoices`, query );
+  }
 }
