@@ -31,7 +31,6 @@ export class AllKartasComponent implements OnInit {
   // Loding var
   loading: boolean = false;
   changetype: boolean = false;
-  newdata: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
@@ -112,7 +111,6 @@ export class AllKartasComponent implements OnInit {
   // Submit shared data
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
-      // if (element.email !== this._commonService.getEmailId()) this.emails.push(element.email);
       if (element.email == this._commonService.getEmailId()) {
         this._commonService.warningToaster("You can not share karta to yourself!");
         if (element.email !== this._commonService.getEmailId()) { }
@@ -132,6 +130,7 @@ export class AllKartasComponent implements OnInit {
         this._commonService.successToaster("Your have shared karta successfully!");
         $('#shareLinkModal').modal('hide');
         this.getAllKartas();
+        this.changetype = false;
       },
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);
@@ -164,6 +163,21 @@ export class AllKartasComponent implements OnInit {
         });
       } this.loading = false;
     })
+  }
+
+  //Add custom email
+  addCustomEmail(event: any){
+    if(event.term.length > 0){
+      this.changetype = true;
+      this.changeModeType = "view";
+    } else {
+      this.changetype = false;
+    }
+  }
+
+  // Remove custom email
+  removeCustomEmail(event: any){
+    this.changetype = false;
   }
 
   // Copy karta
