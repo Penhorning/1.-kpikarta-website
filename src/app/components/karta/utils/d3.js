@@ -49,6 +49,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             return a.parent == b.parent ? 1 : 1.25;
         });
     //   .size([height, width])
+    options.update = update;
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
     options.updateRemovedNode = updateRemovedNode;
@@ -257,7 +258,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         if (selectedNode != draggingNode && selectedNode !== null)
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
-        // updateTempConnector();
     };
 
     // Find max depth of subphases
@@ -307,24 +307,28 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("class", "node")
             .attr("width", 93)
             .attr("height", 60)
-            // .on("mouseover", function (node) {
-            //     selectedNode = node;
-            // })
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
             })
             .on("click", nodeclick)
             .on("contextmenu", d3.contextMenu(contextMenuItems))
             // Drag and drop from inventory
-            .on("dragover", function(d) {
-                console.log("on drag over ", draggingNode)
-                // overCircle(d);
+            .on("dragover", function(node) {
+                d3.event.preventDefault();
+                overCircle(node);
             })
-            .on("dragleave", function(event) {
-                console.log("on drag leave ", event)
+            .on("dragleave", function(node) {
+                d3.event.preventDefault();
+                outCircle(node);
             })
-            .on("drop", function(event) {
-                console.log("on drop ", event)
+            .on("drop", function(dropped_node) {
+                let draggingDepth = getDepth(draggingNode);
+                let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+
+                if ((draggingDepth + selectedDepth) > 6) {
+                    alert("You cannot drag this node becuase it's leaf nodes exceeding the kpi node.")
+                } else options.events.onInventoryDrop(draggingNode, dropped_node);
+                outCircle(dropped_node);
             });
             
         nodeEnter
