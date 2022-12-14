@@ -53,6 +53,12 @@ input[type=number]::-webkit-outer-spin-button {
     line-height: 1.3;
 }
 
+@-moz-document url-prefix() {
+    .line_height_1_3 {
+        line-height: 1.5;
+    }
+}
+
 .short_text {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -149,7 +155,9 @@ input[type=number]::-webkit-outer-spin-button {
     vertical-align: bottom;
     width: 24px;
 }
-
+// .mindmap-node .node-body:hover {
+//     pointer-events: all;
+// }
 .mindmap-node .node-body {
     background-color: #fff;
     border: 1px solid #ccc;

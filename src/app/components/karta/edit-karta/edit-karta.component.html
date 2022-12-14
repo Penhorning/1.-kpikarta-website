@@ -15,13 +15,18 @@
            <div class="search-bar">
               <form class="search-form">
                  <div class="form-group search-filed side-bar-search m-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search"
-                       viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search cursor_pointer"
+                       viewBox="0 0 16 16" (click)="inventorySearch()">
                        <path
                           d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
                        </path>
                     </svg>
-                    <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
+                    <input type="text" class="form-control" name="search" [(ngModel)]="inventory_search_text" id="search" placeholder="Search...">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-x-lg clear_search_icon" viewBox="0 0 16 16" *ngIf="inventory_search_text" (click)="clearInventorySearch()">
+                     <path
+                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                     </svg>
                  </div>
               </form>
            </div>
@@ -71,22 +76,21 @@
                  </div>
                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
-                       <div class="row mt-3">
-                          <div class="col-lg-6" *ngIf="!showSVG">
+                       <div class="row">
+                          <div class="col-lg-6 mb-2" *ngIf="!showSVG">
                              <div class="card custom-card side-bar-card">
-                                <div class="goal-img cursor_pointer" *ngIf="!showSVG" id="root" draggable="true"
-                                (dragstart)="onRootDragStart()">
-                                <img src="assets/img/tutorial-img.png" class="img-fluid">
-                                <p class="pt-2">Empty</p>
+                                <div class="goal-img cursor_pointer" id="root" draggable="true" (dragstart)="onRootDragStart('root', true)">
+                                <img src="assets/img/root.png" class="img-fluid">
+                                <p>Empty</p>
                              </div>
                           </div>
                         </div>
                        <ng-container *ngFor="let inventory of inventories; let i=index">
-                         <div class="col-lg-6" *ngIf="inventory.node_type === 'branch'">
+                         <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'branch'">
                             <div class="card custom-card side-bar-card ">
-                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
+                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onRootDragStart(inventory, false)">
                                   <img [src]="inventory.thumbnail" class="img-fluid">
-                                  <p class="pt-2">{{ inventory?.name }}</p>
+                                  <p>{{ inventory?.name }}</p>
                                </div>
                             </div>
                          </div>
@@ -110,14 +114,14 @@
                  </h5>
               </div>
               <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                 <div class="card-body p-0">
-                    <div class="row mt-3">
+                 <div class="card-body">
+                    <div class="row">
                        <ng-container *ngFor="let inventory of inventories; let i=index">
-                        <div class="col-lg-6" *ngIf="inventory.node_type === 'measure'">
+                        <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'measure'">
                            <div class="card custom-card side-bar-card ">
                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
                                  <img [src]="inventory.thumbnail" class="img-fluid">
-                                 <p class="pt-2">{{ inventory?.name }}</p>
+                                 <p>{{ inventory?.name }}</p>
                               </div>
                            </div>
                         </div>
@@ -141,10 +145,10 @@
                  </h5>
               </div>
               <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                 <div class="card-body p-0">
-                    <div class="row mt-3">
+                 <div class="card-body">
+                    <div class="row">
                       <ng-container *ngFor="let inventory of inventories; let i=index">
-                        <div class="col-lg-6" *ngIf="inventory.node_type === 'metrics'">
+                        <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'metrics'">
                            <div class="card custom-card side-bar-card ">
                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
                                  <img [src]="inventory.thumbnail" class="img-fluid">
@@ -189,9 +193,9 @@
               </div>
             </div>
             <div class="col-lg-2 align-self-center undo_redo_btn">
-              <a title="Undo" (click)="undoRedoFlag ? null : undoKarta()"><img src="assets/img/Undo.svg"
+              <a title="Undo" id="UndoAnchor" (click)="undoRedoFlag ? null : undoKarta()"><img src="assets/img/Undo.svg"
                 [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
-              <a title="Redo" (click)="undoRedoFlag ? null : redoKarta()"><img src="assets/img/Redo.svg"
+              <a title="Redo" id="RedoAnchor" (click)="undoRedoFlag ? null : redoKarta()"><img src="assets/img/Redo.svg"
                   [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
               <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
             </div>
@@ -213,7 +217,7 @@
               </div>
             </div>
             <div class="col-lg-2 text-center">
-              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" disabled (click)="onShare(sharedKartaStr)">View</button>
+              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" (click)="onShare(sharedKartaStr)">View</button>
             </div>
             <div class="col-lg-3 p-0">
               <div class="icon-karta">
@@ -462,14 +466,11 @@
               <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
               <div *ngIf="!showSVG && !loadingKarta">
                 <ng-container *ngFor="let phase of phases; let i = index">
-                  <div class="align-items-center border d-block d-flex justify-content-end karta_dummy_lines pr-3"
-                    *ngIf="phase.name !== 'Target'" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
+                  <div class="karta_dummy_lines" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
                     (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
                     (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide" (click)="addRoteNode($event)"><i
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide" (click)="addRootNode($event)"><i
                         class="fa fa-plus-circle"></i> Node</button>
-                  </div>
-                  <div class="d-block border karta_dummy_lines" *ngIf="phase.name === 'Target'" [id]="phase?.id">
                   </div>
                 </ng-container>
               </div>
@@ -659,7 +660,7 @@
               <div class="col-lg-6">
                 <div class="selct-option-side-r">
                   <label>Start Date</label>
-                  <input type="date" class="form-control" [min]="maxStartDate | date:'yyyy-MM-dd'" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
+                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
                     (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
                   <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                 </div>
