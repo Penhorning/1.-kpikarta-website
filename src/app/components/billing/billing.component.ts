@@ -57,6 +57,7 @@ export class BillingComponent implements OnInit {
 
     this._billingService.getInvoices(this.userId).subscribe(
       (response) => {
+        console.log(response.data);
         this.invoices = response.data;
       },
       (err) => {

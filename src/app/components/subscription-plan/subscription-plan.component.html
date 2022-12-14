@@ -8,10 +8,11 @@
         </div>
     </div>
 </section>
-<section id="plan" class="mt-3 mb-5">
-    <div class="container">
+<section id="plan" class="mt-2 mb-5">
+    <div [innerHTML]="loadingComponent" class="mt-5" *ngIf="!loader"></div>
+    <div class="container" *ngIf="loader">
         <div class="row">
-            <div class="col-md-12 mt-4 mb-4">
+            <!-- <div class="col-md-12 mt-4 mb-4">
                 <div class="col-md-5 mx-auto">
                     <div class="toggle button mx-auto">
                         <div class="col-sm-8 mx-auto">
@@ -22,12 +23,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="col-md-5 mx-auto">
                 <div class="basic_plan">
                     <!-- <h6>CREATOR</h6> -->
                     <img src="assets/img/basic.png" alt="" />
-                    <h1>CREATOR</h1>
+                    <h1>{{prices ? prices.month : ""}}/MONTH</h1>
                     <div class="row">
                         <div class="col-sm-10 mt-3">Create and edit Karta</div>
                         <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
@@ -44,14 +45,47 @@
                             <p class="default_color">Unlimited</p>
                         </div>
                         <div class="col-sm-12 mt-4 text-center">
-                            <button class="btn_sty_2" (click)="selectPlan()">
+                            <button class="btn_sty_2" (click)="selectPlan('monthly')">
                                 <div class="spinner-border align-top" role="status" *ngIf="submitFlag">
                                   <span class="sr-only">Loading...</span>
                                 </div>
                                 <ng-container *ngIf="!submitFlag">
                                     Select Plan
                                 </ng-container>
-                              </button>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 mx-auto">
+                <div class="basic_plan">
+                    <!-- <h6>CREATOR</h6> -->
+                    <img src="assets/img/basic.png" alt="" />
+                    <h1>{{prices ? prices.year : ""}}/YEAR</h1>
+                    <div class="row">
+                        <div class="col-sm-10 mt-3">Create and edit Karta</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Create Catalogs in which user can save Kartas, Branches, measures,
+                            and metrics for reuse</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Share Elements (Catalogs, Kartas, Measures, Metrics) with
+                            Department, Company and Public</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Enter and edit KPI Targets and actuals</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-9 mt-3">Kartas Created</div>
+                        <div class="col-sm-3 mt-3 text-center">
+                            <p class="default_color">Unlimited</p>
+                        </div>
+                        <div class="col-sm-12 mt-4 text-center">
+                            <button class="btn_sty_2" (click)="selectPlan('yearly')">
+                                <div class="spinner-border align-top" role="status" *ngIf="submitFlag">
+                                  <span class="sr-only">Loading...</span>
+                                </div>
+                                <ng-container *ngIf="!submitFlag">
+                                    Select Plan
+                                </ng-container>
+                            </button>
                         </div>
                     </div>
                 </div>

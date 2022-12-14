@@ -91,19 +91,19 @@
                     <div class="spinner-border spinner-grow-sm ml-1" role="status" *ngIf="sendingCredentials && (currentSendingUserId === user._id)">
                       <span class="sr-only">Loading...</span>
                     </div>
-                    <span *ngIf="!user?.active" title="Activate" class="ml-1" style="cursor: pointer;" (click)="activateUser(user._id)">
+                    <span *ngIf="!user?.active" title="Activate" class="ml-1" style="cursor: pointer;" (click)="activateUser(user)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="18.667" viewBox="0 0 16 18.667">
                         <path id="noun-unlock-1926243" d="M154.663,41.667h-1.333V40.333A5.323,5.323,0,0,0,142.851,39h2.093a3.332,3.332,0,0,1,6.385,1.333v1.333h-10A1.334,1.334,0,0,0,140,43v9.333a1.334,1.334,0,0,0,1.333,1.333h13.333A1.334,1.334,0,0,0,156,52.333V43a1.334,1.334,0,0,0-1.333-1.333ZM148,48.333A1.333,1.333,0,1,1,149.329,47,1.334,1.334,0,0,1,148,48.333Z" transform="translate(-139.996 -35)"/>
                       </svg>                                            
                     </span>
-                    <span *ngIf="user?.active" title="Deactivate" class="ml-1" style="cursor: pointer;" (click)="deactivateUser(user._id)">
+                    <span *ngIf="user?.active" title="Deactivate" class="ml-1" style="cursor: pointer;" (click)="deactivateUser(user)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                         <g id="Group_8509" data-name="Group 8509" transform="translate(-23443.762 -2449)">
                           <path id="Path_38523" data-name="Path 38523" d="M229.668,167.668A7.977,7.977,0,1,0,224,165.332,8,8,0,0,0,229.668,167.668Zm0-1.454a6.205,6.205,0,0,1-4.073-1.454l9.164-9.164a6.615,6.615,0,0,1,1.454,4.073,6.518,6.518,0,0,1-6.546,6.546Zm0-13.092a6.2,6.2,0,0,1,4.073,1.454l-9.164,9.164a6.615,6.615,0,0,1-1.454-4.073,6.518,6.518,0,0,1,6.545-6.549Z" transform="translate(23222.094 2297.332)"/>
                         </g>
                       </svg>
                     </span>
-                    <span title="Delete" class="ml-1" style="cursor: pointer;" (click)="deleteUser(user._id)">
+                    <span title="Delete" class="ml-1" style="cursor: pointer;" (click)="deleteUser(user)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19.556" viewBox="0 0 16 19.556">
                         <g id="noun-delete-4810783" transform="translate(-139.996 -23.332)">
                           <path id="Path_38518" data-name="Path 38518" d="M257.686,25.37H263.8a1.019,1.019,0,0,0,0-2.038h-6.115a1.019,1.019,0,0,0,0,2.038Z" transform="translate(-112.747)"/>

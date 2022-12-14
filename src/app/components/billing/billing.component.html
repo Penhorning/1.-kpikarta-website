@@ -58,7 +58,7 @@
                         <tbody *ngFor="let invoice of invoices.data"> 
                           <tr>
                             <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td>
-                            <td>${{invoice.amount_paid}}</td>
+                            <td>${{invoice.amount_paid / 100}}</td>
                             <td class="paid">{{invoice.status | titlecase}}</td>
                             <td>{{invoice.created * 1000 | date}}</td>
                           </tr>
