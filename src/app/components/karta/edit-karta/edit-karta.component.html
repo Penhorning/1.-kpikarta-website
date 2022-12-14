@@ -79,7 +79,7 @@
                        <div class="row">
                           <div class="col-lg-6 mb-2" *ngIf="!showSVG">
                              <div class="card custom-card side-bar-card">
-                                <div class="goal-img cursor_pointer" id="root" draggable="true" (dragstart)="onRootDragStart()">
+                                <div class="goal-img cursor_pointer" id="root" draggable="true" (dragstart)="onRootDragStart('root', true)">
                                 <img src="assets/img/root.png" class="img-fluid">
                                 <p>Empty</p>
                              </div>
@@ -88,7 +88,7 @@
                        <ng-container *ngFor="let inventory of inventories; let i=index">
                          <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'branch'">
                             <div class="card custom-card side-bar-card ">
-                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
+                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onRootDragStart(inventory, false)">
                                   <img [src]="inventory.thumbnail" class="img-fluid">
                                   <p>{{ inventory?.name }}</p>
                                </div>
@@ -469,7 +469,7 @@
                   <div class="karta_dummy_lines" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
                     (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
                     (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide" (click)="addRoteNode($event)"><i
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide" (click)="addRootNode($event)"><i
                         class="fa fa-plus-circle"></i> Node</button>
                   </div>
                 </ng-container>

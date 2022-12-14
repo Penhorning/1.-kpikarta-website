@@ -82,8 +82,8 @@ export class EditKartaComponent implements OnInit {
       onDragStart: (d: any) => {
         if (d && d.parent) this.previousDraggedNodeParentId = d.parent.id;
       },
-      onInventoryDrop: (d: any, parent = null) => {
-        this.onInventoryDrop(d, parent);
+      onInventoryDrop: (node: any, parent = null) => {
+        this.onInventoryDrop(node, parent);
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -1287,7 +1287,7 @@ export class EditKartaComponent implements OnInit {
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.remove('selectedPhase');
   }
-  addRoteNode(ev: any) {
+  addRootNode(ev: any) {
     let element = ev.target.closest('div');
     this.onDrop(element.id, 'add_root');
   }
@@ -1305,8 +1305,12 @@ export class EditKartaComponent implements OnInit {
     if (element) element.classList.remove('selectedPhase');
   }
 
-  onRootDragStart() {
-    this.isRtNodDrgingFrmSide = true;
+  onRootDragStart(data: any, type: boolean) {
+    if (type) this.isRtNodDrgingFrmSide = true;
+    else {
+      this.draggingInventoryNode = data;
+      if (this.karta.node) this.onInventoryDragStart(data);
+    }
   }
   onInventoryDragStart(param: any) {
     this.draggingInventoryNode = param;
@@ -1314,6 +1318,10 @@ export class EditKartaComponent implements OnInit {
   }
 
   onDrop(ev: any, type?: string) {
+    if (this.draggingInventoryNode) {
+      this.onInventoryDrop(this.draggingInventoryNode.node, null);
+      return;
+    }
     let phaseId = '';
     if (type == 'add_root') phaseId = ev;
     else {

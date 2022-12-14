@@ -48,8 +48,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         .separation(function (a, b) {
             return a.parent == b.parent ? 1 : 1.25;
         });
-    //   .size([height, width])
-    options.update = update;
+    //   .size([height, width])=
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
     options.updateRemovedNode = updateRemovedNode;
@@ -248,7 +247,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // Getting depth
             let draggingDepth = getDepth(draggingNode);
             let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
-            if (phase.name !== "KPI" && !((draggingDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId))) {
+            if (phase.name !== "KPI" && !((draggingDepth + selectedDepth) > 6 && ((selectedNode.phaseId !== draggingNode.phaseId) || phase.name === "Goal"))) {
                 colorCode = "#76ff03"; // Red color
             }
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
