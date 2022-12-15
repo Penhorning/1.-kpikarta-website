@@ -65,13 +65,18 @@ export class EditKartaComponent implements OnInit {
       // addNodeRight: (d: any) => {
       //   this.addNodeRight(d);
       // },
-      updateDraggedNode: (d: any) => {
-        this.currentNode = d;
-        if(d.parent.id && d.phaseId) {
+      updateDraggedNode: (draggingNode: any, selectedNode: any) => {
+        if (selectedNode) {
+          draggingNode.parent.id = selectedNode.id;
+          draggingNode.parentId = selectedNode.id;
+        }
+        this.currentNode = draggingNode;
+        if (draggingNode.parent.id && draggingNode.phaseId) {
           let node = this.currentNode;
-          if(this.previousDraggedNodeParentId !== d.parent.id) {
-            this.updateNode('parentId', d.parent.id, 'node_updated', node);
-            this.updateNode('phaseId', d.phaseId, 'node_updated', node);
+          if (this.previousDraggedNodeParentId !== draggingNode.parent.id) {
+            // this.updateNode('parentId', d.parent.id, 'node_updated', node);
+            // this.updateNode('phaseId', d.phaseId, 'node_updated', node);
+            this.updateNodeAndWeightage(draggingNode);
           }
         }
       },
@@ -624,6 +629,19 @@ export class EditKartaComponent implements OnInit {
       return item.id === phaseId;
     });
   }
+  // remove parent object from every node to prevent circular json
+  removeCircularData(data: any) {
+    return JSON.stringify(data, function(key, value) {
+      if (key == 'parent') return value.id;
+      return value;
+    });
+  }
+  // Rerender karta again
+  reRenderKarta() {
+    this.getKartaInfo();
+    setTimeout(() => jqueryFunctions.removeKarta(), 500);
+    jqueryFunctions.enableElement("#karta-svg svg .node");
+  }
   // Update node properties
   updateNodeProperties(param: any, scroll?: any) {
     this.currentNode = param;
@@ -693,7 +711,7 @@ export class EditKartaComponent implements OnInit {
         this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
       // Set notify user
       if (this.currentNode.notifyUserId) {
-        if (this.currentNode.notifyUserId === this.currentNode.contributorId) this.notifyType = "owner";
+        if (this.currentNode.notifyUserId === this.karta.userId) this.notifyType = "owner";
         else this.notifyType = "specific";
       } else this.notifyType = "";
     }
@@ -1048,9 +1066,14 @@ export class EditKartaComponent implements OnInit {
         // this.D3SVG.updateNewNode(param, response);
         // this.setKartaDimension();
         // this.updateNewPercentage();
-        this.getKartaInfo();
-        setTimeout(() => jqueryFunctions.removeKarta(), 2000);
-        jqueryFunctions.enableElement("#karta-svg svg .node");
+        this.reRenderKarta();
+        // this._kartaService.getKarta(this.kartaId).subscribe(
+        //   (response: any) => {
+        //     this.karta = response;
+        //     this.versionId = response.versionId;
+        //     this.D3SVG.update(this.karta.node);
+        //   }
+        // );
         // this.updateNodeProperties(response);
         // this.D3SVG.updateNode(param, response);
         // this.getKartaInfo();
@@ -1192,6 +1215,21 @@ export class EditKartaComponent implements OnInit {
     }
     await this._kartaService.addKartaHistoryObject(history_data).toPromise();
     return true;
+  }
+
+  // Update node and weightage
+  updateNodeAndWeightage(node: any) {
+    let data = {
+      kartaId: this.kartaId,
+      node
+    }
+    data.node = JSON.parse(this.removeCircularData(node));
+
+    this._kartaService.updateNodeAndWeightage(data).subscribe(
+      (response: any) => {
+        this.reRenderKarta();
+      }
+    );
   }
 
   onCatalogSubmit  = async () => {
@@ -1356,13 +1394,6 @@ export class EditKartaComponent implements OnInit {
     });
   }
 
-  // remove parent object from every node to prevent circular json
-  removeCircularData(data: any) {
-    return JSON.stringify(data, function(key, value) {
-      if (key == 'parent') return value.id;
-      return value;
-    });
-  }
   // On Inventory drop
   onInventoryDrop(node: any, parent = null) {
     let data = {

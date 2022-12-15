@@ -217,7 +217,7 @@
               </div>
             </div>
             <div class="col-lg-2 text-center">
-              <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal" (click)="onShare(sharedKartaStr)">View</button>
+              <button type="button" class="btn bg-light border" disabled data-toggle="modal" data-target="#viewKartaModal" (click)="onShare(sharedKartaStr)">View</button>
             </div>
             <div class="col-lg-3 p-0">
               <div class="icon-karta">
@@ -524,7 +524,9 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="search-sugg mt-3">
-              <input type="text" class="form-control" [(ngModel)]="currentNodeName" (blur)="changeNodeName()">
+              <input type="text" class="form-control" [(ngModel)]="currentNodeName" (blur)="changeNodeName()"
+              [ngClass]="{'is-invalid': !currentNodeName}">
+              <div class="invalid-feedback d-block" *ngIf="!currentNodeName">Please enter name!</div>
             </div>
           </div>
         </div>

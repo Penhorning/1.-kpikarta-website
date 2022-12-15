@@ -83,9 +83,11 @@ export class KartaService {
   addKartaHistoryObject(data: any) {
     return this._httpService.POST('/karta_histories/create-karta-history', data);
   }
-
   updateNode(nodeId: string, data: any) {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
+  }
+  updateNodeAndWeightage(data: { kartaId: string, node: object }) {
+    return this._httpService.PATCH('/karta_nodes/update-node', data);
   }
   updateKarta(kartaId: string, data: any) {
     return this._httpService.PATCH(`/karta/${kartaId}`, data);
