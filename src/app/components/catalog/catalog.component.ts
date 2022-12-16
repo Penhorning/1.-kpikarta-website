@@ -26,7 +26,6 @@ export class CatalogComponent implements OnInit {
   ]
   // Share var
   dropdownSettings: any = {};
-  // isDisabled: boolean = false;
   sharingCatalog: any;
   shareSubmitFlag: boolean = false;
   selectedUsers: any = [];
@@ -71,21 +70,24 @@ export class CatalogComponent implements OnInit {
     else this.nodeTypeFilter = this.nodeTypeFilter.filter((item: any) => item !== value);
   }
   applyFilter() {
-    this.pageIndex = 0;
     this.getCatalogs();
   }
 
   // Get all catalogs
   getCatalogs() {
     let data = {
-      page: this.pageIndex + 1,
+      page: 1,
       limit: this.pageSize,
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text,
       nodeTypes: this.nodeTypeFilter,
       type: this.catalogType
     }
+
     this.loading = true;
+    this.catalogs = [];
+    this.pageIndex = 0;
+
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
         this.catalogs = response.catalogs[0].data;
@@ -163,19 +165,14 @@ export class CatalogComponent implements OnInit {
 
   // Tab switch
   onTabSwitch(type: string) {
-    this.pageIndex = 0;
     this.search_text = "";
-    this.catalogs = [];
     this.catalogType = type;
     this.getCatalogs();
   }
 
   // Search
   search() {
-    if (this.search_text) {
-      this.pageIndex = 0;
-      this.getCatalogs();
-    }
+    if (this.search_text) this.getCatalogs();
   }
   clearSearch() {
     this.search_text = "";

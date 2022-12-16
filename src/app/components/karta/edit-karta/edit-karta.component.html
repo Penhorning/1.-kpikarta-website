@@ -325,12 +325,12 @@
               <div class="save-setting-btn">
                 <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
                 <div class="dropdown">
-                  <button (click)="colorFunctionDropDown()" class="dropbtn" title="Settings"><img src="assets/img/settings.svg"></button>
-                  <div id="colorDropdown" class="dropdown-content custom-drop">
-
+                  <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg"></button>
+                  
+                  <div class="dropdown-menu dropdown-content custom-drop" aria-labelledby="dropdownMenuButton">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
                     <div class="fillter-inner-white-box p-2">
-                      <div class="row ">
+                      <!-- <div class="row ">
                         <div class="col-6"> 
                           <div class="pl-1">
                             <p>Help Text</p>
@@ -345,7 +345,7 @@
                           </div>
                         </div>
                       </div>
-                      <hr>
+                      <hr> -->
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -802,7 +802,7 @@
                           <div class="d-flex justify-content-between align-items-center">
                             <label (keypress)="setLimitForContentEditable($event)" (blur)="setFieldValues(i)"
                               contenteditable="false" [id]="'fd'+i"
-                              [class]="checkFieldStatus('fd'+i) ? 'mb-2 border label-width' : 'mb-2 label-width'"
+                              [class]="checkFieldStatus('fd'+i) ? 'mb-2 border rename_label_width' : 'mb-2 rename_label_width'"
                               (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
                             <a class="mb-2" role="button" (click)="editFieldStatus(i, true)"
                               *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"

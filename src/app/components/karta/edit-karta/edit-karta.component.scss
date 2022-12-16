@@ -91,10 +91,6 @@
     margin-top: 27px;
 }
 
-.label-width {
-    width: 100px;
-}
-
 .cursor-not-allowed {
     cursor: not-allowed !important;
 }
@@ -267,6 +263,9 @@
     background-color: transparent;
   }
   
+  .dropbtn.dropdown-toggle::after {
+    display: none;
+  }
 
 
   .dropdown {

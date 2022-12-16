@@ -89,7 +89,7 @@
                                         <div class="col-lg-12 text-center">
                                             <div class="mt-3">
                                                 <div class="d-flex justify-content-center align-items-center">
-                                                    <h5 class="short_text line_height_1_3" [id]="'kt'+i" (keypress)="setLimitForContentEditable($event)" contenteditable="false" [title]="karta.name">
+                                                    <h5 class="short_text line_height_1_3 rename_label_width" [id]="'kt'+i" (keypress)="setLimitForContentEditable($event)" contenteditable="false" [title]="karta.name">
                                                         {{karta?.name}}</h5>
                                                     <img class="ml-2 img-fluid-tick" (click)="renameKarta(karta._id, i)"
                                                         *ngIf="checkEditStatus(i) != false"
