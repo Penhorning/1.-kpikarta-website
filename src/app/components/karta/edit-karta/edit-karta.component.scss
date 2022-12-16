@@ -27,6 +27,15 @@
     right: 0;
 }
 
+.clear_search_icon {
+    cursor: pointer;
+    margin-right: 25px;
+}
+
+.side-bar-card .goal-img img {
+    border-radius: 2px;
+}
+
 .phase_column ul {
     width: 100%;
 }
@@ -38,6 +47,14 @@
 
 .karta_dummy_lines {
     height: 65px;
+    padding-right: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    border: 1px solid #dee2e6;
+    display: flex;
+}
+.mode-btn{
+    margin-inline-start: auto;
 }
 
 .description_div {
@@ -72,10 +89,6 @@
 }
 .target_action_btn {
     margin-top: 27px;
-}
-
-.label-width {
-    width: 100px;
 }
 
 .cursor-not-allowed {
@@ -250,6 +263,9 @@
     background-color: transparent;
   }
   
+  .dropbtn.dropdown-toggle::after {
+    display: none;
+  }
 
 
   .dropdown {
