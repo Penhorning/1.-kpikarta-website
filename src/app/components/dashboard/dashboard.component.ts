@@ -24,6 +24,9 @@ export class DashboardComponent implements OnInit {
   loadingSharedKartas: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
+
+  changetype: boolean = false;
+  changeModeType: string = "view";
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
   loading: boolean = false;
@@ -143,6 +146,25 @@ export class DashboardComponent implements OnInit {
       } this.loading = false;
     })
   }
+
+  // On select user while sharing
+  onSelectUser() {
+    this.changetype = false;
+    for (let i = 0; i < this.selectedUsers.length; i++) {
+      for (let j = 0; j < this.users.length; j++) {
+        if (this.selectedUsers[i].email !== this.users[j].email) {
+          this.changetype = true;
+          this.changeModeType = "view";
+          break;
+        }
+      }
+    }
+  }
+  // Enable edit option
+  enableEditOption() {
+    this.changetype = false;
+  }
+
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
       if (element.email == this._commonService.getEmailId()) {
@@ -155,7 +177,8 @@ export class DashboardComponent implements OnInit {
     if (this.emails.length > 0) {
       let data = {
         karta: this.sharingKarta,
-        emails: this.emails
+        emails: this.emails,
+        accessType: this.changeModeType
       }
       this.sharedSubmitFlag = true;
 
@@ -217,6 +240,12 @@ export class DashboardComponent implements OnInit {
         this._commonService.errorToaster('Error while updating name!');
       }
     );
+  }
+
+  // Change chart mode
+  changeMode(e: any) {
+    if (e.target.value === "edit") this.changeModeType = e.target.value;
+    else this.changeModeType = e.target.value;
   }
    
 }

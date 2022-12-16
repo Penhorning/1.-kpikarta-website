@@ -244,7 +244,7 @@
                    <div class="row">
                       <div class="col-lg-12">
                          <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
-                         [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers" (remove)="removeCustomEmail($event)" (search)="addCustomEmail($event)">
+                         [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
                          <ng-template ng-tag-tmp let-search="searchTerm">
                             <b>Add new email</b>: {{search}}
                          </ng-template>
@@ -267,7 +267,7 @@
           </div>
           <div class="row">
              <div class="col-lg-12 text-left">
-                <div class="shared-with" style="display:flex;">
+                <div class="shared-with d-flex">
                    <span>Shared with:</span>
                    <ng-container *ngIf="sharingKartaCount">
                       <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
@@ -279,9 +279,9 @@
                    </ng-container>
                    <span class="mode-btn">
                       <div class="select-karta-name">
-                         <select class="form-control custom-select-karta-mode" (change)="changeMode($event)" >
-                            <option value="view">View only</option>
-                            <option value="edit" [disabled]='changetype'>Edit only</option>
+                         <select class="form-control custom-select-karta-mode" [(ngModel)]="changeModeType" (change)="changeMode($event)" >
+                            <option value="view">View Only</option>
+                            <option value="edit" [disabled]='changetype'>Edit Only</option>
                            </select>
                         </div>
                      </span>

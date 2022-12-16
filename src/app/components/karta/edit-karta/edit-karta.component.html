@@ -201,7 +201,7 @@
             </div>
             <div class="col-lg-4 p-0">
               <div class="time-select-karta">
-                <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'medium'}}</span>
+                <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'d/M/yy, H:mm'}}</span>
               </div>
             </div>
           </div>
@@ -868,7 +868,7 @@
             <div class="row">
               <div class="col-lg-12">
                 <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select user"
-                  (change)="changeContributor($event)" [ngClass]="{ 'is-invalid': !currentNode.contributorId }">
+                  (change)="changeContributor($event)"  [ngClass]="{ 'is-invalid': !currentNode.contributorId }">
                   <ng-option *ngFor="let user of contributors" [value]="user._id">
                     {{ user?.fullName }} ({{ user?.email }})
                   </ng-option>
@@ -952,7 +952,7 @@
                   <div class="row">
                     <div class="col-lg-12">
                       <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
-                        [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers">
+                        [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
                         <ng-template ng-tag-tmp let-search="searchTerm">
                           <b>Add new email</b>: {{search}}
                         </ng-template>
@@ -985,6 +985,14 @@
                       </div>
                     </span>
                   </ng-container>
+                  <span class="mode-btn">
+                    <div class="select-karta-name">
+                       <select class="form-control custom-select-karta-mode" [(ngModel)]="changeModeType" (change)="changeSharingMode($event)">
+                          <option value="view">View Only</option>
+                          <option value="edit" [disabled]='changetype'>Edit Only</option>
+                         </select>
+                      </div>
+                   </span>
                 </div>
               </div>
             </div>

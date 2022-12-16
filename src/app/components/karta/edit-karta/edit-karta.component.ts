@@ -161,6 +161,8 @@ export class EditKartaComponent implements OnInit {
   kartas: any = [];
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
+  changetype: boolean = false;
+  changeModeType: string = "view";
   sharedKartas: any = [];
   selectedSharedUsers: any = [];
   sharingKartaCount: any = 0;
@@ -640,7 +642,7 @@ export class EditKartaComponent implements OnInit {
   reRenderKarta() {
     this.getKartaInfo();
     setTimeout(() => jqueryFunctions.removeKarta(), 500);
-    jqueryFunctions.enableElement("#karta-svg svg .node");
+    // jqueryFunctions.enableElement("#karta-svg svg .node");
   }
   // Update node properties
   updateNodeProperties(param: any, scroll?: any) {
@@ -957,6 +959,7 @@ export class EditKartaComponent implements OnInit {
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           this.setKartaDimension();
           this.showSVG = true;
+          jqueryFunctions.enableElement("#karta-svg svg .node");
         }
       }
     ).add(() => (this.loadingKarta = false));
@@ -1522,6 +1525,30 @@ export class EditKartaComponent implements OnInit {
         });
       } this.loading = false;
     })
+  }
+
+  // On select user while sharing
+  onSelectUser() {
+    this.changetype = false;
+    for (let i = 0; i < this.selectedSharedUsers.length; i++) {
+      for (let j = 0; j < this.members.length; j++) {
+        if (this.selectedSharedUsers[i].email !== this.members[j].email) {
+          this.changetype = true;
+          this.changeModeType = "view";
+          break;
+        }
+      }
+    }
+  }
+  // Enable edit option
+  enableEditOption() {
+    this.changetype = false;
+  }
+
+  // Change chart mode
+  changeSharingMode(e: any) {
+    if (e.target.value === "edit") this.changeModeType = e.target.value;
+    else this.changeModeType = e.target.value;
   }
 
   shareKarta() {

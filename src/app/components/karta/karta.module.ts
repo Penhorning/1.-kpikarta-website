@@ -17,6 +17,7 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
+import { ViewKartaComponent } from './view-karta/view-karta.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
     EditKartaPropertyComponent,
     EditKartaInventoryComponent,
     EditKartaHeaderComponent,
+    ViewKartaComponent,
   ],
   imports: [
     CommonModule,

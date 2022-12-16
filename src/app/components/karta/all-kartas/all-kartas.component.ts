@@ -122,7 +122,7 @@ export class AllKartasComponent implements OnInit {
     let data = {
       karta: this.sharingKarta,
       emails: this.emails,
-      type: this.changeModeType
+      accessType: this.changeModeType
     }
     this.shareSubmitFlag = true;
     this._kartaService.shareKarta(data).subscribe(
@@ -165,18 +165,21 @@ export class AllKartasComponent implements OnInit {
     })
   }
 
-  //Add custom email
-  addCustomEmail(event: any){
-    if(event.term.length > 0){
-      this.changetype = true;
-      this.changeModeType = "view";
-    } else {
-      this.changetype = false;
+  // On select user while sharing
+  onSelectUser() {
+    this.changetype = false;
+    for (let i = 0; i < this.selectedUsers.length; i++) {
+      for (let j = 0; j < this.members.length; j++) {
+        if (this.selectedUsers[i].email !== this.members[j].email) {
+          this.changetype = true;
+          this.changeModeType = "view";
+          break;
+        }
+      }
     }
   }
-
-  // Remove custom email
-  removeCustomEmail(event: any){
+  // Enable edit option
+  enableEditOption() {
     this.changetype = false;
   }
 
@@ -264,9 +267,8 @@ export class AllKartasComponent implements OnInit {
 
     // Change chart mode
     changeMode(e: any) {
-      if (e.target.value === "edit") this.changeModeType = e.target.value
-      else this.changeModeType = e.target.value
-      console.log("this.changeModeType",  this.changeModeType)
+      if (e.target.value === "edit") this.changeModeType = e.target.value;
+      else this.changeModeType = e.target.value;
     }
 
 }
