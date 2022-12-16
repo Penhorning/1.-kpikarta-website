@@ -30,9 +30,11 @@ export class AllKartasComponent implements OnInit {
   search_text: string = "";
   // Loding var
   loading: boolean = false;
+  changetype: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
+  changeModeType: string = "view";
 
   constructor(
     private _kartaService: KartaService,
@@ -109,7 +111,6 @@ export class AllKartasComponent implements OnInit {
   // Submit shared data
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
-      // if (element.email !== this._commonService.getEmailId()) this.emails.push(element.email);
       if (element.email == this._commonService.getEmailId()) {
         this._commonService.warningToaster("You can not share karta to yourself!");
         if (element.email !== this._commonService.getEmailId()) { }
@@ -120,7 +121,8 @@ export class AllKartasComponent implements OnInit {
     if (this.emails.length > 0) {
     let data = {
       karta: this.sharingKarta,
-      emails: this.emails
+      emails: this.emails,
+      type: this.changeModeType
     }
     this.shareSubmitFlag = true;
     this._kartaService.shareKarta(data).subscribe(
@@ -128,6 +130,7 @@ export class AllKartasComponent implements OnInit {
         this._commonService.successToaster("Your have shared karta successfully!");
         $('#shareLinkModal').modal('hide');
         this.getAllKartas();
+        this.changetype = false;
       },
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);
@@ -150,7 +153,7 @@ export class AllKartasComponent implements OnInit {
   // Add new email and share
   addTagPromise(e: string) {
     return new Promise((resolve) => {
-     this.loading = true;
+      this.loading = true;
       var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (e.match(mailformat)) {
         // Callback function
@@ -160,6 +163,21 @@ export class AllKartasComponent implements OnInit {
         });
       } this.loading = false;
     })
+  }
+
+  //Add custom email
+  addCustomEmail(event: any){
+    if(event.term.length > 0){
+      this.changetype = true;
+      this.changeModeType = "view";
+    } else {
+      this.changetype = false;
+    }
+  }
+
+  // Remove custom email
+  removeCustomEmail(event: any){
+    this.changetype = false;
   }
 
   // Copy karta
@@ -243,5 +261,12 @@ export class AllKartasComponent implements OnInit {
       }
     );
   }
+
+    // Change chart mode
+    changeMode(e: any) {
+      if (e.target.value === "edit") this.changeModeType = e.target.value
+      else this.changeModeType = e.target.value
+      console.log("this.changeModeType",  this.changeModeType)
+    }
 
 }
