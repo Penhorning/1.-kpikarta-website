@@ -66,7 +66,11 @@ export class AllKartasComponent implements OnInit {
       searchQuery: this.search_text,
       type: this.kartaType
     }
+
     this.loading = true;
+    this.kartas = [];
+    this.pageIndex = 0;
+
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
         this.kartas = response.kartas[0].data;
@@ -219,16 +223,13 @@ export class AllKartasComponent implements OnInit {
 
   // Tab switch
   onTabSwitch(type: string) {
-    this.pageIndex = 0;
     this.search_text = "";
-    this.kartas = [];
     this.kartaType = type;
     this.getAllKartas();
   }
 
   search() {
     if (this.search_text) {
-      this.pageIndex = 0;
       this.getAllKartas();
     }
   }
@@ -241,6 +242,7 @@ export class AllKartasComponent implements OnInit {
    changeEditStatus(id: number) {
     $('#kt' + id).attr('contenteditable', true);
     $('#kt' + id).focus();
+    $('#kt' + id).removeClass("short_text");
     return;
   }
   // Limiting length for Content Editable
@@ -252,11 +254,11 @@ export class AllKartasComponent implements OnInit {
     return JSON.parse(value);
   }
   renameKarta(id: string, index: number) {
-    let value = document.getElementById('kt' + index)?.innerHTML;
+    let value = document.getElementById('kt' + index)?.innerText;
     if (value?.length == 0 || value === '<br>') {
       return this._commonService.errorToaster('Karta name should not be blank!');
     }
-    this._kartaService.updateKarta(id, { name: value }).subscribe(
+    this._kartaService.updateKarta(id, { name: value?.trim() }).subscribe(
       (response: any) => {
         $('#kt' + index).attr('contenteditable', false);
         this.ngOnInit();

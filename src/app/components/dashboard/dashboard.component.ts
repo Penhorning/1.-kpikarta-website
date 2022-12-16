@@ -210,6 +210,7 @@ export class DashboardComponent implements OnInit {
   changeEditStatus(id: number) {
     $('#kt' + id).attr('contenteditable', true);
     $('#kt' + id).focus();
+    $('#kt' + id).removeClass("short_text");
     return;
   }
   // Limiting length for Content Editable
@@ -221,18 +222,17 @@ export class DashboardComponent implements OnInit {
     return JSON.parse(value);
   }
   renameKarta(id: string, index: number) {
-    let value = document.getElementById('kt' + index)?.innerHTML;
-    if (value?.length == 0 || value === '<br>') {
+    let value = document.getElementById('kt' + index)?.innerText;
+    if (value?.length == 0) {
       return this._commonService.errorToaster('Karta name should not be blank!');
     }
-    this._kartaService.updateKarta(id, { name: value }).subscribe(
+    this._kartaService.updateKarta(id, { name: value?.trim() }).subscribe(
       (x) => {
         if (x) {
           $('#kt' + index).attr('contenteditable', false);
-          this.ngOnInit();
-          this._commonService.successToaster(
-            'Karta name updated successfully!'
-          );
+          this.getAllKartas();
+          this._commonService.successToaster('Karta name updated successfully!');
+          // $('#kt' + id).addClass("short_text");
         }
       },
       (err) => {

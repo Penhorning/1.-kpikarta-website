@@ -49,7 +49,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             return a.parent == b.parent ? 1 : 1.25;
         });
     //   .size([height, width])=
-    // options.update = update;
+    options.update = update;
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
     options.updateRemovedNode = updateRemovedNode;
@@ -67,7 +67,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             title: 'Save',
             action: function(elm, d, i) {
                 let node_type = "branch";
-                if (d.phase.name === "KPI") node_type = d.type;
+                if (d.phase.name === "KPI") node_type = d.node_type;
                 options.events.onRightClick(d, node_type);
             }
         }
