@@ -62,6 +62,9 @@ export class KartaService {
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);
   }
+  addNodeByInventory(data: any) {
+    return this._httpService.POST('/karta_nodes/add-node-by-inventory', data);
+  }
   addNodeInCatalog(data: any) {
     return this._httpService.POST('/karta_catalogs', data);
   }

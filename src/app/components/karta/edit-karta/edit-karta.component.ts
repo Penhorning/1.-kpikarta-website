@@ -75,12 +75,15 @@ export class EditKartaComponent implements OnInit {
           }
         }
       },
-      onDragStart: (d: any) => {
-        if (d && d.parent) this.previousDraggedNodeParentId = d.parent.id;
-      },
       onRightClick: (d: any, node_type: string) => {
         jqueryFunctions.showModal('saveNodeModal');
         this.catalogForm.patchValue({ node: d, node_type });
+      },
+      onDragStart: (d: any) => {
+        if (d && d.parent) this.previousDraggedNodeParentId = d.parent.id;
+      },
+      onInventoryDrop: (node: any, parent = null) => {
+        this.onInventoryDrop(node, parent);
       },
       nodeItem: (d: any) => {
         console.log(d);
@@ -108,7 +111,6 @@ export class EditKartaComponent implements OnInit {
   }
 
   /* Node properties */
-  maxStartDate: any = new Date();
   maxFiscalStartDate: any = `${new Date().getFullYear()}-01-01`;
   currentNodeName: string = '';
   currentNodeWeight: number = 0;
@@ -291,25 +293,33 @@ export class EditKartaComponent implements OnInit {
 
   // Get all inventories
   inventories: any = [];
+  inventory_search_text: string = "";
+  loadingInventories: boolean = false;
+  draggingInventoryNode: any;
   getInventories() {
     let data = {
-      // page: this.pageIndex + 1,
-      // limit: this.pageSize,
+      page: 1,
+      limit: 1000,
       userId: this._commonService.getUserId(),
-      // searchQuery: this.search_text
+      searchQuery: this.inventory_search_text
     }
-    // this.loading = true;
+    this.loadingInventories = true;
     this._kartaService.getInventories(data).subscribe(
-      (response: any) => {
-        this.inventories = response.catalogs[0].data;
-        // if (response.catalogs[0].metadata.length > 0) {
-        //   this.totalCatalogs = response.catalogs[0].metadata[0].total; 
-        // } else this.totalCatalogs = 0;
-      },
-      (error: any) => {
-        this.loadingKarta = false;
-      }
-    ).add(() => this.loading = false);
+      (response: any) => this.inventories = response.catalogs[0].data
+    ).add(() => {
+      this.loadingInventories = false;
+      this.loadingKarta = false;
+    });
+  }
+  // Search
+  inventorySearch() {
+    if (this.inventory_search_text) {
+      this.getInventories();
+    }
+  }
+  clearInventorySearch() {
+    this.inventory_search_text = "";
+    this.getInventories();
   }
 
   // ---------FormArray Functions defined Below----------
@@ -715,7 +725,7 @@ export class EditKartaComponent implements OnInit {
   // Change weightage
   changeWeightage() {
     let node = this.currentNode;
-    if (this.currentNodeWeight < 0 || !this.currentNodeWeight) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
+    if (this.currentNodeWeight < 0 || this.currentNodeWeight === null || this.currentNodeWeight === undefined) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
     else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weighting cannot be greater than 100!");
     else {
       let sum = node.parent.children
@@ -1023,9 +1033,13 @@ export class EditKartaComponent implements OnInit {
       data.achieved_value = 0;
       // data.threshold_value = 70;
       data.is_achieved_modified = false;
+      data.days_to_calculate = "all";
       data.alert_type = "";
       data.alert_frequency = "";
       data.kpi_calc_period = 'monthly';
+    } else {
+      let nextPhase = this.phases[this.phaseIndex(param.phaseId) + 2];
+      data.nextPhaseId = nextPhase.id;
     }
     jqueryFunctions.disableElement("#karta-svg svg .node");
     this._kartaService.addNode(data).subscribe(
@@ -1273,7 +1287,7 @@ export class EditKartaComponent implements OnInit {
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.remove('selectedPhase');
   }
-  addRoteNode(ev: any) {
+  addRootNode(ev: any) {
     let element = ev.target.closest('div');
     this.onDrop(element.id, 'add_root');
   }
@@ -1291,14 +1305,23 @@ export class EditKartaComponent implements OnInit {
     if (element) element.classList.remove('selectedPhase');
   }
 
-  onRootDragStart() {
-    this.isRtNodDrgingFrmSide = true;
+  onRootDragStart(data: any, type: boolean) {
+    if (type) this.isRtNodDrgingFrmSide = true;
+    else {
+      this.draggingInventoryNode = data;
+      if (this.karta.node) this.onInventoryDragStart(data);
+    }
   }
-  onInventoryDragStart(node: any) {
-    console.log("invent drag node ", node);
+  onInventoryDragStart(param: any) {
+    this.draggingInventoryNode = param;
+    this.D3SVG.inventoryDraggingNode(param.node);
   }
 
   onDrop(ev: any, type?: string) {
+    if (this.draggingInventoryNode) {
+      this.onInventoryDrop(this.draggingInventoryNode.node, null);
+      return;
+    }
     let phaseId = '';
     if (type == 'add_root') phaseId = ev;
     else {
@@ -1333,12 +1356,40 @@ export class EditKartaComponent implements OnInit {
     });
   }
 
+  // remove parent object from every node to prevent circular json
+  removeCircularData(data: any) {
+    return JSON.stringify(data, function(key, value) {
+      if (key == 'parent') return value.id;
+      return value;
+    });
+  }
+  // On Inventory drop
+  onInventoryDrop(node: any, parent = null) {
+    let data = {
+      node,
+      parent,
+      kartaId: this.kartaId,
+      nodeType: this.draggingInventoryNode.node_type
+    }
+    data.node = JSON.parse(this.removeCircularData(node));
+    data.parent = JSON.parse(this.removeCircularData(parent));
+
+    jqueryFunctions.disableElement("#karta-svg svg .node");
+    this._kartaService.addNodeByInventory(data).subscribe(
+      (response: any) => {
+        this.getKartaInfo();
+        setTimeout(() => jqueryFunctions.removeKarta(), 2000);
+        jqueryFunctions.enableElement("#karta-svg svg .node");
+        jqueryFunctions.hideLeftSidebar();
+    });
+  }
+
   // Save karta
   saveKarta() {
     // New Version Calculation
     let versionNumber = this.version.reduce((acc: any,curr: any) => {
       let num = curr.name;
-      if(Number(num) > acc){
+      if (Number(num) > acc) {
         acc = Number(num);
       }
       return acc;

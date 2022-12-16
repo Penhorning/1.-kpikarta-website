@@ -63,13 +63,15 @@ export class CatalogComponent implements OnInit {
   }
 
   // Apply filter
-  applyFilter(event: any) {
+  changeFilter(event: any) {
     const isChecked = event.target.checked;
     const value = event.target.value;
 
     if (isChecked) this.nodeTypeFilter.push(value);
     else this.nodeTypeFilter = this.nodeTypeFilter.filter((item: any) => item !== value);
-    this.catalogs = [];
+  }
+  applyFilter() {
+    this.pageIndex = 0;
     this.getCatalogs();
   }
 
