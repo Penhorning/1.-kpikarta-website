@@ -467,6 +467,7 @@ export class MyKpiComponent implements OnInit {
 
   // Target type select check uncheck
   onTargetSelect(e: any, item: any) {
+    console.log("e", e, item)
     if (e.target.checked) { this.selectedTargetTypes.push(item) }
     else {
       const index = this.selectedTargetTypes.indexOf(item);

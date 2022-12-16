@@ -49,6 +49,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             return a.parent == b.parent ? 1 : 1.25;
         });
     //   .size([height, width])=
+    // options.update = update;
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
     options.updateRemovedNode = updateRemovedNode;
@@ -169,6 +170,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // Drag end
     function endDrag() {
+        let tempSelectedNode = selectedNode;
         if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
         d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
@@ -177,7 +179,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
         if (draggingNode !== null) {
             update(root);
-            options.events.updateDraggedNode(draggingNode);
+            options.events.updateDraggedNode(draggingNode, tempSelectedNode);
             draggingNode = null;
         }
     }
