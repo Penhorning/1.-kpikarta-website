@@ -258,7 +258,7 @@
                   <label class="short_text font-weight-bold" style="max-width: 500px;">{{ sharingCatalog?.name }}</label>
                   <div class="row">
                     <div class="col-lg-12" *ngIf="sharingCatalog">
-                        <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
+                        <ng-multiselect-dropdown [placeholder]="'Select users'"
                         [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
                         (onDeSelect)="onItemDeSelect($event)">
                         </ng-multiselect-dropdown>
