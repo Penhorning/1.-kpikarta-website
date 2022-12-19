@@ -726,7 +726,7 @@
                 </div>
                 <div class="col-lg-4 px-2">
                   <div class="custom-input-side-r-flow">
-                    <input type="number" class="form-control" [value]="t.value" (input)="setTarget('value', $event, i)">
+                    <input type="number" class="form-control" [value]="t.value" (blur)="setTarget('value', $event, i)">
                     <!-- <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
                     [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
                   <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please enter weightage!</div>
@@ -818,10 +818,10 @@
                       </div>
                       <div class="col-lg-4 d-flex flex-column justify-content-end align-items-center pb-3">
                         <div class="custom-add-minus">
-                          <a class="add-icon" *ngIf="fields.length == i+1 && fields.length < 5"
-                            (click)="addFormulaGroup()"><img src="assets/img/plus-field-side-r.svg"
+                          <a id="addIcon" class="add-icon mr-2" *ngIf="fields.length == i+1 && fields.length < 5"
+                            (click)="formulaFlag ? null : addFormulaGroup()"><img src="assets/img/plus-field-side-r.svg"
                               class="img-fluid mr-3"></a>
-                          <a class="remove-icon" *ngIf="fields.length > 1" (click)="deleteFormulaGroup(i)"><img
+                          <a id="removeIcon" class="remove-icon" *ngIf="fields.length > 1" (click)="formulaFlag ? null : deleteFormulaGroup(i)"><img
                               src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>
                         </div>
                       </div>

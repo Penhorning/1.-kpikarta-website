@@ -60,6 +60,10 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       }
     }
+
+    if (this.route.snapshot.queryParamMap.get("isDeleted") && this.route.snapshot.queryParamMap.get("isActive")) {
+      this._commonService.errorToaster("Deactivated user..!!");
+    }
   }
 
   // On submit
