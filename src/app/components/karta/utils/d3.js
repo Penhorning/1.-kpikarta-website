@@ -48,7 +48,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         .separation(function (a, b) {
             return a.parent == b.parent ? 1 : 1.25;
         });
-    //   .size([height, width])
+    //   .size([height, width])=
+    options.update = update;
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
     options.updateRemovedNode = updateRemovedNode;
@@ -56,6 +57,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.getBase64Image = getBase64Image;
     options.exportAsImage = exportAsImage;
     options.exportAsPDF = exportAsPDF;
+    options.inventoryDraggingNode = inventoryDraggingNode;
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
@@ -65,7 +67,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             title: 'Save',
             action: function(elm, d, i) {
                 let node_type = "branch";
-                if (d.phase.name === "KPI") node_type = d.type;
+                if (d.phase.name === "KPI") node_type = d.node_type;
                 options.events.onRightClick(d, node_type);
             }
         }
@@ -168,6 +170,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // Drag end
     function endDrag() {
+        let tempSelectedNode = selectedNode;
         if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
         d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
@@ -176,7 +179,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
         if (draggingNode !== null) {
             update(root);
-            options.events.updateDraggedNode(draggingNode);
+            options.events.updateDraggedNode(draggingNode, tempSelectedNode);
             draggingNode = null;
         }
     }
@@ -246,7 +249,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // Getting depth
             let draggingDepth = getDepth(draggingNode);
             let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
-            if (phase.name !== "KPI" && !((draggingDepth + selectedDepth) > 6 && (selectedNode.phaseId !== draggingNode.phaseId))) {
+            if (phase.name !== "KPI" && !((draggingDepth + selectedDepth) > 6 && ((selectedNode.phaseId !== draggingNode.phaseId) || phase.name === "Goal"))) {
                 colorCode = "#76ff03"; // Red color
             }
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
@@ -256,7 +259,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         if (selectedNode != draggingNode && selectedNode !== null)
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
-        // updateTempConnector();
     };
 
     // Find max depth of subphases
@@ -306,24 +308,28 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("class", "node")
             .attr("width", 93)
             .attr("height", 60)
-            // .on("mouseover", function (node) {
-            //     selectedNode = node;
-            // })
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
             })
             .on("click", nodeclick)
             .on("contextmenu", d3.contextMenu(contextMenuItems))
             // Drag and drop from inventory
-            .on("dragover", function(d) {
-                console.log("on drag over ", d)
-                // overCircle(d);
+            .on("dragover", function(node) {
+                d3.event.preventDefault();
+                overCircle(node);
             })
-            .on("dragleave", function(event) {
-                console.log("on drag leave ", event)
+            .on("dragleave", function(node) {
+                d3.event.preventDefault();
+                outCircle(node);
             })
-            .on("drop", function(event) {
-                console.log("on drop ", event)
+            .on("drop", function(dropped_node) {
+                let draggingDepth = getDepth(draggingNode);
+                let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+
+                if ((draggingDepth + selectedDepth) > 6) {
+                    alert("You cannot drag this node becuase it's leaf nodes exceeding the kpi node.")
+                } else options.events.onInventoryDrop(draggingNode, dropped_node);
+                outCircle(dropped_node);
             });
             
         nodeEnter
@@ -483,6 +489,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             return c.id != d.id;
         })
         update(d.parent);
+    }
+
+    // Dragging node from inventory
+    function inventoryDraggingNode(node) {
+        draggingNode = node;
     }
 
     // Hightlight nodes, while saving in catalog

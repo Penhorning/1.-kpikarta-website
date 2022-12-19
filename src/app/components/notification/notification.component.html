@@ -14,7 +14,14 @@
                 <div class="notification-box mt-3">
                     <div class="row">
                         <div class="col-lg-9">
-                            <h6>{{ notification?.title }}</h6>
+                            <ng-container *ngIf="notification.click_type; else nonClickAble">
+                                <a [routerLink]="['/karta/', notification?.click_type, notification?.contentId]">
+                                    <h6>{{ notification?.title }}</h6>
+                                </a>
+                            </ng-container>
+                            <ng-template #nonClickAble>
+                                <h6>{{ notification?.title }}</h6>
+                            </ng-template>
                             <p>{{ moment(notification?.createdAt).fromNow() }}</p>
                         </div>
                         <div class="col-lg-3 text-right">

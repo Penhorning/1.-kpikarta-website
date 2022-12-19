@@ -34,7 +34,7 @@
 
                             <div class="form-group" *ngIf="!user.userId">
                                 <label for="password">Password <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control form-control1" id="password" formControlName="password" [maxlength]="50"
+                                <input type="password" class="form-control form-control1" id="password" formControlName="password" [maxlength]="32"
                                     [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
                                 <div *ngIf="(submitted || form.password.touched) && form.password.errors" class="invalid-feedback">
                                     <div *ngIf="form.password.errors.required">Password is required!</div>
@@ -46,7 +46,7 @@
 
                             <div class="form-group" *ngIf="!user.userId">
                                 <label for="confirmPassword">Confirm Password <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control form-control1" id="confirmPassword" formControlName="confirmPassword" [maxlength]="50"
+                                <input type="password" class="form-control form-control1" id="confirmPassword" formControlName="confirmPassword" [maxlength]="32"
                                     [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
                                 <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors" class="invalid-feedback">
                                     <div *ngIf="form.confirmPassword.errors.required">Confirm password is required!</div>

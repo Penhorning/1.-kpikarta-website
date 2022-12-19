@@ -24,6 +24,9 @@ export class DashboardComponent implements OnInit {
   loadingSharedKartas: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
+
+  changetype: boolean = false;
+  changeModeType: string = "view";
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
   loading: boolean = false;
@@ -143,6 +146,25 @@ export class DashboardComponent implements OnInit {
       } this.loading = false;
     })
   }
+
+  // On select user while sharing
+  onSelectUser() {
+    this.changetype = false;
+    for (let i = 0; i < this.selectedUsers.length; i++) {
+      for (let j = 0; j < this.users.length; j++) {
+        if (this.selectedUsers[i].email !== this.users[j].email) {
+          this.changetype = true;
+          this.changeModeType = "view";
+          break;
+        }
+      }
+    }
+  }
+  // Enable edit option
+  enableEditOption() {
+    this.changetype = false;
+  }
+
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
       if (element.email == this._commonService.getEmailId()) {
@@ -155,7 +177,8 @@ export class DashboardComponent implements OnInit {
     if (this.emails.length > 0) {
       let data = {
         karta: this.sharingKarta,
-        emails: this.emails
+        emails: this.emails,
+        accessType: this.changeModeType
       }
       this.sharedSubmitFlag = true;
 
@@ -187,6 +210,7 @@ export class DashboardComponent implements OnInit {
   changeEditStatus(id: number) {
     $('#kt' + id).attr('contenteditable', true);
     $('#kt' + id).focus();
+    $('#kt' + id).removeClass("short_text");
     return;
   }
   // Limiting length for Content Editable
@@ -198,18 +222,17 @@ export class DashboardComponent implements OnInit {
     return JSON.parse(value);
   }
   renameKarta(id: string, index: number) {
-    let value = document.getElementById('kt' + index)?.innerHTML;
-    if (value?.length == 0 || value === '<br>') {
+    let value = document.getElementById('kt' + index)?.innerText;
+    if (value?.length == 0) {
       return this._commonService.errorToaster('Karta name should not be blank!');
     }
-    this._kartaService.updateKarta(id, { name: value }).subscribe(
+    this._kartaService.updateKarta(id, { name: value?.trim() }).subscribe(
       (x) => {
         if (x) {
           $('#kt' + index).attr('contenteditable', false);
-          this.ngOnInit();
-          this._commonService.successToaster(
-            'Karta name updated successfully!'
-          );
+          this.getAllKartas();
+          this._commonService.successToaster('Karta name updated successfully!');
+          // $('#kt' + id).addClass("short_text");
         }
       },
       (err) => {
@@ -217,6 +240,12 @@ export class DashboardComponent implements OnInit {
         this._commonService.errorToaster('Error while updating name!');
       }
     );
+  }
+
+  // Change chart mode
+  changeMode(e: any) {
+    if (e.target.value === "edit") this.changeModeType = e.target.value;
+    else this.changeModeType = e.target.value;
   }
    
 }

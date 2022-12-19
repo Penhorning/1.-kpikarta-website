@@ -1146,7 +1146,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <ng-container *ngIf="measureFlag ;else second">
+      <ng-container *ngIf="metricFlag; else measure">
         <div class="modal-body">
           <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()" class="achieved-val">
             <div formArrayName="fields">
@@ -1185,7 +1185,7 @@
           </form>
         </div>
       </ng-container>
-      <ng-template #second>
+      <ng-template #measure>
         <div class="modal-body">
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
           <div class="share-link-model mt-3">
