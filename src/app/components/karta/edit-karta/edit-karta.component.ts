@@ -740,6 +740,12 @@ export class EditKartaComponent implements OnInit {
      /* ===== Formula code ends ===== */
       // Set target
       this.target = param.target;
+      this.targetOptions = [
+        { name: "Weekly", value: "weekly", disabled: false },
+        { name: "Monthly", value: "monthly", disabled: false },
+        { name: "Quarterly", value: "quarterly", disabled: false },
+        { name: "Yearly", value: "yearly", disabled: false }
+      ]
       // Disable the target option that is already defined
       this.target.forEach((element: any) => {
         this.disableTargetOption(element.frequency);

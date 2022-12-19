@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
       if (response) {
         this.kartas = response.kartas[0].data;
       } else this.kartas = [];
-    }).add(() => this.loadingKartas = false );;
+    }).add(() => this.loadingKartas = false );
   }
 
   // Get all members
@@ -150,16 +150,19 @@ export class DashboardComponent implements OnInit {
   // On select user while sharing
   onSelectUser() {
     this.changetype = false;
-    for (let i = 0; i < this.selectedUsers.length; i++) {
-      for (let j = 0; j < this.users.length; j++) {
-        if (this.selectedUsers[i].email !== this.users[j].email) {
-          this.changetype = true;
-          this.changeModeType = "view";
-          break;
-        }
+    let emailsObj: any = {};
+    
+    for (let i = 0; i < this.users.length; i++) {
+      emailsObj[this.users[i].email] = this.users[i].email;
+    }
+    for (let j = 0; j < this.selectedUsers.length; j++) {
+      if (!emailsObj[this.selectedUsers[j].email]) {
+        this.changetype = true;
+        this.changeModeType = "view";
       }
     }
   }
+
   // Enable edit option
   enableEditOption() {
     this.changetype = false;
