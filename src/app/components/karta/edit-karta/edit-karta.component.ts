@@ -147,6 +147,7 @@ export class EditKartaComponent implements OnInit {
   contributorUsers: any = [];
   selectedContributorUsers: any = [];
   // Metric Formula
+  formulaFlag: boolean = false;
   formulagroupDefaultValues: any = {};
   timer: any = null;
   formulaFieldSuggestions: any = [];
@@ -432,6 +433,10 @@ export class EditKartaComponent implements OnInit {
     }
     this.timer = this.formulaFieldSuggestions.length == 0 &&
     setTimeout(() => {
+        this.formulaFlag = true;
+        jqueryFunctions.disableElement("#addIcon");
+        jqueryFunctions.disableElement("#removeIcon");
+
         let tempObj: any = {};
         let suggesionsLength = this.formulaFieldSuggestions.length;
         let formValidation = this.formulaGroup.valid;
@@ -456,6 +461,9 @@ export class EditKartaComponent implements OnInit {
             this.formulaGroup.patchValue({
               calculatedValue: 0,
             });
+            this.formulaFlag = false;
+            jqueryFunctions.enableElement("#addIcon");
+            jqueryFunctions.enableElement("#removeIcon");
             this.formulaError = response.message;
           } else {
               this.formulaError = "";
@@ -465,7 +473,7 @@ export class EditKartaComponent implements OnInit {
               this._kartaService
                 .updateNode(this.currentNode.id, { node_formula: request, achieved_value: total, target: newTarget })
                 .subscribe(
-                  (x) => {
+                  async (x) => {
                     this.currentNode.node_formula = x.node_formula;
                     $('#formula-field').addClass('is-valid');
                     this.formulaError = "";
@@ -475,10 +483,17 @@ export class EditKartaComponent implements OnInit {
                     this.updateNode('node_formula', request , 'node_updated', node);
                     this.updateNode('achieved_value', total , 'node_updated', node, "metrics");
                     this.updateNode('target', newTarget , 'node_updated', node);
+
+                    this.formulaFlag = false;
+                    jqueryFunctions.enableElement("#addIcon");
+                    jqueryFunctions.enableElement("#removeIcon");
                   },
                   (err) => {
                     console.log(err);
                     this._commonService.errorToaster('Something went wrong..!!');
+                    this.formulaFlag = false;
+                    jqueryFunctions.enableElement("#addIcon");
+                    jqueryFunctions.enableElement("#removeIcon");
                   }
               );
           }
@@ -488,6 +503,7 @@ export class EditKartaComponent implements OnInit {
 
   //Show Dropdown suggestions for Formula Fields
   filterFieldSuggestions(event: any) {
+    this.formulaError = "";
     let value = MetricOperations.filterFieldSuggestions(event);
     if( typeof value == 'string' ) {
       let data = this.formulaGroup.value.fields.filter((x: any) => {
@@ -656,7 +672,7 @@ export class EditKartaComponent implements OnInit {
     this.currentNodeName = param.name;
     this.currentNodeWeight = param.weightage;
     this.currentNodeAchievedValue = param.achieved_value;
-    if (param.hasOwnProperty("node_formula")) {
+    if ( param.hasOwnProperty("node_formula") && param.node_formula ) {
       this.formulaGroup.controls['fields'] = new FormArray([]);
       for (let i = 0; i < param.node_formula.fields.length; i++ ) {
         let fieldForm = this.fb.group({
@@ -750,9 +766,12 @@ export class EditKartaComponent implements OnInit {
     if (this.currentNodeWeight < 0 || this.currentNodeWeight === null || this.currentNodeWeight === undefined) this._commonService.errorToaster("Please enter any positive value less than or equal to 100!");
     else if (this.currentNodeWeight > 100) this._commonService.errorToaster("Weighting cannot be greater than 100!");
     else {
-      let sum = node.parent.children
-        .filter((item: any) => item.id !== node.id)
-        .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
+      let sum = 0;
+      if(node && node.parent) {
+        sum = node.parent.children
+          .filter((item: any) => item.id !== node.id)
+          .reduce((total: any, currentValue: any) => total + currentValue.weightage, 0);
+      }
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greater than 100!");
       } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
