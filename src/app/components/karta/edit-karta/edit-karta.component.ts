@@ -610,7 +610,13 @@ export class EditKartaComponent implements OnInit {
   setTarget(type: string, e: any, index: any) {
     let node = this.currentNode;
     if (type === 'frequency') {
-      this.target[index].frequency = e.target.value;
+      if(this.target.length > 0) {
+        this.target[index].frequency = e.target.value;
+      } else {
+        this.target.push(
+          { frequency: e.target.value, value: 0, percentage: 0 }
+        )
+      }
       this.disableTargetOption(e.target.value);
       this.enableTargetOption(this.previousTargetFrequency);
       this.previousTargetFrequency = e.target.value;
@@ -619,10 +625,15 @@ export class EditKartaComponent implements OnInit {
     }
     else {
       let percentage = (node.achieved_value / e.target.value) * 100;
-      this.target[index].percentage = Math.round(percentage);
-      this.target[index].value = parseInt(e.target.value);
-      this.updateNode('target', this.target, 'node_updated', node);
-      
+      if(this.target.length > 0) {
+        this.target[index].percentage = Math.round(percentage);
+        this.target[index].value = parseInt(e.target.value);
+      } else {
+        this.target.push(
+          { frequency: 'monthly', value: parseInt(e.target.value), percentage: Math.round(percentage) }
+        )
+      }
+      this.updateNode('target', this.target, 'node_updated', node); 
     }
   }
   addMoreTarget() {
