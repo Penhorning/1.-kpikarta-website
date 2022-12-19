@@ -327,7 +327,7 @@ export class MemberComponent implements OnInit {
   }
   // Delete user
   deleteUser(userId: string) {
-    const result = confirm("Are you sure do you want to Delete this user?");
+    const result = confirm("Are you sure, Do you want to Delete this user?");
     if (result) {
       this._memberService.deleteUser({ userId }).subscribe(
         (response: any) => {
