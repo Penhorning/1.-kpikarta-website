@@ -60,6 +60,10 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       }
     }
+
+    if (this.route.snapshot.queryParamMap.get("isDeleted") && this.route.snapshot.queryParamMap.get("isActive")) {
+      this._commonService.errorToaster("Your account has been deactivated or deleted by the admin, please connect admin at info@kpikarta.com for more details.");
+    }
   }
 
   // On submit

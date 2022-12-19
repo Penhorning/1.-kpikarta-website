@@ -184,12 +184,15 @@ export class CatalogComponent implements OnInit {
     this.selectedUsers.push({ userId: item._id });
   }
   onItemDeSelect(item: any) {
-    this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
+    if( this.selectedUsers && this.selectedUsers.length > 0 ) {
+      this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
+    }
   }
 
   // Reset share catalog
   resetSharingCatalog() {
     this.sharingCatalog = undefined;
+    this.selectedUsers = []
   }
   // On share click
   onShare(param: any) {
