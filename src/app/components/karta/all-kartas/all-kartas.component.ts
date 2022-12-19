@@ -254,11 +254,11 @@ export class AllKartasComponent implements OnInit {
     return JSON.parse(value);
   }
   renameKarta(id: string, index: number) {
-    let value = document.getElementById('kt' + index)?.innerText;
+    let value = document.getElementById('kt' + index)?.innerText.trim();
     if (value?.length == 0 || value === '<br>') {
       return this._commonService.errorToaster('Karta name should not be blank!');
     }
-    this._kartaService.updateKarta(id, { name: value?.trim() }).subscribe(
+    this._kartaService.updateKarta(id, { name: value }).subscribe(
       (response: any) => {
         $('#kt' + index).attr('contenteditable', false);
         this.ngOnInit();
