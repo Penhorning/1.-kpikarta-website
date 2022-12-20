@@ -192,7 +192,7 @@ export class CatalogComponent implements OnInit {
   // Reset share catalog
   resetSharingCatalog() {
     this.sharingCatalog = undefined;
-    this.selectedUsers = []
+    this.selectedUsers = [];
   }
   // On share click
   onShare(param: any) {

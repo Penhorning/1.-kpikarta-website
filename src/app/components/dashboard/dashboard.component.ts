@@ -150,13 +150,13 @@ export class DashboardComponent implements OnInit {
   // On select user while sharing
   onSelectUser() {
     this.changetype = false;
-    let emailsObj: any = {};
+    let emailObject: any = {};
     
-    for (let i = 0; i < this.users.length; i++) {
-      emailsObj[this.users[i].email] = this.users[i].email;
+    for (let i=0; i<this.users.length; i++) {
+      emailObject[this.users[i].email] = this.users[i].email;
     }
-    for (let j = 0; j < this.selectedUsers.length; j++) {
-      if (!emailsObj[this.selectedUsers[j].email]) {
+    for (let j=0; j<this.selectedUsers.length; j++) {
+      if (!emailObject[this.selectedUsers[j].email]) {
         this.changetype = true;
         this.changeModeType = "view";
       }
