@@ -292,7 +292,7 @@ export class EditKartaComponent implements OnInit {
       jqueryFunctions.closeRightSidebar();
     });
     // Toggle color settings
-    $(document).on('click', '.dropdown-menu.keep-open', function (e: any) {
+    $(document).on('click', '.dropdown-menu.keep-open, .plus-minus.cursor_pointer', function (e: any) {
       e.stopPropagation();
     });
     // Get all members
