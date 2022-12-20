@@ -53,21 +53,6 @@ export class EditKartaComponent implements OnInit {
     max: [this.maxValue, Validators.required]
   });
 
-  draggingNode: any;
-  findDraggingNode(param: any, childNode: any) {
-    this.draggingNode = null;
-    if (param.id === childNode.id) {
-      this.draggingNode = param;
-      return;
-    }
-    else if (param.children && param.children.length > 0 ) {
-      for (let i=0; i<param.children.length; i++) {
-          if (this.draggingNode) break;
-          this.findDraggingNode(param.children[i], childNode);
-      }
-    }
-  }
-
   // D3 karta events
   previousDraggedNodeParentId: any;
   D3SVG: any = {
@@ -80,17 +65,16 @@ export class EditKartaComponent implements OnInit {
       // addNodeRight: (d: any) => {
       //   this.addNodeRight(d);
       // },
-      updateDraggedNode: (root: any, draggingNode: any) => {
-        this.findDraggingNode(root, draggingNode);
-        this.currentNode = this.draggingNode;
+      updateDraggedNode: (draggingNode: any) => {
+        this.currentNode = draggingNode;
 
-        if (this.draggingNode.parent.id && this.draggingNode.phaseId) {
+        if (draggingNode.parent.id && draggingNode.phaseId) {
           let node = this.currentNode;
-          if (this.previousDraggedNodeParentId !== this.draggingNode.parent.id) {
+          if (this.previousDraggedNodeParentId !== draggingNode.parent.id) {
+            // will do from backend
             // this.updateNode('parentId', d.parent.id, 'node_updated', node);
             // this.updateNode('phaseId', d.phaseId, 'node_updated', node);
-            // this.draggingNode.parentId = this.draggingNode.parent.id;
-            this.updateNodeAndWeightage(this.draggingNode);
+            this.updateNodeAndWeightage(draggingNode);
           }
         }
       },
@@ -1300,8 +1284,13 @@ export class EditKartaComponent implements OnInit {
 
     this._kartaService.updateNodeAndWeightage(data).subscribe(
       (response: any) => {
-        // this.reRenderKarta();
-        this.updateNewPercentage();
+        this._kartaService.getKarta(this.kartaId).subscribe(
+          (response: any) => {
+            this.karta = response;
+            this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+            this.D3SVG.rerender(this.karta.node);
+          }
+        );
       }
     );
   }

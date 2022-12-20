@@ -61,6 +61,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
+    options.rerender = function (data = root) {
+        update(data, true);
+    };
     // Context menu
     const contextMenuItems = [
         {
@@ -182,7 +185,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
         if (draggingNode !== null) {
             update(root);
-            if (success) options.events.updateDraggedNode(root, draggingNode);
+            if (success) options.events.updateDraggedNode(draggingNode);
             draggingNode = draggingNodeType = null;
         }
     }
@@ -242,14 +245,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                         if (typeof selectedNode.children !== 'undefined') {
                             draggingNode.parentId = selectedNode.id;
                             selectedNode.children.push(draggingNode);
+                            draggingNode.parent = selectedNode;
+                            draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
                         } else {
                             draggingNode.parentId = selectedNode.id;
                             selectedNode._children.push(draggingNode);
+                            draggingNode.parent = selectedNode;
+                            draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
                         }
                     } else {
                         selectedNode.children = [];
                         draggingNode.parentId = selectedNode.id;
                         selectedNode.children.push(draggingNode);
+                        draggingNode.parent = selectedNode;
+                        draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
                     }
                     endDrag(true);
                 }
