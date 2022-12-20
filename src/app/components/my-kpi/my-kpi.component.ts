@@ -219,7 +219,6 @@ export class MyKpiComponent implements OnInit {
             if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
             $('#editActualValueModal').modal('hide');
             this.pageIndex = 0;
-            this.pageSize = 10;
             this.getMyKPIsList();
             this.getKpiStats();
           },
@@ -250,7 +249,6 @@ export class MyKpiComponent implements OnInit {
         if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
         this.pageIndex = 0;
-        this.pageSize = 10;
         this.getMyKPIsList();
         this.getKpiStats();
       },
@@ -432,7 +430,6 @@ export class MyKpiComponent implements OnInit {
         this.sharingKarta = null;
         this.selectedUsers = []
         this.pageIndex = 0;
-        this.pageSize = 10;
         this.getMyKPIsList();
       },
       (error: any) => { }

@@ -174,7 +174,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // Drag end
     function endDrag(success = false) {
-        let tempSelectedNode = selectedNode;
         if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
         d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
@@ -183,7 +182,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
         if (draggingNode !== null) {
             update(root);
-            if (success) options.events.updateDraggedNode(draggingNode, tempSelectedNode);
+            if (success) options.events.updateDraggedNode(root, draggingNode);
             draggingNode = draggingNodeType = null;
         }
     }
@@ -232,7 +231,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                     ((selectedPhase.name !== "Action" && draggingPhase.name !== "KPI") && (draggingDepth + selectedDepth) > 5)
                 ) {
                     alert("You cannot drag this node here");
-                    endDrag(false); 
+                    endDrag(false);
                 } else {
                     // now remove the element from the parent, and insert it into the new elements children
                     var index = draggingNode.parent.children.indexOf(draggingNode);
@@ -241,12 +240,15 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                     }
                     if (typeof selectedNode.children !== 'undefined' || typeof selectedNode._children !== 'undefined') {
                         if (typeof selectedNode.children !== 'undefined') {
+                            draggingNode.parentId = selectedNode.id;
                             selectedNode.children.push(draggingNode);
                         } else {
+                            draggingNode.parentId = selectedNode.id;
                             selectedNode._children.push(draggingNode);
                         }
                     } else {
                         selectedNode.children = [];
+                        draggingNode.parentId = selectedNode.id;
                         selectedNode.children.push(draggingNode);
                     }
                     endDrag(true);
