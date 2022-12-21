@@ -87,7 +87,6 @@ export class CatalogComponent implements OnInit {
     this.loading = true;
     this.catalogs = [];
     this.pageIndex = 0;
-
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
         this.catalogs = response.catalogs[0].data;

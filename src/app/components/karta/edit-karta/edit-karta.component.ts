@@ -54,7 +54,8 @@ export class EditKartaComponent implements OnInit {
   });
 
   // D3 karta events
-  previousDraggedNodeParentId: any;
+  previousDraggedParentId: string = "";
+  previousDraggedPhaseId: string = "";
   D3SVG: any = {
     // subPhases: (() => this.subPhases),
     phases: () => this.phases,
@@ -70,7 +71,7 @@ export class EditKartaComponent implements OnInit {
 
         if (draggingNode.parent.id && draggingNode.phaseId) {
           let node = this.currentNode;
-          if (this.previousDraggedNodeParentId !== draggingNode.parent.id) {
+          if (this.previousDraggedParentId !== draggingNode.parent.id) {
             // will do from backend
             // this.updateNode('parentId', d.parent.id, 'node_updated', node);
             // this.updateNode('phaseId', d.phaseId, 'node_updated', node);
@@ -83,7 +84,10 @@ export class EditKartaComponent implements OnInit {
         this.catalogForm.patchValue({ node: d, node_type });
       },
       onDragStart: (d: any) => {
-        if (d && d.parent) this.previousDraggedNodeParentId = d.parent.id;
+        if (d && d.parent) {
+          this.previousDraggedParentId = d.parent.id;
+          this.previousDraggedPhaseId = d.phaseId;
+        }
       },
       onInventoryDrop: (node: any, parent = null) => {
         this.onInventoryDrop(node, parent);
@@ -1004,7 +1008,7 @@ export class EditKartaComponent implements OnInit {
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           this.setKartaDimension();
           this.showSVG = true;
-          jqueryFunctions.enableElement("#karta-svg svg .node");
+          jqueryFunctions.enableChart();
         }
       }
     ).add(() => (this.loadingKarta = false));
@@ -1069,7 +1073,8 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
-  divideWeightage(param: any, phase: any) {
+  // Divide weightage
+  divideWeightage(param: any, phase: any, extraLength = 0) {
     let weightage = 0;
     if (param.hasOwnProperty("children") && param.children.length > 0) {
       let haveFurtherChildren = false;
@@ -1080,7 +1085,7 @@ export class EditKartaComponent implements OnInit {
         }
       });
       if (!haveFurtherChildren) {
-        weightage = + (100 / (param.children.length + 1)).toFixed(2);
+        weightage = + (100 / (param.children.length + extraLength)).toFixed(2);
         param.children.forEach((item: any) => {
           item.weightage = weightage;
         });
@@ -1091,7 +1096,7 @@ export class EditKartaComponent implements OnInit {
   // Add node
   addNode(param: any) {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
-    const node = this.divideWeightage(param, phase);
+    const node = this.divideWeightage(param, phase, 1);
     param = node.param;
     let data: any = {
       kartaDetailId: this.kartaId,
@@ -1113,74 +1118,13 @@ export class EditKartaComponent implements OnInit {
       let nextPhase = this.phases[this.phaseIndex(param.phaseId) + 2];
       data.nextPhaseId = nextPhase.id;
     }
-    jqueryFunctions.disableElement("#karta-svg svg .node");
+    jqueryFunctions.disableChart();
     this._kartaService.addNode(data).subscribe(
       (response: any) => {
         response.phase = phase;
         this.D3SVG.updateNewNode(param, response);
-        jqueryFunctions.enableElement("#karta-svg svg .node");
-        // this.setKartaDimension();
-        // this.updateNewPercentage();
-        // this.reRenderKarta();
-        // this._kartaService.getKarta(this.kartaId).subscribe(
-        //   (response: any) => {
-        //     this.karta = response;
-        //     this.versionId = response.versionId;
-        //     this.D3SVG.update(this.karta.node);
-        //   }
-        // );
-        // this.updateNodeProperties(response);
-        // this.D3SVG.updateNode(param, response);
-        // this.getKartaInfo();
-        // let new_response = {
-        //   ...data,
-        //   name: response.name,
-        //   font_style: response.font_style,
-        //   alignment: response.alignment,
-        //   text_color: response.text_color,
-        //   weightage: response.weightage,
-        // };
-
-        // let history_data = {
-        //   event: "node_created",
-        //   eventValue: new_response,
-        //   kartaNodeId: response.id,
-        //   userId: this._commonService.getUserId(),
-        //   versionId: this.versionId,
-        //   kartaId: this.kartaId,
-        //   parentNodeId: param.id,
-        //   historyType: 'main'
-        // };
-        // this._kartaService.addKartaHistoryObject(history_data).subscribe(
-        //   (result: any) => {
-        //     this._kartaService.updateKarta(this.kartaId, {historyId: result.id}).subscribe(
-        //       (response: any) => { }
-        //     );
-        //     this._kartaService.syncKartaHistory({kartaId: this.kartaId, versionId: this.versionId}).subscribe(
-        //       async (response: any) => {
-
-        //         // try {
-        //         //   if (isWeightageDivided) {
-        //         //     for (let i = 0; i < param.children.length; i++) {
-        //         //       await this.updateNode('weightage', weightage, 'node_updated', param.children[i]);
-        //         //       if (param.children.length-1 == i) jqueryFunctions.enableElement("#karta-svg svg .node");
-        //         //     }
-        //         //   } else jqueryFunctions.enableElement("#karta-svg svg .node");
-        //         // } catch (error) {
-        //         //   jqueryFunctions.enableElement("#karta-svg svg .node");
-        //         // }
-        //       }, (error: any) => {
-        //         jqueryFunctions.enableElement("#karta-svg svg .node");
-        //       }
-        //     );
-        //   }, (error: any) => {
-        //     jqueryFunctions.enableElement("#karta-svg svg .node");
-        //   }
-        // );
-      }, (error: any) => {
-        jqueryFunctions.enableElement("#karta-svg svg .node");
       }
-    );
+    ).add(() => jqueryFunctions.enableChart());
   }
 
   // Add right node
@@ -1275,12 +1219,14 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update node and weightage
-  updateNodeAndWeightage(node: any) {
+  updateNodeAndWeightage(draggingNode: any) {
     let data = {
       kartaId: this.kartaId,
-      node
+      draggingNode,
+      previousDraggedParentId: this.previousDraggedParentId,
+      previousDraggedPhaseId: this.previousDraggedPhaseId
     }
-    data.node = JSON.parse(this.removeCircularData(node));
+    data.draggingNode = JSON.parse(this.removeCircularData(draggingNode));
 
     this._kartaService.updateNodeAndWeightage(data).subscribe(
       (response: any) => {
@@ -1332,15 +1278,19 @@ export class EditKartaComponent implements OnInit {
 
   // Remove node from karta
   removeNode(param: any) {
-    // let phase = this.phases[this.phaseIndex(param.phaseId)];
-    // const node = this.divideWeightage(param.parent, phase);
-    // param = node.param;
-
-    // jqueryFunctions.disableElement("#karta-svg svg .node");
-    this._kartaService.removeNode(param.id).subscribe((response: any) => {
-      // this.D3SVG.update(param);
-      this.reRenderKarta();
-      // jqueryFunctions.enableElement("#karta-svg svg .node");
+    // Divide weightage of remaining nodes starts
+    let phase = this.phases[this.phaseIndex(param.phaseId)];
+    const node = this.divideWeightage(param.parent, phase);
+    param.parent = node.param;
+    // Divide weightage of remaining nodes ends
+    let data = {
+      kartaId: this.kartaId,
+      nodeId: param.id,
+      phaseId: phase.id,
+      parentId: param.parent.id
+    }
+    this._kartaService.removeNode(data).subscribe((response: any) => {
+      this.D3SVG.update(param.parent);
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
       let kpi_check_obj = {
@@ -1477,12 +1427,12 @@ export class EditKartaComponent implements OnInit {
     data.node = JSON.parse(this.removeCircularData(node));
     data.parent = JSON.parse(this.removeCircularData(parent));
 
-    jqueryFunctions.disableElement("#karta-svg svg .node");
+    jqueryFunctions.disableChart();
     this._kartaService.addNodeByInventory(data).subscribe(
       (response: any) => {
         this.getKartaInfo();
         setTimeout(() => jqueryFunctions.removeKarta(), 2000);
-        jqueryFunctions.enableElement("#karta-svg svg .node");
+        jqueryFunctions.enableChart();
         jqueryFunctions.hideLeftSidebar();
     });
   }
