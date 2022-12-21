@@ -215,7 +215,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         }).on("dragend", function (d) {
             if (d == root) {
                 return;
-            } else if (draggingNode.parentId === selectedNode.id) return endDrag(false);
+            } else if (draggingNode !== null && selectedNode !== null && draggingNode.parentId === selectedNode.id) {
+                return endDrag(false);
+            }
             domNode = this;
 
             if (selectedNode && draggingNode) {
