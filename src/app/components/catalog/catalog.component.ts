@@ -87,6 +87,7 @@ export class CatalogComponent implements OnInit {
     this.loading = true;
     this.catalogs = [];
     this.pageIndex = 0;
+    
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
         this.catalogs = response.catalogs[0].data;
@@ -166,6 +167,7 @@ export class CatalogComponent implements OnInit {
   onTabSwitch(type: string) {
     this.search_text = "";
     this.catalogType = type;
+    this.catalogs.length = 0;
     this.getCatalogs();
   }
 
