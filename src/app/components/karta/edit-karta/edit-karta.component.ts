@@ -1771,16 +1771,18 @@ export class EditKartaComponent implements OnInit {
               case "node_created":
                 if(x.data.data){
                   this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
-                    this.currentNode.phase = "";
-                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
-                    kartaNode.phase = phase;
-                    this.showSVG = true;
-                    this.isRtNodDrgingFrmSide = false;
-                    this.getKartaInfo();
-                    setTimeout(() => {
-                      jqueryFunctions.removeKarta();
-                    }, 2000);
-                    this.undoRedoFlag = false;
+                    if(kartaNode) {
+                      this.currentNode.phase = "";
+                      let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                      kartaNode.phase = phase;
+                      this.showSVG = true;
+                      this.isRtNodDrgingFrmSide = false;
+                      this.getKartaInfo();
+                      setTimeout(() => {
+                        jqueryFunctions.removeKarta();
+                      }, 2000);
+                      this.undoRedoFlag = false;
+                    }
                   },
                   (err) => {
                     console.log(err);
@@ -1791,17 +1793,19 @@ export class EditKartaComponent implements OnInit {
               case "node_updated":
                 if(x.data.data){
                   this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
-                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
-                    kartaNode.phase = phase;
-                    this.showSVG = true;
-                    this.isRtNodDrgingFrmSide = false;
-                    this.updateNodeProperties(kartaNode);
-                    this.D3SVG.updateNode(this.currentNode);
-                    this.getKartaInfo();
-                    setTimeout(() => {
-                      jqueryFunctions.removeKarta();
-                    }, 2000);
-                    this.undoRedoFlag = false;
+                    if(kartaNode) {
+                      let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                      kartaNode.phase = phase;
+                      this.showSVG = true;
+                      this.isRtNodDrgingFrmSide = false;
+                      this.updateNodeProperties(kartaNode);
+                      this.D3SVG.updateNode(this.currentNode);
+                      this.getKartaInfo();
+                      setTimeout(() => {
+                        jqueryFunctions.removeKarta();
+                      }, 2000);
+                      this.undoRedoFlag = false;
+                    }
                   },
                   (err) => {
                     console.log(err);
