@@ -11,6 +11,7 @@ import * as jqueryFunctions from '../utils/jqueryOperations.js';
 export class EditKartaInventoryComponent implements OnInit {
 
   @Input() kartaId: string = '';
+  
   @Input() versionId: any = "";
   @Input() showSVG: boolean = false;
   @Input() isRtNodDrgingFrmSide: boolean = false;

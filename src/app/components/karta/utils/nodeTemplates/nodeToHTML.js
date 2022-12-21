@@ -3,7 +3,6 @@
  * Return the HTML representation of a node.
  */
 export default (node, source) => {
-  console.log("node ", node);
   return `
     <div id="nodeItem" nodeid=${node.id} class="d-flex align-self-center">
       <div class="center-options">

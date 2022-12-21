@@ -431,7 +431,6 @@ export class MyKpiComponent implements OnInit {
         this.sharingKarta = null;
         this.selectedUsers = []
         this.pageIndex = 0;
-        this.pageSize = 10;
         this.getMyKPIsList();
       },
       (error: any) => { }

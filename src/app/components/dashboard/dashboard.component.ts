@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
       if (response) {
         this.kartas = response.kartas[0].data;
       } else this.kartas = [];
-    }).add(() => this.loadingKartas = false );;
+    }).add(() => this.loadingKartas = false );
   }
 
   // Get all members
@@ -150,16 +150,19 @@ export class DashboardComponent implements OnInit {
   // On select user while sharing
   onSelectUser() {
     this.changetype = false;
-    for (let i = 0; i < this.selectedUsers.length; i++) {
-      for (let j = 0; j < this.users.length; j++) {
-        if (this.selectedUsers[i].email !== this.users[j].email) {
-          this.changetype = true;
-          this.changeModeType = "view";
-          break;
-        }
+    let emailObject: any = {};
+    
+    for (let i=0; i<this.users.length; i++) {
+      emailObject[this.users[i].email] = this.users[i].email;
+    }
+    for (let j=0; j<this.selectedUsers.length; j++) {
+      if (!emailObject[this.selectedUsers[j].email]) {
+        this.changetype = true;
+        this.changeModeType = "view";
       }
     }
   }
+
   // Enable edit option
   enableEditOption() {
     this.changetype = false;
@@ -222,11 +225,11 @@ export class DashboardComponent implements OnInit {
     return JSON.parse(value);
   }
   renameKarta(id: string, index: number) {
-    let value = document.getElementById('kt' + index)?.innerText;
+    let value = document.getElementById('kt' + index)?.innerText.trim();
     if (value?.length == 0) {
       return this._commonService.errorToaster('Karta name should not be blank!');
     }
-    this._kartaService.updateKarta(id, { name: value?.trim() }).subscribe(
+    this._kartaService.updateKarta(id, { name: value }).subscribe(
       (x) => {
         if (x) {
           $('#kt' + index).attr('contenteditable', false);

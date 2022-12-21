@@ -65,15 +65,13 @@ export class EditKartaComponent implements OnInit {
       // addNodeRight: (d: any) => {
       //   this.addNodeRight(d);
       // },
-      updateDraggedNode: (draggingNode: any, selectedNode: any) => {
-        if (selectedNode) {
-          draggingNode.parent.id = selectedNode.id;
-          draggingNode.parentId = selectedNode.id;
-        }
+      updateDraggedNode: (draggingNode: any) => {
         this.currentNode = draggingNode;
+
         if (draggingNode.parent.id && draggingNode.phaseId) {
           let node = this.currentNode;
           if (this.previousDraggedNodeParentId !== draggingNode.parent.id) {
+            // will do from backend
             // this.updateNode('parentId', d.parent.id, 'node_updated', node);
             // this.updateNode('phaseId', d.phaseId, 'node_updated', node);
             this.updateNodeAndWeightage(draggingNode);
@@ -290,6 +288,10 @@ export class EditKartaComponent implements OnInit {
     // Close right sidebar when click outside
     $(document).on('click', '.right_sidebar_overlay', function () {
       jqueryFunctions.closeRightSidebar();
+    });
+    // Toggle color settings
+    $(document).on('click', '.dropdown-menu.keep-open, .plus-minus.cursor_pointer', function (e: any) {
+      e.stopPropagation();
     });
     // Get all members
     this.getAllMembers();
@@ -669,7 +671,6 @@ export class EditKartaComponent implements OnInit {
   reRenderKarta() {
     this.getKartaInfo();
     setTimeout(() => jqueryFunctions.removeKarta(), 500);
-    // jqueryFunctions.enableElement("#karta-svg svg .node");
   }
   // Update node properties
   updateNodeProperties(param: any, scroll?: any) {
@@ -683,38 +684,6 @@ export class EditKartaComponent implements OnInit {
     this.currentNodeName = param.name;
     this.currentNodeWeight = param.weightage;
     this.currentNodeAchievedValue = param.achieved_value;
-    if ( param.hasOwnProperty("node_formula") && param.node_formula ) {
-      this.formulaGroup.controls['fields'] = new FormArray([]);
-      for (let i = 0; i < param.node_formula.fields.length; i++ ) {
-        let fieldForm = this.fb.group({
-          fieldName: new FormControl(param.node_formula.fields[i].fieldName),
-          fieldValue: new FormControl(param.node_formula.fields[i].fieldValue),
-        })
-        this.fields.push(fieldForm);
-      }
-      this.formulaGroup.patchValue({
-        calculatedValue: param.achieved_value,
-        formula: param.node_formula.formula,
-      });
-    } else {
-      let newArr: any = [];
-      this.formulaGroup.controls['fields'] = new FormArray(newArr);
-      if(this.formulaGroup.controls['fields'].controls.length == 0){
-        if(!this.currentNode.node_formula){
-          for(let i = 0; i < 2; i++){
-            newArr.push(this.fb.group({
-              fieldName: [`Field${i + 1}`],
-              fieldValue: [0, Validators.min(0)],
-            }))
-          }
-        }
-      }
-      this.formulaGroup.controls['fields'] = new FormArray(newArr);
-      this.formulaGroup.patchValue({
-        calculatedValue: 0,
-        formula: '',
-      });
-    }
 
     this.showKPICalculation = false;
 
@@ -731,8 +700,49 @@ export class EditKartaComponent implements OnInit {
     // Show Measure and metrics when KPI's node selected
     if (this.currentNode.phase.name === 'KPI') {
       this.showKPICalculation = true;
+      
+      /* ===== Formula Code starts ===== */
+      if (param.hasOwnProperty("node_formula") && param.node_formula) {
+        this.formulaGroup.controls['fields'] = new FormArray([]);
+        for (let i = 0; i < param.node_formula.fields.length; i++ ) {
+          let fieldForm = this.fb.group({
+            fieldName: new FormControl(param.node_formula.fields[i].fieldName),
+            fieldValue: new FormControl(param.node_formula.fields[i].fieldValue),
+          })
+          this.fields.push(fieldForm);
+        }
+        this.formulaGroup.patchValue({
+          calculatedValue: param.achieved_value,
+          formula: param.node_formula.formula,
+        });
+      } else {
+        let newArr: any = [];
+        this.formulaGroup.controls['fields'] = new FormArray(newArr);
+        if(this.formulaGroup.controls['fields'].controls.length == 0){
+          if(!this.currentNode.node_formula){
+            for(let i = 0; i < 2; i++){
+              newArr.push(this.fb.group({
+                fieldName: [`Field${i + 1}`],
+                fieldValue: [0, Validators.min(0)],
+              }))
+            }
+          }
+        }
+        this.formulaGroup.controls['fields'] = new FormArray(newArr);
+        this.formulaGroup.patchValue({
+          calculatedValue: 0,
+          formula: '',
+        });
+      }
+     /* ===== Formula code ends ===== */
       // Set target
       this.target = param.target;
+      this.targetOptions = [
+        { name: "Weekly", value: "weekly", disabled: false },
+        { name: "Monthly", value: "monthly", disabled: false },
+        { name: "Quarterly", value: "quarterly", disabled: false },
+        { name: "Yearly", value: "yearly", disabled: false }
+      ]
       // Disable the target option that is already defined
       this.target.forEach((element: any) => {
         this.disableTargetOption(element.frequency);
@@ -742,7 +752,7 @@ export class EditKartaComponent implements OnInit {
         this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
       // Set notify user
       if (this.currentNode.notifyUserId) {
-        if (this.currentNode.notifyUserId === this.karta.userId) this.notifyType = "owner";
+        if (this.currentNode.notify_type === "owner") this.notifyType = "owner";
         else this.notifyType = "specific";
       } else this.notifyType = "";
     }
@@ -838,7 +848,7 @@ export class EditKartaComponent implements OnInit {
         (response: any) => {
           this.kpiPercentage = response.data ? response.data.percentage : 0;
           this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-          this.D3SVG.updateNode(this.karta.node);
+          this.D3SVG.update(this.karta.node, true);
         }
       );
     }
@@ -868,7 +878,7 @@ export class EditKartaComponent implements OnInit {
   setNotifyUser() {
     let node = this.currentNode;
     if (this.notifyType === "owner") {
-      this.updateNode('notifyUserId', this.karta.userId, 'node_updated', node);
+      this.updateNode('notifyUserId', this.karta.userId, 'node_updated', node, "owner");
       node.notifyUserId = this.karta.userId;
     } else if (this.notifyType === "") {
       this.updateNode('notifyUserId', "", 'node_updated', node);
@@ -877,7 +887,7 @@ export class EditKartaComponent implements OnInit {
   }
   selectNotifyUser(userId: string) {
     let node = this.currentNode;
-    this.updateNode('notifyUserId', userId, 'node_updated', node);
+    this.updateNode('notifyUserId', userId, 'node_updated', node, "specific");
     node.notifyUserId = userId;
   }
   // Change alert type
@@ -1059,30 +1069,35 @@ export class EditKartaComponent implements OnInit {
     );
   }
 
+  divideWeightage(param: any, phase: any) {
+    let weightage = 0;
+    if (param.hasOwnProperty("children") && param.children.length > 0) {
+      let haveFurtherChildren = false;
+      param.children.forEach((element: any) => {
+        if (element.hasOwnProperty("children") && element.children.length > 0 && element.phaseId === phase.id) {
+          weightage = 0;
+          haveFurtherChildren = true;
+        }
+      });
+      if (!haveFurtherChildren) {
+        weightage = + (100 / (param.children.length + 1)).toFixed(2);
+        param.children.forEach((item: any) => {
+          item.weightage = weightage;
+        });
+      }
+    } else weightage = 100;
+    return { param, weightage };
+  }
   // Add node
   addNode(param: any) {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
-    // Weightage division starts
-    // let weightage = 0, isWeightageDivided = false;
-    // if (param.hasOwnProperty("children") && param.children.length > 0) {
-    //   let haveFurtherChildren = false;
-    //   param.children.forEach((element: any) => {
-    //     if (element.hasOwnProperty("children") && element.children.length > 0 && element.phaseId === phase.id) {
-    //       weightage = 0;
-    //       haveFurtherChildren = true;
-    //     }
-    //   });
-    //   if (!haveFurtherChildren) {
-    //     weightage = + (100 / (param.children.length + 1)).toFixed(2);
-    //     isWeightageDivided = true;
-    //   }
-    // }
-    // else weightage = 100;
-    // Weightage division ends
+    const node = this.divideWeightage(param, phase);
+    param = node.param;
     let data: any = {
       kartaDetailId: this.kartaId,
       phaseId: phase.id,
-      parentId: param.id
+      parentId: param.id,
+      weightage: node.weightage
     }
     if (phase.name === "KPI") {
       data.node_type = "measure";
@@ -1101,11 +1116,12 @@ export class EditKartaComponent implements OnInit {
     jqueryFunctions.disableElement("#karta-svg svg .node");
     this._kartaService.addNode(data).subscribe(
       (response: any) => {
-        // response.phase = phase;
-        // this.D3SVG.updateNewNode(param, response);
+        response.phase = phase;
+        this.D3SVG.updateNewNode(param, response);
+        jqueryFunctions.enableElement("#karta-svg svg .node");
         // this.setKartaDimension();
         // this.updateNewPercentage();
-        this.reRenderKarta();
+        // this.reRenderKarta();
         // this._kartaService.getKarta(this.kartaId).subscribe(
         //   (response: any) => {
         //     this.karta = response;
@@ -1214,29 +1230,30 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.karta = response;
         this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-        this.D3SVG.updateNode(this.karta.node, true);
+        // this.D3SVG.updateNode(this.karta.node, true);
+        this.D3SVG.update(this.karta.node, true);
       }
     );
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", updatingNode?: any, type?: any) {
+  updateNode(key: string, value: any, event: string = "unknown", updatingNode: any = this.currentNode, type?: any) {
     // Set data
     let data = { [key]: value }
-    if ( key == "achieved_value") {
+    if (key === "achieved_value") {
       data["node_type"] = type;
       this.kpiType = type;
     }
+    if (key === "notifyUserId") data["notify_type"] = type;
     // Send update node request
-    this._kartaService.updateNode(updatingNode.id? updatingNode.id: this.currentNode.id, data).subscribe(
+    this._kartaService.updateNode(updatingNode.id, data).subscribe(
       async (response: any) => {
-        let oldValue = {
-          [key]: updatingNode[key]
-        };
+        const oldValue = { [key]: updatingNode[key] }
         updatingNode[key] = value;
-        this.D3SVG.updateNode(updatingNode);
+        if (key === "notifyUserId") updatingNode["notify_type"] = type;
+        this.D3SVG.update(updatingNode);
         // Calculate new percentage when any achieved, target and weightage value changes
-        if (key === "achieved_value" || key === "target" || key === "weightage" || key === "contributorId" || key === "notifyUserId" ||
+        if (key === "achieved_value" || key === "target" || key === "weightage" || 
         ((key === 'kpi_calc_period') && this.kpiCalculationPeriod === "monthly" || this.kpiCalculationPeriod === "month-to-date" || this.kpiCalculationPeriod === "year-to-date")) {
           this.updateNewPercentage();
         }
@@ -1267,7 +1284,13 @@ export class EditKartaComponent implements OnInit {
 
     this._kartaService.updateNodeAndWeightage(data).subscribe(
       (response: any) => {
-        this.reRenderKarta();
+        this._kartaService.getKarta(this.kartaId).subscribe(
+          (response: any) => {
+            this.karta = response;
+            this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+            this.D3SVG.rerender(this.karta.node);
+          }
+        );
       }
     );
   }
@@ -1309,7 +1332,15 @@ export class EditKartaComponent implements OnInit {
 
   // Remove node from karta
   removeNode(param: any) {
+    // let phase = this.phases[this.phaseIndex(param.phaseId)];
+    // const node = this.divideWeightage(param.parent, phase);
+    // param = node.param;
+
+    // jqueryFunctions.disableElement("#karta-svg svg .node");
     this._kartaService.removeNode(param.id).subscribe((response: any) => {
+      // this.D3SVG.update(param);
+      this.reRenderKarta();
+      // jqueryFunctions.enableElement("#karta-svg svg .node");
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
       let kpi_check_obj = {
@@ -1393,7 +1424,7 @@ export class EditKartaComponent implements OnInit {
   }
   onInventoryDragStart(param: any) {
     this.draggingInventoryNode = param;
-    this.D3SVG.inventoryDraggingNode(param.node);
+    this.D3SVG.inventoryDraggingNode(param.node, param.node_type);
   }
 
   onDrop(ev: any, type?: string) {
@@ -1568,13 +1599,15 @@ export class EditKartaComponent implements OnInit {
   // On select user while sharing
   onSelectUser() {
     this.changetype = false;
-    for (let i = 0; i < this.selectedSharedUsers.length; i++) {
-      for (let j = 0; j < this.members.length; j++) {
-        if (this.selectedSharedUsers[i].email !== this.members[j].email) {
-          this.changetype = true;
-          this.changeModeType = "view";
-          break;
-        }
+    let emailObject: any = {};
+    
+    for (let i=0; i<this.members.length; i++) {
+      emailObject[this.members[i].email] = this.members[i].email;
+    }
+    for (let j=0; j<this.selectedSharedUsers.length; j++) {
+      if (!emailObject[this.selectedSharedUsers[j].email]) {
+        this.changetype = true;
+        this.changeModeType = "view";
       }
     }
   }
@@ -1599,7 +1632,8 @@ export class EditKartaComponent implements OnInit {
     if (email_array.length > 0) {
       let data = {
         karta: this.sharingKarta,
-        emails: email_array
+        emails: email_array,
+        accessType: this.changeModeType
       }
       this.sharedSubmitFlag = true;
 
@@ -1722,6 +1756,7 @@ export class EditKartaComponent implements OnInit {
             switch(x.data.data.event){
               case "node_created":
                 if(x.data.data){
+                  console.log(x.data.data, 'x.data.data');
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
                   this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
