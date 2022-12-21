@@ -1121,10 +1121,10 @@
             <!-- <span class="ml-3"><a href="#"><img src="../../../assets/img/link-.svg"></a></span> -->
             <ng-container *ngIf="sharingKartaCount">
               <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-              <span class="ml-2" *ngIf="sharingKartaCount > 1">
+              <span class="ml-2">
                 <div class="user-counter">
-                  <p>+{{ sharingKartaCount - 1 }}</p>
-                </div>
+                  <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
+               </div>
               </span>
             </ng-container>
           </div>

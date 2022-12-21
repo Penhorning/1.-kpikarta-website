@@ -86,7 +86,7 @@ export class KartaService {
   updateNode(nodeId: string, data: any) {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
   }
-  updateNodeAndWeightage(data: { kartaId: string, node: object }) {
+  updateNodeAndWeightage(data: any) {
     return this._httpService.PATCH('/karta_nodes/update-node', data);
   }
   updateKarta(kartaId: string, data: any) {
@@ -96,8 +96,8 @@ export class KartaService {
   deleteKarta(data: any) {
     return this._httpService.POST('/karta/delete', data);
   }
-  removeNode(nodeId: string) {
-    return this._httpService.POST('/karta_nodes/delete', {nodeId});
+  removeNode(data: any) {
+    return this._httpService.POST('/karta_nodes/delete', data);
   }
   shareKarta(data: any) {
     return this._httpService.POST('/karta/share', data);
