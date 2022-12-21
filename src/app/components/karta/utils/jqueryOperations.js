@@ -33,7 +33,8 @@ export function disableChart() {
 }
 // Enable chart
 export function enableChart() {
-    $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+    const isZoomed = getAttribute("#karta-svg svg g", "transform");
+    if (!isZoomed) $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
 }
 // Show modal
 export function showModal(id) {
@@ -62,6 +63,10 @@ export function setStyle(element, property, value) {
 // Set attribute
 export function setAttribute(element, property, value) {
     $(element).attr(property, value);
+}
+// Get attribute
+export function getAttribute(element, attribute) {
+    return $(element).attr(attribute);
 }
 // Disable element
 export function disableElement(element) {
