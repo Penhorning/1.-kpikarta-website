@@ -1303,26 +1303,9 @@ export class EditKartaComponent implements OnInit {
         kpi_calc_period: 'kpi_calc_period'
       };
 
-      let new_obj: any = {
-        kartaDetailId: this.kartaId,
-        phaseId: param.phaseId,
-        parentId: param.parentId,
-        name: param.name,
-        font_style: param.font_style,
-        alignment: param.alignment,
-        text_color: param.text_color,
-        weightage: param.weightage,
-      }
-
-      Object.keys(kpi_check_obj).forEach(x => {
-        if(param[x]){
-          new_obj[x] = param[x];
-        }
-      });
-
       let history_data = {
         event: 'node_removed',
-        eventValue: new_obj,
+        eventValue: { "is_deleted": true },
         kartaNodeId: param.id,
         userId: this._commonService.getUserId(),
         versionId: this.versionId,
@@ -1706,7 +1689,6 @@ export class EditKartaComponent implements OnInit {
             switch(x.data.data.event){
               case "node_created":
                 if(x.data.data){
-                  console.log(x.data.data, 'x.data.data');
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
                   this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
@@ -1745,23 +1727,21 @@ export class EditKartaComponent implements OnInit {
                 break;
               case "node_removed":
                 if(x.data.data) {
-                  if(x.data.data){
-                    this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
-                      let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
-                      kartaNode.phase = phase;
-                      this.currentNode.phase = "";
-                      this.showSVG = true;
-                      this.isRtNodDrgingFrmSide = false;
-                      this.getKartaInfo();
-                      setTimeout(() => {
-                        jqueryFunctions.removeKarta();
-                      }, 2000);
-                      this.undoRedoFlag = false;
-                    },
-                    (err) => {
-                      console.log(err);
-                    });
-                  }
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.currentNode.phase = "";
+                    this.showSVG = true;
+                    this.isRtNodDrgingFrmSide = false;
+                    this.getKartaInfo();
+                    setTimeout(() => {
+                      jqueryFunctions.removeKarta();
+                    }, 2000);
+                    this.undoRedoFlag = false;
+                  },
+                  (err) => {
+                    console.log(err);
+                  });
                 }
                 break;
             }
@@ -1771,6 +1751,10 @@ export class EditKartaComponent implements OnInit {
             $("#UndoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
             this.undoRedoFlag = false;
           }
+        } else {
+          this._commonService.warningToaster("Maximum Undo limit has reached..!!");
+          $("#UndoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+          this.undoRedoFlag = false;
         }
       }
     )
@@ -1848,6 +1832,10 @@ export class EditKartaComponent implements OnInit {
             $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
             this.undoRedoFlag = false;
           }
+        } else {
+          this._commonService.warningToaster("Maximum Redo limit has reached..!!");
+          $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+          this.undoRedoFlag = false;
         }
       }
     )
