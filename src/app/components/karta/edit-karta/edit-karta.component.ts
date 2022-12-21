@@ -68,13 +68,8 @@ export class EditKartaComponent implements OnInit {
       // },
       updateDraggedNode: (draggingNode: any) => {
         this.currentNode = draggingNode;
-
         if (draggingNode.parent.id && draggingNode.phaseId) {
-          let node = this.currentNode;
           if (this.previousDraggedParentId !== draggingNode.parent.id) {
-            // will do from backend
-            // this.updateNode('parentId', d.parent.id, 'node_updated', node);
-            // this.updateNode('phaseId', d.phaseId, 'node_updated', node);
             this.updateNodeAndWeightage(draggingNode);
           }
         }
@@ -1197,10 +1192,11 @@ export class EditKartaComponent implements OnInit {
         if (key === "notifyUserId") updatingNode["notify_type"] = type;
         this.D3SVG.update(updatingNode);
         // Calculate new percentage when any achieved, target and weightage value changes
-        if (key === "achieved_value" || key === "target" || key === "weightage" || 
-        ((key === 'kpi_calc_period') && this.kpiCalculationPeriod === "monthly" || this.kpiCalculationPeriod === "month-to-date" || this.kpiCalculationPeriod === "year-to-date")) {
-          this.updateNewPercentage();
-        }
+        // if (key === "achieved_value" || key === "target" || key === "weightage" || 
+        // ((key === 'kpi_calc_period') && this.kpiCalculationPeriod === "monthly" || this.kpiCalculationPeriod === "month-to-date" || this.kpiCalculationPeriod === "year-to-date")) {
+        //   this.updateNewPercentage();
+        // }
+        this.updateNewPercentage();
         // Save the karta update history
         let history_data = {
           event,
@@ -1291,6 +1287,7 @@ export class EditKartaComponent implements OnInit {
     }
     this._kartaService.removeNode(data).subscribe((response: any) => {
       this.D3SVG.update(param.parent);
+      this.updateNewPercentage();
       this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
       let kpi_check_obj = {
