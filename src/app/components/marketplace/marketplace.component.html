@@ -1,11 +1,223 @@
 <app-header></app-header>
 <app-sidebar></app-sidebar>
 <div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1>Coming soon!</h1>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-lg-2 align-self-center">
+            <div class="page-heading">
+               <h4 class="pt-2">Inventory</h4>
             </div>
-        </div>
-    </div>
+         </div>
+         <div class="col-lg-6">
+            <div class="search-bar">
+               <form class="search-form">
+                  <div class="form-group search-filed inventory m-0">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-search cursor_pointer" viewBox="0 0 16 16" (click)="search()">
+                        <path
+                           d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                     </svg>
+                     <input type="text" class="form-control mt-0" name="search" [(ngModel)]="search_text"
+                     id="search" placeholder="Search...">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-x-lg clear_search_icon" viewBox="0 0 16 16" *ngIf="search_text" (click)="clearSearch()">
+                     <path
+                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                     </svg>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <div class="col-lg-4 text-right">
+            <div class="filter-icon">
+               <div class="dropdown filter-option d-inline-block">
+                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                  <img src="assets/img/filter-icon.svg">
+                  </button>
+                  <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
+                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
+                     <div class="row">
+                        <div class="col-lg-12">
+                           <p class="pl-3 pt-3">Filter</p>
+                        </div>
+                     </div>
+                     <div class="fillter-inner-white-box inventory" *ngFor="let option of filterOptions; let i = index" [ngClass]="{'border-0': i == filterOptions.length-1}">
+                        <div class="row pb-2">
+                           <div class="col-6">
+                              <h6 class="pl-2 m-0 pt-1">{{ option.name }}</h6>
+                           </div>
+                           <div class="col-6 text-right">
+                              <div class="form-check custom-box mr-2">
+                                 <input type="checkbox" class="form-check-input" (change)="changeFilter($event)" [value]="option.value">
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-lg-12 text-center">
+                           <button class="Apply-btn" (click)="applyFilter()">Apply</button>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="row mt-4">
+         <div class="col-lg-12">
+            <div class="KPI-dash-tab inventory">
+               <!-- KPI Tabs -->
+               <ul class="nav nav-tabs" role="tablist">
+                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('owned')"> <a
+                     class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1"
+                     role="tab">Owned by me</a> </li>
+                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('shared')"> <a
+                     class="nav-link nav-link-cus pl-0" id="shared_tab" data-toggle="tab" href="#tabs-1"
+                     role="tab">Shared with me {{catalogs.length}} {{totalCatalogs}}</a> </li>
+               </ul>
+               <!-- Tab panes -->
+               <div class="tab-content tab-content-cus inventory">
+                  <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
+                     <div class="row mt-4">
+                        <!-- card-one -->
+                        <ng-container *ngFor="let catalog of catalogs; let i = index">
+                           <div class="col-lg-3">
+                              <div class="karata-card">
+                                 <div class="row">
+                                    <div class="col-8">
+                                       <div class="own d-flex">
+                                          <img src="assets/img/own-icon.svg">
+                                          <ng-container *ngIf="catalogType === 'owned'; else nameShared">
+                                             <p class="short_text">Own</p>
+                                          </ng-container>
+                                          <ng-template #nameShared>
+                                             <p class="short_text" [title]="catalog?.user?.fullName">
+                                                {{ catalog?.user?.fullName }}
+                                             </p>
+                                          </ng-template>
+                                       </div>
+                                    </div>
+                                    <div class="col-4 text-right">
+                                       <div class="dropdown show">
+                                          <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
+                                             id="dropdownMenuLink" data-toggle="dropdown"
+                                             aria-haspopup="true" aria-expanded="false">
+                                          <img src="assets/img/dots.svg" class="">
+                                          </a>
+                                          <div class="dropdown-menu three-dots-drop"
+                                             aria-labelledby="dropdownMenuLink">
+                                             <img src="assets/img/drop-arrow.svg" class="drop-arrow">
+                                             <ng-template #optionShared>
+                                                <a class="dropdown-item" href="javascript:void(0);">
+                                                <img src="assets/img/used.svg" class="mr-2">
+                                                Used <span>(5)</span>
+                                                </a>
+                                             </ng-template>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-12 text-center">
+                                       <div class="edit-btn-img">
+                                          <a href="javascript:void(0);" data-toggle="modal" data-target="#viewCatalogModal"
+                                             (click)="onView(catalog)">
+                                          <img src="assets/img/View-blue.svg" class="">
+                                          </a>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-12 text-center">
+                                       <div class="mt-3">
+                                          <div class="d-flex justify-content-center align-items-center">
+                                             <h5 class="short_text line_height_1_3" [title]="catalog?.name">
+                                                {{catalog?.name}}
+                                             </h5>
+                                          </div>
+                                          <p>{{catalog?.createdAt | date:'mediumDate'}}</p>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <hr>
+                                 <div class="row">
+                                    <div class="col-lg-6 text-left">
+                                       <div class="dropdown show">
+                                        <a class="dropdown-toggle three-dots change-acc text-body cursor_default"
+                                            href="javascript:void(0);" role="button">
+                                        Change access <img src="assets/img/down-arrow.svg" class="ml-2">
+                                        </a>
+                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                             <a class="dropdown-item" href="javascript:void(0);">Public</a>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                       <div class="private d-flex">
+                                          <p class="text-capitalize">{{catalog?.type}}</p>
+                                          <img src="assets/img/{{catalog?.type}}-icon.svg" class="ml-2">
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-6">
+                                       <div class="Shared-with">
+                                          <h5>Shared with:</h5>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                       <div class="d-flex">
+                                          <ng-container *ngIf="catalog?.sharedTo?.length > 0">
+                                             <div class="user-img">
+                                                <img src="assets/img/user-placeholder.svg">
+                                             </div>
+                                             <div class="user-counter">
+                                                <p>{{ catalog?.sharedTo?.length > 100 ? '100+':
+                                                   catalog?.sharedTo?.length }}
+                                                </p>
+                                             </div>
+                                          </ng-container>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </ng-container>
+                        <!-- Pagination -->
+                        <div class="col-md-12">
+                           <ng-container *ngIf="loading">
+                              <div class="p-5" [innerHtml]="loader"></div>
+                           </ng-container>
+                           <ng-container *ngIf="!loading && catalogs.length === 0">
+                              <div [innerHtml]="noDataAvailable"></div>
+                           </ng-container>
+                           <div class="text-center" *ngIf="!loading && totalCatalogs > catalogs.length">
+                              <p class="view_more" (click)="viewMore()">View More..</p>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- View catalog modal -->
+<div class="modal fade" id="viewCatalogModal" data-backdrop="static" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+   <div class="modal-xl modal-dialog modal-dialog-centered">
+      <div class="modal-content p-4">
+         <div class="modal-header">
+            <h5 class="modal-title pt-0" id="staticBackdropLabel">View Inventory</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body p-0">
+            <div class="share-link-model">
+               <img [src]="viewingCatalog?.thumbnail">
+            </div>
+         </div>
+      </div>
+   </div>
 </div>
