@@ -1012,6 +1012,8 @@ export class EditKartaComponent implements OnInit {
   versionRollback(event: any){
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
+        $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
+        $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
         jqueryFunctions.removeElement('#karta-svg svg');
         this.getKartaInfo();
         MetricOperations.recheckFormula();
