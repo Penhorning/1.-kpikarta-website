@@ -163,6 +163,12 @@ export class CatalogComponent implements OnInit {
     ).add(() => this.loading = false);
   }
 
+  catalogTimer: any = null;
+  onHandleSwitch(type: string) {
+    clearTimeout(this.catalogTimer);
+    this.catalogTimer = setTimeout(() => this.onTabSwitch(type), 500);
+  }
+
   // Tab switch
   onTabSwitch(type: string) {
     this.search_text = "";
