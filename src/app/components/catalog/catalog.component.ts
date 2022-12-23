@@ -169,7 +169,6 @@ export class CatalogComponent implements OnInit {
     clearTimeout(this.catalogTimer);
     this.catalogTimer = setTimeout(() => this.onTabSwitch(type), 500);
   }
-
   // Tab switch
   onTabSwitch(type: string) {
     this.search_text = "";

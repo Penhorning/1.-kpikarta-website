@@ -5,7 +5,7 @@
       <div class="row">
          <div class="col-lg-2 align-self-center">
             <div class="page-heading">
-               <h4 class="pt-2">Inventory</h4>
+               <h4 class="pt-2">Marketplace</h4>
             </div>
          </div>
          <div class="col-lg-6">
@@ -28,7 +28,7 @@
                </form>
             </div>
          </div>
-         <div class="col-lg-4 text-right">
+         <div class="col-lg-4 text-right" *ngIf="catalogType === 'inventory'">
             <div class="filter-icon">
                <div class="dropdown filter-option d-inline-block">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
@@ -68,12 +68,12 @@
             <div class="KPI-dash-tab inventory">
                <!-- KPI Tabs -->
                <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('owned')"> <a
+                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('inventory')"> <a
                      class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1"
-                     role="tab">Owned by me</a> </li>
-                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('shared')"> <a
-                     class="nav-link nav-link-cus pl-0" id="shared_tab" data-toggle="tab" href="#tabs-1"
-                     role="tab">Shared with me {{catalogs.length}} {{totalCatalogs}}</a> </li>
+                     role="tab">Inventory</a> </li>
+                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('karta')"> <a
+                     class="nav-link nav-link-cus pl-0" id="shared_tab" data-toggle="tab" href="#tabs-2"
+                     role="tab">Kartas</a> </li>
                </ul>
                <!-- Tab panes -->
                <div class="tab-content tab-content-cus inventory">
@@ -84,46 +84,29 @@
                            <div class="col-lg-3">
                               <div class="karata-card">
                                  <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-12">
                                        <div class="own d-flex">
                                           <img src="assets/img/own-icon.svg">
-                                          <ng-container *ngIf="catalogType === 'owned'; else nameShared">
-                                             <p class="short_text">Own</p>
-                                          </ng-container>
-                                          <ng-template #nameShared>
-                                             <p class="short_text" [title]="catalog?.user?.fullName">
-                                                {{ catalog?.user?.fullName }}
-                                             </p>
-                                          </ng-template>
-                                       </div>
-                                    </div>
-                                    <div class="col-4 text-right">
-                                       <div class="dropdown show">
-                                          <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
-                                             id="dropdownMenuLink" data-toggle="dropdown"
-                                             aria-haspopup="true" aria-expanded="false">
-                                          <img src="assets/img/dots.svg" class="">
-                                          </a>
-                                          <div class="dropdown-menu three-dots-drop"
-                                             aria-labelledby="dropdownMenuLink">
-                                             <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                                             <ng-template #optionShared>
-                                                <a class="dropdown-item" href="javascript:void(0);">
-                                                <img src="assets/img/used.svg" class="mr-2">
-                                                Used <span>(5)</span>
-                                                </a>
-                                             </ng-template>
-                                          </div>
+                                          <p class="short_text" [title]="catalog?.user?.fullName">
+                                            {{ catalog?.user?.fullName }}
+                                         </p>
                                        </div>
                                     </div>
                                  </div>
                                  <div class="row">
                                     <div class="col-lg-12 text-center">
                                        <div class="edit-btn-img">
-                                          <a href="javascript:void(0);" data-toggle="modal" data-target="#viewCatalogModal"
+                                          <ng-container *ngIf="catalogType === 'inventory'; else karta">
+                                            <a href="javascript:void(0);" data-toggle="modal" data-target="#viewCatalogModal"
                                              (click)="onView(catalog)">
-                                          <img src="assets/img/View-blue.svg" class="">
-                                          </a>
+                                                <img src="assets/img/View-blue.svg" class="">
+                                            </a>
+                                          </ng-container>
+                                          <ng-template #karta>
+                                            <a [routerLink]="['/karta/view', catalog._id]" target="_blank">
+                                                <img src="assets/img/View-blue.svg" class="">
+                                            </a>
+                                          </ng-template>
                                        </div>
                                     </div>
                                  </div>
@@ -140,25 +123,6 @@
                                     </div>
                                  </div>
                                  <hr>
-                                 <div class="row">
-                                    <div class="col-lg-6 text-left">
-                                       <div class="dropdown show">
-                                        <a class="dropdown-toggle three-dots change-acc text-body cursor_default"
-                                            href="javascript:void(0);" role="button">
-                                        Change access <img src="assets/img/down-arrow.svg" class="ml-2">
-                                        </a>
-                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                             <a class="dropdown-item" href="javascript:void(0);">Public</a>
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                       <div class="private d-flex">
-                                          <p class="text-capitalize">{{catalog?.type}}</p>
-                                          <img src="assets/img/{{catalog?.type}}-icon.svg" class="ml-2">
-                                       </div>
-                                    </div>
-                                 </div>
                                  <div class="row">
                                     <div class="col-lg-6">
                                        <div class="Shared-with">

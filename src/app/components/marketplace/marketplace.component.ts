@@ -14,8 +14,7 @@ export class MarketplaceComponent implements OnInit {
 
   catalogs: any = [];
   members: any = [];
-  catalogTimer: any = null;
-  catalogType: string = "owned";
+  catalogType: string = "inventory";
   viewingCatalog: any;
   
   // Filter var
@@ -56,27 +55,30 @@ export class MarketplaceComponent implements OnInit {
 
   // Get all catalogs
   getCatalogs() {
-    let data = {
+    let data: any = {
       page: 1,
       limit: this.pageSize,
-      userId: this._commonService.getUserId(),
-      searchQuery: this.search_text,
-      nodeTypes: this.nodeTypeFilter,
-      type: this.catalogType
+      searchQuery: this.search_text
+    }
+
+    let url = "";
+    if (this.catalogType === 'inventory') {
+      url = '/karta_catalogs/get-all-public';
+      data["nodeTypes"] = this.nodeTypeFilter;
+    } else {
+      url = "/karta/get-all-public"
     }
 
     this.loading = true;
     this.catalogs = [];
     this.pageIndex = 0;
     
-    this._marketplaceService.getCatalogs(data).subscribe(
+    this._marketplaceService.getCatalogs(data, url).subscribe(
       (response: any) => {
         this.catalogs = response.catalogs[0].data;
-        console.table(this.catalogs);
         if (response.catalogs[0].metadata.length > 0) {
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
-        // this.changeDetectorRef.detectChanges();
       }
     ).add(() => this.loading = false);
   }
@@ -89,16 +91,21 @@ export class MarketplaceComponent implements OnInit {
   // View more
   viewMore() {
     this.pageIndex++;
-    let data = {
+    let data: any = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
-      userId: this._commonService.getUserId(),
-      searchQuery: this.search_text,
-      nodeTypes: this.nodeTypeFilter,
-      type: this.catalogType
+      searchQuery: this.search_text
     }
+    let url = "";
+    if (this.catalogType === 'inventory') {
+      url = '/karta_catalogs/get-all-public';
+      data["nodeTypes"] = this.nodeTypeFilter;
+    } else {
+      url = "/karta/get-all-public"
+    }
+
     this.loading = true;
-    this._marketplaceService.getCatalogs(data).subscribe(
+    this._marketplaceService.getCatalogs(data, url).subscribe(
       (response: any) => {
         this.catalogs.push(...response.catalogs[0].data);
         if (response.catalogs[0].metadata.length > 0) {
@@ -108,19 +115,17 @@ export class MarketplaceComponent implements OnInit {
     ).add(() => this.loading = false);
   }
 
+  catalogTimer: any = null;
+  onHandleSwitch(type: string) {
+    clearTimeout(this.catalogTimer);
+    this.catalogTimer = setTimeout(() => this.onTabSwitch(type), 500);
+  }
   // Tab switch
   onTabSwitch(type: string) {
-    if (this.catalogType !== type) {
-      this.search_text = "";
-      this.catalogType = type;
-      this.catalogs.length = 0;
-      if (this.catalogTimer) {
-        clearTimeout(this.catalogTimer);
-        this.catalogTimer = null;
-      } else {
-        this.catalogTimer = this.catalogs.length == 0 && setTimeout(() => {this.getCatalogs()}, 1000);
-      }
-    }
+    this.search_text = "";
+    this.catalogType = type;
+    this.catalogs.length = 0;
+    this.getCatalogs();
   }
 
   // Search

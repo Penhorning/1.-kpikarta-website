@@ -1007,7 +1007,7 @@
           <div class="modal-content p-4">
             <div class="modal-header">
               <h5 class="modal-title pt-0" id="staticBackdropLabel">Save {{ catalogForm?.value?.node_type | titlecase }}</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetCatalogForm()">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>

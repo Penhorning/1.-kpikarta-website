@@ -9,11 +9,8 @@ export class MarketplaceService {
   constructor(private _httpService: HttpService) { }
 
 /*============================== API FUNCTIONS STARTS ==============================*/
-  getCatalogs(data: any) {
-    return this._httpService.POST('/karta_catalogs/get-all', data);
-  }
-  getKartas(data: any) {
-    return this._httpService.POST('/karta/get-all', data);
+  getCatalogs(data: any, url: string) {
+    return this._httpService.POST(url, data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
 

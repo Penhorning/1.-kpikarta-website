@@ -9,6 +9,7 @@ import * as jqueryFunctions from '../utils/jqueryOperations.js';
 import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 import * as MetricOperations from '../utils/metricFormulaOperations';
+import { CalculatePercentage } from '../utils/calculatePercentage';
 
 declare const $: any;
 
@@ -96,13 +97,7 @@ export class EditKartaComponent implements OnInit {
       },
       linkColor: (d: any) => {
         let node_percentage = parseInt((d.target).percentage) || 0;
-        if (node_percentage > 100) {
-          let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
-          return colorSetting[0]?.color || 'black';
-        } else if (this.colorSettings.settings) {
-          let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
-          return colorSetting[0]?.color || 'black';
-        } else return 'black';
+        return this.setColors(node_percentage);
       },
       linkWidth: (d: any) => {
         let weightage = parseInt(d.target.weightage);
@@ -171,6 +166,9 @@ export class EditKartaComponent implements OnInit {
   version: any = [];
   versionId: any = "";
   formulaError: string = "";
+
+  // Declare calculate percentage class variable
+  percentageObj: any;
 
   // Undo Redo
   getRemovableNodeId: any = "";
@@ -256,7 +254,7 @@ export class EditKartaComponent implements OnInit {
           this.karta = response.data.data;
           this.versionId = response.data.data.versionId;
           if (this.karta.node) {
-            this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+            this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
             // this.D3SVG.updateNode(this.karta.node, true);
             this.setKartaDimension();
@@ -298,6 +296,17 @@ export class EditKartaComponent implements OnInit {
     this.getAllVersion();
     // Get all inventories
     this.getInventories();
+  }
+
+  // Set colors
+  setColors(node_percentage: number) {
+    if (node_percentage > 100) {
+      let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
+      return colorSetting[0]?.color || 'black';
+    } else if (this.colorSettings.settings) {
+      let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
+      return colorSetting[0]?.color || 'black';
+    } else return 'black';
   }
 
   // Get all inventories
@@ -753,6 +762,8 @@ export class EditKartaComponent implements OnInit {
       if (this.currentNode.notifyUserId) {
         if (this.currentNode.notify_type === "owner") this.notifyType = "owner";
         else this.notifyType = "specific";
+        let isMemberExists = this.members.find((item: any) => item._id === this.currentNode.notifyUserId);
+        if (!isMemberExists) this.currentNode.notifyUserId = "User (Deactivated)";
       } else this.notifyType = "";
     }
   }
@@ -839,14 +850,13 @@ export class EditKartaComponent implements OnInit {
     this.kpiCalculationPeriod = el.target.value;
     let node = this.currentNode;
     if (el.target.value === "monthly" || el.target.value === "month-to-date" || el.target.value === "year-to-date") {
-      // this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-      // this.D3SVG.updateNode(this.karta.node);
       this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
     } else {
       this._kartaService.getKPICalculation({ "nodeId": node.id, "type": el.target.value }).subscribe(
         (response: any) => {
           this.kpiPercentage = response.data ? response.data.percentage : 0;
-          this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
+          this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
           this.D3SVG.update(this.karta.node, true);
         }
       );
@@ -902,93 +912,6 @@ export class EditKartaComponent implements OnInit {
     node.alert_frequency = e.target.value;
   }
 
-  // Calculate each node percentage
-  calculatePercentage(params: any, percentage: number = 0) {
-    let total_percentage: number[] = [];
-    // Set blank array for children, if not available
-    if (!params.hasOwnProperty("children")) params.children = [];
-    params?.children?.forEach((element: any) => {
-      // Check if current element is a kpi node or not
-      if (element.phase.name === "KPI") {
-        let targetValue = 0;
-        const todayDate = moment().date();
-        const currentYear = moment().year();
-        const dayOfYear = moment().dayOfYear();
-        const daysInMonth = moment().daysInMonth();
-        const daysInYear = moment([currentYear]).isLeapYear() ? 366 : 365;
-
-        function findTarget(type: string) {
-          return element.target.find((item: any) => item.frequency === type);
-        }
-        const checkOtherPeriods = () => {
-          return (this.kpiCalculationPeriod === "month-over-month" || this.kpiCalculationPeriod === "year-over-year");
-        }
-        // Set target value according to monthly
-        if (element.kpi_calc_period === "monthly" && !checkOtherPeriods()) {
-          if (findTarget('monthly')) targetValue = findTarget('monthly').value;
-          else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
-          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
-          targetValue = targetValue;
-        }
-        // Set target value according to month to date
-        else if (element.kpi_calc_period === "month-to-date" && !checkOtherPeriods()) {
-          if (findTarget('monthly')) targetValue = findTarget('monthly').value;
-          else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
-          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
-          targetValue = todayDate * (targetValue / daysInMonth);
-        }
-        // Set target value according to year to date
-        else if (element.kpi_calc_period === "year-to-date" && !checkOtherPeriods()) {
-          if (findTarget('annually')) targetValue = findTarget('annually').value;
-          else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
-          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
-          targetValue = dayOfYear * (targetValue / daysInYear);
-        }
-        // Set percentage for month-over-month and year-over-year
-        else if (this.kpiCalculationPeriod === "month-over-month" || this.kpiCalculationPeriod === "year-over-year") {
-          element.percentage = this.kpiPercentage;
-        }
-        // const totalDays = moment().daysInMonth();
-        // const todayDay = moment().date();
-        // targetValue = element.target[0].value;
-        // targetValue = todayDay * (targetValue / totalDays);
-        if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {
-          let current_percentage= (element.achieved_value/targetValue) * 100;
-          element.percentage = Math.round(current_percentage);
-          element.percentage = element.percentage === Infinity ? 0 : element.percentage;
-        }
-        // if (element.percentage > 100) {
-        //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
-        //   element.border_color = colorSetting[0]?.color || 'black';
-        // } else if (this.colorSettings.settings) {
-        //   let colorSetting = this.colorSettings.settings.filter((item: any) => element.percentage >= item.min && element.percentage <= item.max);
-        //   element.border_color = colorSetting[0]?.color || 'black';
-        // } else element.border_color = 'black';
-        // Set percentage for target nodes, if exists
-        // if (element.hasOwnProperty("children") && element.children.length > 0) {
-        //   element.children[0].percentage = Math.round(current_percentage);
-        // }
-      } else {
-        let returned_percentage = this.calculatePercentage(element, percentage);
-        element.percentage = Math.round(returned_percentage);
-        element.percentage = element.percentage === Infinity ? 0 : Math.round(returned_percentage);
-        // if (element.percentage > 100) {
-        //   let colorSetting = this.colorSettings.settings.filter((item: any) => item.min === 101 && item.max === 101);
-        //   element.border_color = colorSetting[0]?.color || 'black';
-        // } else if (this.colorSettings.settings) {
-        //   let colorSetting = this.colorSettings.settings.filter((item: any) => element.percentage >= item.min && element.percentage <= item.max);
-        //   element.border_color = colorSetting[0]?.color || 'black';
-        // } else element.border_color = 'black';
-      }
-      total_percentage.push(((element.percentage * element.weightage) / 100) || 0);
-    });
-    let aggregate_percentage = total_percentage.reduce((acc: number, num: number) => acc + num, 0);
-    return aggregate_percentage;
-  }
-
   // Get karta details including all nodes
   getKartaInfo() {
     this._kartaService.getKarta(this.kartaId).subscribe(
@@ -997,9 +920,8 @@ export class EditKartaComponent implements OnInit {
         this.versionId = response.versionId;
         this.sharedKartaStr = response;
         if (this.karta.node) {
-          this.karta.node.percentage = Math.round(
-            this.calculatePercentage(this.karta.node)
-          );
+          this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+          this.karta.node.border_color = this.setColors(this.karta.node.percentage);
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           this.setKartaDimension();
           this.showSVG = true;
@@ -1066,6 +988,7 @@ export class EditKartaComponent implements OnInit {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
         this.getPhases();
+        this.percentageObj = new CalculatePercentage(this.colorSettings, "", 0);
       }
     );
   }
@@ -1120,6 +1043,7 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         response.phase = phase;
         this.D3SVG.updateNewNode(param, response);
+        this.updateNewPercentage();
       }
     ).add(() => jqueryFunctions.enableChart());
   }
@@ -1170,8 +1094,8 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
         this.karta = response;
-        this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
-        // this.D3SVG.updateNode(this.karta.node, true);
+        this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+        this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
       }
     );
@@ -1231,7 +1155,7 @@ export class EditKartaComponent implements OnInit {
         this._kartaService.getKarta(this.kartaId).subscribe(
           (response: any) => {
             this.karta = response;
-            this.karta.node.percentage = Math.round(this.calculatePercentage(this.karta.node));
+            this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
             this.D3SVG.rerender(this.karta.node);
           }
         );
@@ -1265,13 +1189,17 @@ export class EditKartaComponent implements OnInit {
             node_type = node_type.charAt(0).toUpperCase() + node_type.slice(1);
             this._commonService.successToaster(`${node_type} saved successfully!`);
             jqueryFunctions.hideModal('saveNodeModal');
-            this.catalogForm.reset();
+            this.resetCatalogForm();
             this.catalogSubmitted = false;
             this.getInventories();
           }
         ).add(() => this.catalogSubmitFlag = false );
       })
     }
+  }
+  resetCatalogForm() {
+    this.catalogForm.reset();
+    this.catalogForm.markAsUntouched();
   }
 
   // Remove node from karta

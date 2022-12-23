@@ -1,9 +1,52 @@
-<div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
+<!-- main-section -->
+<div class="wrapper">
+   <!-- Page Content  -->
+   <div id="content" class="karta-edit-contnet">
+      <!-- Karta header -->
+      <div class="karta-edit-header">
+         <div class="row no-gutters">
             <div class="col-lg-12">
-                <h1>Coming soon!</h1>
+               <div class="row no-gutters">
+                  <div class="col-lg-9">
+                     <div class="karta-name">
+                        <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
+                     </div>
+                  </div>
+                  <div class="col-lg-2">
+                     <div class="time-select-karta">
+                        <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'d/M/yy, H:mm'}}</span>
+                     </div>
+                  </div>
+                  <div class="col-lg-1 align-self-center pr-1">
+                     <img src="assets/img/reset-zoom.svg" class="img-fluid float-right cursor_pointer" title="Reset Zoom" id="reset_zoom_btn">
+                  </div>
+               </div>
             </div>
-        </div>
-    </div>
+         </div>
+      </div>
+      <!-- Karta SVG Chart -->
+      <div class="main-center-content d-flex">
+         <div class="center-content mt-4 w-100">
+            <div class="row tab-content-center">
+               <div class="phase_column">
+                  <div class="vertical-tabs">
+                     <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" *ngFor="let phase of phases">
+                           <a class="nav-link text-nowrap">{{phase?.name}}</a>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="karta_column">
+                  <div class="tab-pane active">
+                     <ng-container *ngIf="loadingKarta">
+                        <div class="p-5" [innerHtml]="loader"></div>
+                     </ng-container>
+                     <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
 </div>
