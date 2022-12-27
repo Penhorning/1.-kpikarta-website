@@ -34,6 +34,7 @@ export class EditKartaComponent implements OnInit {
   loader: any = this._commonService.loader;
   showSVG: boolean = false;
   isRtNodDrgingFrmSide: boolean = false;
+  isNodeDropable: boolean = false;
   formulaGroup: FormGroup | any = [];
 
   // Color variables
@@ -1274,15 +1275,16 @@ export class EditKartaComponent implements OnInit {
   }
   onMouseLeaveKartaLines(ev: any) {
     ev.preventDefault();
+    this.isRtNodDrgingFrmSide = false;
     let element = document.getElementById(ev.target.id);
     if (element) element.classList.remove('selectedPhase');
   }
   addRootNode(ev: any) {
     let element = ev.target.closest('div');
+    this.isNodeDropable = true;
     this.onDrop(element.id, 'add_root');
   }
 
-  isNodeDropable: boolean = false;
   onDragOver(ev: any) {
     ev.preventDefault();
     jqueryFunctions.hideLeftSidebar();
@@ -1297,10 +1299,10 @@ export class EditKartaComponent implements OnInit {
       element.classList.add('selectedPhase');
     }
     // Check if inventory node dragging
-    else if (this.draggingInventoryNode.node && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value === "KPI") {
+    else if (this.draggingInventoryNode && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value === "KPI") {
       this.isNodeDropable = false;
       element.classList.add('selectedPhaseError');
-    } else if (this.draggingInventoryNode.node && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value !== "KPI") {
+    } else if (this.draggingInventoryNode && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value !== "KPI") {
       const draggingDepth = this.getDepth(this.draggingInventoryNode.node);
       const selectedDepth = this.phaseIndex(ev.target.id.substring(9));
       if ((draggingDepth + selectedDepth) > 5) {
@@ -1310,10 +1312,10 @@ export class EditKartaComponent implements OnInit {
         this.isNodeDropable = true;
         element.classList.add('selectedPhase');
       }
-    } else if (this.draggingInventoryNode.node && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value === "KPI") {
+    } else if (this.draggingInventoryNode && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value === "KPI") {
       this.isNodeDropable = true;
       element.classList.add('selectedPhase');
-    } else if (this.draggingInventoryNode.node && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value !== "KPI") {
+    } else if (this.draggingInventoryNode && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value !== "KPI") {
       this.isNodeDropable = false;
       element.classList.add('selectedPhaseError');
     }
@@ -1362,6 +1364,7 @@ export class EditKartaComponent implements OnInit {
         this.getKartaInfo();
         this.showSVG = true;
         this.isRtNodDrgingFrmSide = false;
+        this.isNodeDropable = false;
         // this.updateNodeProperties(response);
   
         let history_data = {
