@@ -59,7 +59,7 @@
      </div> -->
   <div class="row">
      <div class="col-lg-12">
-        <div class="">
+        <div class="inventory_sidebar_accordion">
            <div id="accordion">
               <div class="card custom_accordion">
                  <div class="card-header accordion_header_custom" id="headingOne">
@@ -330,22 +330,21 @@
                   <div class="dropdown-menu keep-open dropdown-content custom-drop" aria-labelledby="dropdownMenuButton">
                     <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
                     <div class="fillter-inner-white-box p-2">
-                      <!-- <div class="row ">
+                      <div class="row ">
                         <div class="col-6"> 
                           <div class="pl-1">
-                            <p>Help Text</p>
+                            <p>Apply Global</p>
                           </div>
                         </div>
                         <div class="col-6 text-right">
                           <div class="toggle-tab-karta-edit ">
                             <label class="switch" for="checkbox">
-                              <input type="checkbox" id="checkbox">
+                              <input type="checkbox" id="checkbox" [checked]="colorSettings.is_global" (change)="toggleColorSettings($event)">
                               <div class="slider round karta-edit"></div>
                             </label>
                           </div>
                         </div>
                       </div>
-                      <hr> -->
                       <div class="row">
                         <div class="col-lg-12">
                           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -466,10 +465,10 @@
               <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
               <div *ngIf="!showSVG && !loadingKarta">
                 <ng-container *ngFor="let phase of phases; let i = index">
-                  <div class="karta_dummy_lines" [id]="'svg_line_' + phase?.id" (drop)="onDrop($event)"
+                  <div class="karta_dummy_lines" [id]="'svg_line_' + phase?.id" [attr.name]="phase?.name" (drop)="onDrop($event)"
                     (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
                     (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide" (click)="addRootNode($event)"><i
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide && phase?.name !== 'KPI'" (click)="addRootNode($event)"><i
                         class="fa fa-plus-circle"></i> Node</button>
                   </div>
                 </ng-container>

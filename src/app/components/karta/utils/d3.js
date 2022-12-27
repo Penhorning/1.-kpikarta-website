@@ -373,7 +373,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 outCircle(dropped_node);
                 draggingNodeType = null;
             });
-            
         nodeEnter
             .append("foreignObject")
             .attr("class", "mindmap-node")
@@ -593,13 +592,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         toggleNode: (d) => {
             if (d.children) {
                 if (d.children.length) {
-                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up')
+                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up');
                 }
                 d._children = d.children;
                 d.children = null;
             } else {
                 if (d._children.length) {
-                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up')
+                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up');
                 }
                 d.children = d._children;
                 d._children = null;

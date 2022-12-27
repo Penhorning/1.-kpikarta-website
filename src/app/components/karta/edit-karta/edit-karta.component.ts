@@ -805,7 +805,12 @@ export class EditKartaComponent implements OnInit {
       }
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greater than 100!");
-      } else this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
+      } else {
+        if (sum + this.currentNodeWeight < 100) {
+          this._commonService.warningToaster("Your aggregate weighting of all the nodes is less than 100!");
+        }
+        this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
+      }
     }
   }
   // Change font style
@@ -971,7 +976,7 @@ export class EditKartaComponent implements OnInit {
     };
     this._kartaService.getSuggestion(data).subscribe(
       (response: any) => {
-        this.suggestion = response;
+        this.suggestion = response.suggestion;
       },
       (error: any) => { }
     );
@@ -1156,6 +1161,7 @@ export class EditKartaComponent implements OnInit {
           (response: any) => {
             this.karta = response;
             this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+            this.karta.node.border_color = this.setColors(this.karta.node.percentage);
             this.D3SVG.rerender(this.karta.node);
           }
         );
@@ -1246,6 +1252,19 @@ export class EditKartaComponent implements OnInit {
     });
   }
 
+  // Get depth of nested child
+  getDepth(node: any) {
+    let depth = 0;
+    if (node.children) {
+        node.children.forEach((d: any) => {
+            let tmpDepth = this.getDepth(d);
+            if (tmpDepth > depth) {
+                depth = tmpDepth
+            }
+        });
+    }
+    return ++depth;
+  }
   // On karta lines hover
   onMouseOverKartaLines(ev: any) {
     ev.preventDefault();
@@ -1262,17 +1281,49 @@ export class EditKartaComponent implements OnInit {
     this.onDrop(element.id, 'add_root');
   }
 
+  isNodeDropable: boolean = false;
   onDragOver(ev: any) {
     ev.preventDefault();
     jqueryFunctions.hideLeftSidebar();
-    let element = document.getElementById(ev.target.id);
-    if (element) element.classList.add('selectedPhase');
+    let element = document.getElementById(ev.target.id)!;
+    let elAttributes: any = element.attributes;
+    // Check is root node dragging
+    if (this.isRtNodDrgingFrmSide && elAttributes.name.value === "KPI") {
+      this.isNodeDropable = false;
+      element.classList.add('selectedPhaseError');
+    } else if (this.isRtNodDrgingFrmSide && elAttributes.name.value !== "KPI") {
+      this.isNodeDropable = true;
+      element.classList.add('selectedPhase');
+    }
+    // Check if inventory node dragging
+    else if (this.draggingInventoryNode.node && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value === "KPI") {
+      this.isNodeDropable = false;
+      element.classList.add('selectedPhaseError');
+    } else if (this.draggingInventoryNode.node && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value !== "KPI") {
+      const draggingDepth = this.getDepth(this.draggingInventoryNode.node);
+      const selectedDepth = this.phaseIndex(ev.target.id.substring(9));
+      if ((draggingDepth + selectedDepth) > 5) {
+        this.isNodeDropable = false;
+        element.classList.add('selectedPhaseError');
+      } else {
+        this.isNodeDropable = true;
+        element.classList.add('selectedPhase');
+      }
+    } else if (this.draggingInventoryNode.node && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value === "KPI") {
+      this.isNodeDropable = true;
+      element.classList.add('selectedPhase');
+    } else if (this.draggingInventoryNode.node && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value !== "KPI") {
+      this.isNodeDropable = false;
+      element.classList.add('selectedPhaseError');
+    }
   }
   onDragLeave(ev: any) {
     ev.preventDefault();
-    this.isRtNodDrgingFrmSide = false;
     let element = document.getElementById(ev.target.id);
-    if (element) element.classList.remove('selectedPhase');
+    if (element) {
+      element.classList.remove('selectedPhase');
+      element.classList.remove('selectedPhaseError');
+    }
   }
 
   onRootDragStart(data: any, type: boolean) {
@@ -1288,42 +1339,52 @@ export class EditKartaComponent implements OnInit {
   }
 
   onDrop(ev: any, type?: string) {
-    if (this.draggingInventoryNode) {
-      this.onInventoryDrop(this.draggingInventoryNode.node, null);
-      return;
-    }
-    let phaseId = '';
-    if (type == 'add_root') phaseId = ev;
-    else {
-      ev.preventDefault();
-      phaseId = ev.target.id;
-    }
-    let phase = this.phases[this.phaseIndex(phaseId.substring(9))];
-    let data = {
-      name: "Empty",
-      phaseId: phaseId.substring(9),
-      kartaId: this.kartaId
-    };
-    this._kartaService.addNode(data).subscribe((response: any) => {
-      response.phase = phase;
-      this.getKartaInfo();
-      this.showSVG = true;
-      this.isRtNodDrgingFrmSide = false;
-      // this.updateNodeProperties(response);
-
-      let history_data = {
-        event: "node_created",
-        eventValue: data,
-        kartaNodeId: response.id,
-        userId: this._commonService.getUserId(),
-        versionId: this.versionId,
-        kartaId: this.kartaId,
-        historyType: 'main'
+    if (this.isNodeDropable) {
+      if (this.draggingInventoryNode) {
+        this.onInventoryDrop(this.draggingInventoryNode.node, null);
+        return;
+      }
+      let phaseId = '';
+      if (type == 'add_root') phaseId = ev;
+      else {
+        ev.preventDefault();
+        phaseId = ev.target.id;
+      }
+      let phase = this.phases[this.phaseIndex(phaseId.substring(9))];
+      let data = {
+        name: "Empty",
+        phaseId: phaseId.substring(9),
+        kartaId: this.kartaId
       };
-      this._kartaService.addKartaHistoryObject(history_data).subscribe(
-        (result: any) => { }
-      );
-    });
+      this._kartaService.addNode(data).subscribe((response: any) => {
+        response.phase = phase;
+        this.getKartaInfo();
+        this.showSVG = true;
+        this.isRtNodDrgingFrmSide = false;
+        // this.updateNodeProperties(response);
+  
+        let history_data = {
+          event: "node_created",
+          eventValue: data,
+          kartaNodeId: response.id,
+          userId: this._commonService.getUserId(),
+          versionId: this.versionId,
+          kartaId: this.kartaId,
+          historyType: 'main'
+        };
+        this._kartaService.addKartaHistoryObject(history_data).subscribe(
+          (result: any) => { }
+        );
+      });
+    } else {
+      alert("You cannot drag this node here");
+      this.isRtNodDrgingFrmSide = false;
+      let element = document.getElementById(ev.target.id);
+      if (element) {
+        element.classList.remove('selectedPhase');
+        element.classList.remove('selectedPhaseError');
+      }
+    }
   }
 
   // On Inventory drop
@@ -1552,6 +1613,18 @@ export class EditKartaComponent implements OnInit {
       else this.colorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
     }
   }
+  toggleColorSettings(e: any) {
+    this._kartaService.updateColorSetting({ is_global: e.target.checked }, this.colorSettings.id).subscribe(
+      (response: any) => {
+        if (e.target.checked) {
+          this._commonService.successToaster("Success! Now this settings will apply in all other places.");
+        }
+      },
+      (error: any) => {
+        setTimeout(() => e.target.checked = false, 500);
+      }
+    );
+  }
   saveColorSetting() {
     if (this.colorForm.valid) {
       if (this.sumOfRange() == 100) {
@@ -1562,7 +1635,7 @@ export class EditKartaComponent implements OnInit {
               this.colorSettings = response;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              location.reload();
+              this.reRenderKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         } else {
