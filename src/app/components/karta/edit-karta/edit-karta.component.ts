@@ -937,6 +937,7 @@ export class EditKartaComponent implements OnInit {
   }
 
   versionRollback(event: any){
+    this.loadingKarta = true;
     this._kartaService.versionControlHistory({versionId: event.target.value, kartaId: this.kartaId}).subscribe(
       (data) => {
         $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
@@ -946,7 +947,7 @@ export class EditKartaComponent implements OnInit {
         MetricOperations.recheckFormula();
       },
       (err) => console.log(err)
-    );
+    ).add(() => this.loadingKarta = false);
   }
 
   // Get all phases
