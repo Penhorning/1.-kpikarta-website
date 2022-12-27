@@ -218,6 +218,7 @@ export class MyKpiComponent implements OnInit {
           (response) => {
             if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
             $('#editActualValueModal').modal('hide');
+            this.pageIndex = 0;
             this.getMyKPIsList();
             this.getKpiStats();
           },
@@ -247,6 +248,7 @@ export class MyKpiComponent implements OnInit {
       (response) => {
         if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
+        this.pageIndex = 0;
         this.getMyKPIsList();
         this.getKpiStats();
       },
@@ -338,29 +340,30 @@ export class MyKpiComponent implements OnInit {
   }
   clearSearch() {
     this.search_text = "";
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 
   // On last edit date change
   onDateChange(e: any) {
-    this.pageIndex = 0;
     if (e[0] && e[1]) {
       this.startDate = e[0];
       this.endDate = e[1];
       this.startDueDate = "",
-        this.endDueDate = "",
-        this.getMyKPIsList();
+      this.endDueDate = "",
+      this.pageIndex = 0;
+      this.getMyKPIsList();
     }
   }
 
   // On due date change
   onDueDateChange(e: any) {
-    this.pageIndex = 0;
     if (e[0] && e[1]) {
       this.startDueDate = e[0];
       this.endDueDate = e[1];
       this.startDate = "";
       this.endDate = "";
+      this.pageIndex = 0;
       this.getMyKPIsList();
     }
   }
@@ -426,12 +429,20 @@ export class MyKpiComponent implements OnInit {
         if (response) this._commonService.successToaster("Your have shared the node successfully");
         $('#staticBackdrop').modal('hide');
         this.sharingKarta = null;
+        this.selectedUsers = []
+        this.pageIndex = 0;
         this.getMyKPIsList();
       },
       (error: any) => { }
     ).add(() => this.sharedSubmitFlag = false);
   }
 
+  // Close model
+  closeModal(){
+    this.sharingKarta = undefined;
+    this.selectedUsers = []
+  }
+  
   // On click geting data of acheived value
   editActualValue(node: any) {
     this.editingKarta = node;
@@ -468,12 +479,12 @@ export class MyKpiComponent implements OnInit {
 
   // Target type select check uncheck
   onTargetSelect(e: any, item: any) {
-    console.log("e", e, item)
     if (e.target.checked) { this.selectedTargetTypes.push(item) }
     else {
       const index = this.selectedTargetTypes.indexOf(item);
       this.selectedTargetTypes.splice(index, 1);
     }
+    this.pageIndex = 0;
     this.getMyKPIsList()
   }
 
@@ -484,6 +495,7 @@ export class MyKpiComponent implements OnInit {
       const index = this.selectedPercentage.indexOf(item);
       this.selectedPercentage.splice(index, 1);
     }
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 
@@ -512,6 +524,7 @@ export class MyKpiComponent implements OnInit {
       const index = this.kartaCreatorIds.indexOf(kartaCreatorIds)
       this.kartaCreatorIds.splice(index, 1);
     }
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 

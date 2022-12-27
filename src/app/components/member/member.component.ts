@@ -26,7 +26,6 @@ export class MemberComponent implements OnInit {
   submitted: boolean = false;
   submitFlag = false;
   showDepartment: boolean = false;
-  wasDepartment: boolean = false;
   showRole: boolean = false;
   hideValues: any = ['company admin', 'billing staff']
   hide: boolean = true;
@@ -160,13 +159,11 @@ export class MemberComponent implements OnInit {
       }
     }
     else {
-      this.wasDepartment = false;
       if (!data.hasOwnProperty("department")) {
         this.showDepartment = false;
         this.inviteForm.removeControl("departmentId");
       } else {
         this.showDepartment = true;
-        this.wasDepartment = true;
         this.inviteForm.addControl("departmentId", this.fb.control('', [Validators.required]));
         this.inviteForm.patchValue({
           departmentId: data.department._id ? data.department._id : ''
@@ -231,7 +228,7 @@ export class MemberComponent implements OnInit {
       else if (this.checkFormType === "UPDATE") {
         formData.type = "invited_user";
         formData.userId = this.currentUser._id;
-        if (this.wasDepartment) formData.departmentId = "";
+        if (!this.showDepartment) formData.departmentId = "";
         this._memberService.updateUser(formData, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
@@ -344,7 +341,7 @@ export class MemberComponent implements OnInit {
   }
   // Delete user
   deleteUser(user: any) {
-    const result = confirm("Are you sure do you want to Delete this user?");
+    const result = confirm("Are you sure, Do you want to Delete this user?");
     if (result) {
       this._memberService.deleteUser({ userId: user._id }).subscribe(
         (response: any) => {

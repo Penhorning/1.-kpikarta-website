@@ -30,7 +30,7 @@
          </div>
          <div class="col-lg-4 text-right">
             <div class="filter-icon">
-               <div class="dropdown filter-option">
+               <div class="dropdown filter-option d-inline-block">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
                   <img src="assets/img/filter-icon.svg">
                   </button>
@@ -99,7 +99,7 @@
                                     </div>
                                     <div class="col-4 text-right">
                                        <div class="dropdown show">
-                                          <a class=" dropdown-toggle three-dots" href="#" role="button"
+                                          <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
                                              id="dropdownMenuLink" data-toggle="dropdown"
                                              aria-haspopup="true" aria-expanded="false">
                                           <img src="assets/img/dots.svg" class="">
@@ -168,7 +168,7 @@
                                        <div class="dropdown show">
                                           <ng-container *ngIf="catalogType === 'owned'; else actionShared">
                                              <a class="dropdown-toggle three-dots change-acc text-body"
-                                                href="#" role="button" id="dropdownMenuLink"
+                                                href="javascript:void(0);" role="button" id="dropdownMenuLink"
                                                 data-toggle="dropdown" aria-haspopup="true"
                                                 aria-expanded="false">
                                              Change access 
@@ -258,7 +258,7 @@
                   <label class="short_text font-weight-bold" style="max-width: 500px;">{{ sharingCatalog?.name }}</label>
                   <div class="row">
                     <div class="col-lg-12" *ngIf="sharingCatalog">
-                        <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
+                        <ng-multiselect-dropdown [placeholder]="'Select users'"
                         [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
                         (onDeSelect)="onItemDeSelect($event)">
                         </ng-multiselect-dropdown>

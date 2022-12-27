@@ -1083,8 +1083,8 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content p-4">
       <div class="modal-header">
-        <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Link</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="sharingKarta = undefined">
+        <h5 class="modal-title pt-0" id="staticBackdropLabel">Share KPI</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -1094,7 +1094,7 @@
             <label class="short_text" style="font-weight: bold; max-width: 500px;">{{ sharingKarta?.karta?.name }}: {{ sharingKarta?.name }}</label>
             <div class="row">
               <div class="col-lg-12" *ngIf="sharingKarta">
-                <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
+                <ng-multiselect-dropdown [placeholder]="'Select users'"
                   [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
                   (onDeSelect)="onItemDeSelect($event)">
                 </ng-multiselect-dropdown>
@@ -1118,13 +1118,13 @@
         <div class="col-lg-12 text-left">
           <div class="shared-with" style="display:flex;">
             <span>Shared with:</span>
-            <!-- <span class="ml-3"><a href="#"><img src="../../../assets/img/link-.svg"></a></span> -->
+            <!-- <span class="ml-3"><a href="javascript:void(0);"><img src="../../../assets/img/link-.svg"></a></span> -->
             <ng-container *ngIf="sharingKartaCount">
               <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-              <span class="ml-2" *ngIf="sharingKartaCount > 1">
+              <span class="ml-2">
                 <div class="user-counter">
-                  <p>+{{ sharingKartaCount - 1 }}</p>
-                </div>
+                  <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
+               </div>
               </span>
             </ng-container>
           </div>

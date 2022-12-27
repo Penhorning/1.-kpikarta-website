@@ -87,7 +87,7 @@ export class CatalogComponent implements OnInit {
     this.loading = true;
     this.catalogs = [];
     this.pageIndex = 0;
-
+    
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
         this.catalogs = response.catalogs[0].data;
@@ -167,6 +167,7 @@ export class CatalogComponent implements OnInit {
   onTabSwitch(type: string) {
     this.search_text = "";
     this.catalogType = type;
+    this.catalogs.length = 0;
     this.getCatalogs();
   }
 
@@ -184,12 +185,15 @@ export class CatalogComponent implements OnInit {
     this.selectedUsers.push({ userId: item._id });
   }
   onItemDeSelect(item: any) {
-    this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
+    if( this.selectedUsers && this.selectedUsers.length > 0 ) {
+      this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
+    }
   }
 
   // Reset share catalog
   resetSharingCatalog() {
     this.sharingCatalog = undefined;
+    this.selectedUsers = [];
   }
   // On share click
   onShare(param: any) {

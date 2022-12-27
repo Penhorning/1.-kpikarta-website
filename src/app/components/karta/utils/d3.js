@@ -33,7 +33,7 @@ var getSVGSize = (tree, level = 0) => {
 }
 var tree = null, root = null, nodes = null, parentLink = null, links = null, nodePaths = null, nodesExit = null;
 // variables for drag/drop
-var selectedNode = null, draggingNode = null, dragStarted = null, domNode = null;
+var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = null, domNode = null;
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var margin = { top: 0, right: 0, bottom: 20, left: 0 };
@@ -61,6 +61,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // options.buildOneKartaDivider = buildOneKartaDivider;
     // options.removeOneKartaDivider = removeOneKartaDivider;
 
+    options.rerender = function (data = root) {
+        update(data, true);
+    };
     // Context menu
     const contextMenuItems = [
         {
@@ -84,6 +87,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             });
         }
         return ++depth;
+    }
+    // Get phase by phase id
+    function getPhaseById(phaseId) {
+        return options.phases()[options.phases().map(item => item.id).indexOf(phaseId)]
     }
 
     // Define the zoom function for the zoomable tree
@@ -169,8 +176,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         dragStarted = null;
     }
     // Drag end
-    function endDrag() {
-        let tempSelectedNode = selectedNode;
+    function endDrag(success = false) {
         if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
         selectedNode = null;
         d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
@@ -179,8 +185,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
         if (draggingNode !== null) {
             update(root);
-            options.events.updateDraggedNode(draggingNode, tempSelectedNode);
-            draggingNode = null;
+            if (success) options.events.updateDraggedNode(draggingNode);
+            draggingNode = draggingNodeType = null;
         }
     }
     // Drag start
@@ -209,15 +215,28 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         }).on("dragend", function (d) {
             if (d == root) {
                 return;
+            } else if (draggingNode !== null && selectedNode !== null && draggingNode.parentId === selectedNode.id) {
+                return endDrag(false);
             }
             domNode = this;
 
             if (selectedNode && draggingNode) {
-                let draggingDepth = getDepth(draggingNode);
-                let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+                // Getting depth
+                const draggingDepth = getDepth(draggingNode);
+                const selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+                // Getting phase
+                const selectedPhase = getPhaseById(selectedNode.phaseId);
+                const draggingPhase = getPhaseById(draggingNode.phaseId);
 
-                if ((draggingDepth + selectedDepth) > 6) {
-                    alert("You cannot drag this node becuase it's leaf nodes exceeding the kpi node.")
+                if (
+                    (selectedPhase.name === "KPI") ||
+                    (selectedPhase.name === "Action" && draggingPhase.name !== "KPI") ||
+                    (selectedPhase.name !== "Action" && draggingPhase.name === "KPI") ||
+                    ((selectedPhase.name === "Action" && draggingPhase.name === "KPI") && (draggingDepth + selectedDepth) > 6) ||
+                    ((selectedPhase.name !== "Action" && draggingPhase.name !== "KPI") && (draggingDepth + selectedDepth) > 5)
+                ) {
+                    alert("You cannot drag this node here");
+                    endDrag(false);
                 } else {
                     // now remove the element from the parent, and insert it into the new elements children
                     var index = draggingNode.parent.children.indexOf(draggingNode);
@@ -226,32 +245,49 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                     }
                     if (typeof selectedNode.children !== 'undefined' || typeof selectedNode._children !== 'undefined') {
                         if (typeof selectedNode.children !== 'undefined') {
+                            draggingNode.parentId = selectedNode.id;
                             selectedNode.children.push(draggingNode);
+                            draggingNode.parent = selectedNode;
+                            draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
                         } else {
+                            draggingNode.parentId = selectedNode.id;
                             selectedNode._children.push(draggingNode);
+                            draggingNode.parent = selectedNode;
+                            draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
                         }
                     } else {
                         selectedNode.children = [];
+                        draggingNode.parentId = selectedNode.id;
                         selectedNode.children.push(draggingNode);
+                        draggingNode.parent = selectedNode;
+                        draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
                     }
+                    endDrag(true);
                 }
-                endDrag();
             } else {
-                endDrag();
+                endDrag(false);
             }
         });
 
     var overCircle = function (d) {
         selectedNode = d;
         if (selectedNode != draggingNode && selectedNode !== null && draggingNode !== null) {
-            let colorCode = "#ff1744";  // Green color
-            let phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
+            let colorCode = "#76ff03";  // Green color
+            // Getting phase
+            const selectedPhase = getPhaseById(selectedNode.phaseId);
+            const draggingPhase = getPhaseById(draggingNode.phaseId);
             // Getting depth
             let draggingDepth = getDepth(draggingNode);
             let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
-            if (phase.name !== "KPI" && !((draggingDepth + selectedDepth) > 6 && ((selectedNode.phaseId !== draggingNode.phaseId) || phase.name === "Goal"))) {
-                colorCode = "#76ff03"; // Red color
-            }
+            if (
+                (selectedPhase.name === "KPI") ||
+                (selectedPhase.name === "Action" && draggingPhase.name !== "KPI") ||
+                (selectedPhase.name !== "Action" && draggingPhase.name === "KPI") ||
+                ((selectedPhase.name === "Action" && draggingPhase.name === "KPI") && (draggingDepth + selectedDepth) > 7) ||
+                ((selectedPhase.name !== "Action" && draggingPhase.name !== "KPI") && (draggingDepth + selectedDepth) > 5) ||
+                (draggingNodeType === "branch" && (draggingDepth + selectedDepth) > 5) ||
+                ((draggingNodeType === "measure" || draggingNodeType === "metric") && selectedPhase.name !== "Action")
+            ) colorCode = "#ff1744"; // Red color
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
         }
     };
@@ -268,7 +304,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // var initialDepth = getPhaseDepth(root);
     update(root);
 
-    function update(source) {
+    function update(source, isRoot = false) {
+        if (isRoot) root = source;
         // Compute the new tree layout.
         var svgSize = getSVGSize(root);
         var svg = d3.select('#karta-svg svg')
@@ -323,13 +360,18 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 outCircle(node);
             })
             .on("drop", function(dropped_node) {
-                let draggingDepth = getDepth(draggingNode);
-                let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
+                // Getting depth
+                const draggingDepth = getDepth(draggingNode);
+                const selectedDepth = options.phases().map(item => item.id).indexOf(dropped_node.phaseId);
 
-                if ((draggingDepth + selectedDepth) > 6) {
-                    alert("You cannot drag this node becuase it's leaf nodes exceeding the kpi node.")
+                if (draggingNodeType === "branch" && ((draggingDepth + selectedDepth) > 5)) {
+                    alert("You cannot drag this node becuase it's leaf nodes exceeding the ACTION PHASE");
+                } else if ((draggingNodeType === "measure" || draggingNodeType === "metric") && ((draggingDepth + selectedDepth) > 6)) {
+                    alert("You cannot drag this node becuase it's leaf nodes exceeding the KPI PHASE");
                 } else options.events.onInventoryDrop(draggingNode, dropped_node);
+
                 outCircle(dropped_node);
+                draggingNodeType = null;
             });
             
         nodeEnter
@@ -354,7 +396,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         //horizontal tree
         var nodeUpdate = node.transition()
             .duration(duration)
-            .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+            .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+            node.select("foreignObject").html(node => nodeToHTML(node, nodeEnter));
 
 
         // Transition exiting nodes to the parent's new position.
@@ -492,8 +535,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
 
     // Dragging node from inventory
-    function inventoryDraggingNode(node) {
+    function inventoryDraggingNode(node, node_type) {
         draggingNode = node;
+        draggingNodeType = node_type;
     }
 
     // Hightlight nodes, while saving in catalog

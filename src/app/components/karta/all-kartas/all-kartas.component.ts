@@ -172,13 +172,15 @@ export class AllKartasComponent implements OnInit {
   // On select user while sharing
   onSelectUser() {
     this.changetype = false;
-    for (let i = 0; i < this.selectedUsers.length; i++) {
-      for (let j = 0; j < this.members.length; j++) {
-        if (this.selectedUsers[i].email !== this.members[j].email) {
-          this.changetype = true;
-          this.changeModeType = "view";
-          break;
-        }
+    let emailObject: any = {};
+    
+    for (let i=0; i<this.members.length; i++) {
+      emailObject[this.members[i].email] = this.members[i].email;
+    }
+    for (let j=0; j<this.selectedUsers.length; j++) {
+      if (!emailObject[this.selectedUsers[j].email]) {
+        this.changetype = true;
+        this.changeModeType = "view";
       }
     }
   }
@@ -254,11 +256,11 @@ export class AllKartasComponent implements OnInit {
     return JSON.parse(value);
   }
   renameKarta(id: string, index: number) {
-    let value = document.getElementById('kt' + index)?.innerText;
+    let value = document.getElementById('kt' + index)?.innerText.trim();
     if (value?.length == 0 || value === '<br>') {
       return this._commonService.errorToaster('Karta name should not be blank!');
     }
-    this._kartaService.updateKarta(id, { name: value?.trim() }).subscribe(
+    this._kartaService.updateKarta(id, { name: value }).subscribe(
       (response: any) => {
         $('#kt' + index).attr('contenteditable', false);
         this.ngOnInit();
