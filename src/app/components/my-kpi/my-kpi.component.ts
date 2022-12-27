@@ -106,7 +106,7 @@ export class MyKpiComponent implements OnInit {
   submittedMeasure: boolean = false;
   measureSubmitFlag: boolean = false;
   metricsSubmitFlag: boolean = false;
-  measureFlag = false;
+  metricFlag = false;
   kartaName: any;
   editingKarta: any;
   index: any;
@@ -201,30 +201,32 @@ export class MyKpiComponent implements OnInit {
       this.metricsForm.patchValue({ calculatedValue: 0 }); return;
     } else {
       total = eval(newValue);
-      this.metricsForm.patchValue({ calculatedValue: total });
+      if (total >= 0) {
+        this.metricsForm.patchValue({ calculatedValue: total });
 
-      let request = {
-        ...this.metricsForm.value,
-        metrics: true
-      };
-      delete request['calculatedValue'];
-      this.target.forEach((element: any) => {
-        let percentage = (+this.metricsForm.value.calculatedValue / element.value) * 100;
-        return element.percentage = Math.round(percentage);
-      });
-      this.metricsSubmitFlag = true;
-      this._myKpiService.updateNode(this.currentNode, { node_type: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
-        (response) => {
-          if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
-          $('#editActualValueModal').modal('hide');
-          this.getMyKPIsList();
-          this.getKpiStats();
-        },
-        (err) => {
-          console.log(err); this._commonService.errorToaster('Something went wrong!');
-        }
-      ).add(() => this.metricsSubmitFlag = false);
-      return;
+        let request = {
+          ...this.metricsForm.value,
+          metrics: true
+        };
+        delete request['calculatedValue'];
+        this.target.forEach((element: any) => {
+          let percentage = (+this.metricsForm.value.calculatedValue / element.value) * 100;
+          return element.percentage = Math.round(percentage);
+        });
+        this.metricsSubmitFlag = true;
+        this._myKpiService.updateNode(this.currentNode, { node_formula: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
+          (response) => {
+            if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
+            $('#editActualValueModal').modal('hide');
+            this.pageIndex = 0;
+            this.getMyKPIsList();
+            this.getKpiStats();
+          },
+          (err) => {
+            console.log(err); this._commonService.errorToaster('Something went wrong!');
+          }
+        ).add(() => this.metricsSubmitFlag = false);
+      } else this._commonService.errorToaster(`Achieved value can't be a negative value..!! (${total})`);
     }
   }
 
@@ -246,6 +248,7 @@ export class MyKpiComponent implements OnInit {
       (response) => {
         if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
+        this.pageIndex = 0;
         this.getMyKPIsList();
         this.getKpiStats();
       },
@@ -259,11 +262,14 @@ export class MyKpiComponent implements OnInit {
 
   // Get color settings
   getColorSettings() {
-    this._myKpiService.getColorSettings().subscribe(
+    this._myKpiService.getColorSettings({userId: this._commonService.getUserId()}).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
         this.getMyKPIsList();
+      },
+      (error: any) => {
+        this.loading = false
       }
     );
   }
@@ -325,7 +331,11 @@ export class MyKpiComponent implements OnInit {
         this.members?.map((element:any) => {
           element.nameAndEmail = (element.fullName +' '+ `(${element.email})`);
         });
-    });
+      },
+      (error: any) => {
+        this.loading = false
+      }
+    );
   }
 
   // Search
@@ -337,29 +347,30 @@ export class MyKpiComponent implements OnInit {
   }
   clearSearch() {
     this.search_text = "";
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 
   // On last edit date change
   onDateChange(e: any) {
-    this.pageIndex = 0;
     if (e[0] && e[1]) {
       this.startDate = e[0];
       this.endDate = e[1];
       this.startDueDate = "",
-        this.endDueDate = "",
-        this.getMyKPIsList();
+      this.endDueDate = "",
+      this.pageIndex = 0;
+      this.getMyKPIsList();
     }
   }
 
   // On due date change
   onDueDateChange(e: any) {
-    this.pageIndex = 0;
     if (e[0] && e[1]) {
       this.startDueDate = e[0];
       this.endDueDate = e[1];
       this.startDate = "";
       this.endDate = "";
+      this.pageIndex = 0;
       this.getMyKPIsList();
     }
   }
@@ -425,34 +436,42 @@ export class MyKpiComponent implements OnInit {
         if (response) this._commonService.successToaster("Your have shared the node successfully");
         $('#staticBackdrop').modal('hide');
         this.sharingKarta = null;
+        this.selectedUsers = []
+        this.pageIndex = 0;
         this.getMyKPIsList();
       },
       (error: any) => { }
     ).add(() => this.sharedSubmitFlag = false);
   }
 
+  // Close model
+  closeModal(){
+    this.sharingKarta = undefined;
+    this.selectedUsers = []
+  }
+  
   // On click geting data of acheived value
-  editActualValue(e: any) {
-    this.editingKarta = e;
-    this.measureFlag = false; 
-    this.metricsData = e.node_type;
-    this.currentNode = e._id;
-    this.kartaName =  e.karta.name;
-    this.target = e.target
+  editActualValue(node: any) {
+    this.editingKarta = node;
+    this.metricFlag = false; 
+    this.metricsData = node.node_formula;
+    this.currentNode = node._id;
+    this.kartaName =  node.karta.name;
+    this.target = node.target
     this.metricsForm.reset();
     this.measureForm.reset();
     this.fields.clear();
-    if (e?.node_type?.metrics) {
-      this.measureFlag = !this.measureFlag;
+    if (node.node_type === "metrics") {
+      this.metricFlag = true;
       this.metricsForm.patchValue({
-        calculatedValue: e.node_type.calculated_value ? e.node_type.calculated_value : 0 ,
-        achieved_value: e.achieved_value ? e.achieved_value : 0,
-        formula: e.node_type.formula ? e.node_type.formula : ''
+        calculatedValue: node.node_formula.calculated_value ? node.node_formula.calculated_value : 0 ,
+        achieved_value: node.achieved_value ? node.achieved_value : 0,
+        formula: node.node_formula.formula ? node.node_formula.formula : ''
       });
     } else {
-      this.measureFlag = this.measureFlag;
+      this.metricFlag = false;
       this.measureForm.patchValue({
-        actualValue : e.achieved_value
+        actualValue : node.achieved_value
       });
     }
     this.addMetricsData();
@@ -472,6 +491,7 @@ export class MyKpiComponent implements OnInit {
       const index = this.selectedTargetTypes.indexOf(item);
       this.selectedTargetTypes.splice(index, 1);
     }
+    this.pageIndex = 0;
     this.getMyKPIsList()
   }
 
@@ -482,6 +502,7 @@ export class MyKpiComponent implements OnInit {
       const index = this.selectedPercentage.indexOf(item);
       this.selectedPercentage.splice(index, 1);
     }
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 
@@ -510,6 +531,7 @@ export class MyKpiComponent implements OnInit {
       const index = this.kartaCreatorIds.indexOf(kartaCreatorIds)
       this.kartaCreatorIds.splice(index, 1);
     }
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 
@@ -518,6 +540,9 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getCreators({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
         this.creators = response.creators;
+      },
+      (error: any) => {
+        this.loading = false
       }
     );
   }

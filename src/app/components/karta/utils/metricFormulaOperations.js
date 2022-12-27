@@ -74,7 +74,7 @@ export function calculateFormula(event, suggestionsLength, tempObj, formValidati
                 $('#formula-field').removeClass('is-valid');
                 return {
                     data: null,
-                    message: "Achieved value can't be a negative value..!!"
+                    message: `Achieved value can't be a negative value..!! (${total})`
                 }
             } else {
                 $('#formula-field').removeClass('is-invalid');

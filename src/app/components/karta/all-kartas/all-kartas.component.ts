@@ -30,9 +30,11 @@ export class AllKartasComponent implements OnInit {
   search_text: string = "";
   // Loding var
   loading: boolean = false;
+  changetype: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
+  changeModeType: string = "view";
 
   constructor(
     private _kartaService: KartaService,
@@ -64,7 +66,11 @@ export class AllKartasComponent implements OnInit {
       searchQuery: this.search_text,
       type: this.kartaType
     }
+
     this.loading = true;
+    this.kartas = [];
+    this.pageIndex = 0;
+
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
         this.kartas = response.kartas[0].data;
@@ -109,7 +115,6 @@ export class AllKartasComponent implements OnInit {
   // Submit shared data
   shareKarta() {
     this.selectedUsers.forEach((element: any) => {
-      // if (element.email !== this._commonService.getEmailId()) this.emails.push(element.email);
       if (element.email == this._commonService.getEmailId()) {
         this._commonService.warningToaster("You can not share karta to yourself!");
         if (element.email !== this._commonService.getEmailId()) { }
@@ -120,7 +125,8 @@ export class AllKartasComponent implements OnInit {
     if (this.emails.length > 0) {
     let data = {
       karta: this.sharingKarta,
-      emails: this.emails
+      emails: this.emails,
+      accessType: this.changeModeType
     }
     this.shareSubmitFlag = true;
     this._kartaService.shareKarta(data).subscribe(
@@ -128,6 +134,7 @@ export class AllKartasComponent implements OnInit {
         this._commonService.successToaster("Your have shared karta successfully!");
         $('#shareLinkModal').modal('hide');
         this.getAllKartas();
+        this.changetype = false;
       },
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);
@@ -150,7 +157,7 @@ export class AllKartasComponent implements OnInit {
   // Add new email and share
   addTagPromise(e: string) {
     return new Promise((resolve) => {
-     this.loading = true;
+      this.loading = true;
       var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
       if (e.match(mailformat)) {
         // Callback function
@@ -160,6 +167,26 @@ export class AllKartasComponent implements OnInit {
         });
       } this.loading = false;
     })
+  }
+
+  // On select user while sharing
+  onSelectUser() {
+    this.changetype = false;
+    let emailObject: any = {};
+    
+    for (let i=0; i<this.members.length; i++) {
+      emailObject[this.members[i].email] = this.members[i].email;
+    }
+    for (let j=0; j<this.selectedUsers.length; j++) {
+      if (!emailObject[this.selectedUsers[j].email]) {
+        this.changetype = true;
+        this.changeModeType = "view";
+      }
+    }
+  }
+  // Enable edit option
+  enableEditOption() {
+    this.changetype = false;
   }
 
   // Copy karta
@@ -198,16 +225,13 @@ export class AllKartasComponent implements OnInit {
 
   // Tab switch
   onTabSwitch(type: string) {
-    this.pageIndex = 0;
     this.search_text = "";
-    this.kartas = [];
     this.kartaType = type;
     this.getAllKartas();
   }
 
   search() {
     if (this.search_text) {
-      this.pageIndex = 0;
       this.getAllKartas();
     }
   }
@@ -220,6 +244,7 @@ export class AllKartasComponent implements OnInit {
    changeEditStatus(id: number) {
     $('#kt' + id).attr('contenteditable', true);
     $('#kt' + id).focus();
+    $('#kt' + id).removeClass("short_text");
     return;
   }
   // Limiting length for Content Editable
@@ -231,7 +256,7 @@ export class AllKartasComponent implements OnInit {
     return JSON.parse(value);
   }
   renameKarta(id: string, index: number) {
-    let value = document.getElementById('kt' + index)?.innerHTML;
+    let value = document.getElementById('kt' + index)?.innerText.trim();
     if (value?.length == 0 || value === '<br>') {
       return this._commonService.errorToaster('Karta name should not be blank!');
     }
@@ -243,5 +268,11 @@ export class AllKartasComponent implements OnInit {
       }
     );
   }
+
+    // Change chart mode
+    changeMode(e: any) {
+      if (e.target.value === "edit") this.changeModeType = e.target.value;
+      else this.changeModeType = e.target.value;
+    }
 
 }

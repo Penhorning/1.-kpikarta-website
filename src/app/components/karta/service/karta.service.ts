@@ -22,7 +22,7 @@ export class KartaService {
   //   return this._httpService.GET(`/karta_sub_phases?filter[where][kartaId]=${kartaId}&filter[order]=createdAt Desc`);
   // }
   getSuggestion(data: any) {
-    return this._httpService.POST('/suggestion-by-phase', data);
+    return this._httpService.POST('/suggestions/by-user', data);
   }
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
@@ -62,6 +62,9 @@ export class KartaService {
   addNode(data: any) {
     return this._httpService.POST('/karta_nodes', data);
   }
+  addNodeByInventory(data: any) {
+    return this._httpService.POST('/karta_nodes/add-node-by-inventory', data);
+  }
   addNodeInCatalog(data: any) {
     return this._httpService.POST('/karta_catalogs', data);
   }
@@ -80,9 +83,11 @@ export class KartaService {
   addKartaHistoryObject(data: any) {
     return this._httpService.POST('/karta_histories/create-karta-history', data);
   }
-
   updateNode(nodeId: string, data: any) {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
+  }
+  updateNodeAndWeightage(data: any) {
+    return this._httpService.PATCH('/karta_nodes/update-node', data);
   }
   updateKarta(kartaId: string, data: any) {
     return this._httpService.PATCH(`/karta/${kartaId}`, data);
@@ -91,8 +96,8 @@ export class KartaService {
   deleteKarta(data: any) {
     return this._httpService.POST('/karta/delete', data);
   }
-  removeNode(nodeId: string) {
-    return this._httpService.POST('/karta_nodes/delete', {nodeId});
+  removeNode(data: any) {
+    return this._httpService.POST('/karta_nodes/delete', data);
   }
   shareKarta(data: any) {
     return this._httpService.POST('/karta/share', data);
@@ -110,7 +115,7 @@ export class KartaService {
     return this._httpService.POST('/karta_histories/redo-control', data);
   }
   getColorSettingsByKarta(data: any) {
-    return this._httpService.POST('/color_settings/by-karta', data);
+    return this._httpService.POST('/color_settings/by-user', data);
   }
   createColorSetting(data: any) {
     return this._httpService.POST('/color_settings', data);

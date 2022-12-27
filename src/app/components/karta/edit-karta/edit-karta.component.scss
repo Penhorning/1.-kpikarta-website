@@ -11,6 +11,11 @@
     display: block;
 }
 
+.inventory_sidebar_accordion .card-body {
+    overflow-y: scroll;
+    height: 250px;
+}
+
 .sidebar_collapsible_btn {
     z-index: 999;
     top: 50%;
@@ -27,6 +32,15 @@
     right: 0;
 }
 
+.clear_search_icon {
+    cursor: pointer;
+    margin-right: 25px;
+}
+
+.side-bar-card .goal-img img {
+    border-radius: 2px;
+}
+
 .phase_column ul {
     width: 100%;
 }
@@ -38,6 +52,14 @@
 
 .karta_dummy_lines {
     height: 65px;
+    padding-right: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    border: 1px solid #dee2e6;
+    display: flex;
+}
+.mode-btn{
+    margin-inline-start: auto;
 }
 
 .description_div {
@@ -47,6 +69,9 @@
 
 .selectedPhase {
     background-color: #4c659e80;
+}
+.selectedPhaseError {
+    background-color: rgb(221, 144, 144);
 }
 
 .karta_dummy_lines button {
@@ -72,10 +97,6 @@
 }
 .target_action_btn {
     margin-top: 27px;
-}
-
-.label-width {
-    width: 100px;
 }
 
 .cursor-not-allowed {
@@ -195,7 +216,6 @@
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    float: right;
     transition: transform .25s linear;
     -webkit-transition: -webkit-transform .25s linear;
   }
@@ -233,8 +253,7 @@
   button.btn.btn-default.dropdown-toggle.arrow-hide-setting::after {
     display: none;
   }
-    
-//   }
+
 .dropdown-content.custom-drop.show {
     margin-left: -11.5rem;
 }
@@ -250,6 +269,9 @@
     background-color: transparent;
   }
   
+  .dropbtn.dropdown-toggle::after {
+    display: none;
+  }
 
 
   .dropdown {

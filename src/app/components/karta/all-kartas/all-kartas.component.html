@@ -70,7 +70,7 @@
                                      </div>
                                      <div class="col-4 text-right">
                                         <div class="dropdown show">
-                                           <a class=" dropdown-toggle three-dots" href="#" role="button"
+                                           <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
                                               id="dropdownMenuLink" data-toggle="dropdown"
                                               aria-haspopup="true" aria-expanded="false">
                                            <img src="assets/img/dots.svg" class="">
@@ -97,7 +97,7 @@
                                                     (click)="changeEditStatus(i)"><img
                                                     src="assets/img/rename.png"
                                                     class="mr-3 karta-icon-rename">Rename</a>
-                                                 <a class="dropdown-item" href="#"><img
+                                                 <a class="dropdown-item" href="javascript:void(0);"><img
                                                     src="assets/img/used.svg" class="mr-2"> Used <span>
                                                  (5)</span></a>
                                                  <a class="dropdown-item Delete" href="javascript:void(0);"
@@ -134,7 +134,7 @@
                                      <div class="col-lg-12 text-center">
                                         <div class="mt-3">
                                            <div class="d-flex justify-content-center align-items-center">
-                                              <h5 class="short_text line_height_1_3" [id]="'kt'+i"
+                                              <h5 class="short_text line_height_1_3 rename_label_width" [id]="'kt'+i"
                                               (keypress)="setLimitForContentEditable($event)"
                                               contenteditable="false" [title]="karta.name">
                                               {{karta?.name}}</h5>
@@ -153,7 +153,7 @@
                                         <div class="dropdown show">
                                            <ng-container *ngIf="kartaType === 'owned'; else actionShared">
                                               <a class="dropdown-toggle three-dots change-acc text-body"
-                                                 href="#" role="button" id="dropdownMenuLink"
+                                                 href="javascript:void(0);" role="button" id="dropdownMenuLink"
                                                  data-toggle="dropdown" aria-haspopup="true"
                                                  aria-expanded="false">
                                               Change access 
@@ -231,7 +231,7 @@
     <div class="modal-dialog modal-dialog-centered">
        <div class="modal-content p-4">
           <div class="modal-header">
-             <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Link</h5>
+             <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Karta</h5>
              <button type="button" class="close" data-dismiss="modal" aria-label="Close"
                 (click)="selectedUsers = undefined">
              <span aria-hidden="true">&times;</span>
@@ -244,7 +244,7 @@
                    <div class="row">
                       <div class="col-lg-12">
                          <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
-                         [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers">
+                         [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
                          <ng-template ng-tag-tmp let-search="searchTerm">
                             <b>Add new email</b>: {{search}}
                          </ng-template>
@@ -267,7 +267,7 @@
           </div>
           <div class="row">
              <div class="col-lg-12 text-left">
-                <div class="shared-with" style="display:flex;">
+                <div class="shared-with d-flex">
                    <span>Shared with:</span>
                    <ng-container *ngIf="sharingKartaCount">
                       <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
@@ -277,6 +277,14 @@
                          </div>
                       </span>
                    </ng-container>
+                   <span class="mode-btn">
+                      <div class="select-karta-name">
+                         <select class="form-control custom-select-karta-mode" [(ngModel)]="changeModeType" (change)="changeMode($event)" >
+                            <option value="view">View Only</option>
+                            <option value="edit" [disabled]='changetype'>Edit Only</option>
+                           </select>
+                        </div>
+                     </span>
                 </div>
              </div>
           </div>

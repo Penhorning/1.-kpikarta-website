@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonService } from '@app/shared/_services/common.service';
 import { CatalogService } from './service/catalog.service';
 
@@ -26,7 +26,6 @@ export class CatalogComponent implements OnInit {
   ]
   // Share var
   dropdownSettings: any = {};
-  // isDisabled: boolean = false;
   sharingCatalog: any;
   shareSubmitFlag: boolean = false;
   selectedUsers: any = [];
@@ -43,7 +42,7 @@ export class CatalogComponent implements OnInit {
   noDataAvailable: any = this._commonService.noDataAvailable;
 
 
-  constructor(private _catalogService: CatalogService, private _commonService: CommonService) { }
+  constructor(private _catalogService: CatalogService, private _commonService: CommonService, private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.getCatalogs();
@@ -63,33 +62,39 @@ export class CatalogComponent implements OnInit {
   }
 
   // Apply filter
-  applyFilter(event: any) {
+  changeFilter(event: any) {
     const isChecked = event.target.checked;
     const value = event.target.value;
 
     if (isChecked) this.nodeTypeFilter.push(value);
     else this.nodeTypeFilter = this.nodeTypeFilter.filter((item: any) => item !== value);
-    this.catalogs = [];
+  }
+  applyFilter() {
     this.getCatalogs();
   }
 
   // Get all catalogs
   getCatalogs() {
     let data = {
-      page: this.pageIndex + 1,
+      page: 1,
       limit: this.pageSize,
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text,
       nodeTypes: this.nodeTypeFilter,
       type: this.catalogType
     }
+
     this.loading = true;
+    this.catalogs = [];
+    this.pageIndex = 0;
+    
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
         this.catalogs = response.catalogs[0].data;
         if (response.catalogs[0].metadata.length > 0) {
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
+        this.changeDetectorRef.detectChanges();
       }
     ).add(() => this.loading = false);
   }
@@ -159,21 +164,22 @@ export class CatalogComponent implements OnInit {
     ).add(() => this.loading = false);
   }
 
+  catalogTimer: any = null;
+  onHandleSwitch(type: string) {
+    clearTimeout(this.catalogTimer);
+    this.catalogTimer = setTimeout(() => this.onTabSwitch(type), 500);
+  }
   // Tab switch
   onTabSwitch(type: string) {
-    this.pageIndex = 0;
     this.search_text = "";
-    this.catalogs = [];
     this.catalogType = type;
+    this.catalogs.length = 0;
     this.getCatalogs();
   }
 
   // Search
   search() {
-    if (this.search_text) {
-      this.pageIndex = 0;
-      this.getCatalogs();
-    }
+    if (this.search_text) this.getCatalogs();
   }
   clearSearch() {
     this.search_text = "";
@@ -185,12 +191,15 @@ export class CatalogComponent implements OnInit {
     this.selectedUsers.push({ userId: item._id });
   }
   onItemDeSelect(item: any) {
-    this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
+    if( this.selectedUsers && this.selectedUsers.length > 0 ) {
+      this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
+    }
   }
 
   // Reset share catalog
   resetSharingCatalog() {
     this.sharingCatalog = undefined;
+    this.selectedUsers = [];
   }
   // On share click
   onShare(param: any) {

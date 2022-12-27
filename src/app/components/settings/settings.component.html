@@ -53,7 +53,7 @@
                 <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
                   <div class="form-group">
                     <label for="oldPassword">Old Password<span class="text-danger">*</span></label>
-                    <input type="password" class="form-control" id="oldPassword" formControlName="oldPassword"
+                    <input type="password" class="form-control" id="oldPassword" formControlName="oldPassword" [maxlength]="32"
                       [ngClass]="{ 'is-invalid': (submitted || form.oldPassword.touched) && form.oldPassword.errors }">
                     <div *ngIf="(submitted || form.oldPassword.touched) && form.oldPassword.errors"
                       class="invalid-feedback">
@@ -64,7 +64,7 @@
                   </div>
                   <div class="form-group">
                     <label for="newPassword">New Password<span class="text-danger">*</span></label>
-                    <input type="password" class="form-control" id="newPassword" formControlName="newPassword"
+                    <input type="password" class="form-control" id="newPassword" formControlName="newPassword" [maxlength]="32"
                       [ngClass]="{ 'is-invalid': (submitted || form.newPassword.touched) && form.newPassword.errors }">
                     <div *ngIf="(submitted || form.newPassword.touched) && form.newPassword.errors"
                       class="invalid-feedback">
@@ -75,7 +75,7 @@
                   </div>
                   <div class="form-group">
                     <label for="confirmPassword">Confirm Password<span class="text-danger">*</span></label>
-                    <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
+                    <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" [maxlength]="32"
                       [ngClass]="{ 'is-invalid': (submitted || form.confirmPassword.touched) && form.confirmPassword.errors }">
                     <div *ngIf="(submitted || form.confirmPassword.touched) && form.confirmPassword.errors"
                       class="invalid-feedback">

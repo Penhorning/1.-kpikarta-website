@@ -13,7 +13,7 @@
                <form class="search-form">
                   <div class="form-group search-filed inventory m-0">
                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-search" style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
+                        class="bi bi-search cursor_pointer" viewBox="0 0 16 16" (click)="search()">
                         <path
                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                      </svg>
@@ -30,7 +30,7 @@
          </div>
          <div class="col-lg-4 text-right">
             <div class="filter-icon">
-               <div class="dropdown filter-option">
+               <div class="dropdown filter-option d-inline-block">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
                   <img src="assets/img/filter-icon.svg">
                   </button>
@@ -41,20 +41,23 @@
                            <p class="pl-3 pt-3">Filter</p>
                         </div>
                      </div>
-                     <ng-container *ngFor="let option of filterOptions; let i = index">
-                        <div class="fillter-inner-white-box inventory" [ngClass]="{'border-0': i == filterOptions.length-1}">
-                           <div class="row pb-2">
-                              <div class="col-6">
-                                 <h6 class="pl-2 m-0 pt-1">{{ option.name }}</h6>
-                              </div>
-                              <div class="col-6 text-right">
-                                 <div class="form-check custom-box mr-2">
-                                    <input type="checkbox" class="form-check-input" (change)="applyFilter($event)" [value]="option.value">
-                                 </div>
+                     <div class="fillter-inner-white-box inventory" *ngFor="let option of filterOptions; let i = index" [ngClass]="{'border-0': i == filterOptions.length-1}">
+                        <div class="row pb-2">
+                           <div class="col-6">
+                              <h6 class="pl-2 m-0 pt-1">{{ option.name }}</h6>
+                           </div>
+                           <div class="col-6 text-right">
+                              <div class="form-check custom-box mr-2">
+                                 <input type="checkbox" class="form-check-input" (change)="changeFilter($event)" [value]="option.value">
                               </div>
                            </div>
                         </div>
-                     </ng-container>
+                     </div>
+                     <div class="row">
+                        <div class="col-lg-12 text-center">
+                           <button class="Apply-btn" (click)="applyFilter()">Apply</button>
+                        </div>
+                     </div>
                   </div>
                </div>
             </div>
@@ -65,10 +68,10 @@
             <div class="KPI-dash-tab inventory">
                <!-- KPI Tabs -->
                <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('owned')"> <a
+                  <li class="nav-item nav-item-cus inventory" (click)="onHandleSwitch('owned')"> <a
                      class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1"
                      role="tab">Owned by me</a> </li>
-                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('shared')"> <a
+                  <li class="nav-item nav-item-cus inventory" (click)="onHandleSwitch('shared')"> <a
                      class="nav-link nav-link-cus pl-0" id="shared_tab" data-toggle="tab" href="#tabs-1"
                      role="tab">Shared with me</a> </li>
                </ul>
@@ -96,7 +99,7 @@
                                     </div>
                                     <div class="col-4 text-right">
                                        <div class="dropdown show">
-                                          <a class=" dropdown-toggle three-dots" href="#" role="button"
+                                          <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
                                              id="dropdownMenuLink" data-toggle="dropdown"
                                              aria-haspopup="true" aria-expanded="false">
                                           <img src="assets/img/dots.svg" class="">
@@ -165,7 +168,7 @@
                                        <div class="dropdown show">
                                           <ng-container *ngIf="catalogType === 'owned'; else actionShared">
                                              <a class="dropdown-toggle three-dots change-acc text-body"
-                                                href="#" role="button" id="dropdownMenuLink"
+                                                href="javascript:void(0);" role="button" id="dropdownMenuLink"
                                                 data-toggle="dropdown" aria-haspopup="true"
                                                 aria-expanded="false">
                                              Change access 
@@ -255,7 +258,7 @@
                   <label class="short_text font-weight-bold" style="max-width: 500px;">{{ sharingCatalog?.name }}</label>
                   <div class="row">
                     <div class="col-lg-12" *ngIf="sharingCatalog">
-                        <ng-multiselect-dropdown [(ngModel)]="selectedSharedUsers" [placeholder]="'Select users'"
+                        <ng-multiselect-dropdown [placeholder]="'Select users'"
                         [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
                         (onDeSelect)="onItemDeSelect($event)">
                         </ng-multiselect-dropdown>
@@ -277,7 +280,7 @@
          </div>
          <div class="row">
             <div class="col-lg-12 text-left">
-               <div class="shared-with" style="display:flex;">
+               <div class="shared-with d-flex">
                   <span>Shared with:</span>
                   <ng-container *ngIf="sharingCatalogCount">
                      <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
@@ -294,8 +297,8 @@
    </div>
 </div>
 <!-- View catalog modal -->
-<div class="modal fade" id="viewCatalogModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
-   aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="viewCatalogModal" data-backdrop="static" tabindex="-1"
+aria-labelledby="staticBackdropLabel" aria-hidden="true">
    <div class="modal-xl modal-dialog modal-dialog-centered">
       <div class="modal-content p-4">
          <div class="modal-header">
