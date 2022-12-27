@@ -6,9 +6,9 @@
 
 .navbar_logo {
     min-width: 250px;
-    min-height: 57px;
+    // min-height: 57px;
     max-width: 250px;
-    max-height: 57px;
+    // max-height: 57px;
 }
 
 .login_profile {
@@ -203,14 +203,34 @@ input[type=number]::-webkit-outer-spin-button {
     transform: translateX(-50%);
 }
 
-.mindmap-node:hover .center-options{
+// .mindmap-node:hover .center-options{
+//     display: flex;
+// }
+
+.mindmap-node .center-options{
     display: flex;
 }
-.mindmap-node:hover .left-options,  .mindmap-node:hover .right-options {
+
+.mindmap-node .center-options .add-item i,
+.mindmap-node .center-options .remove-item i,
+.mindmap-node .center-options .toggle-item i{
+    visibility: hidden;
+}
+.mindmap-node #nodeItem.hasChildren .center-options .toggle-item i[class*="fa-chevron-circle-down"]{
+    visibility: visible;
+}
+
+.mindmap-node:hover .center-options .add-item i,
+.mindmap-node:hover .center-options .remove-item i,
+.mindmap-node:hover .center-options .toggle-item i{
+    visibility: visible;
+}
+
+.mindmap-node:hover .left-options, .mindmap-node:hover .right-options {
     display: block;
 }
 
-.mindmap-node .left-options, .mindmap-node .center-options, .mindmap-node .right-options {
+.mindmap-node .left-options, .mindmap-node .right-options {
     display: none;
 }
 

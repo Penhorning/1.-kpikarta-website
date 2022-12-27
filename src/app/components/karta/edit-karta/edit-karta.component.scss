@@ -11,6 +11,11 @@
     display: block;
 }
 
+.inventory_sidebar_accordion .card-body {
+    overflow-y: scroll;
+    height: 250px;
+}
+
 .sidebar_collapsible_btn {
     z-index: 999;
     top: 50%;
@@ -64,6 +69,9 @@
 
 .selectedPhase {
     background-color: #4c659e80;
+}
+.selectedPhaseError {
+    background-color: rgb(221, 144, 144);
 }
 
 .karta_dummy_lines button {
@@ -208,7 +216,6 @@
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    float: right;
     transition: transform .25s linear;
     -webkit-transition: -webkit-transform .25s linear;
   }
