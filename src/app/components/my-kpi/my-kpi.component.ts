@@ -262,11 +262,14 @@ export class MyKpiComponent implements OnInit {
 
   // Get color settings
   getColorSettings() {
-    this._myKpiService.getColorSettings().subscribe(
+    this._myKpiService.getColorSettings({userId: this._commonService.getUserId()}).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
         this.getMyKPIsList();
+      },
+      (error: any) => {
+        this.loading = false
       }
     );
   }
@@ -328,7 +331,11 @@ export class MyKpiComponent implements OnInit {
         this.members?.map((element:any) => {
           element.nameAndEmail = (element.fullName +' '+ `(${element.email})`);
         });
-    });
+      },
+      (error: any) => {
+        this.loading = false
+      }
+    );
   }
 
   // Search
@@ -533,6 +540,9 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getCreators({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
         this.creators = response.creators;
+      },
+      (error: any) => {
+        this.loading = false
       }
     );
   }

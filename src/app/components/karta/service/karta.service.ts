@@ -22,7 +22,7 @@ export class KartaService {
   //   return this._httpService.GET(`/karta_sub_phases?filter[where][kartaId]=${kartaId}&filter[order]=createdAt Desc`);
   // }
   getSuggestion(data: any) {
-    return this._httpService.POST('/suggestion-by-phase', data);
+    return this._httpService.POST('/suggestions/by-user', data);
   }
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
@@ -115,7 +115,7 @@ export class KartaService {
     return this._httpService.POST('/karta_histories/redo-control', data);
   }
   getColorSettingsByKarta(data: any) {
-    return this._httpService.POST('/color_settings/by-karta', data);
+    return this._httpService.POST('/color_settings/by-user', data);
   }
   createColorSetting(data: any) {
     return this._httpService.POST('/color_settings', data);
