@@ -1653,7 +1653,7 @@ export class EditKartaComponent implements OnInit {
               this.colorSettings = response;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              location.reload();
+              this.reRenderKarta();
             }
           ).add(() => this.colorSubmitFlag = false);
         }
