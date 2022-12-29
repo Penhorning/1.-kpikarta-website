@@ -208,7 +208,7 @@ a.nav-link-cus {
     float: left;
 }
 
-.achieved-val {
+.achieved_val {
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -224,8 +224,17 @@ a.nav-link-cus {
 select.form-select.form-select-lg.short-dropdown-custom {
     text-align: left !important;
 }
+
 .sort_dropdown {
     height:35px;
     margin-top:3px;
     font-weight: 700;
+}
+
+.short_text_metrics_formula{
+    font-style: italic;
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }

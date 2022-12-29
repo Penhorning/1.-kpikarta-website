@@ -4,6 +4,7 @@ import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ExportToCsv } from 'export-to-csv';
 
 
 declare const $: any;
@@ -110,6 +111,8 @@ export class MyKpiComponent implements OnInit {
   kartaName: any;
   editingKarta: any;
   index: any;
+  metricsFormula: any;
+  acheivedValueMetrics: any;
   metricsForm = this.fb.group({
     fields: this.fb.array([]),
     formula: [''],
@@ -117,10 +120,10 @@ export class MyKpiComponent implements OnInit {
   });
 
   measureForm = this.fb.group({
-    actualValue: [0,[Validators.required, Validators.pattern('^[0-9]*$')]]
+    actualValue: [0, [Validators.required, Validators.pattern('^[0-9]*$')]]
   });
 
-  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,private route: ActivatedRoute) {
+  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
     this.maxDate = new Date();
   }
 
@@ -175,8 +178,8 @@ export class MyKpiComponent implements OnInit {
     let tempObj: any = {};
     let originalValue = this.metricsForm.value.formula.trim();
     let newValue = '';
-    let value = this.metricsForm.value.formula.trim().split(/[,.+\-\/% *)(\/\\s]/);
-    
+    let value = this.metricsForm.value.formula.trim().split(/[\s() */%+-]+/g);
+
     let total: any = 0;
     let checkFrag = false;
 
@@ -230,8 +233,7 @@ export class MyKpiComponent implements OnInit {
     }
   }
 
-
-  onMeasureSubmit(){
+  onMeasureSubmit() {
     if (!this.measureForm.valid) {
       this.measureForm.markAllAsTouched();
       this.submittedMeasure = true;
@@ -262,7 +264,7 @@ export class MyKpiComponent implements OnInit {
 
   // Get color settings
   getColorSettings() {
-    this._myKpiService.getColorSettings({userId: this._commonService.getUserId()}).subscribe(
+    this._myKpiService.getColorSettings({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
@@ -298,10 +300,10 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         this.kpis = response.kpi_nodes[0].data;
         if (response.kpi_nodes[0].metadata.length > 0) {
-          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total; 
+          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
       }
-    ).add(() => this.loading = false );
+    ).add(() => this.loading = false);
   }
 
   // Get color for each node percentage
@@ -328,8 +330,8 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getAllMembers(data).subscribe(
       (response: any) => {
         this.members = response.members[0].data;
-        this.members?.map((element:any) => {
-          element.nameAndEmail = (element.fullName +' '+ `(${element.email})`);
+        this.members?.map((element: any) => {
+          element.nameAndEmail = (element.fullName + ' ' + `(${element.email})`);
         });
       },
       (error: any) => {
@@ -357,8 +359,8 @@ export class MyKpiComponent implements OnInit {
       this.startDate = e[0];
       this.endDate = e[1];
       this.startDueDate = "",
-      this.endDueDate = "",
-      this.pageIndex = 0;
+        this.endDueDate = "",
+        this.pageIndex = 0;
       this.getMyKPIsList();
     }
   }
@@ -445,33 +447,36 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Close model
-  closeModal(){
+  closeModal() {
     this.sharingKarta = undefined;
     this.selectedUsers = []
   }
-  
+
   // On click geting data of acheived value
   editActualValue(node: any) {
+    console.log("data", node)
     this.editingKarta = node;
-    this.metricFlag = false; 
+    this.metricFlag = false;
     this.metricsData = node.node_formula;
     this.currentNode = node._id;
-    this.kartaName =  node.karta.name;
+    this.kartaName = node.karta.name;
     this.target = node.target
+    this.metricsFormula = node?.node_formula?.formula;
+    this.acheivedValueMetrics = node.achieved_value;
     this.metricsForm.reset();
     this.measureForm.reset();
     this.fields.clear();
     if (node.node_type === "metrics") {
       this.metricFlag = true;
       this.metricsForm.patchValue({
-        calculatedValue: node.node_formula.calculated_value ? node.node_formula.calculated_value : 0 ,
+        calculatedValue: node.node_formula.calculated_value ? node.node_formula.calculated_value : 0,
         achieved_value: node.achieved_value ? node.achieved_value : 0,
         formula: node.node_formula.formula ? node.node_formula.formula : ''
       });
     } else {
       this.metricFlag = false;
       this.measureForm.patchValue({
-        actualValue : node.achieved_value
+        actualValue: node.achieved_value
       });
     }
     this.addMetricsData();
@@ -562,7 +567,7 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         this.kpis.push(...response.kpi_nodes[0].data);
         if (response.kpi_nodes[0].metadata.length > 0) {
-          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total; 
+          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
       }).add(() => this.loading = false);
   }
@@ -627,5 +632,62 @@ export class MyKpiComponent implements OnInit {
     this.getMyKPIsList();
     $('#assigned_tab').trigger('click')
   }
-  
+
+
+  // Export to CSV
+  csvKartaData: any = [
+    {
+      _id: "",
+      kartaId: "",
+      name: "",
+      kartaName: "",
+      node_type: "",
+      targetValue: "",
+      achieved_value: ""
+    }
+  ];
+
+  pushCSVData(data: any) {
+    data.forEach((element: any) => {
+      element.kartaId = element.karta._id;
+      element.kartaName = element.karta.name;
+      element.targetdata = element.target.map((element: any) => { return element.value });
+      if (element.hasOwnProperty("node_formula")) {
+        element.matrixData = element?.node_formula.fields.map((element: any) => { return element.fieldValue });
+        element.achieved_value = element.matrixData ? element.matrixData.toString() : "";
+      }
+      element.targetValue = element.targetdata[0].toString();
+      this.csvKartaData.push(element);
+    });
+  }
+
+  exportCSV() {
+    this.csvKartaData = [
+      {
+        _id: "",
+        kartaId: "",
+        name: "",
+        kartaName: "",
+        node_type: "",
+        targetValue: "",
+        achieved_value: ""
+      }
+    ];
+    
+    this.pushCSVData(this.kpis)
+    const options = {
+      fieldSeparator: ',',
+      quoteStrings: '"',
+      decimalSeparator: '.',
+      showLabels: true,
+      showTitle: true,
+      title: 'My KPI Export',
+      useTextFile: false,
+      useBom: true,
+      headers: ['Id', 'Karta Id', 'KPI Name', 'Karta Name', 'Node Type', 'Target Value', 'Achieved Value']
+    };
+
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(this.csvKartaData);
+  }
 }
