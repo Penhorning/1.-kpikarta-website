@@ -808,7 +808,7 @@ export class EditKartaComponent implements OnInit {
         this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greater than 100!");
       } else {
         if (sum + this.currentNodeWeight < 100) {
-          this._commonService.warningToaster("Your aggregate weighting of all the nodes is less than 100!");
+          this._commonService.warningToaster(`Your aggregate weighting of all the nodes is less than 100 in ${this.currentNode.phase.name}!`);
         }
         this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
       }
