@@ -64,12 +64,12 @@ export class CalculatePercentage {
         // Set percentage for other kpi calculation periods
         if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {
           let current_percentage= (element.achieved_value/targetValue) * 100;
-          element.percentage = Math.round(current_percentage);
+          element.percentage = Math.round(current_percentage || 0);
           element.percentage = element.percentage === Infinity ? 0 : element.percentage;
         }
       } else {
         let returned_percentage = this.calculatePercentage(element, percentage);
-        element.percentage = Math.round(returned_percentage);
+        element.percentage = Math.round(returned_percentage || 0);
         element.percentage = element.percentage === Infinity ? 0 : Math.round(returned_percentage);
       }
       // Set border color for each node according to percentage

@@ -125,7 +125,7 @@ export class ViewKartaComponent implements OnInit {
 
   // Get all phases
   getPhases() {
-    this._kartaService.getPhases().subscribe((response: any) => {
+    this._kartaService.getPhases(this.kartaId).subscribe((response: any) => {
       this.phases = response;
       this.getKartaInfo();
     });

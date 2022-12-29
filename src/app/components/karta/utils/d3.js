@@ -26,6 +26,7 @@ var getSVGSize = (tree, level = 0) => {
     children.forEach(child => {
         getSVGSize(child, level + 1);
     })
+    console.log(levelDepth)
     return {
         width: levelDepth.reduce((a, b) => a > b ? a : b) < width2 ? width2 : levelDepth.reduce((a, b) => a > b ? a : b),
         height: levelHeight > height2 ? levelHeight : height2
@@ -58,8 +59,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.exportAsImage = exportAsImage;
     options.exportAsPDF = exportAsPDF;
     options.inventoryDraggingNode = inventoryDraggingNode;
-    // options.buildOneKartaDivider = buildOneKartaDivider;
-    // options.removeOneKartaDivider = removeOneKartaDivider;
+    options.buildOneKartaDivider = buildOneKartaDivider;
+    options.removeOneKartaDivider = removeOneKartaDivider;
 
     options.rerender = function (data = root) {
         update(data, true);
@@ -297,11 +298,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         selectedNode = null;
     };
 
-    // Find max depth of subphases
-    // function getPhaseDepth(node){
-    //     return options.phases().map(item => item.id).indexOf(node.phaseId);
-    // }
-    // var initialDepth = getPhaseDepth(root);
+    // Find max depth of phases
+    function getPhaseDepth(node){
+        return options.phases().map(item => item.id).indexOf(node.phaseId);
+    }
+    var initialDepth = getPhaseDepth(root);
     update(root);
 
     function update(source, isRoot = false) {
@@ -327,15 +328,15 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             d.phaseId = options.phases()[d.depth].id;
             d.phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
         });
-        // nodes.forEach(function (d) {
-        //     let children = (d.parent || {children:[]}).children;
-        //     let hasSubPhases = children.find(item => options.subPhases().map(item => item.id).indexOf(item));
-        //     if (hasSubPhases) {
-        //         let subPhaseDepth = getPhaseDepth(d, 0);
-        //         d.y = (subPhaseDepth)* 65;
-        //     }
-        //     else d.y = (d.depth+initialDepth) * 65;
-        // });
+        nodes.forEach(function (d) {
+            let children = (d.parent || { children: [] }).children;
+            let hasSubPhases = children.find(item => options.phases().map(item => item.id).indexOf(item));
+            if (hasSubPhases) {
+                let subPhaseDepth = getPhaseDepth(d, 0);
+                d.y = (subPhaseDepth)* 65;
+            }
+            else d.y = (d.depth + initialDepth) * 65;
+        });
         // Declare the nodes…
         var node = svg.selectAll("g.node")
             .data(nodes, function (d) { return d.id || (d.id = ++i); });
@@ -475,20 +476,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         });
     }
 
-    // function buildOneKartaDivider() {
-    //     var pathGenerator = d3.svg.line();
-    //     width2 = $(".karta_column").width();
-    //     svg.append('path')
-    //         .attr("class", "karta_divider")
-    //         .attr('stroke', 'lightgrey')
-    //         .attr('stroke-width', '1px')
-    //         .attr('d', pathGenerator([[-width2, 65], [width2, 65]]));
-    // }
-    // function removeOneKartaDivider() {
-    //     let dividers = svg.selectAll('.karta_divider')[0];
-    //     // console.log(dividers)
-    //     (dividers.length - 1).remove();
-    // }
+    function buildOneKartaDivider() {
+        var pathGenerator = d3.svg.line();
+        width2 = $(".karta_column").width();
+        svg.append('path')
+            .attr("class", "karta_divider")
+            .attr('stroke', 'lightgrey')
+            .attr('stroke-width', '1px')
+            .attr('d', pathGenerator([[-width2, 65], [width2, 65]]));
+    }
+    function removeOneKartaDivider() {
+        let dividers = svg.selectAll('.karta_divider')[0];
+        // console.log(dividers)
+        (dividers.length - 1).remove();
+    }
 
     // $(document).on('click', '#sidebarCollapse', function () {
     //     width2 = $(".karta_column").width();
@@ -581,8 +582,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     var events = {
         addNode: (d) => { },
-        // addNodeRight: (d) => {
-        // },
+        addNodeRight: (d) => {
+        },
         removeNode: (d) => {
             d.parent.children = d.parent.children.filter(c => {
                 return c.id != d.id;

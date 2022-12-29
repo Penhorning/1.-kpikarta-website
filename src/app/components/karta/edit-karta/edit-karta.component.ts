@@ -27,7 +27,6 @@ export class EditKartaComponent implements OnInit {
   // currentPhase: any;
   phaseId: string = '';
   phases: any = [];
-  // subPhases: any = [];
   colorSettings: any = [];
   suggestion: any;
   loadingKarta: boolean = true;
@@ -59,15 +58,14 @@ export class EditKartaComponent implements OnInit {
   previousDraggedParentId: string = "";
   previousDraggedPhaseId: string = "";
   D3SVG: any = {
-    // subPhases: (() => this.subPhases),
     phases: () => this.phases,
     events: {
       addNode: (d: any) => {
         this.addNode(d);
       },
-      // addNodeRight: (d: any) => {
-      //   this.addNodeRight(d);
-      // },
+      addNodeRight: (d: any) => {
+        this.addNodeRight(d);
+      },
       updateDraggedNode: (draggingNode: any) => {
         this.currentNode = draggingNode;
         if (draggingNode.parent.id && draggingNode.phaseId) {
@@ -561,8 +559,8 @@ export class EditKartaComponent implements OnInit {
 
     // $('#karta-svg').css("max-height", karta_col_height + 5);   // For multiple phases
     jqueryFunctions.setStyle('#karta-svg', 'max-height', karta_col_height);
-    jqueryFunctions.setAttribute('#karta-svg svg', 'width', width);
-    jqueryFunctions.setAttribute('#karta-svg svg', 'height', height);
+    // jqueryFunctions.setAttribute('#karta-svg svg', 'width', width);
+    // jqueryFunctions.setAttribute('#karta-svg svg', 'height', height);
   }
 
   // Change chart mode
@@ -953,19 +951,9 @@ export class EditKartaComponent implements OnInit {
 
   // Get all phases
   getPhases() {
-    this._kartaService.getPhases().subscribe((response: any) => {
+    this._kartaService.getPhases(this.kartaId).subscribe((response: any) => {
       this.phases = response;
-      // this._kartaService.getSubPhases(this.kartaId).subscribe(
-      //   (response: any) => {
-      //     this.subPhases = response;
-      //     this.phases.forEach((item: any, index: number) => {
-      //       this.subPhases.forEach((sub_item: any) => {
-      //         if (item.id === sub_item.kartaPhaseId) this.phases.splice(index+1, 0, sub_item);
-      //       });
-      //     });
-          this.getKartaInfo();
-      //   }
-      // );
+      this.getKartaInfo();
     });
   }
 
@@ -974,7 +962,7 @@ export class EditKartaComponent implements OnInit {
     let phase = this.phases[this.phaseIndex(param.phaseId)];
     let data = {
       userId: this._commonService.getUserId(),
-      phaseId: phase.kartaPhaseId ? phase.kartaPhaseId : phase.id,
+      phaseId: phase.phaseId
     };
     this._kartaService.getSuggestion(data).subscribe(
       (response: any) => {
@@ -1021,11 +1009,12 @@ export class EditKartaComponent implements OnInit {
     return { param, weightage };
   }
   // Add node
-  addNode(param: any) {
+  addNode(param: any, name = "child") {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     const node = this.divideWeightage(param, phase, 1);
     param = node.param;
     let data: any = {
+      name,
       kartaDetailId: this.kartaId,
       phaseId: phase.id,
       parentId: param.id,
@@ -1056,45 +1045,47 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Add right node
-  // addNodeRight(param: any) {
-  //   let currentPhaseIndex = this.phaseIndex(param.phaseId);
-  //   const isExists = this.phases.filter((item: any): any => {
-  //     if (item.hasOwnProperty("parentId")) return item.parentId === param.phaseId;
-  //   });
-  //   if (isExists.length <= 0) {
-  //     let mainPhase: string = "";
-  //     if (this.phases[currentPhaseIndex].hasOwnProperty("kartaPhaseId")) mainPhase = this.phases[currentPhaseIndex].kartaPhaseId;
-  //     else mainPhase = this.phases[currentPhaseIndex].id;
-  //     // Set new phase name
-  //     let nameString, lastString, num, joinedName, newName;
-  //     nameString = this.phases[currentPhaseIndex].name.split(" ");
-  //     lastString = parseInt(nameString[nameString.length - 1]);
-  //     num = lastString ? lastString + 1 : 1;
-  //     lastString ? nameString.pop() : nameString;
-  //     joinedName = nameString.join(" ");
-  //     newName = `${joinedName} ${num}`;
-  //     let data = {
-  //       "name": newName,
-  //       "kartaId": this.kartaId,
-  //       "parentId": param.phaseId,
-  //       "kartaPhaseId": mainPhase
-  //     }
-  //     this._kartaService.addSubPhase(data).subscribe(
-  //       (response: any) => {
-  //         let resopnse_data = {
-  //           "id": response.id,
-  //           "name": response.name,
-  //           "parentId": param.phaseId,
-  //           "kartaPhaseId": mainPhase
-  //         }
-  //         this.phases.splice((currentPhaseIndex + 1), 0, resopnse_data);
-  //         this.addNode(param);
-  //       }
-  //     );
-  //   } else this.addNode(param, 'Child 2');
-  //   this.setKartaDimension();
-  //   this.D3SVG.buildOneKartaDivider();
-  // }
+  addNodeRight(param: any) {
+    let currentPhaseIndex = this.phaseIndex(param.phaseId);
+    const isExists = this.phases.filter((item: any): any => {
+      if (item.hasOwnProperty("parentId")) return item.parentId === param.phaseId;
+    });
+    if (isExists.length <= 0) {
+      let mainPhaseId: string = "";
+      if (this.phases[currentPhaseIndex].hasOwnProperty("phaseId")) mainPhaseId = this.phases[currentPhaseIndex].phaseId;
+      else mainPhaseId = this.phases[currentPhaseIndex].id;
+      // Set new phase name
+      let nameString, lastString, num, joinedName, newName;
+      nameString = this.phases[currentPhaseIndex].name.split(" ");
+      lastString = parseInt(nameString[nameString.length - 1]);
+      num = lastString ? lastString + 1 : 1;
+      lastString ? nameString.pop() : nameString;
+      joinedName = nameString.join(" ");
+      newName = `${joinedName} ${num}`;
+      let data = {
+        "name": newName,
+        "kartaId": this.kartaId,
+        "parentId": param.phaseId,
+        "phaseId": mainPhaseId,
+        "userId": this._commonService.getUserId()
+      }
+      this._kartaService.addPhase(data).subscribe(
+        (response: any) => {
+          let resopnse_data = {
+            "id": response.id,
+            "name": response.name,
+            "kartaId": this.kartaId,
+            "parentId": param.phaseId,
+            "phaseId": mainPhaseId
+          }
+          this.phases.splice((currentPhaseIndex + 1), 0, resopnse_data);
+          this.addNode(param);
+        }
+      );
+    } else this.addNode(param, 'Child 2');
+    this.setKartaDimension();
+    this.D3SVG.buildOneKartaDivider();
+  }
 
   // Update new percentage
   updateNewPercentage() {

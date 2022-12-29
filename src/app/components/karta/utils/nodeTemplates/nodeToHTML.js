@@ -5,6 +5,9 @@
 export default (node, source) => {
   return `
     <div id="nodeItem" nodeid=${node.id} class="d-flex align-self-center ${node.children || node._children ? 'hasChildren' : ''}">
+      <div class="left-options">
+        <div class="option add-item"><i id="addNodeRight" class="fa fa-plus-circle"></i></div>
+      </div>
       <div class="center-options">
         ${node.phase.name !== 'KPI' ? `<div class="option add-item"><i id="addNode" class="fa fa-plus-circle"></i></div>` : ''}
         ${node.phase.name !== 'Goal' ? `<div class="option remove-item"><i id="removeNode" class="fa fa-minus-circle"></i></div>` : ''}
@@ -17,6 +20,9 @@ export default (node, source) => {
             <span class="font-weight-bold nodePercentage">${node.percentage || 0}%</span>
           </p>
         </div>
+      </div>
+      <div class="right-options">
+        <div class="option add-item"><i id="addNodeRight" class="fa fa-plus-circle"></i></div>
       </div>
     </div>`;
 }
