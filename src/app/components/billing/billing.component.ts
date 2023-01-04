@@ -48,7 +48,7 @@ export class BillingComponent implements OnInit {
 
     this._billingService.getSubscribedUsers(this.userId).subscribe(
       (response) => {
-        this.overview = response.data;
+        this.overview = response.data.data;
       },
       (err) => {
         console.log(err);
