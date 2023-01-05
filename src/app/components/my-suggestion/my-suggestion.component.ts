@@ -67,7 +67,7 @@ export class MySuggestionComponent implements OnInit {
       (response: any) => {
         this.suggestionForm.reset();
         this.descriptions.clear();
-        this.suggestion = response;
+        this.suggestion = response.suggestion;
         this.patchForm();
       },
       (error: any) => { }

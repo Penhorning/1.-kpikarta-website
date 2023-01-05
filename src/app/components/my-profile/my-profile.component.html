@@ -108,7 +108,7 @@
                                                 </ng-container>
                                                 <ng-container *ngIf="numberType == 'Verify'">
                                                     <span class="phone_verify" title="Verify mobile number" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
-                                                        Verify
+                                                        Edit and Verify
                                                     </span>
                                                 </ng-container>
                                             </div>
@@ -352,12 +352,15 @@
                                 transform="translate(0 -6)" />
                             </svg>
                             <span class="upload-text-msg">Upload Your Logo</span>
+                            <br>
+                            <span>Recommended Dimensions: {{cropperModel.staticWidth}} x {{cropperModel.staticHeight}} pixels.</span>
                             <input type="file" id="company_logo" name="company_logo" class="input_logo" accept=".png, .jpg, .jpeg" (change)="fileChangeEvent($event)">
                         </div>
                     </ng-container>
                     <div class="col-md-12 text-center" [hidden]="!imageChangedEvent">
                         <h5>Crop Image</h5>
                         <p>To crop this image, drag the region below and then click "Submit"</p>
+                        <p>Recommended Dimensions: {{cropperModel.staticWidth}} x {{cropperModel.staticHeight}} pixels.</p>
                         <image-cropper 
                         [imageChangedEvent]="imageChangedEvent" 
                         [maintainAspectRatio]="true"

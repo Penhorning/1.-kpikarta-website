@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonService } from '@app/shared/_services/common.service';
 import { CatalogService } from './service/catalog.service';
 
@@ -42,7 +42,7 @@ export class CatalogComponent implements OnInit {
   noDataAvailable: any = this._commonService.noDataAvailable;
 
 
-  constructor(private _catalogService: CatalogService, private _commonService: CommonService) { }
+  constructor(private _catalogService: CatalogService, private _commonService: CommonService, private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.getCatalogs();
@@ -94,6 +94,7 @@ export class CatalogComponent implements OnInit {
         if (response.catalogs[0].metadata.length > 0) {
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
+        this.changeDetectorRef.detectChanges();
       }
     ).add(() => this.loading = false);
   }
@@ -163,6 +164,11 @@ export class CatalogComponent implements OnInit {
     ).add(() => this.loading = false);
   }
 
+  catalogTimer: any = null;
+  onHandleSwitch(type: string) {
+    clearTimeout(this.catalogTimer);
+    this.catalogTimer = setTimeout(() => this.onTabSwitch(type), 500);
+  }
   // Tab switch
   onTabSwitch(type: string) {
     this.search_text = "";

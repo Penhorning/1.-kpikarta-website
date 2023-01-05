@@ -9,11 +9,11 @@ export class MyKpiService {
   constructor(private _httpService: HttpService) { }
 
   /*============================== API FUNCTIONS STARTS ==============================*/
-  getMyKPIs(data: any) {
+  getMyKPIs(data: { "userId": string }) {
     return this._httpService.POST('/karta_nodes/kpis', data);
   }
-  getColorSettings() {
-    return this._httpService.GET('/color_settings/global');
+  getColorSettings(data: any) {
+    return this._httpService.POST('/color_settings/global', data);
   }
   getAllMembers(data: any) {
     return this._httpService.POST('/users/get-all-members', data);

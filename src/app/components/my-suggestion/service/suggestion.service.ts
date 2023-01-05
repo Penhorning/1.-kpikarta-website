@@ -13,7 +13,7 @@ export class SuggestionService {
     return this._httpService.GET('/karta_phases');
   }
   getSuggestion(data: any) {
-    return this._httpService.POST('/suggestion-by-phase', data);
+    return this._httpService.POST('/suggestions/by-user', data);
   }
   createSuggestion(data: any) {
     return this._httpService.POST('/suggestions', data);
