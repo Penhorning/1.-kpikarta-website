@@ -93,7 +93,7 @@ export class AddPaymentMethodComponent implements OnInit {
         if(data.length > 0) {
           let userId = data[0].id;
           let requestObj = {
-            // plan: this.user.plan,
+            plan: this.user.plan,
             // priceId: this.user.plan == "monthly" ? StripeDetails.monthlyPriceId : StripeDetails.yearlyPriceId,
             userId,
             ...this.paymentMethodForm.value
