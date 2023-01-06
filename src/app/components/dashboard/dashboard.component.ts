@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../karta/service/karta.service';
 import { MemberService } from '../member/service/member.service';
+import { DashboardService } from './service/dashboard.service';
 
 
 declare const $: any;
@@ -19,6 +20,7 @@ export class DashboardComponent implements OnInit {
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
+  registeredUsers: any = {};
 
   loadingKartas: boolean = false;
   loadingSharedKartas: boolean = false;
@@ -36,10 +38,12 @@ export class DashboardComponent implements OnInit {
     private _commonService: CommonService,
     private _kartaService: KartaService,
     private _memberService: MemberService,
+    private _dashboardService: DashboardService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.getSubscribedUsers();
     this.getAllKartas();
     this.getAllMembers();
     this.getAllSharedKartas();
@@ -48,6 +52,15 @@ export class DashboardComponent implements OnInit {
   // Navigate to create karta
   navigateToKarta() {
     this.router.navigate(['/karta/create']);
+  }
+
+  // Get Subscribed Users
+  getSubscribedUsers(){
+    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(data => {
+      if (data) {
+        this.registeredUsers = data;
+      } else this.registeredUsers = {};
+    })
   }
 
   // Get all kartas
