@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
-  registeredUsers: any = {};
+  registeredUsers: any = [];
 
   loadingKartas: boolean = false;
   loadingSharedKartas: boolean = false;
@@ -56,10 +56,21 @@ export class DashboardComponent implements OnInit {
 
   // Get Subscribed Users
   getSubscribedUsers(){
-    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(data => {
-      if (data) {
-        this.registeredUsers = data;
-      } else this.registeredUsers = {};
+    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(response => {
+      if (response) {
+        let iconMapping = [
+          "assets/img/total-creator.svg",
+          "assets/img/total-champion.svg",
+          "assets/img/total-spectators.svg",
+        ];
+        let mappedData = response.data.data.userDetails.map((user: any, index: number) => {
+          return {
+            ...user,
+            icon: iconMapping[index]
+          }
+        });
+        this.registeredUsers = mappedData;
+      } else this.registeredUsers = [];
     })
   }
 
