@@ -293,15 +293,15 @@
                 </div>
             </div>
             <div class="col-lg-3">
-                <div class="total-section">
+                <div class="total-section" *ngIf="registeredUsers && registeredUsers.length > 0">
                     <div *ngFor="let user of registeredUsers; let i = index;">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="total-inner-section pl-3 pr-3">
                                     <div class="row">
                                         <div class="col-lg-6 col-6">
-                                            <h5>Total {{user.user | titlecase}}</h5>
-                                            <p>{{user.quantity}}</p>
+                                            <h5>Total {{user.user ? (user.user | titlecase) : 'N/A'}}</h5>
+                                            <p>{{user.quantity ? user.quantity : 0}}</p>
                                         </div>
                                         <div class="col-lg-6 col-6 text-right">
                                             <img [src]="user.icon">
