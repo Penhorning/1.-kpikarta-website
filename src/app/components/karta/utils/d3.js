@@ -1,55 +1,70 @@
 'use strict';
 
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js").default;
+const { calculateSVGSize } = require("./calculateSVGSize.js");
 
-var levelDepth = [];
-var levelHeight = 0;
+
+// var levelDepth = [];
+var totalPhases = 0;
 let width2, height2;
-var getSVGSize = (tree, level = 0) => {
-    var children = (tree.children || tree._children || []);
-    width2 = $(".karta_column").width();
-    // height2 = $(".karta_column").height();
-    height2 = 455;
-    if (!level) {
-        levelDepth = [children.length * 100 || width2];
-    } else {
-        if (!levelDepth[level]) {
-            levelDepth[level] = children.length * 100;
-        } else {
-            levelDepth[level] += children.length * 100;
-        }
-    }
-    if ((level + 1) * 65 > levelHeight) {
-        levelHeight = (level + 1) * 65;
-    }
+var getSVGSize = (tree) => {
+    let dimensions = calculateSVGSize(tree);
+    console.log(" my size rt ", dimensions);
 
-    children.forEach(child => {
-        getSVGSize(child, level + 1);
-    })
-    console.log(levelDepth)
+    width2 = $(".karta_column").width();
+    height2 = totalPhases * 65;
     return {
-        width: levelDepth.reduce((a, b) => a > b ? a : b) < width2 ? width2 : levelDepth.reduce((a, b) => a > b ? a : b),
-        height: levelHeight > height2 ? levelHeight : height2
-    };
+        width: dimensions.width > width2 ? dimensions.width : width2,
+        height: totalPhases * 65
+    }
+    // height2 = $(".karta_column").height();
+
+    // var children = (tree.children || tree._children || []);
+    // width2 = $(".karta_column").width();
+    // height2 = $(".karta_column").height();
+    // // height2 = 455;
+    // if (!level) {
+    //     levelDepth = [children.length * 100 || width2];
+    // } else {
+    //     if (!levelDepth[level]) {
+    //         levelDepth[level] = children.length * 100;
+    //     } else {
+    //         levelDepth[level] += children.length * 100;
+    //     }
+    // }
+    // if ((level + 1) * 65 > levelHeight) {
+    //     levelHeight = (level + 1) * 65;
+    // }
+
+    // children.forEach(child => {
+    //     getSVGSize(child, level + 1);
+    // })
+    // // console.log(levelDepth)
+    // return {
+    //     width: levelDepth.reduce((a, b) => a > b ? a : b) < width2 ? width2 : levelDepth.reduce((a, b) => a > b ? a : b),
+    //     height: levelHeight > height2 ? levelHeight : height2
+    // };
 }
 var tree = null, root = null, nodes = null, parentLink = null, links = null, nodePaths = null, nodesExit = null;
 // variables for drag/drop
 var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = null, domNode = null;
+var dragErrorMsg = "You cannot drag this node here";
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var margin = { top: 0, right: 0, bottom: 20, left: 0 };
     var width = window.screen.width - margin.right - margin.left;
     var height = window.screen.height - margin.top - margin.bottom;
+    totalPhases = options.phases().length;
     var svgSize = getSVGSize(treeData);
     var width = svgSize.width;
     var height = svgSize.height;
     var i = 0, duration = 750;
     tree = d3.layout.tree()
         .nodeSize([90, 60])
-        .separation(function (a, b) {
-            return a.parent == b.parent ? 1 : 1.25;
-        });
-    //   .size([height, width])=
+        // .separation(function (a, b) {
+        //     return a.parent == b.parent ? 1 : 1.25;
+        // });
+    //   .size([height, width]);
     options.update = update;
     options.updateNode = updateNode;
     options.updateNewNode = updateNewNode;
@@ -65,13 +80,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.rerender = function (data = root) {
         update(data, true);
     };
+
     // Context menu
     const contextMenuItems = [
         {
             title: 'Save',
             action: function(elm, d, i) {
                 let node_type = "branch";
-                if (d.phase.name === "KPI") node_type = d.node_type;
+                if (d.phase.global_name === "KPI") node_type = d.node_type;
                 options.events.onRightClick(d, node_type);
             }
         }
@@ -90,8 +106,63 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         return ++depth;
     }
     // Get phase by phase id
-    function getPhaseById(phaseId) {
-        return options.phases()[options.phases().map(item => item.id).indexOf(phaseId)]
+    function getPhase(phaseId, index = 0) {
+        return options.phases()[options.phases().map(item => item.id).indexOf(phaseId) + index]
+    }
+    // Get phase index by phase id
+    function getPhaseIndex(phaseId) {
+        return options.phases().map(item => item.id).indexOf(phaseId);
+    }
+    // Check drop condition
+    function isDroppable(selectedNode, draggingNode, isDraggingInventory = false) {
+        // Getting depth
+        const draggingDepth = getDepth(draggingNode);
+        const selectedDepth = getPhaseIndex(selectedNode.phaseId);
+        // Getting phase
+        const selectedPhase = getPhase(selectedNode.phaseId);
+        const draggingPhase = getPhase(draggingNode.phaseId);
+        // Get last action phase name of just above the kpi (because we can have more than one action phase)
+        const lastActionPhase = options.phases()[totalPhases-2];
+
+        // If dragging is happening from the inventory's nodes that are not exists in the karta yet
+        let exceededBy = 0;
+        if (isDraggingInventory === true) {
+            switch(true) {
+                case selectedPhase.global_name === "KPI":
+                    dragErrorMsg = "You cannot drop any node on KPI Phase!";
+                    return false;
+                case selectedPhase.global_name === lastActionPhase.global_name && draggingNodeType === "branch":
+                    dragErrorMsg = "You can only drop Measure or Metrics node on Action Phase..!!";
+                    return false;
+                case selectedPhase.global_name !== lastActionPhase.global_name && (draggingNodeType === "measure" || draggingNodeType === "metric"):
+                    dragErrorMsg = "You cannot drop any Branch on Action Phase..!!";
+                    return false;
+                case selectedPhase.global_name !== lastActionPhase.global_name && draggingNodeType === "branch" && (draggingDepth + selectedDepth) > totalPhases-2:
+                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-2);
+                    dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
+                    return false;
+                default: 
+                return true;
+            }
+        } else {
+            switch(true) {
+                case selectedPhase.global_name === "KPI":
+                    dragErrorMsg = "You cannot drop any node on KPI Phase..!!";
+                    return false;
+                case selectedPhase.global_name !== lastActionPhase.global_name && draggingPhase.global_name === "KPI":
+                    dragErrorMsg = "You can only drop KPI node on Action Phase..!!";
+                    return false;
+                case selectedPhase.global_name === lastActionPhase.global_name && draggingPhase.global_name !== "KPI":
+                    dragErrorMsg = "You cannot drop Non-KPI node on Action Phase..!!";
+                    return false;
+                case selectedPhase.global_name !== lastActionPhase.global_name && draggingPhase.global_name !== "KPI" && (draggingDepth + selectedDepth) > totalPhases-2:
+                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-2);
+                    dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
+                    return false;
+                default: 
+                return true;
+            }
+        }
     }
 
     // Define the zoom function for the zoomable tree
@@ -126,7 +197,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         .attr("width", width)
         .attr("height", height)
         .call(zoomListener)
-        .attr({ viewBox: "" + (-width / 2) + " " + (height / 20.7) + " " + width + " " + height })
+        .attr({ viewBox: "" + (-width / 2) + " " + 0 + " " + width + " " + height })
         .append("g");
         // .attr("transform", "translate(" + ((width / 2) - 45) + "," + (margin.top) + ")");
     root = treeData;
@@ -222,25 +293,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             domNode = this;
 
             if (selectedNode && draggingNode) {
-                // Getting depth
-                const draggingDepth = getDepth(draggingNode);
-                const selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
-                // Getting phase
-                const selectedPhase = getPhaseById(selectedNode.phaseId);
-                const draggingPhase = getPhaseById(draggingNode.phaseId);
-
-                if (
-                    (selectedPhase.name === "KPI") ||
-                    (selectedPhase.name === "Action" && draggingPhase.name !== "KPI") ||
-                    (selectedPhase.name !== "Action" && draggingPhase.name === "KPI") ||
-                    ((selectedPhase.name === "Action" && draggingPhase.name === "KPI") && (draggingDepth + selectedDepth) > 6) ||
-                    ((selectedPhase.name !== "Action" && draggingPhase.name !== "KPI") && (draggingDepth + selectedDepth) > 5)
-                ) {
-                    alert("You cannot drag this node here");
+                // Check whether the node is droppable or not
+                if (!isDroppable(selectedNode, draggingNode)) {
+                    alert(dragErrorMsg);
                     endDrag(false);
                 } else {
                     // now remove the element from the parent, and insert it into the new elements children
-                    var index = draggingNode.parent.children.indexOf(draggingNode);
+                    const index = draggingNode.parent.children.indexOf(draggingNode);
+                    const newPhaseId = getPhase(selectedNode.phaseId, 1).id;
                     if (index > -1) {
                         draggingNode.parent.children.splice(index, 1);
                     }
@@ -249,19 +309,19 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                             draggingNode.parentId = selectedNode.id;
                             selectedNode.children.push(draggingNode);
                             draggingNode.parent = selectedNode;
-                            draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
+                            draggingNode.phaseId = newPhaseId
                         } else {
                             draggingNode.parentId = selectedNode.id;
                             selectedNode._children.push(draggingNode);
                             draggingNode.parent = selectedNode;
-                            draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
+                            draggingNode.phaseId = newPhaseId
                         }
                     } else {
                         selectedNode.children = [];
                         draggingNode.parentId = selectedNode.id;
                         selectedNode.children.push(draggingNode);
                         draggingNode.parent = selectedNode;
-                        draggingNode.phaseId = options.phases()[options.phases().map(item => item.id).indexOf(selectedPhase.id) + 1].id;
+                        draggingNode.phaseId = newPhaseId
                     }
                     endDrag(true);
                 }
@@ -270,25 +330,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             }
         });
 
-    var overCircle = function (d) {
+    var overCircle = function (d, isDraggingInventory = false) {
         selectedNode = d;
         if (selectedNode != draggingNode && selectedNode !== null && draggingNode !== null) {
             let colorCode = "#76ff03";  // Green color
-            // Getting phase
-            const selectedPhase = getPhaseById(selectedNode.phaseId);
-            const draggingPhase = getPhaseById(draggingNode.phaseId);
-            // Getting depth
-            let draggingDepth = getDepth(draggingNode);
-            let selectedDepth = options.phases().map(item => item.id).indexOf(selectedNode.phaseId);
-            if (
-                (selectedPhase.name === "KPI") ||
-                (selectedPhase.name === "Action" && draggingPhase.name !== "KPI") ||
-                (selectedPhase.name !== "Action" && draggingPhase.name === "KPI") ||
-                ((selectedPhase.name === "Action" && draggingPhase.name === "KPI") && (draggingDepth + selectedDepth) > 7) ||
-                ((selectedPhase.name !== "Action" && draggingPhase.name !== "KPI") && (draggingDepth + selectedDepth) > 5) ||
-                (draggingNodeType === "branch" && (draggingDepth + selectedDepth) > 5) ||
-                ((draggingNodeType === "measure" || draggingNodeType === "metric") && selectedPhase.name !== "Action")
-            ) colorCode = "#ff1744"; // Red color
+            // Check whether the node is droppable or not
+            if (!isDroppable(selectedNode, draggingNode, isDraggingInventory)) colorCode = "#ff1744"; // Red color
             $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
         }
     };
@@ -306,13 +353,16 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     update(root);
 
     function update(source, isRoot = false) {
+        totalPhases = options.phases().length;
         if (isRoot) root = source;
         // Compute the new tree layout.
         var svgSize = getSVGSize(root);
+        width = svgSize.width;
+        height = svgSize.height;
         var svg = d3.select('#karta-svg svg')
             .attr("width", svgSize.width)
             .attr("height", svgSize.height)
-            .attr({ viewBox: "" + (-svgSize.width / 2) + " " + (height / 20.7) + " " + svgSize.width + " " + svgSize.height })
+            .attr({ viewBox: "" + (-svgSize.width / 2) + " " + 0 + " " + svgSize.width + " " + svgSize.height })
             .select('g');
             // .attr("transform", "translate(" + ((svgSize.width / 2)) + "," + (margin.top) + ")");
         buildKartaDivider();
@@ -322,12 +372,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         // Normalize for fixed-depth
         nodes.forEach(function (d) { d.y = d.depth * 65; });
         // Change phase ids of every nodes when someone dragging nodes
-        nodes.forEach(function (d) {
-            // if (d.depth >= options.phases().length) d.depth -= d.depth;
-            // console.log("my depth ", d.depth)
-            d.phaseId = options.phases()[d.depth].id;
-            d.phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
-        });
+        // nodes.forEach(function (d) {
+        //     // if (d.depth >= options.phases().length) d.depth -= d.depth;
+        //     // console.log("my depth ", d.depth)
+        //     d.phaseId = options.phases()[d.depth].id;
+        //     d.phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
+        // });
         nodes.forEach(function (d) {
             let children = (d.parent || { children: [] }).children;
             let hasSubPhases = children.find(item => options.phases().map(item => item.id).indexOf(item));
@@ -354,22 +404,15 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             // Drag and drop from inventory
             .on("dragover", function(node) {
                 d3.event.preventDefault();
-                overCircle(node);
+                overCircle(node, true);
             })
             .on("dragleave", function(node) {
                 d3.event.preventDefault();
                 outCircle(node);
             })
             .on("drop", function(dropped_node) {
-                // Getting depth
-                const draggingDepth = getDepth(draggingNode);
-                const selectedDepth = options.phases().map(item => item.id).indexOf(dropped_node.phaseId);
-
-                if (draggingNodeType === "branch" && ((draggingDepth + selectedDepth) > 5)) {
-                    alert("You cannot drag this node becuase it's leaf nodes exceeding the ACTION PHASE");
-                } else if ((draggingNodeType === "measure" || draggingNodeType === "metric") && ((draggingDepth + selectedDepth) > 6)) {
-                    alert("You cannot drag this node becuase it's leaf nodes exceeding the KPI PHASE");
-                } else options.events.onInventoryDrop(draggingNode, dropped_node);
+                if (!isDroppable(dropped_node, draggingNode, true)) alert(dragErrorMsg);
+                else options.events.onInventoryDrop(draggingNode, dropped_node);
 
                 outCircle(dropped_node);
                 draggingNodeType = null;
@@ -434,7 +477,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 return diagonal(d)
             });
 
-
         // Transition exiting nodes to the parent's new position.
         link.exit().transition()
             .duration(duration)
@@ -475,7 +517,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 .attr('d', pathGenerator([[-100000, (index + 1) * 65], [100000, (1 + index) * 65]]));
         });
     }
-
+    // Draw one horizontal line, when new child phase added
     function buildOneKartaDivider() {
         var pathGenerator = d3.svg.line();
         width2 = $(".karta_column").width();
@@ -485,18 +527,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr('stroke-width', '1px')
             .attr('d', pathGenerator([[-width2, 65], [width2, 65]]));
     }
+    // Remove horizontal lines for phases, when child phase deleted
     function removeOneKartaDivider() {
         let dividers = svg.selectAll('.karta_divider')[0];
-        // console.log(dividers)
         (dividers.length - 1).remove();
     }
-
-    // $(document).on('click', '#sidebarCollapse', function () {
-    //     width2 = $(".karta_column").width();
-    //     d3.select('#karta-svg svg')
-    //         .attr("width", width2);
-    //     buildKartaDivider();
-    // });
 
     // Update node properties
     function updateNode(d, isRoot = false) {
@@ -573,17 +608,16 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2) }).then(uri => {
             let imageBase64 = uri.split(',')[1];
             let svgWidth = $("#karta-svg svg").width();
-            let doc = new jsPDF('1', 'px', [width2, 455]);
+            let doc = new jsPDF('1', 'px', [svgSize.width, height2]);
             doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, height2);
             doc.save(`${name}.pdf`);
         });
     }
 
-
+    // Chart events
     var events = {
         addNode: (d) => { },
-        addNodeRight: (d) => {
-        },
+        addNodeRight: (d) => { },
         removeNode: (d) => {
             d.parent.children = d.parent.children.filter(c => {
                 return c.id != d.id;

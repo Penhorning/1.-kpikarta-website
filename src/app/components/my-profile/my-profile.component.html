@@ -337,7 +337,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-capitalize" id="passwordModalLabel">Upload {{cropperModel.type}} logo</h5>
+                <h5 class="modal-title text-capitalize" id="passwordModalLabel">Upload {{cropperModal.type === 'user' ? 'picture' : 'logo'}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetPictureModal()">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -351,21 +351,21 @@
                                 d="M51.063,21.939a19.772,19.772,0,0,0-36.944-5.278,15.827,15.827,0,0,0,1.715,31.561H50.139a13.157,13.157,0,0,0,.924-26.283ZM36.944,29.75V40.306H26.389V29.75H18.472L31.667,16.556,44.861,29.75Z"
                                 transform="translate(0 -6)" />
                             </svg>
-                            <span class="upload-text-msg">Upload Your Logo</span>
+                            <span class="upload-text-msg">Upload your {{cropperModal.type === 'user' ? 'picture' : 'logo'}}</span>
                             <br>
-                            <span>Recommended Dimensions: {{cropperModel.staticWidth}} x {{cropperModel.staticHeight}} pixels.</span>
+                            <span>Recommended Dimensions: {{cropperModal.staticWidth}} x {{cropperModal.staticHeight}} pixels.</span>
                             <input type="file" id="company_logo" name="company_logo" class="input_logo" accept=".png, .jpg, .jpeg" (change)="fileChangeEvent($event)">
                         </div>
                     </ng-container>
                     <div class="col-md-12 text-center" [hidden]="!imageChangedEvent">
                         <h5>Crop Image</h5>
                         <p>To crop this image, drag the region below and then click "Submit"</p>
-                        <p>Recommended Dimensions: {{cropperModel.staticWidth}} x {{cropperModel.staticHeight}} pixels.</p>
+                        <p>Recommended Dimensions: {{cropperModal.staticWidth}} x {{cropperModal.staticHeight}} pixels.</p>
                         <image-cropper 
                         [imageChangedEvent]="imageChangedEvent" 
                         [maintainAspectRatio]="true"
-                        [cropperStaticWidth]="cropperModel.staticWidth"
-                        [cropperStaticHeight]="cropperModel.staticHeight"
+                        [cropperStaticWidth]="cropperModal.staticWidth"
+                        [cropperStaticHeight]="cropperModal.staticHeight"
                         [transform]="transform"
                         format="png" 
                         (imageCropped)="imageCropped($event)">

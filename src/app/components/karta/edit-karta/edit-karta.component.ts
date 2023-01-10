@@ -388,8 +388,8 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Limiting length for Content Editable
-  setLimitForContentEditable(event: any) {
-    return event.target.innerText.length < 15;
+  setLimitForContentEditable(event: any, limit=15) {
+    return event.target.innerText.length < limit;
   }
 
   // Check Field Value for ReadOnly
@@ -546,19 +546,19 @@ export class EditKartaComponent implements OnInit {
   setKartaDimension() {
     let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
     karta_col_width = jqueryFunctions.getWidth('.karta_column');
-    // karta_col_height = $('.karta_column').height();
-    karta_col_height = 455;
+    karta_col_height = $('.karta_column').height();
+    // karta_col_height = 455;
     svg_width = jqueryFunctions.getWidth('#karta-svg svg');
     svg_height = jqueryFunctions.getHeight('#karta-svg svg');
 
     width = svg_width > karta_col_width ? svg_width : karta_col_width;
-    // height = svg_height > karta_col_height ? svg_height : karta_col_height;
-    height = 455;
+    height = svg_height > karta_col_height ? svg_height : karta_col_height;
+    // height = 455;
 
-    jqueryFunctions.setStyle('#karta-svg', 'max-width', karta_col_width);
+    // jqueryFunctions.setStyle('#karta-svg', 'max-width', karta_col_width);
 
     // $('#karta-svg').css("max-height", karta_col_height + 5);   // For multiple phases
-    jqueryFunctions.setStyle('#karta-svg', 'max-height', karta_col_height);
+    // jqueryFunctions.setStyle('#karta-svg', 'max-height', karta_col_height);
     // jqueryFunctions.setAttribute('#karta-svg svg', 'width', width);
     // jqueryFunctions.setAttribute('#karta-svg svg', 'height', height);
   }
@@ -705,7 +705,7 @@ export class EditKartaComponent implements OnInit {
     // Get suggestion by phase id
     this.getSuggestionByPhaseId(param);
     // Show Measure and metrics when KPI's node selected
-    if (this.currentNode.phase.name === 'KPI') {
+    if (this.currentNode.phase.global_name === 'KPI') {
       this.showKPICalculation = true;
       
       /* ===== Formula Code starts ===== */
@@ -781,6 +781,42 @@ export class EditKartaComponent implements OnInit {
       due_date = moment(start_date).add(1, 'years');
     }
     this.updateNode('due_date', due_date, 'node_updated', node);
+  }
+
+  // Change phase name
+  makePhaseEditable(id: string) {
+    jqueryFunctions.setAttribute(`#${id} div`,"contenteditable", true);
+    $(`#${id} div`).focus();
+  }
+  changePhaseName(e: any, id: string, oldName: string) {
+    const name = e.target.textContent.trim();
+    if (name.length === 0) {
+      e.target.textContent = oldName;
+      return;
+    }
+    this._kartaService.updatePhase(id, { name }).subscribe(
+      (response: any) => {
+        e.target.textContent = name;
+        jqueryFunctions.setAttribute(`#${id} div`,"contenteditable", false);
+      }
+    );
+  }
+  // Delete only child phase
+  deletePhase(id: string, index: number) {
+    const result = confirm("Are you sure you want to delete this phase?");
+    if (result) {
+      const data = {
+        phaseId: id,
+        kartaId: this.kartaId
+      }
+      this._kartaService.deletePhase(data).subscribe(
+        (response: any) => {
+          this.phases.splice(index, 1);
+          this.updateNewPercentage();
+          this.setKartaDimension();
+        }
+      );
+    }
   }
 
   // Change node name
@@ -951,10 +987,26 @@ export class EditKartaComponent implements OnInit {
 
   // Get all phases
   getPhases() {
-    this._kartaService.getPhases(this.kartaId).subscribe((response: any) => {
-      this.phases = response;
-      this.getKartaInfo();
-    });
+    this._kartaService.getPhases(this.kartaId).subscribe(
+      (response: any) => {
+        // Find sub phase
+        const findSubPhase = (array: any, phaseId: string) => {
+          let childPhase = array.find((item: any) => item.parentId === phaseId);
+          if (childPhase) {
+            this.phases.push(childPhase);
+            array.splice(array.findIndex((a: any) => a.id === childPhase.id) , 1);
+            findSubPhase(array, childPhase.id);
+          }
+        }
+        // Iterate phases
+        for (let phase of response) {
+          this.phases.push(phase);
+          findSubPhase(response, phase.id);
+        }
+        // Fetch karta nodes
+        this.getKartaInfo();
+      }
+    );
   }
 
   // Get suggestion by phaseId
@@ -1009,7 +1061,7 @@ export class EditKartaComponent implements OnInit {
     return { param, weightage };
   }
   // Add node
-  addNode(param: any, name = "child") {
+  addNode(param: any, name = "Child") {
     let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
     const node = this.divideWeightage(param, phase, 1);
     param = node.param;
@@ -1020,7 +1072,7 @@ export class EditKartaComponent implements OnInit {
       parentId: param.id,
       weightage: node.weightage
     }
-    if (phase.name === "KPI") {
+    if (phase.global_name === "KPI") {
       data.node_type = "measure";
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
@@ -1065,6 +1117,7 @@ export class EditKartaComponent implements OnInit {
       let data = {
         "name": newName,
         "kartaId": this.kartaId,
+        "is_child": true,
         "parentId": param.phaseId,
         "phaseId": mainPhaseId,
         "userId": this._commonService.getUserId()
@@ -1074,6 +1127,8 @@ export class EditKartaComponent implements OnInit {
           let resopnse_data = {
             "id": response.id,
             "name": response.name,
+            "global_name": response.name,
+            "is_child": response.is_child,
             "kartaId": this.kartaId,
             "parentId": param.phaseId,
             "phaseId": mainPhaseId
@@ -1083,7 +1138,7 @@ export class EditKartaComponent implements OnInit {
         }
       );
     } else this.addNode(param, 'Child 2');
-    this.setKartaDimension();
+    // this.setKartaDimension();
     this.D3SVG.buildOneKartaDivider();
   }
 
@@ -1400,7 +1455,11 @@ export class EditKartaComponent implements OnInit {
         setTimeout(() => jqueryFunctions.removeKarta(), 2000);
         jqueryFunctions.enableChart();
         jqueryFunctions.hideLeftSidebar();
-    });
+      },
+      (error: any) => {
+        jqueryFunctions.enableChart();
+      }
+    );
   }
 
   // Save karta

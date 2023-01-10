@@ -451,8 +451,15 @@
             <div class="vertical-tabs">
               <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item" *ngFor="let phase of phases; let i = index">
-                  <a class="nav-link text-nowrap" [ngClass]="{ 'active': phase.id == phaseId }"
-                    [id]="phase.id">{{phase?.name}}</a>
+                  <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
+                    <ng-container *ngIf="phase.is_child">
+                      <div class="phase_action">
+                        <i class="fa fa-pencil" (click)="makePhaseEditable(phase.id)"></i>
+                        <i class="fa fa-trash" (click)="deletePhase(phase.id, i)"></i>
+                      </div>
+                    </ng-container>
+                    <div (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name)">{{phase?.name}}</div>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -468,7 +475,7 @@
                   <div class="karta_dummy_lines" [id]="'svg_line_' + phase?.id" [attr.name]="phase?.name" (drop)="onDrop($event)"
                     (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
                     (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide && phase?.name !== 'KPI'" (click)="addRootNode($event)"><i
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide && phase?.global_name !== 'KPI'" (click)="addRootNode($event)"><i
                         class="fa fa-plus-circle"></i> Node</button>
                   </div>
                 </ng-container>
@@ -530,7 +537,7 @@
           </div>
         </div>
         <!-- Weightage -->
-        <ng-container *ngIf="currentNode?.phase?.name !== 'Goal'">
+        <ng-container *ngIf="currentNode?.phase?.global_name !== 'Goal'">
           <div class="row">
             <div class="col-lg-12">
               <div class="goal-name mt-3">
@@ -947,7 +954,7 @@
             <div class="modal-body">
               <div class="share-link-model mt-3">
                 <div class="form-group">
-                  <label class="short_text" style="max-width: 500px;">{{sharingKarta?.name}}</label>
+                  <label class="short_text max_width_500">{{sharingKarta?.name}}</label>
                   <div class="row">
                     <div class="col-lg-12">
                       <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"

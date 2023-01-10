@@ -15,9 +15,9 @@ export class CalculatePercentage {
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
     let total_percentage: number[] = [];
-    // Set blank array for children, if not available
-    if (!params.hasOwnProperty("children")) params.children = [];
-    params?.children?.forEach((element: any) => {
+    const children = (params.children || []);
+    
+    children.forEach((element: any) => {
       // Check if current element is a kpi node or not
       if (element.phase.name === "KPI") {
         let targetValue = 0;
