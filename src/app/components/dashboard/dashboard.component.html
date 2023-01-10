@@ -293,7 +293,7 @@
                 </div>
             </div>
             <div class="col-lg-3">
-                <div class="total-section" *ngIf="registeredUsers && registeredUsers.length > 0">
+                <div class="total-section">
                     <div *ngFor="let user of registeredUsers; let i = index;">
                         <div class="row">
                             <div class="col-lg-12">
@@ -312,6 +312,9 @@
                         </div>
                         <hr *ngIf="registeredUsers.length - 1 != i">
                     </div>
+                    <ng-container *ngIf="loadingSubscribers">
+                        <div [innerHtml]="loader"></div>
+                    </ng-container>
                 </div>
                 <div class="total-section mt-3">
                     <div class="row">
