@@ -68,6 +68,12 @@ input[type=number]::-webkit-outer-spin-button {
     white-space: nowrap;
     overflow: hidden;
 }
+.max_width_500 {
+    max-width: 500px;
+}
+.max_width_200 {
+    max-width: 200px;
+}
 
 .view_more {
     cursor: pointer;
@@ -98,27 +104,28 @@ input[type=number]::-webkit-outer-spin-button {
     transition: background-color 0.2s, color 0.2s ease-out;
     padding-left: 5px;
     padding-right: 5px;
-}
 
-.node-text p {
-    line-height: normal;
-    font-size: 12px !important;
+    p {
+        line-height: normal;
+        font-size: 12px !important;
+    }
 }
 
 .link {
     fill: none;
 }
 
-#karta-svg svg {
-    min-width: 500px;
-    min-height: 500px;
-    background: white;
-}
-
 #karta-svg {
     overflow-x: auto;
     overflow-y: hidden;
     resize: both;
+    scrollbar-width: thin;
+
+    svg {
+        // min-width: 500px;
+        // min-height: 500px;
+        background: white;
+    }
 }
 
 #karta-svg:focus {
@@ -148,47 +155,36 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 2px 5px;
 }
 
-#karta-svg .mindmap-emoji {
-    height: 24px;
-    vertical-align: bottom;
-    width: 24px;
-}
-
-#karta-svg .mindmap-emoji {
-    height: 24px;
-    vertical-align: bottom;
-    width: 24px;
-}
-
-.mindmap-node .node-body {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: rgb(0 0 0 / 20%) 0px 0.5px 3px -1px, rgb(0 0 0 / 15%) 0px 5px 30px -10px;
-    width: 65px;
-    margin-top: 18px;
-}
-
 .mindmap-node .node_body_disable {
     pointer-events: none;
 }
 
-.mindmap-node .center-options {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-}
-.mindmap-node .left-options {
-    top: 25px;
-    left: 0;
-    position: absolute;
-}
-.mindmap-node .right-options {
-    top: 25px;
-    right: 0;
-    position: absolute;
+.mindmap-node {
+    .node-body {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: rgb(0 0 0 / 20%) 0px 0.5px 3px -1px, rgb(0 0 0 / 15%) 0px 5px 30px -10px;
+        width: 65px;
+        margin-top: 18px;
+    }
+    .left-options {
+        top: 20px;
+        left: 0;
+        position: absolute;
+    }
+    .center-options{
+        position: absolute;
+        top: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    .right-options {
+        top: 20px;
+        right: 0;
+        position: absolute;
+    }
 }
 
 .nodePercentage {
@@ -206,10 +202,6 @@ input[type=number]::-webkit-outer-spin-button {
 // .mindmap-node:hover .center-options{
 //     display: flex;
 // }
-
-.mindmap-node .center-options{
-    display: flex;
-}
 
 .mindmap-node .center-options .add-item i,
 .mindmap-node .center-options .remove-item i,

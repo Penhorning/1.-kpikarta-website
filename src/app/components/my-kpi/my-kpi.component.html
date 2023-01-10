@@ -1150,7 +1150,7 @@
         <div class="modal-body">
           <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()" class="achieved-val">
             <div formArrayName="fields">
-              <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
+              <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
               <div class="share-link-model mt-3" *ngFor="let field of fields.controls; let i = index"
                 [formGroupName]="i">
                 <div class="form-group">
@@ -1190,7 +1190,7 @@
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
           <div class="share-link-model mt-3">
           <div class="form-group">
-            <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
+            <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
             <div class="row">
               <div class="col-lg-12">
                 <div class="">
