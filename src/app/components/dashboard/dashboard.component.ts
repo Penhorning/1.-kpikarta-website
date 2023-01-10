@@ -24,6 +24,7 @@ export class DashboardComponent implements OnInit {
 
   loadingKartas: boolean = false;
   loadingSharedKartas: boolean = false;
+  loadingSubscribers: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
@@ -55,8 +56,10 @@ export class DashboardComponent implements OnInit {
   }
 
   // Get Subscribed Users
-  getSubscribedUsers(){
-    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(response => {
+  getSubscribedUsers() {
+    this.loadingSubscribers = true;
+    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(
+      (response: any) => {
       if (response) {
         let iconMapping = [
           "assets/img/total-creator.svg",
@@ -71,7 +74,7 @@ export class DashboardComponent implements OnInit {
         });
         this.registeredUsers = mappedData;
       } else this.registeredUsers = [];
-    })
+    }).add(() => this.loadingSubscribers = false );
   }
 
   // Get all kartas

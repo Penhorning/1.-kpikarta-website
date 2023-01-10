@@ -12,15 +12,18 @@ export class KartaService {
   getInventories(data: any) {
     return this._httpService.POST('/karta_catalogs/get-all', data);
   }
-  getPhases() {
-    return this._httpService.GET('/karta_phases');
+  getPhases(kartaId: string) {
+    return this._httpService.GET(`/karta_phases?filter[where][kartaId]=${kartaId}&filter[where][is_deleted]=false`);
   }
-  // addSubPhase(data: any) {
-  //   return this._httpService.POST('/karta_sub_phases', data);
-  // }
-  // getSubPhases(kartaId: string) {
-  //   return this._httpService.GET(`/karta_sub_phases?filter[where][kartaId]=${kartaId}&filter[order]=createdAt Desc`);
-  // }
+  addPhase(data: any) {
+    return this._httpService.POST('/karta_phases', data);
+  }
+  updatePhase(phaseId: string, data: any) {
+    return this._httpService.PATCH(`/karta_phases/${phaseId}`, data);
+  }
+  deletePhase(data: { kartaId: string, phaseId: string }) {
+    return this._httpService.POST('/karta_phases/delete', data);
+  }
   getSuggestion(data: any) {
     return this._httpService.POST('/suggestions/by-user', data);
   }

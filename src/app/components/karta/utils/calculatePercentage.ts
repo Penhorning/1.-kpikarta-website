@@ -15,9 +15,9 @@ export class CalculatePercentage {
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
     let total_percentage: number[] = [];
-    // Set blank array for children, if not available
-    if (!params.hasOwnProperty("children")) params.children = [];
-    params?.children?.forEach((element: any) => {
+    const children = (params.children || []);
+    
+    children.forEach((element: any) => {
       // Check if current element is a kpi node or not
       if (element.phase.name === "KPI") {
         let targetValue = 0;
@@ -64,12 +64,12 @@ export class CalculatePercentage {
         // Set percentage for other kpi calculation periods
         if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {
           let current_percentage= (element.achieved_value/targetValue) * 100;
-          element.percentage = Math.round(current_percentage);
+          element.percentage = Math.round(current_percentage || 0);
           element.percentage = element.percentage === Infinity ? 0 : element.percentage;
         }
       } else {
         let returned_percentage = this.calculatePercentage(element, percentage);
-        element.percentage = Math.round(returned_percentage);
+        element.percentage = Math.round(returned_percentage || 0);
         element.percentage = element.percentage === Infinity ? 0 : Math.round(returned_percentage);
       }
       // Set border color for each node according to percentage
