@@ -471,7 +471,6 @@ export class MyKpiComponent implements OnInit {
 
   // On click geting data of acheived value
   editActualValue(node: any) {
-    console.log("data", node)
     this.editingKarta = node;
     this.metricFlag = false;
     this.metricsData = node.node_formula;
@@ -668,7 +667,6 @@ export class MyKpiComponent implements OnInit {
 
   pushCSVData(data: any) {
     data.forEach((element: any) => {
-      console.log("item", element)
       element.kartaId = element.karta._id;
       element.kartaName = element.karta.name;
       element.formula = element?.node_formula?.formula ? element?.node_formula?.formula : 'N/A';
@@ -768,33 +766,21 @@ export class MyKpiComponent implements OnInit {
         if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
           this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
           this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
-            // this.tableData = data
             for(let title in data[0]){
-              console.log("data[0][title]",data[0][title])
               this.tableTitle.push(data[0][title])
 
             }
             this.tableTitle.splice(0,2)
-            // this.tableTitle.splice(1,1)
-
-
-            // this.tableTitle['header'] = Object.values(data[0]);
-            // this.tableTitle = Object.keys(data[0]);
             this.tableData = data.map((item: any , i:any) => {
-            // console.log("item",item)
             delete item.__EMPTY;
             delete item['My KPI Export'];
             if(!  this.isNumeric(item.__EMPTY_4)){
- item.ac = true;
+              item.ac = true;
             } else {
               item.ac = false;
             }
-            // this.isNumeric(item.__EMPTY_4)
-            // this.tableRecords = this.tableData;
             return item;
           })
-          console.log("tableData",this.tableData)
-          console.log("this.tableTitle",this.tableTitle)
         } else {
           this._commonService.errorToaster("Pleas download sample CSV");
         }
@@ -887,7 +873,7 @@ export class MyKpiComponent implements OnInit {
     let data = { "nodes": this.nodes }
     this._myKpiService.updateCsv(data).subscribe(
       (response: any) => {
-        if (response) this._commonService.successToaster("Your have shared the node successfully");
+        if (response) this._commonService.successToaster("Your have uploaded karta successfully.");
         $('#importExportModal').modal('hide');
         this.pageIndex = 0;
         this.tableRecords = [];
