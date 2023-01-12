@@ -238,3 +238,20 @@ select.form-select.form-select-lg.short-dropdown-custom {
     white-space: nowrap;
     overflow: hidden;
 }
+
+// .excelTable{
+//     width: 100%;
+//     min-width: 800px;
+//   }
+.excelTable{
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  button.import-send-btn {
+    background-color: #243864;
+    border: 0;
+    color: #fff;
+    padding: 8px 34px;
+    border-radius: 5px;
+  }

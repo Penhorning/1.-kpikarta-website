@@ -5,8 +5,9 @@ import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
+import * as XLSX from 'xlsx';
 
-
+type AOA = Array<Array<any>>;
 declare const $: any;
 
 @Component({
@@ -57,8 +58,25 @@ export class MyKpiComponent implements OnInit {
   selectedUsers: any = [];
   isDisabled: boolean = false;
   sharedSubmitFlag: boolean = false;
+  // import export
+  tableData: any;
+  tableTitle: any = [];
+  tableHeader: any = [];
+  customPagination = 1;
+  recordsPerPage = 10;
+  tableRecords = [];
+  pageStartCount = 0;
+  pageEndCount = 10;
+  totalPageCount = 0;
+  currentPage = 0;
+  tableDatavalidation = [];
+  validationtitleHead: any
+  nodes: any = []
   // Target filter
   target: any = [
+    { frequency: "", value: 0, percentage: 0 }
+  ]
+  importTarget: any = [
     { frequency: "", value: 0, percentage: 0 }
   ]
   selectedTargetTypes: any = [];
@@ -174,10 +192,9 @@ export class MyKpiComponent implements OnInit {
       this.submitted = true;
       return;
     }
-
     let tempObj: any = {};
     let originalValue = this.metricsForm.value.formula.trim();
-    let newValue = '';
+    let newValue = '10 + 20 + 30';
     let value = this.metricsForm.value.formula.trim().split(/[\s() */%+-]+/g);
 
     let total: any = 0;
@@ -200,7 +217,7 @@ export class MyKpiComponent implements OnInit {
     });
 
     if (checkFrag) {
-      this._commonService.errorToaster('Please type correct formula');
+      this._commonService.errorToaster('Something went wrong!');
       this.metricsForm.patchValue({ calculatedValue: 0 }); return;
     } else {
       total = eval(newValue);
@@ -642,16 +659,25 @@ export class MyKpiComponent implements OnInit {
       name: "",
       kartaName: "",
       node_type: "",
+      achieved_value: "",
       targetValue: "",
-      achieved_value: ""
+      targetPercentage: "",
+      targetFrequency: ""
     }
   ];
 
   pushCSVData(data: any) {
     data.forEach((element: any) => {
+      console.log("item", element)
       element.kartaId = element.karta._id;
       element.kartaName = element.karta.name;
+      element.formula = element?.node_formula?.formula ? element?.node_formula?.formula : 'N/A';
+
       element.targetdata = element.target.map((element: any) => { return element.value });
+      element.targetPercentage = element.target.map((element: any) => { return element.percentage });
+      element.targetFrequency = element.target.map((element: any) => { return element.frequency });
+
+      // element.target = element.target;
       if (element.hasOwnProperty("node_formula")) {
         element.matrixData = element?.node_formula.fields.map((element: any) => { return element.fieldValue });
         element.achieved_value = element.matrixData ? element.matrixData.toString() : "";
@@ -669,11 +695,14 @@ export class MyKpiComponent implements OnInit {
         name: "",
         kartaName: "",
         node_type: "",
+        achieved_value: "",
+        formula: "",
         targetValue: "",
-        achieved_value: ""
+        targetPercentage: "",
+        targetFrequency: ""
       }
     ];
-    
+
     this.pushCSVData(this.kpis)
     const options = {
       fieldSeparator: ',',
@@ -684,10 +713,192 @@ export class MyKpiComponent implements OnInit {
       title: 'My KPI Export',
       useTextFile: false,
       useBom: true,
-      headers: ['Id', 'Karta Id', 'KPI Name', 'Karta Name', 'Node Type', 'Target Value', 'Achieved Value']
+      headers: ['Id', 'Karta Id', 'KPI Name', 'Karta Name', 'Node Type', 'Achieved Value', 'Formula', 'Target Value', 'Percentage', 'Frequency']
     };
 
     const csvExporter = new ExportToCsv(options);
     csvExporter.generateCsv(this.csvKartaData);
+  }
+
+  // Import Excel File
+  closeImportModal() {
+    this.tableRecords = [];
+    this.tableTitle = [];
+    this.validationtitleHead = ''
+  }
+
+  // Number validation
+  isNumeric(value: any) {
+     
+    const isNumericData = (value: string): boolean => !new RegExp(/[^\d,]/g).test(value.trim());
+    return isNumericData(value);
+    // if (isNumericData(value)) {
+    //   return ''
+    // } else {
+    //   this._commonService.errorToaster("Please enter positive integer value in Target Value and Achieved Value");
+    //   return '#BD362F' 
+    // }
+  }
+
+  // Select Csv file
+  onFileChange(event: any) {
+    /* wire up file reader */
+    const target: DataTransfer = <DataTransfer>(<unknown>event.target);
+    if (target.files.length !== 1) {
+      throw new Error('Cannot use multiple files');
+    }
+    const reader: FileReader = new FileReader();
+    reader.readAsBinaryString(target.files[0]);
+    reader.onload = (e: any) => {
+      /* create workbook */
+      const binarystr: string = e.target.result;
+      const wb: XLSX.WorkBook = XLSX.read(binarystr, { type: 'binary', raw: true, dense: true, cellNF: true, cellDates: true });
+
+      /* selected the first sheet */
+      const wsname: string = wb.SheetNames[0];
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+      /* save data */
+      const data = <AOA>(XLSX.utils.sheet_to_json(ws)); // to get 2d array pass 2nd parameter as object {header: 1}
+
+      this.calculateCSVData(data)
+      if (data.length > 0) {
+        let title = Object.values(data);
+        this.validationtitleHead = Object.values(title[0])
+        if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
+          this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
+          this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
+            // this.tableData = data
+            for(let title in data[0]){
+              console.log("data[0][title]",data[0][title])
+              this.tableTitle.push(data[0][title])
+
+            }
+            this.tableTitle.splice(0,2)
+            // this.tableTitle.splice(1,1)
+
+
+            // this.tableTitle['header'] = Object.values(data[0]);
+            // this.tableTitle = Object.keys(data[0]);
+            this.tableData = data.map((item: any , i:any) => {
+            // console.log("item",item)
+            delete item.__EMPTY;
+            delete item['My KPI Export'];
+            if(!  this.isNumeric(item.__EMPTY_4)){
+ item.ac = true;
+            } else {
+              item.ac = false;
+            }
+            // this.isNumeric(item.__EMPTY_4)
+            // this.tableRecords = this.tableData;
+            return item;
+          })
+          console.log("tableData",this.tableData)
+          console.log("this.tableTitle",this.tableTitle)
+        } else {
+          this._commonService.errorToaster("Pleas download sample CSV");
+        }
+      } else {
+        this._commonService.errorToaster("Pleas select sample CSV file");
+      }
+    };
+  }
+
+  // Metrics formula calculation
+  calculateMetricFormulaForCSV(values: any) {
+    let tempObj: any = [];
+    let originalValue = values.__EMPTY_5.trim();
+    let newValue = '';
+    let value = values.__EMPTY_5.trim().split(/[\s() */%+-]+/g);
+    let total: any = 0;
+    let formulaValues = values.__EMPTY_4.split(",");
+    if (value.length == formulaValues.length) {
+      value.forEach((x: any, index: number) => {
+        let obj = {
+          "fieldName": x,
+          "fieldValue": formulaValues[index]
+        }
+        tempObj.push(obj)
+        newValue = newValue
+          ? newValue.replace(x, formulaValues[index])
+          : originalValue.replace(x, formulaValues[index]);
+      });
+    } else {
+      return false;
+    }
+    total = eval(newValue);
+    if (total > 0) {
+      let percentage = (total / +values.__EMPTY_6) * 100;
+      let abc = {
+        "id": values['My KPI Export'],
+        "achieved_value": Math.round(percentage),
+        "node_formula": {
+          "fields": tempObj,
+          "formula": values.__EMPTY_5,
+          "metrics": true
+        },
+        "target": [
+          {
+            "frequency": values.__EMPTY_8,
+            "percentage": Math.round(percentage),
+            "value": values.__EMPTY_6
+          }]
+      }
+      return abc;
+    } else {
+      return false;
+    }
+  }
+
+  calculateCSVData(csvData: any) {
+    csvData.forEach((element: any, index: number) => {
+      if (index > 0) {
+        if (element.__EMPTY_3 == "measure") {
+          let percentage = (+element.__EMPTY_4 / +element.__EMPTY_6) * 100;
+          element.node = {
+            "id": element['My KPI Export'],
+            "achieved_value": +element.__EMPTY_4,
+            "target": [
+              {
+                "frequency": element.__EMPTY_8,
+                "percentage": Math.round(percentage),
+                "value": +element.__EMPTY_6
+              }
+            ]
+          }
+        } else {
+          let data = this.calculateMetricFormulaForCSV(element)
+          if (data) {
+            element.node = data;
+          } 
+        }
+      }
+    });
+    this.nodes = csvData.map((elm: any, index: number) => {
+      if (index > 0) {
+        return elm.node
+      }
+    })
+    this.nodes.splice(0, 1)
+  }
+
+  // Upload csv function
+  submitCSV() {
+    let data = { "nodes": this.nodes }
+    this._myKpiService.updateCsv(data).subscribe(
+      (response: any) => {
+        if (response) this._commonService.successToaster("Your have shared the node successfully");
+        $('#importExportModal').modal('hide');
+        this.pageIndex = 0;
+        this.tableRecords = [];
+        this.tableTitle = [];
+        this.validationtitleHead = '';
+        this.nodes = '';
+        this.getMyKPIsList();
+      },
+      (error: any) => {
+        this.loading = false
+      }
+    );
   }
 }
