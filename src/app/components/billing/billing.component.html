@@ -25,16 +25,16 @@
                           <div *ngIf="overview" class="overview mt-4">
                               <div class="heading">
                                   <h5 class="m-0">Member Information</h5>
-                                  <button type="button" class="btn overview-btn">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
+                                  <button *ngIf="overview.interval" type="button" class="btn overview-btn">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
                               </div>
                               <div class="creators" *ngFor="let user of overview.userDetails">
                                   <div class="creaters-header">
                                       <h6>{{ user.user ? (user.user | titlecase) : "N/A" }}</h6>
                                       <p>{{ user.quantity ? (user.quantity) : "0" }} {{ user.quantity == 1 ? 'member' : 'members'}}</p>
                                   </div>
-                                  <div class="creaters-info text-right">
-                                      <h6>{{user.total_amount == "Free" ? null : "$"}}{{ user.total_amount ? (user.total_amount) : "0.00" }}</h6>
-                                      <p>${{ user.unit_amount ? (user.unit_amount) : "0.00" }} per Member</p>
+                                  <div *ngIf="overview.interval" class="creaters-info text-right">
+                                      <h6>{{user.total_amount == "Free" ? null : "$"}}{{ (user.total_amount || user.total_amount == 0) ? (user.total_amount) : "0.00" }}</h6>
+                                      <p>${{ (user.unit_amount || user.unit_amount == 0) ? (user.unit_amount) : "0.00" }} per Member</p>
                                   </div>
                               </div>
                           </div>
@@ -49,7 +49,7 @@
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="KPI-custom-table">
-                      <table class="table" *ngIf="invoices.data && invoices.data.length > 0">
+                      <table class="table" *ngIf="invoices && invoices.length > 0">
                         <thead class="thead">
                           <tr>
                             <th scope="col">Period</th>
@@ -58,7 +58,7 @@
                             <th scope="col">Invoice Date</th>
                           </tr>
                         </thead>
-                        <tbody *ngFor="let invoice of invoices.data"> 
+                        <tbody *ngFor="let invoice of invoices"> 
                           <tr>
                             <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td>
                             <td>${{invoice.amount_paid / 100}}</td>
@@ -67,7 +67,7 @@
                           </tr>
                         </tbody>
                       </table>
-                      <div *ngIf="!invoices.data || invoices.data.length == 0" class="py-5">
+                      <div *ngIf="!invoices || invoices.length == 0" class="py-5">
                         <div [innerHtml]="noDataAvailable"></div>
                       </div>
                     </div>

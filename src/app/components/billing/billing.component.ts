@@ -16,7 +16,7 @@ export class BillingComponent implements OnInit {
   noDataAvailable: any = this._commonService.noDataAvailable;
   cards: any = [];
   overview: any;
-  invoices: any;
+  invoices: any = [];
 
   constructor(private _commonService: CommonService, private router: Router, private _billingService: BillingService) { }
 
@@ -57,8 +57,10 @@ export class BillingComponent implements OnInit {
 
     this._billingService.getInvoices(this.userId).subscribe(
       (response) => {
-        console.log(response.data);
-        this.invoices = response.data;
+        if(response.data.data.length > 0) {
+          response.data.data.pop();
+          this.invoices = response.data.data;
+        }
       },
       (err) => {
         console.log(err);
