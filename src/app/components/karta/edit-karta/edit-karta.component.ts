@@ -10,6 +10,7 @@ import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 import * as MetricOperations from '../utils/metricFormulaOperations';
 import { CalculatePercentage } from '../utils/calculatePercentage';
+import { addInvisibleNodes } from '../utils/addInvisibleNodes';
 
 declare const $: any;
 
@@ -962,6 +963,7 @@ export class EditKartaComponent implements OnInit {
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
           this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+          this.karta.node = addInvisibleNodes(this.karta.node, this.phases);
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           this.setKartaDimension();
           this.showSVG = true;
@@ -1149,6 +1151,7 @@ export class EditKartaComponent implements OnInit {
         this.karta = response;
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+        this.karta.node = addInvisibleNodes(this.karta.node, this.phases);
         this.D3SVG.update(this.karta.node, true);
       }
     );

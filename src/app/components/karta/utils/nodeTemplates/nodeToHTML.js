@@ -4,7 +4,7 @@
  */
 export default (node, source) => {
   return `
-    <div id="nodeItem" nodeid=${node.id} class="d-flex align-self-center ${node.children || node._children ? 'hasChildren' : ''}">
+    <div id="nodeItem" nodeid=${node.id} style="visibility: ${node.isInvisible === true ? 'hidden' : 'visible'}" class="d-flex align-self-center ${node.children || node._children ? 'hasChildren' : ''}">
       ${node.phase.global_name !== 'Goal' && node.phase.global_name !== 'KPI' ?
         `<div class="left-options">
           <div class="option add-item"><i id="addNodeRight" class="fa fa-plus-circle"></i></div>
