@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup, AbstractControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RoutesRecognized } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '../service/signup.service';
-import { StripeDetails } from '../utils/stripe-details';
 
 @Component({
   selector: 'app-add-payment-method',
@@ -29,10 +28,10 @@ export class AddPaymentMethodComponent implements OnInit {
     private _commonService: CommonService,
     private _signupService: SignupService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     // Preventing back button in browser
-    window.onpopstate = function (e: any) { window.history.forward(); }
+    // window.onpopstate = function (e: any) { window.history.forward(); }
 
     // Initializing FormGroup
     this.paymentMethodForm = this.fb.group({

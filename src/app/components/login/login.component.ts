@@ -92,8 +92,8 @@ export class LoginComponent implements OnInit {
               stage: 1
             }
             this._signupService.setSignUpSession(sessionData);
-            // this.router.navigate(['/subscription-plan']);
-            this.router.navigate(['/sign-up/payment-method']);
+            this.router.navigate(['/subscription-plan']);
+            // this.router.navigate(['/sign-up/payment-method']);
           }
           else {
             let sessionData = {
