@@ -700,8 +700,9 @@ export class MyKpiComponent implements OnInit {
         targetFrequency: ""
       }
     ];
-
-    this.pushCSVData(this.kpis)
+    // Filter out those kpis whose target is 0
+    let kpis = this.kpis.filter((item: any) => item.target[0].value > 0 );
+    this.pushCSVData(kpis);
     const options = {
       fieldSeparator: ',',
       quoteStrings: '"',
