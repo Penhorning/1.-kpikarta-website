@@ -59,13 +59,13 @@
             <div class="form-group search-filed m-0">
               <input type="text" class="form-control" name="search" [(ngModel)]="search_text" id="search"
                 placeholder="Search...">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg clear_search"
-                viewBox="0 0 16 16" *ngIf="search_text" (click)="clearSearch()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-x-lg clear_search" viewBox="0 0 16 16" *ngIf="search_text" (click)="clearSearch()">
                 <path
                   d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
               </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search cursor_pointer"
-                viewBox="0 0 16 16" (click)="search()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-search cursor_pointer" viewBox="0 0 16 16" (click)="search()">
                 <path
                   d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
               </svg>
@@ -77,10 +77,19 @@
     <div class="row mt-4">
       <div class="col-lg-12">
         <div class="KPI-dash-tab">
+
+          <a class="three-dots" role="button" style="float: right; 
+          margin-left: 20px;" aria-haspopup="true" aria-expanded="false" title="Export"
+            data-target="#importExportModal" data-toggle="modal">
+            <!-- (click)="exportCSV()" -->
+            <img src="assets/img/download-icon.svg">
+          </a>
+
           <div class="dropdown sort-drop">
             <div>
               <form>
-                <select #id (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom sort_dropdown">
+                <select #id (change)="onSortBy(id.value)"
+                  class="form-select form-select-lg short-dropdown-custom sort_dropdown">
                   <option hidden>Sort by</option>
                   <option value="worst">Worst to Best Performing</option>
                   <option value="best">Best to Worst Performing</option>
@@ -100,6 +109,7 @@
             <li class="nav-item nav-item-cus" (click)="onTabSwitch('shared')"> <a class="nav-link nav-link-cus pl-0"
                 data-toggle="tab" href="#tabs-2" role="tab">Shared with me</a> </li>
           </ul>
+
 
           <!-- Tab panes -->
           <div class="tab-content tab-content-cus">
@@ -487,7 +497,9 @@
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis; let i = index;">
                           <td>
-                            <p class="m-0 short_text_with_width">{{ kpi?.karta?.name }}</p>
+                            <a class="short_text_with_width view_karta_link" [routerLink]="['/karta/view', kpi?.karta?._id]" target="_blank">
+                              {{ kpi?.karta?.name }}
+                            </a>
                             <p class="user-name-iocn short_text_with_width">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                                 class="bi bi-person-circle" viewBox="0 0 16 16">
@@ -504,31 +516,25 @@
                             <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
                           </td>
                           <td>
-                            <!-- <div class="editacval">
-                              <span *ngIf="rowClicked == i ? isHidden : !isHidden" style="cursor:pointer;">
-                                {{ kpi?.achieved_value }}
-                              </span>
-                              <input *ngIf="rowClicked == i ? !isHidden : isHidden" autofocus #ach_val
-                                (blur)="onEditAcheivedValue(ach_val.value, kpi)" value="{{ kpi?.achieved_value }}">
-                              <svg xmlns="http://www.w3.org/2000/svg" (click)="editActualValue(i)"
-                                style="cursor:pointer;" width="16" height="12" fill="currentColor" class="bi bi-pencil"
-                                viewBox="0 0 16 16" data-toggle="modal" data-target="#editActualValueModal">
-                                <path
-                                  d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
-                              </svg>
-                            </div> -->
                             <div class="editacval">
-                              <span style="cursor:pointer;">
-                                {{ kpi?.achieved_value }}
-                              </span>
-                              <!-- <input *ngIf="rowClicked == i ? !isHidden : isHidden" autofocus #ach_val
-                                (blur)="onEditAcheivedValue(ach_val.value, kpi)" value="{{ kpi?.achieved_value }}"> -->
-                              <svg xmlns="http://www.w3.org/2000/svg" (click)="editActualValue(kpis[i])"
-                                style="cursor:pointer;" width="16" height="12" fill="currentColor" class="bi bi-pencil"
-                                viewBox="0 0 16 16" data-toggle="modal" data-target="#editActualValueModal">
-                                <path
-                                  d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
-                              </svg>
+                              {{ kpi?.achieved_value }}
+                              <ng-container *ngIf="kpi.target[0].value > 0; else disableIcon">
+                                <svg xmlns="http://www.w3.org/2000/svg" (click)="editActualValue(kpis[i])"
+                                  width="16" height="12" fill="currentColor" class="bi bi-pencil cursor_pointer"
+                                  viewBox="0 0 16 16" data-toggle="modal" data-target="#editActualValueModal">
+                                  <path
+                                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                                </svg>
+                              </ng-container>
+                              <ng-template #disableIcon>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                  width="16" height="12" fill="currentColor" class="bi bi-pencil"
+                                  viewBox="0 0 16 16">
+                                  <title>Target is not defined yet!</title>
+                                  <path
+                                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                                </svg>
+                              </ng-template>
                             </div>
                           </td>
                           <td>{{ kpi?.updatedAt | date }}</td>
@@ -593,7 +599,7 @@
                       <div [innerHtml]="loader"></div>
                     </ng-container>
                     <ng-container *ngIf="!loading && kpis.length === 0">
-                        <div [innerHtml]="noDataAvailable"></div>
+                      <div [innerHtml]="noDataAvailable"></div>
                     </ng-container>
                     <div class="text-center" *ngIf="!loading && totalAssignedKPIs > kpis.length">
                       <p class="view_more" (click)="viewMore()">View More..</p>
@@ -1058,7 +1064,7 @@
                       <div [innerHtml]="loader"></div>
                     </ng-container>
                     <ng-container *ngIf="!loading && kpis.length === 0">
-                        <div [innerHtml]="noDataAvailable"></div>
+                      <div [innerHtml]="noDataAvailable"></div>
                     </ng-container>
                     <div class="text-center" *ngIf="!loading && totalAssignedKPIs > kpis.length">
                       <p class="view_more" (click)="viewMore()">View More..</p>
@@ -1089,14 +1095,14 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="share-link-model mt-3">
+        <div class="mt-3">
           <div class="form-group">
-            <label class="short_text" style="font-weight: bold; max-width: 500px;">{{ sharingKarta?.karta?.name }}: {{ sharingKarta?.name }}</label>
+            <label class="short_text" style="font-weight: bold; max-width: 500px;">{{ sharingKarta?.karta?.name }}: {{
+              sharingKarta?.name }}</label>
             <div class="row">
               <div class="col-lg-12" *ngIf="sharingKarta">
-                <ng-multiselect-dropdown [placeholder]="'Select users'"
-                  [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
-                  (onDeSelect)="onItemDeSelect($event)">
+                <ng-multiselect-dropdown [placeholder]="'Select users'" [settings]="dropdownSettings" [data]="members"
+                  (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)">
                 </ng-multiselect-dropdown>
               </div>
             </div>
@@ -1124,7 +1130,7 @@
               <span class="ml-2">
                 <div class="user-counter">
                   <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
-               </div>
+                </div>
               </span>
             </ng-container>
           </div>
@@ -1148,22 +1154,33 @@
       </div>
       <ng-container *ngIf="metricFlag; else measure">
         <div class="modal-body">
-          <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()" class="achieved-val">
+          <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()">
             <div formArrayName="fields">
-              <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
-              <div class="share-link-model mt-3" *ngFor="let field of fields.controls; let i = index"
-                [formGroupName]="i">
-                <div class="form-group">
-                  <div class="row">
-                    <div class="col-lg-12">
-                      <div class="">
-                        <label class="font-weight-bold">{{field.value.fieldName}}</label>
-                        <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue" [maxlength]='4'
-                          [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }">
-                        <div *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors" class="invalid-feedback">
-                          <div *ngIf="field.get('fieldValue')?.hasError('required')">{{field.value.fieldName}} value is required!</div>
-                          <div *ngIf="field.get('fieldValue')?.hasError('pattern')">Value should be a positive number!</div>
+              <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+              </h5>
+              <h6 class="short_text_metrics_formula max_width_500">{{metricsFormula}} =
+                {{acheivedValueMetrics}}
+              </h6>
+              <div class="achieved_val">
+                <div class="mt-3" *ngFor="let field of fields.controls; let i = index" [formGroupName]="i">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="">
+                          <label class="font-weight-bold">{{field.value.fieldName}}</label>
+                          <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue"
+                            [maxlength]='4'
+                            [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }">
+                          <div
+                            *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors"
+                            class="invalid-feedback">
+                            <div *ngIf="field.get('fieldValue')?.hasError('required')">{{field.value.fieldName}} value
+                              is
+                              required!</div>
+                            <div *ngIf="field.get('fieldValue')?.hasError('pattern')">Value should be a positive number!
+                            </div>
 
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1188,37 +1205,126 @@
       <ng-template #measure>
         <div class="modal-body">
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
-          <div class="share-link-model mt-3">
-          <div class="form-group">
-            <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="">
-                  <label for="actualValue" class="font-weight-bold">Actual Value</label>
-                  <input type="text" id="actualValue" class="form-control" formControlName="actualValue" [maxlength]="4"
-                  [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
-                  <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors" class="invalid-feedback">
-                      <div *ngIf="form.actualValue.hasError('required')">Actual value is required!</div>
-                      <div *ngIf="form.actualValue.hasError('pattern')">Actual value should be a positive number!</div>
+            <div class="mt-3">
+              <div class="form-group">
+                <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+                </h5>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="">
+                      <label for="actualValue" class="font-weight-bold">Actual Value</label>
+                      <input type="text" id="actualValue" class="form-control" formControlName="actualValue"
+                        [maxlength]="4"
+                        [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
+                      <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.actualValue.hasError('required')">Actual value is required!</div>
+                        <div *ngIf="form.actualValue.hasError('pattern')">Actual value should be a positive number!
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div style="border-color: unset;" data-dismiss="" aria-label="">
-          <span aria-hidden="true">
-            <button type="submit" class="send-btn" [disabled]="measureSubmitFlag">
-              <div class="spinner-border text-light align-top" role="status" *ngIf="measureSubmitFlag">
-                <span class="sr-only">Loading...</span>
-              </div>
-              <ng-container *ngIf="!measureSubmitFlag">Save</ng-container>
-            </button>
-          </span>
-        </div>
-        </form>
+            <div style="border-color: unset;" data-dismiss="" aria-label="">
+              <span aria-hidden="true">
+                <button type="submit" class="send-btn" [disabled]="measureSubmitFlag">
+                  <div class="spinner-border text-light align-top" role="status" *ngIf="measureSubmitFlag">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                  <ng-container *ngIf="!measureSubmitFlag">Save</ng-container>
+                </button>
+              </span>
+            </div>
+          </form>
         </div>
       </ng-template>
+    </div>
+  </div>
+</div>
+
+
+<!-- import-export-modal -->
+
+<div class="modal fade share_link" id="importExportModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content p-4">
+      <div class="modal-header">
+        <h5 class="modal-title pt-0" id="staticBackdropLabel">Import/Export KPIs</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeImportModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="overflow: auto;  max-height: 300px;">
+        <div class="row">
+          <div class="text-center">
+            <table cellspacing="0" cellpadding="0">
+              <tr>
+                <th class="excelTable" *ngFor="let headers of tableTitle">{{ headers }}</th>
+              </tr>
+              <!-- <tr *ngFor="let data of tableRecords; let i = index">
+               <ng-container *ngIf="i > 0">
+                <td class="excelTable" *ngFor="let title of tableTitle; let i = index" 
+                [ngStyle]="{'background-color':isNumeric(data, i)}"
+                >
+                  {{ data[title]}}
+                </td>
+               </ng-container>
+              </tr> -->
+              <ng-container *ngFor="let data of tableData; let i = index">
+              <tr *ngIf="i > 0">
+                 <td class="excelTable">
+                   {{ data['__EMPTY_1']}}
+                 </td>
+                 <td class="excelTable">
+                  {{ data['__EMPTY_2']}}
+                </td> 
+                <td class="excelTable">
+                  {{ data['__EMPTY_3']}}
+                </td>
+                 <td class="excelTable" >
+                  {{ data['__EMPTY_4']}}
+                </td>
+                <!-- <td class="excelTable" [ngStyle]="{'background-color':data.ac ? '' : 'red'}">
+                  {{ data['__EMPTY_4']}}
+                </td> -->
+                 <td class="excelTable">
+                  {{ data['__EMPTY_5']}}
+                </td>
+                <td class="excelTable">
+                  {{ data['__EMPTY_6']}}
+                </td> 
+                 <td class="excelTable">
+                  {{ data['__EMPTY_7']}}
+                </td> 
+                 <td class="excelTable">
+                  {{ data['__EMPTY_8']}}
+                </td>
+                
+                
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="align-self-center col-lg-6">
+          <input type="file" (change)="onFileChange($event)" multiple="false" />
+        </div>
+        <div class="col-lg-6 text-right">
+          <button class="btn btn-sm btn-info" type="button" (click)="exportCSV()">
+            <i class="fa fa-download"></i> Download KPIs
+          </button>
+        </div>
+      </div>
+      <div class="row ">
+        <div class="d-grid col-6 mx-auto">
+          <button class="btn btn-block btn-success mt-3" (click)="submitCSV()">Submit</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

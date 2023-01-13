@@ -12,20 +12,40 @@ export class CalculatePercentage {
     this.kpiPercentage = kpi_percentage;
   }
 
+  // Get number of business days
+  getBusinessDays(type: any = 'month', todayDate?: any) {
+    let startDate = moment().startOf(type).format('YYYY-MM-DD hh:mm');
+    let endDate = moment().endOf(type).format('YYYY-MM-DD hh:mm');
+    // Get business days till today
+    if (todayDate) endDate = moment(todayDate).format('YYYY-MM-DD hh:mm');
+    let day = moment(startDate);
+    let businessDays = 0;
+    
+    while (day.isSameOrBefore(endDate,'day')) {
+      if (day.day()!=0 && day.day()!=6) businessDays++;
+        day.add(1,'d');
+    }
+    return businessDays;
+  }
+
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
     let total_percentage: number[] = [];
-    // Set blank array for children, if not available
-    if (!params.hasOwnProperty("children")) params.children = [];
-    params?.children?.forEach((element: any) => {
+    const children = (params.children || []);
+    
+    children.forEach((element: any) => {
       // Check if current element is a kpi node or not
       if (element.phase.name === "KPI") {
         let targetValue = 0;
-        const todayDate = moment().date();
+        const dayOfMonth = moment().date();
+        const businessDayOfMonth = this.getBusinessDays('month', moment());
         const currentYear = moment().year();
         const dayOfYear = moment().dayOfYear();
+        const businessDayOfYear = this.getBusinessDays('year', moment());
         const daysInMonth = moment().daysInMonth();
+        const businessDaysInMonth = this.getBusinessDays('month');
         const daysInYear = moment([currentYear]).isLeapYear() ? 366 : 365;
+        const businessDaysInYear = this.getBusinessDays('year');
 
         function findTarget(type: string) {
           return element.target.find((item: any) => item.frequency === type);
@@ -47,7 +67,9 @@ export class CalculatePercentage {
           else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
           else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
-          targetValue = todayDate * (targetValue / daysInMonth);
+          if (element.days_to_calculate === "business") {
+            targetValue = dayOfMonth * (targetValue / businessDaysInMonth);
+          } else targetValue = businessDayOfMonth * (targetValue / daysInMonth);
         }
         // Set target value according to year to date
         else if (element.kpi_calc_period === "year-to-date" && !checkOtherPeriods()) {
@@ -55,7 +77,9 @@ export class CalculatePercentage {
           else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
           else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
-          targetValue = dayOfYear * (targetValue / daysInYear);
+          if (element.days_to_calculate === "business") {
+            targetValue = dayOfYear * (targetValue / businessDaysInYear);
+          } else targetValue = businessDayOfYear * (targetValue / daysInYear);
         }
         // Set percentage for month-over-month and year-over-year
         else if (this.kpiCalculationPeriod === "month-over-month" || this.kpiCalculationPeriod === "year-over-year") {
@@ -64,12 +88,12 @@ export class CalculatePercentage {
         // Set percentage for other kpi calculation periods
         if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {
           let current_percentage= (element.achieved_value/targetValue) * 100;
-          element.percentage = Math.round(current_percentage);
+          element.percentage = Math.round(current_percentage || 0);
           element.percentage = element.percentage === Infinity ? 0 : element.percentage;
         }
       } else {
         let returned_percentage = this.calculatePercentage(element, percentage);
-        element.percentage = Math.round(returned_percentage);
+        element.percentage = Math.round(returned_percentage || 0);
         element.percentage = element.percentage === Infinity ? 0 : Math.round(returned_percentage);
       }
       // Set border color for each node according to percentage
