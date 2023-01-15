@@ -306,8 +306,8 @@ export class MyProfileComponent implements OnInit {
             (response: any) => {
               this.user = response;
               this.setRegion();
-              this._commonService.updateUserNameInSession(this.profileForm.value.fullName);
-              if (this.profileImage.newImage) this._commonService.updateUserImageInSession(this.profileImage.newImage);
+              this._commonService.updateSession('name', this.profileForm.value.fullName);
+              if (this.profileImage.newImage) this._commonService.updateSession('profilePic', this.profileImage.newImage);
               this._commonService.successToaster("Profile updated successfully");
               this.profileImage.oldImage = response.profilePic;
               this.resetPictureModal();
@@ -342,7 +342,7 @@ export class MyProfileComponent implements OnInit {
           this.companySubmitFlag = true;
           this._profileService.updateCompany(this.companyForm.value, this.company.id).subscribe(
             (response: any) => {
-              if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
+              if (this.companyLogo.newImage) this._commonService.updateSession('companyLogo', this.companyLogo.newImage);
               this._commonService.successToaster("Company details updated successfully");
               this.companyLogo.oldImage = response.logo;
               this.resetPictureModal();

@@ -51,11 +51,7 @@ export class MySuggestionComponent implements OnInit {
       (response: any) => {
         this.phases = response;
         this.getSuggestion(this.phases[0].id);
-      },
-      (error: any) => {
-        this.isLoading = false;
-      }
-    );
+      }).add(() => this.isLoading = false );
   }
 
   getSuggestion(id: string) {
@@ -69,8 +65,7 @@ export class MySuggestionComponent implements OnInit {
         this.descriptions.clear();
         this.suggestion = response.suggestion;
         this.patchForm();
-      },
-      (error: any) => { }
+      }
     ).add(() => this.isLoading = false);
   }
 
