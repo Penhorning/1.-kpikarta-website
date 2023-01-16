@@ -14,7 +14,7 @@
                         <form [formGroup]="paymentMethodForm">
                             <div class="form-group">
                                 <label for="fullName">Name on Card <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="fullName" formControlName="fullName" [maxlength]="50"
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="fullName" formControlName="fullName" [maxlength]="50"
                                     [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
                                 <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
                                     <div *ngIf="form.fullName.errors.required">Full name is required!</div>
@@ -24,7 +24,7 @@
 
                             <div class="form-group">
                                 <label for="cardNumber">Credit Card Number <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="cardNumber" formControlName="cardNumber" min="0" [minlength]="14" [maxlength]="16"
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="cardNumber" formControlName="cardNumber" min="0" [minlength]="14" [maxlength]="16"
                                     [ngClass]="{ 'is-invalid': (submitted || form.cardNumber.touched) && form.cardNumber.errors }">
                                 <div *ngIf="(submitted || form.cardNumber.touched) && form.cardNumber.errors"
                                     class="invalid-feedback">
@@ -38,7 +38,7 @@
 
                             <div class="form-group">
                                 <label for="expirationDate">Expiration Date <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
                                     [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }">
                                 <div *ngIf="(submitted || form.expirationDate.touched) && form.expirationDate.errors"
                                     class="invalid-feedback">
@@ -50,13 +50,13 @@
 
                             <div class="form-group">
                                 <label for="cvc">CVC <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" id="cvc" formControlName="cvc" min="0" [minlength]="3" [maxlength]="4"
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="cvc" formControlName="cvc" min="0" [minlength]="3" [maxlength]="4"
                                     [ngClass]="{ 'is-invalid': (submitted || form.cvc.touched) && form.cvc.errors }">
                                 <div *ngIf="(submitted || form.cvc.touched) && form.cvc.errors"
                                     class="invalid-feedback">
                                     <div *ngIf="form.cvc.errors.required">CVC is required!</div>
                                     <div *ngIf="form.cvc.errors.pattern">Blank space is not allowed!</div>
-                                    <div *ngIf="form.cvc.errors.minlength">CVC should be of 3 digits!</div>
+                                    <div *ngIf="form.cvc.errors.minlength">CVC should be of 3-4 digits!</div>
                                     <div *ngIf="form.cvc.errors.maxlength">CVC should be of 4 digits!</div>
                                     <div *ngIf="form.cvc.errors.numerror">CVC should be a digit value!</div>
                                 </div>

@@ -38,9 +38,12 @@
                                   </div>
                               </div>
                           </div>
-                          <div *ngIf="!overview" class="py-5">
+                          <div *ngIf="!overview && !loadingOverview" class="py-5">
                             <div [innerHtml]="noDataAvailable"></div>
                           </div>
+                          <ng-container *ngIf="loadingOverview">
+                            <div [innerHtml]="loader" class="mt-4"></div>
+                          </ng-container>
                       </div>
                   </div>
               </div>
@@ -79,24 +82,11 @@
                   <div class="row pt-3">
                       <div class="col-lg-12">
                         <div class="row">
-                          <!-- <div class="col-lg-3 p-0">
-                              <img class="img-responsive" src="assets/img/Card.png" alt="card">
-                              <div class="overlay">
-                                  <div class="icon-container">
-                                      <a href="javascript:void(0);" class="icon" title="User Profile">
-                                          <i class="fa fa-edit"></i>
-                                      </a>
-                                      <a href="javascript:void(0);" class="icon" title="User Profile">
-                                      <i class="fa fa-trash"></i>
-                                      </a>
-                                  </div>
-                              </div>
-                          </div> -->
                           <div class="col-lg-3 p-0" *ngFor="let card of cards">
                             <div class="card-bg p-4 d-flex flex-column justify-content-between">
                               <div>
                                 <h4 class="card-label">{{card.brand}}</h4>
-                                <h5 class="text-white">**** **** **** {{card.last4}}</h5>
+                                <h5 class="text-white card-num-size">**** **** **** {{card.last4}}</h5>
                               </div>
                               <div class="d-flex justify-content-end">
                                 <div class="d-flex flex-column justify-content-end">
@@ -106,6 +96,24 @@
                               </div>
                             </div>
                           </div>
+                          <div class="col-lg-3 p-0">
+                            <div class="add-card-bg p-4 d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#cardModal">
+                              <h4 class="card-label change-card-label">Add Card</h4>
+                            </div>
+                          </div>
+                          <!-- <div class="col-lg-3 p-0">
+                            <img class="img-responsive" src="assets/img/Card.png" alt="card">
+                            <div class="overlay">
+                                <div class="icon-container">
+                                    <a href="javascript:void(0);" class="icon" title="User Profile">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0);" class="icon" title="User Profile">
+                                    <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                          </div> -->
                         </div>
                       </div>
                   </div>
@@ -115,8 +123,97 @@
           </div>
         </div>
       </div>  
-  
-  
-  
+    </div>
+
+    <!-- add -member-Modal -->
+  <div class="modal fade" id="cardModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content p-4">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">
+            Add Card
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetFormModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="share-link-model mt-3">
+            <form [formGroup]="cardForm">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="fullName">Name on Card <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="fullName" formControlName="fullName" [maxlength]="50"
+                        [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
+                    <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
+                        <div *ngIf="form.fullName.errors.required">Full name is required!</div>
+                        <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="cardNumber">Credit Card Number <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="cardNumber" formControlName="cardNumber" min="0" [minlength]="14" [maxlength]="16"
+                        [ngClass]="{ 'is-invalid': (submitted || form.cardNumber.touched) && form.cardNumber.errors }">
+                    <div *ngIf="(submitted || form.cardNumber.touched) && form.cardNumber.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.cardNumber.errors.required">Credit card number is required!</div>
+                        <div *ngIf="form.cardNumber.errors.pattern">Blank space is not allowed!</div>
+                        <div *ngIf="form.cardNumber.errors.minlength">Credit card number should be of 14 digits!</div>
+                        <div *ngIf="form.cardNumber.errors.maxlength">Credit card number should be of 16 digits!</div>
+                        <div *ngIf="form.cardNumber.errors.numerror">Credit card number should be a digit value!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="expirationDate">Expiration Date <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
+                        [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }">
+                    <div *ngIf="(submitted || form.expirationDate.touched) && form.expirationDate.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.expirationDate.errors.required">Expiration Date is required!</div>
+                        <div *ngIf="form.expirationDate.errors.pattern">Blank space is not allowed!</div>
+                        <div *ngIf="form.expirationDate.errors.expiration">Wrong sequence.!!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="cvc">CVC <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="cvc" formControlName="cvc" min="0" [minlength]="3" [maxlength]="4"
+                        [ngClass]="{ 'is-invalid': (submitted || form.cvc.touched) && form.cvc.errors }">
+                    <div *ngIf="(submitted || form.cvc.touched) && form.cvc.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.cvc.errors.required">CVC is required!</div>
+                        <div *ngIf="form.cvc.errors.pattern">Blank space is not allowed!</div>
+                        <div *ngIf="form.cvc.errors.minlength">CVC should be of 3-4 digits!</div>
+                        <div *ngIf="form.cvc.errors.maxlength">CVC should be of 4 digits!</div>
+                        <div *ngIf="form.cvc.errors.numerror">CVC should be a digit value!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-lg-4 text-left">
+                  <button class="btn btn-light btn_default mb-2" (click)="onSubmit()" [disabled]="submitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!submitFlag">SUBMIT</ng-container>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  
+</div>
