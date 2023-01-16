@@ -667,13 +667,13 @@ export class MyKpiComponent implements OnInit {
 
   pushCSVData(data: any) {
     data.forEach((element: any) => {
+      let clacTarget = [element.target[0]];
       element.kartaId = element.karta._id;
       element.kartaName = element.karta.name;
       element.formula = element?.node_formula?.formula ? element?.node_formula?.formula : 'N/A';
-
-      element.targetdata = element.target.map((element: any) => { return element.value });
-      element.targetPercentage = element.target.map((element: any) => { return element.percentage });
-      element.targetFrequency = element.target.map((element: any) => { return element.frequency });
+      element.targetdata = clacTarget.map((element: any) => { return element.value });
+      element.targetPercentage = clacTarget.map((element: any) => { return element.percentage });
+      element.targetFrequency = clacTarget.map((element: any) => { return element.frequency });
 
       // element.target = element.target;
       if (element.hasOwnProperty("node_formula")) {
@@ -722,6 +722,7 @@ export class MyKpiComponent implements OnInit {
   closeImportModal() {
     this.tableRecords = [];
     this.tableTitle = [];
+    this.tableData = [];
     this.validationtitleHead = ''
   }
 
@@ -768,7 +769,6 @@ export class MyKpiComponent implements OnInit {
           this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
             for(let title in data[0]){
               this.tableTitle.push(data[0][title])
-
             }
             this.tableTitle.splice(0,2)
             this.tableData = data.map((item: any , i:any) => {
@@ -873,10 +873,10 @@ export class MyKpiComponent implements OnInit {
     let data = { "nodes": this.nodes }
     this._myKpiService.updateCsv(data).subscribe(
       (response: any) => {
-        if (response) this._commonService.successToaster("Your have uploaded karta successfully.");
+        if (response) this._commonService.successToaster("Your have uploaded KPIs successfully.");
         $('#importExportModal').modal('hide');
         this.pageIndex = 0;
-        this.tableRecords = [];
+        this.tableData = [];
         this.tableTitle = [];
         this.validationtitleHead = '';
         this.nodes = '';
