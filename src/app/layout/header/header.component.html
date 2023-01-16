@@ -45,7 +45,7 @@
                         <img src="assets/img/my-profile.svg" class="mr-2">
                         My Profile
                       </a>
-                      <ng-container *ngIf="_commonService.getUserLicense() === 'Creator'">
+                      <ng-container *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
                         <a class="dropdown-item" [routerLink]="['/my-suggestion']">
                           <img src="assets/img/Suggestion.svg" class="mr-2">
                           My Suggestion

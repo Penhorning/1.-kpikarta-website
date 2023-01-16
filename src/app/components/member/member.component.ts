@@ -60,26 +60,17 @@ export class MemberComponent implements OnInit {
   constructor(
     private _memberService: MemberService,
     private fb: FormBuilder,
-    private _commonService: CommonService,
+    public _commonService: CommonService,
     private router: Router
   ) {
     
   }
 
   ngOnInit(): void {
-    this._commonService.getUserInfo().subscribe(
-      (response: any) => {
-        this.user = response;
-        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'department_admin') {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.getAllMembers();
-          this.getRoles();
-          this.getDepartments();
-          this.getLicenses();
-        }
-      }
-    );
+    this.getAllMembers();
+    this.getRoles();
+    this.getDepartments();
+    this.getLicenses();
   }
 
   // Get all members users

@@ -3,7 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { MemberComponent } from './member.component';
 
 const routes: Routes = [
-  { path: '', component: MemberComponent, data: { title: "Members - KPI Karta" } }
+  { path: '', component: MemberComponent,
+    data: {
+      title: "Members - KPI Karta",
+      roles: ["company_admin", "billing_staff", "department_admin"]
+    }
+  }
 ];
 
 @NgModule({
