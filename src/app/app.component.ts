@@ -71,8 +71,8 @@ export class AppComponent implements OnInit {
         if (this._commonService.getSession().token) {
           this._commonService.getUserInfo().subscribe(
             (response: any) => {
-              this._commonService.userRole = response.roles[0].name;
-              this._commonService.userLicense = response.license.name;
+              this._commonService.updateSession('role', response.roles[0].name);
+              this._commonService.updateSession('license', response.license.name);
             }
           );
         }

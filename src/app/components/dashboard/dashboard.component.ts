@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../karta/service/karta.service';
 import { MemberService } from '../member/service/member.service';
+import { DashboardService } from './service/dashboard.service';
 
 
 declare const $: any;
@@ -19,9 +20,11 @@ export class DashboardComponent implements OnInit {
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
+  registeredUsers: any = [];
 
   loadingKartas: boolean = false;
   loadingSharedKartas: boolean = false;
+  loadingSubscribers: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
@@ -36,10 +39,12 @@ export class DashboardComponent implements OnInit {
     private _commonService: CommonService,
     private _kartaService: KartaService,
     private _memberService: MemberService,
+    private _dashboardService: DashboardService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.getSubscribedUsers();
     this.getAllKartas();
     this.getAllMembers();
     this.getAllSharedKartas();
@@ -48,6 +53,28 @@ export class DashboardComponent implements OnInit {
   // Navigate to create karta
   navigateToKarta() {
     this.router.navigate(['/karta/create']);
+  }
+
+  // Get Subscribed Users
+  getSubscribedUsers() {
+    this.loadingSubscribers = true;
+    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(
+      (response: any) => {
+      if (response) {
+        let iconMapping = [
+          "assets/img/total-creator.svg",
+          "assets/img/total-champion.svg",
+          "assets/img/total-spectators.svg",
+        ];
+        let mappedData = response.data.data.userDetails.map((user: any, index: number) => {
+          return {
+            ...user,
+            icon: iconMapping[index]
+          }
+        });
+        this.registeredUsers = mappedData;
+      } else this.registeredUsers = [];
+    }).add(() => this.loadingSubscribers = false );
   }
 
   // Get all kartas

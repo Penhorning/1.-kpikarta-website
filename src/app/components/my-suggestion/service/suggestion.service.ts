@@ -10,7 +10,7 @@ export class SuggestionService {
 
 /*============================== API FUNCTIONS STARTS ==============================*/
   getPhases() {
-    return this._httpService.GET('/karta_phases');
+    return this._httpService.GET('/karta_phases?filter={"where": {"kartaId": {"exists": false}}}');
   }
   getSuggestion(data: any) {
     return this._httpService.POST('/suggestions/by-user', data);

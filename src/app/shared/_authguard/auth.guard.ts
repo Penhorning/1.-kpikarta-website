@@ -10,10 +10,16 @@ import { SignupService } from '@app/components/sign-up/service/signup.service';
 export class AuthGuard implements CanActivateChild {
 
   constructor (private _commonService: CommonService, private router: Router) { }
+  
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       if (this._commonService.getSession() && this._commonService.getSession().token) {
+        console.log("role ", this._commonService.getUserRole())
+        if (childRoute.data.roles && childRoute.data.roles.indexOf(this._commonService.getUserRole()) === -1) {
+          this.router.navigate(['/']);
+          return false;
+        }
         return true;
       } else {
         this.router.navigate(['/login']);
