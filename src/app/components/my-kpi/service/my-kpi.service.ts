@@ -36,5 +36,8 @@ export class MyKpiService {
   updateCsv(data: any) {
     return this._httpService.POST('/karta_nodes/update-kpi-nodes', data);
   }
+  getNodesDetails(data: any) {
+    return this._httpService.POST('/karta_nodes/get-nodes-details', data);
+  }
 }
 

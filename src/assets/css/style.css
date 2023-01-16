@@ -2870,6 +2870,14 @@ button.send-btn {
   border-radius: 5px;
 }
 
+button.import-submit-btn {
+  background-color: #28a745;
+  border: 0;
+  color: #fff;
+  padding: 8px 34px;
+  border-radius: 5px;
+}
+
 .shared-with {
   border-top: 1px solid #dee2e6;
   padding: 1rem;
