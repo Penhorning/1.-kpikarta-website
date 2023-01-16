@@ -1252,7 +1252,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content p-4">
       <div class="modal-header">
-        <h5 class="modal-title pt-0" id="staticBackdropLabel">Import/Export KPIs</h5>
+        <h5 class="modal-title pt-0" id="staticBackdropLabel">Import KPIs</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeImportModal()">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -1284,12 +1284,12 @@
                 <td class="excelTable">
                   {{ data['__EMPTY_3']}}
                 </td>
-                 <td class="excelTable" >
-                  {{ data['__EMPTY_4']}}
-                </td>
-                <!-- <td class="excelTable" [ngStyle]="{'background-color':data.ac ? '' : 'red'}">
+                 <!-- <td class="excelTable" >
                   {{ data['__EMPTY_4']}}
                 </td> -->
+                <td class="excelTable" [ngStyle]="{'background-color':data.ac ?  'red' : ''}">
+                  {{ data['__EMPTY_4']}}
+                </td>
                  <td class="excelTable">
                   {{ data['__EMPTY_5']}}
                 </td>
@@ -1299,7 +1299,7 @@
                  <td class="excelTable">
                   {{ data['__EMPTY_7']}}
                 </td> 
-                 <td class="excelTable">
+                 <td class="excelTable" [ngStyle]="{'background-color':data.ac ?  'red' : ''}">
                   {{ data['__EMPTY_8']}}
                 </td>
                 
@@ -1309,22 +1309,31 @@
             </table>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="align-self-center col-lg-6">
-          <input type="file" (change)="onFileChange($event)" multiple="false" />
-        </div>
-        <div class="col-lg-6 text-right">
-          <button class="btn btn-sm btn-info" type="button" (click)="exportCSV()">
-            <i class="fa fa-download"></i> Download KPIs
-          </button>
+        <div class="row">
+          <div class="align-self-center col-lg-6">
+            <input type="file" (change)="onFileChange($event)" multiple="false" />
+          </div>
         </div>
       </div>
-      <div class="row ">
-        <div class="d-grid col-6 mx-auto">
-          <button class="btn btn-block btn-success mt-3" (click)="submitCSV()">Submit</button>
+     
+       <div class="modal-footer">
+        <div class="no-gutters row w-100">
+          <div class="col-md-6">
+            <button (click)="submitCSV()" class="import-submit-btn btn-sm" [disabled]="importSubmitFlag">
+              <div class="spinner-border text-light align-top" role="status" *ngIf="importSubmitFlag">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <ng-container *ngIf="!importSubmitFlag">Submit</ng-container>
+            </button>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-sm btn-info float-right" type="button" (click)="exportCSV()">
+              <i class="fa fa-download"></i> Current KPIs
+            </button>
+          </div>
         </div>
-      </div>
+       </div>
+     
     </div>
   </div>
 </div>
