@@ -3,7 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { MySuggestionComponent } from './my-suggestion.component';
 
 const routes: Routes = [
-  { path: '', component: MySuggestionComponent, data: { title: "My Suggestions - KPI Karta" } }
+  { path: '', component: MySuggestionComponent,
+    data: {
+      title: "My Suggestions - KPI Karta",
+      roles: ["company_admin", "department_admin", "user"],
+      licenses: ["Creator"]
+    }
+  }
 ];
 
 @NgModule({

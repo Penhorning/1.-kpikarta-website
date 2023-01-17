@@ -31,7 +31,7 @@
           </form>
         </div>
       </div>
-      <div class="col-lg-3 text-right">
+      <div class="col-lg-3 text-right" *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin'">
         <button class="karta-btn mt-2" data-toggle="modal" data-target="#memberModal" (click)="setFormType('CREATE')">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
             class="bi bi-person-plus-fill" viewBox="0 0 16 16">
@@ -57,7 +57,7 @@
                   <th>Department</th>
                   <th>Status</th>
                   <th>Date added</th>
-                  <th>Action</th>
+                  <th *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin'">Action</th>
                 </tr>
               </thead>
               <tbody class="border-0">
@@ -72,7 +72,7 @@
                     <span *ngIf="!user.active" class="table_btn_status bg-danger">Inactive</span>
                   </td>
                   <td>{{ user?.createdAt | date }}</td>
-                  <td>
+                  <td *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                       class="bi bi-pencil-fill" viewBox="0 0 16 16" data-toggle="modal" data-target="#memberModal"
                       (click)="setFormType('UPDATE', user)" style="cursor: pointer;">

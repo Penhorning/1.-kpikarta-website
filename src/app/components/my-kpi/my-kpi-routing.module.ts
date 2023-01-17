@@ -3,7 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { MyKpiComponent } from './my-kpi.component';
 
 const routes: Routes = [
-  { path: '', component: MyKpiComponent, data: { title: "My KPI - KPI Karta" } }
+  { path: '', component: MyKpiComponent,
+    data: {
+      title: "My KPIs - KPI Karta",
+      roles: ["company_admin", "department_admin", "user"],
+      licenses: ["Creator", "Champion"]
+    }
+  }
 ];
 
 @NgModule({

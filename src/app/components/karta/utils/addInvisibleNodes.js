@@ -49,11 +49,11 @@ function addNodes(params, phases) {
 export function addInvisibleNodes(tree, phases) {
   const children = (tree.children || tree._children || []);
 
-  if (children.length > 0) {
-    let d = addNodes(tree, phases);
-    console.log(d);
-    return d;
-  }
-  else return tree;
-  // return tree;
+  // if (children.length > 0) {
+  //   let d = addNodes(tree, phases);
+  //   console.log(d);
+  //   return d;
+  // }
+  // else return tree;
+  return tree;
 }
