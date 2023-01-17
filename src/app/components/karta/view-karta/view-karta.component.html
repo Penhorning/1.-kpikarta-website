@@ -3,7 +3,7 @@
    <!-- Page Content  -->
    <div id="content" class="karta-edit-contnet">
       <!-- Karta header -->
-      <div class="karta-edit-header">
+      <div class="karta-edit-header" [ngStyle]="{'padding-left': (_commonService.getSession() && _commonService.getSession().token) ? '118px': '18px' }">
          <div class="row no-gutters">
             <div class="col-lg-12">
                <div class="row no-gutters">
@@ -25,7 +25,7 @@
          </div>
       </div>
       <!-- Karta SVG Chart -->
-      <div class="main-center-content d-flex">
+      <div class="main-center-content d-flex mb-3" [ngStyle]="{'margin-left': (_commonService.getSession() && _commonService.getSession().token) ? '100px': '0' }">
          <div class="center-content mt-4 w-100">
             <div class="row tab-content-center">
                <div class="phase_column">
