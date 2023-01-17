@@ -3,15 +3,16 @@
 
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
             <div class="col-lg-12">
                 <button class="karta-btn" (click)="navigateToKarta()"><img src="assets/img/add-karata.svg" class="mr-2">
                     Create a Karta</button>
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-9">
-                <div class="white-karata-card">
+            <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-9': 'col-md-12'">
+                <!-- Latest Kartas -->
+                <div class="white-karata-card" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="Shared-karata">
@@ -154,7 +155,8 @@
                         <div [innerHtml]="noDataAvailable"></div>
                     </ng-container>
                 </div>
-                <div class="white-karata-card mt-3">
+                <!-- Latest Shared Kartas -->
+                <div class="white-karata-card" [ngClass]="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff' ? 'mt-3': ''">
                     <div class="row">
                         <div class="col-lg-6">
                             <div class="Shared-karata">
@@ -292,7 +294,7 @@
                     </ng-container>
                 </div>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-3" *ngIf="_commonService.getUserRole() !== 'user'">
                 <div class="total-section">
                     <div *ngFor="let user of registeredUsers; let i = index;">
                         <div class="row">
@@ -316,7 +318,7 @@
                         <div [innerHtml]="loader"></div>
                     </ng-container>
                 </div>
-                <div class="total-section mt-3">
+                <div class="total-section mt-3" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="total-inner-section pl-3 pr-3">
@@ -432,7 +434,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="share-link-model mt-3">
+                <div class="share-link-modal mt-3">
                     <div class="form-group">
                         <label class="font-weight-bold short_text max_width_500">{{sharingKarta?.name}}</label>
                         <div class="row">

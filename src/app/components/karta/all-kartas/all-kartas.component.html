@@ -8,7 +8,7 @@
           </div>
           <div class="col-lg-6">
              <div class="search-bar">
-                <form action="" class="search-form">
+                <form class="search-form">
                    <div class="form-group search-filed inventory m-0">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-search" style="cursor: pointer;" viewBox="0 0 16 16" (click)="search()">
@@ -28,7 +28,7 @@
                 </form>
              </div>
           </div>
-          <div class="col-lg-4 text-right">
+          <div class="col-lg-4 text-right" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
              <button class="karta-btn mt-2" (click)="navigateToKarta()"><img src="assets/img/add-karata.svg"
                 class="mr-2"> Create a Karta</button>
           </div>
@@ -38,12 +38,12 @@
              <div class="KPI-dash-tab inventory">
                 <!-- KPI Tabs -->
                 <ul class="nav nav-tabs" role="tablist">
-                   <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('owned')">
-                      <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1"
+                   <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('owned')" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
+                      <a class="nav-link nav-link-cus pl-0 active" id="assigned_tab" data-toggle="tab" href="#tabs-1"
                          role="tab">Assigned to me</a> 
                    </li>
-                   <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('shared')"> <a
-                      class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-1"
+                   <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('shared')" id="shared_tab">
+                     <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-1"
                       role="tab">Shared with me</a> </li>
                 </ul>
                 <!-- Tab panes -->
@@ -238,7 +238,7 @@
              </button>
           </div>
           <div class="modal-body">
-             <div class="share-link-model mt-3">
+             <div class="share-link-modal mt-3">
                 <div class="form-group">
                    <label class="font-weight-bold short_text max_width_500">{{sharingKarta?.name}}</label>
                    <div class="row">

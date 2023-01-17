@@ -37,20 +37,6 @@ export class BillingComponent implements OnInit {
       cvc: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), Validators.minLength(3), Validators.maxLength(4), this.numberValidation]], // Validtion for blank space
     });
 
-    this._commonService.getUserInfo().subscribe(
-      (response: any) => {
-        this.user = response;
-        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'billing_staff') {
-          this.router.navigate(['/dashboard']);
-        } else {
-          // this.getAllMembers();
-          // this.getRoles();
-          // this.getDepartments();
-          // this.getLicenses();
-        }
-      }
-    );
-
     this.getCardDetails();
     this.getSubscribedUsersDetail();
     this.getInvoicesDetails();

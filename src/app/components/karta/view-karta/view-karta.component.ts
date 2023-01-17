@@ -47,7 +47,7 @@ export class ViewKartaComponent implements OnInit {
 
   constructor(
     private _kartaService: KartaService,
-    private _commonService: CommonService,
+    public _commonService: CommonService,
     private route: ActivatedRoute
   ) {
     // Get karta id from url
@@ -68,27 +68,6 @@ export class ViewKartaComponent implements OnInit {
       let colorSetting = this.colorSettings.settings.filter((item: any) => node_percentage >= item.min && node_percentage <= item.max);
       return colorSetting[0]?.color || 'black';
     } else return 'black';
-  }
-
-  // Set karta's div width
-  setKartaDimension() {
-    let width, height, karta_col_width, karta_col_height, svg_width, svg_height;
-    karta_col_width = jqueryFunctions.getWidth('.karta_column');
-    // karta_col_height = $('.karta_column').height();
-    karta_col_height = 455;
-    svg_width = jqueryFunctions.getWidth('#karta-svg svg');
-    svg_height = jqueryFunctions.getHeight('#karta-svg svg');
-
-    width = svg_width > karta_col_width ? svg_width : karta_col_width;
-    // height = svg_height > karta_col_height ? svg_height : karta_col_height;
-    height = 455;
-
-    jqueryFunctions.setStyle('#karta-svg', 'max-width', karta_col_width);
-
-    // $('#karta-svg').css("max-height", karta_col_height + 5);   // For multiple phases
-    jqueryFunctions.setStyle('#karta-svg', 'max-height', karta_col_height);
-    jqueryFunctions.setAttribute('#karta-svg svg', 'width', width);
-    jqueryFunctions.setAttribute('#karta-svg svg', 'height', height);
   }
 
   // Get all versions
@@ -116,7 +95,6 @@ export class ViewKartaComponent implements OnInit {
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           jqueryFunctions.removeElement(".center-options");
           jqueryFunctions.disableChart();
-          this.setKartaDimension();
           this.showSVG = true;
         }
       }
@@ -125,10 +103,26 @@ export class ViewKartaComponent implements OnInit {
 
   // Get all phases
   getPhases() {
-    this._kartaService.getPhases(this.kartaId).subscribe((response: any) => {
-      this.phases = response;
-      this.getKartaInfo();
-    });
+    this._kartaService.getPhases(this.kartaId).subscribe(
+      (response: any) => {
+        // Find sub phase
+        const findSubPhase = (array: any, phaseId: string) => {
+          let childPhase = array.find((item: any) => item.parentId === phaseId);
+          if (childPhase) {
+            this.phases.push(childPhase);
+            array.splice(array.findIndex((a: any) => a.id === childPhase.id) , 1);
+            findSubPhase(array, childPhase.id);
+          }
+        }
+        // Iterate phases
+        for (let phase of response) {
+          this.phases.push(phase);
+          findSubPhase(response, phase.id);
+        }
+        // Fetch karta nodes
+        this.getKartaInfo();
+      }
+    );
   }
   // Get color settings by karta
   getColorSettingsByKarta() {

@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit {
   emails: any = [];
 
   constructor(
-    private _commonService: CommonService,
+    public _commonService: CommonService,
     private _kartaService: KartaService,
     private _memberService: MemberService,
     private _dashboardService: DashboardService,
@@ -44,8 +44,12 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getSubscribedUsers();
-    this.getAllKartas();
+    if (this._commonService.getUserLicense() === 'Creator' && this._commonService.getUserRole() !== 'billing_staff') {
+      this.getAllKartas();
+    }
+    if (this._commonService.getUserRole() !== 'user') {
+      this.getSubscribedUsers();
+    }
     this.getAllMembers();
     this.getAllSharedKartas();
   }

@@ -189,6 +189,10 @@ a.nav-link-cus {
     line-height: 25px;
 }
 
+.view_karta_link:hover {
+    text-decoration: underline;
+}
+
 .editacval svg {
     margin-top: -30px;
     margin-left: -9px;
@@ -208,7 +212,7 @@ a.nav-link-cus {
     float: left;
 }
 
-.achieved-val {
+.achieved_val {
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -224,8 +228,72 @@ a.nav-link-cus {
 select.form-select.form-select-lg.short-dropdown-custom {
     text-align: left !important;
 }
+
 .sort_dropdown {
     height:35px;
     margin-top:3px;
     font-weight: 700;
+}
+
+.short_text_metrics_formula{
+    font-style: italic;
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+// .excelTable{
+//     width: 100%;
+//     min-width: 800px;
+//   }
+.excelTable{
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  button.import-send-btn {
+    background-color: #243864;
+    border: 0;
+    color: #fff;
+    padding: 8px 34px;
+    border-radius: 5px;
+  }
+
+  button.import-submit-import-btn {
+    background-color: #243864;
+    border: 0;
+    color: #fff;
+    padding: 8px 34px;
+    border-radius: 5px;
+  }
+
+  .file-upload-button {
+    background-color: #ff5252;
+    border-radius: 50%;
+    height: 3rem;
+    overflow: hidden;
+    position: relative;
+    width: 3rem;
+
+  &::after {
+    content: '⇪';
+    color: #fff;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  input[type="file"] {
+        font-size: 100px;
+        left: 0;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+    }
+}
+
+.file-info {
+  color: #999;
+  font-family: Lato;
+  margin-left: 0.5rem;
 }

@@ -38,20 +38,30 @@ export class AllKartasComponent implements OnInit {
 
   constructor(
     private _kartaService: KartaService,
-    private _commonService: CommonService,
+    public _commonService: CommonService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.getAllKartas();
-    this.getAllMembers();
+    if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
+      this.getAllKartas();
+      this.getAllMembers();
+    } else this.clickSharedTab();
 
     this.route.fragment.subscribe(f => {
-      if (f === "tabs-2") $("#shared_tab").click();
+      if (f === "tabs-2") this.clickSharedTab();
     });
   }
 
+  // Shared tab clicked
+  clickSharedTab() {
+    setTimeout(() => {
+      $("#assigned_tab").removeClass("active");
+    }, 100);
+    $("#shared_tab").click();
+    $("#shared_tab a").addClass("active");
+  }
   // Navigate to create karta
   navigateToKarta() {
     this.router.navigate(['/karta/create']);

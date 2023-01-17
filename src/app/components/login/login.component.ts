@@ -35,9 +35,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     let email = this._commonService.getRememberMeSession().email;
-    if (email) {
-      this.loginForm.patchValue({ email });
-    }
+    if (email) this.loginForm.patchValue({ email, rememberMe: true });
   }
 
   ngOnInit(): void {
@@ -49,6 +47,8 @@ export class LoginComponent implements OnInit {
         email: this.route.snapshot.queryParamMap.get("email") || "",
         profilePic: this.route.snapshot.queryParamMap.get("profilePic") || "",
         companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || "",
+        role: this.route.snapshot.queryParamMap.get("role") || "",
+        license: this.route.snapshot.queryParamMap.get("license") || "",
         _2faEnabled: this.route.snapshot.queryParamMap.get("_2faEnabled") || "false",
         mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false"
       }
@@ -102,7 +102,9 @@ export class LoginComponent implements OnInit {
               name: fullName,
               email,
               profilePic,
-              companyLogo: response.company.logo
+              companyLogo: response.user.company.logo,
+              role: response.user.role.name,
+              license: response.user.license.name
             }
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({ email: this.loginForm.value.email });

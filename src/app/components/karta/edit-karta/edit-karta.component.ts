@@ -841,7 +841,7 @@ export class EditKartaComponent implements OnInit {
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greater than 100!");
       } else {
-        if (sum + this.currentNodeWeight < 100) {
+        if (sum + this.currentNodeWeight < 99.9) {
           this._commonService.warningToaster(`Your aggregate weighting of all the nodes is less than 100 in ${this.currentNode.phase.name}!`);
         }
         this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
@@ -901,6 +901,11 @@ export class EditKartaComponent implements OnInit {
         }
       );
     }
+  }
+  // Change target label
+  changeTargetLabel(event: any) {
+    let node = this.currentNode;
+    this.updateNode('target_label', event.target.value, 'node_updated', node);
   }
   // Change achieved value
   changeAchievedValue() {
