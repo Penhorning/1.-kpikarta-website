@@ -20,7 +20,7 @@ export class SubscriptionPlanComponent implements OnInit {
 
   constructor(private _signupService: SignupService, private _subscriptionPlanService: SubscriptionPlanService, private router: Router, private _commonService: CommonService) {
     // Preventing back button in browser
-    window.onpopstate = function (e: any) { window.history.forward(); }
+    // window.onpopstate = function (e: any) { window.history.forward(); }
   }
 
   ngOnInit(): void {

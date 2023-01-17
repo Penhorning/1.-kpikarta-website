@@ -27,7 +27,9 @@ export class VerificationComponent implements OnInit {
     private router: Router
   ) {
     // Preventing back button in browser
-    window.onpopstate = function (e: any) { window.history.forward(); }
+    if(this._signupService.getSignUpSession().stage >= 2) {
+      window.onpopstate = function (e: any) { window.history.forward(); }
+    }
   }
 
   ngOnInit(): void {

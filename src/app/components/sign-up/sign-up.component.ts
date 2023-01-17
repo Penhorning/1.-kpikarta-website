@@ -44,7 +44,11 @@ export class SignUpComponent implements OnInit {
     private _signupService: SignupService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    if(this._signupService.getSignUpSession().stage >= 1) {
+      window.onpopstate = function (e: any) { window.history.forward(); }
+    }
+  }
 
   ngOnInit(): void {
     this.user.userId = this.route.snapshot.queryParamMap.get("userId") || "";
