@@ -1,0 +1,78 @@
+<section id="common_sec">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <div class="logo">
+                    <a [routerLink]="['/']"><img src="assets/img/kpi-karta-logo.png" width="280" height="65" alt="" /></a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mng_col">
+                    <div class="login_form">
+                        <h2 class="text-white text-center py-4">Add payment method</h2>
+
+                        <form [formGroup]="paymentMethodForm">
+                            <div class="form-group">
+                                <label for="fullName">Name on Card <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="fullName" formControlName="fullName" [maxlength]="50"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
+                                <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
+                                    <div *ngIf="form.fullName.errors.required">Full name is required!</div>
+                                    <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cardNumber">Credit Card Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="cardNumber" formControlName="cardNumber" min="0" [minlength]="14" [maxlength]="16"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.cardNumber.touched) && form.cardNumber.errors }">
+                                <div *ngIf="(submitted || form.cardNumber.touched) && form.cardNumber.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.cardNumber.errors.required">Credit card number is required!</div>
+                                    <div *ngIf="form.cardNumber.errors.pattern">Blank space is not allowed!</div>
+                                    <div *ngIf="form.cardNumber.errors.minlength">Credit card number should be of 14 digits!</div>
+                                    <div *ngIf="form.cardNumber.errors.maxlength">Credit card number should be of 16 digits!</div>
+                                    <div *ngIf="form.cardNumber.errors.numerror">Credit card number should be a digit value!</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="expirationDate">Expiration Date <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }">
+                                <div *ngIf="(submitted || form.expirationDate.touched) && form.expirationDate.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.expirationDate.errors.required">Expiration Date is required!</div>
+                                    <div *ngIf="form.expirationDate.errors.pattern">Blank space is not allowed!</div>
+                                    <div *ngIf="form.expirationDate.errors.expiration">Wrong sequence.!!</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cvc">CVC <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control1" autocomplete="off" id="cvc" formControlName="cvc" min="0" [minlength]="3" [maxlength]="4"
+                                    [ngClass]="{ 'is-invalid': (submitted || form.cvc.touched) && form.cvc.errors }">
+                                <div *ngIf="(submitted || form.cvc.touched) && form.cvc.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="form.cvc.errors.required">CVC is required!</div>
+                                    <div *ngIf="form.cvc.errors.pattern">Blank space is not allowed!</div>
+                                    <div *ngIf="form.cvc.errors.minlength">CVC should be of 3-4 digits!</div>
+                                    <div *ngIf="form.cvc.errors.maxlength">CVC should be of 4 digits!</div>
+                                    <div *ngIf="form.cvc.errors.numerror">CVC should be a digit value!</div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-light btn_default mb-3 mt-5" (click)="onSubmit()" [disabled]="submitFlag">
+                                <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <ng-container *ngIf="!submitFlag">SUBMIT</ng-container>
+                            </button>
+                        </form>
+                        <app-footer></app-footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

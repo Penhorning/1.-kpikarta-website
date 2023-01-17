@@ -47,7 +47,7 @@ export class ViewKartaComponent implements OnInit {
 
   constructor(
     private _kartaService: KartaService,
-    private _commonService: CommonService,
+    public _commonService: CommonService,
     private route: ActivatedRoute
   ) {
     // Get karta id from url

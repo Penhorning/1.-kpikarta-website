@@ -10,7 +10,6 @@ import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 import * as MetricOperations from '../utils/metricFormulaOperations';
 import { CalculatePercentage } from '../utils/calculatePercentage';
-import { addInvisibleNodes } from '../utils/addInvisibleNodes';
 
 declare const $: any;
 
@@ -842,7 +841,7 @@ export class EditKartaComponent implements OnInit {
       if (sum + this.currentNodeWeight > 100) {
         this._commonService.errorToaster("Your aggregate weighting of all the nodes cannot be greater than 100!");
       } else {
-        if (sum + this.currentNodeWeight < 100) {
+        if (sum + this.currentNodeWeight < 99.9) {
           this._commonService.warningToaster(`Your aggregate weighting of all the nodes is less than 100 in ${this.currentNode.phase.name}!`);
         }
         this.updateNode('weightage', this.currentNodeWeight, 'node_updated', node);
@@ -902,6 +901,11 @@ export class EditKartaComponent implements OnInit {
         }
       );
     }
+  }
+  // Change target label
+  changeTargetLabel(event: any) {
+    let node = this.currentNode;
+    this.updateNode('target_label', event.target.value, 'node_updated', node);
   }
   // Change achieved value
   changeAchievedValue() {
@@ -963,7 +967,6 @@ export class EditKartaComponent implements OnInit {
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
           this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-          this.karta.node = addInvisibleNodes(this.karta.node, this.phases);
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           this.setKartaDimension();
           this.showSVG = true;
@@ -1151,7 +1154,6 @@ export class EditKartaComponent implements OnInit {
         this.karta = response;
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-        this.karta.node = addInvisibleNodes(this.karta.node, this.phases);
         this.D3SVG.update(this.karta.node, true);
       }
     );

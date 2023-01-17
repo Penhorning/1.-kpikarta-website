@@ -70,7 +70,9 @@ export class MyKpiComponent implements OnInit {
   totalPageCount = 0;
   currentPage = 0;
   tableDatavalidation = [];
-  validationtitleHead: any
+  validationtitleHead: any;
+  importNodeIds: any = [];
+  importSubmitFlag: boolean = false;
   nodes: any = []
   // Target filter
   target: any = [
@@ -667,13 +669,13 @@ export class MyKpiComponent implements OnInit {
 
   pushCSVData(data: any) {
     data.forEach((element: any) => {
+      let clacTarget = [element.target[0]];
       element.kartaId = element.karta._id;
       element.kartaName = element.karta.name;
       element.formula = element?.node_formula?.formula ? element?.node_formula?.formula : 'N/A';
-
-      element.targetdata = element.target.map((element: any) => { return element.value });
-      element.targetPercentage = element.target.map((element: any) => { return element.percentage });
-      element.targetFrequency = element.target.map((element: any) => { return element.frequency });
+      element.targetdata = clacTarget.map((element: any) => { return element.value });
+      element.targetPercentage = clacTarget.map((element: any) => { return element.percentage });
+      element.targetFrequency = clacTarget.map((element: any) => { return element.frequency });
 
       // element.target = element.target;
       if (element.hasOwnProperty("node_formula")) {
@@ -723,6 +725,7 @@ export class MyKpiComponent implements OnInit {
   closeImportModal() {
     this.tableRecords = [];
     this.tableTitle = [];
+    this.tableData = [];
     this.validationtitleHead = ''
   }
 
@@ -742,53 +745,60 @@ export class MyKpiComponent implements OnInit {
   // Select Csv file
   onFileChange(event: any) {
     /* wire up file reader */
-    const target: DataTransfer = <DataTransfer>(<unknown>event.target);
-    if (target.files.length !== 1) {
-      throw new Error('Cannot use multiple files');
-    }
-    const reader: FileReader = new FileReader();
-    reader.readAsBinaryString(target.files[0]);
-    reader.onload = (e: any) => {
-      /* create workbook */
-      const binarystr: string = e.target.result;
-      const wb: XLSX.WorkBook = XLSX.read(binarystr, { type: 'binary', raw: true, dense: true, cellNF: true, cellDates: true });
-
-      /* selected the first sheet */
-      const wsname: string = wb.SheetNames[0];
-      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-
-      /* save data */
-      const data = <AOA>(XLSX.utils.sheet_to_json(ws)); // to get 2d array pass 2nd parameter as object {header: 1}
-
-      this.calculateCSVData(data)
-      if (data.length > 0) {
-        let title = Object.values(data);
-        this.validationtitleHead = Object.values(title[0])
-        if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
+    this.tableData = [];
+    this.tableTitle = [];
+    this.nodes = '';
+    if (!event.target.files && !event.target.files[0]) {
+      this._commonService.errorToaster("File not found!");
+      event.target.value = "";
+    } else if (event.target.files[0].type !== "application/vnd.ms-excel") {
+      this._commonService.errorToaster("Only CSV file accepted!");
+      event.target.value = "";
+    } else {
+      const reader: FileReader = new FileReader();
+      reader.readAsBinaryString(event.target.files[0]);
+      reader.onload = (e: any) => {
+        /* create workbook */
+        const binarystr: string = e.target.result;
+        const wb: XLSX.WorkBook = XLSX.read(binarystr, { type: 'binary', raw: true, dense: true, cellNF: true, cellDates: true });
+  
+        /* selected the first sheet */
+        const wsname: string = wb.SheetNames[0];
+        const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+  
+        /* save data */
+        const data = <AOA>(XLSX.utils.sheet_to_json(ws)); // to get 2d array pass 2nd parameter as object {header: 1}
+  
+        if (data.length > 0) {
+          let title = Object.values(data);
+          this.validationtitleHead = Object.values(title[0])
+          console.log("validationtitleHead", this.validationtitleHead)
+          if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
           this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
           this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
+            this.calculateCSVData(data)
             for(let title in data[0]){
-              this.tableTitle.push(data[0][title])
-
-            }
-            this.tableTitle.splice(0,2)
-            this.tableData = data.map((item: any , i:any) => {
-            delete item.__EMPTY;
-            delete item['My KPI Export'];
-            if(!  this.isNumeric(item.__EMPTY_4)){
-              item.ac = true;
-            } else {
-              item.ac = false;
-            }
-            return item;
-          })
+                this.tableTitle.push(data[0][title])
+              }
+              this.tableTitle.splice(0,2)
+              this.tableData = data.map((item: any , i:any) => {
+              delete item.__EMPTY;
+              delete item['My KPI Export'];
+              if(!  this.isNumeric(item.__EMPTY_4)){
+                item.ac = true;
+              } else {
+                item.ac = false;
+              }
+              return item;
+            })
+          } else {
+            this._commonService.errorToaster("Invalid data found in a file.");
+          }
         } else {
-          this._commonService.errorToaster("Pleas download sample CSV");
+          this._commonService.errorToaster("Please select current KPI file.");
         }
-      } else {
-        this._commonService.errorToaster("Pleas select sample CSV file");
       }
-    };
+    }
   }
 
   // Metrics formula calculation
@@ -838,6 +848,14 @@ export class MyKpiComponent implements OnInit {
   }
 
   calculateCSVData(csvData: any) {
+ console.log("csvData", csvData)
+//     this.importNodeIds = csvData.filter((obj: any) => {
+//       if(obj.__EMPTY_3 == "metrics")
+
+//         // return obj;
+//     });
+    
+
     csvData.forEach((element: any, index: number) => {
       if (index > 0) {
         if (element.__EMPTY_3 == "measure") {
@@ -854,6 +872,14 @@ export class MyKpiComponent implements OnInit {
             ]
           }
         } else {
+
+          // this.importNodeIds.push(element['My KPI Export'])
+          // let formulaList =  this.getNodesDetail(this.importNodeIds);
+          
+          // setTimeout(() => {
+          // }, 5000)
+          // console.log(" this.importNodeIds",  this.importNodeIds)
+          // console.log("formula", formulaList)
           let data = this.calculateMetricFormulaForCSV(element)
           if (data) {
             element.node = data;
@@ -871,21 +897,36 @@ export class MyKpiComponent implements OnInit {
 
   // Upload csv function
   submitCSV() {
-    let data = { "nodes": this.nodes }
-    this._myKpiService.updateCsv(data).subscribe(
+    if (this.nodes.length > 0) {
+      let data = { "nodes": this.nodes }
+      this.importSubmitFlag = true;
+      this._myKpiService.updateCsv(data).subscribe(
+        (response: any) => {
+          if (response) this._commonService.successToaster("KPIs imported successfully.");
+          $('#importExportModal').modal('hide');
+          this.pageIndex = 0;
+          this.tableData = [];
+          this.tableTitle = [];
+          this.validationtitleHead = '';
+          this.nodes = '';
+          this.getMyKPIsList();
+        },
+        (error: any) => {
+          this.importSubmitFlag = false;
+        }
+      ).add(() => this.importSubmitFlag = false);
+    }
+  }
+
+  getNodesDetail(importNodeIds: any) {
+    let data = {
+      nodeIds: importNodeIds
+    
+    }
+    this.importSubmitFlag = true;
+    this._myKpiService.getNodesDetails(data).subscribe(
       (response: any) => {
-        if (response) this._commonService.successToaster("Your have uploaded karta successfully.");
-        $('#importExportModal').modal('hide');
-        this.pageIndex = 0;
-        this.tableRecords = [];
-        this.tableTitle = [];
-        this.validationtitleHead = '';
-        this.nodes = '';
-        this.getMyKPIsList();
-      },
-      (error: any) => {
-        this.loading = false
-      }
-    );
+        console.log("data", response)
+      }).add(() => this.importSubmitFlag = false);
   }
 }

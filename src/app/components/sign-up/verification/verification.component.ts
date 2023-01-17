@@ -27,7 +27,9 @@ export class VerificationComponent implements OnInit {
     private router: Router
   ) {
     // Preventing back button in browser
-    window.onpopstate = function (e: any) { window.history.forward(); }
+    if(this._signupService.getSignUpSession().stage >= 2) {
+      window.onpopstate = function (e: any) { window.history.forward(); }
+    }
   }
 
   ngOnInit(): void {
@@ -41,8 +43,9 @@ export class VerificationComponent implements OnInit {
       this._signupService.verification(this.verificationForm.value).subscribe(
         (response: any) => {
           this._commonService.successToaster("Email is verified successfully");
-          this._signupService.updateSignUpSession(2);
-          this.router.navigate(['/thank-you']);
+          this._signupService.updateSignUpSession(2, response.id);
+          this.router.navigate(['/subscription-plan']);
+          // this.router.navigate(['/sign-up/payment-method']);
         },
         (error: any) => { }
       ).add(() => this.submitFlag = false);

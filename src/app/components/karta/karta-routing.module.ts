@@ -10,9 +10,27 @@ const routes: Routes = [
   { path: '', redirectTo:'/dashboard', pathMatch: 'full' },
   { path: '', component: KartaComponent,
     children: [
-      { path: 'all', component: AllKartasComponent, data: { title: 'All Kartas - KPI Karta'} },
-      { path: 'create', component: CreateKartaComponent, data: { title: 'Create Karta - KPI Karta'} },
-      { path: 'edit/:id', component: EditKartaComponent, data: { title: 'Edit Karta - KPI Karta'} },
+      { path: 'all', component: AllKartasComponent,
+        data: {
+          title: "All Kartas - KPI Karta",
+          roles: ["company_admin", "department_admin", "billing_staff", "user"],
+          licenses: ["Creator", "Champion", "Spectator"]
+        }
+      },
+      { path: 'create', component: CreateKartaComponent,
+        data: {
+          title: "Create - KPI Karta",
+          roles: ["company_admin", "department_admin", "user"],
+          licenses: ["Creator"]
+        }
+      },
+      { path: 'edit/:id', component: EditKartaComponent,
+        data: {
+          title: "Edit - KPI Karta",
+          roles: ["company_admin", "department_admin", "user"],
+          licenses: ["Creator"]
+        }
+      },
       { path: 'view/:id', component: ViewKartaComponent, data: { title: 'View Karta - KPI Karta'} }
     ]
   }

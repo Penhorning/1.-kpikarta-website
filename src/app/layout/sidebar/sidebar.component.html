@@ -1,23 +1,23 @@
 <aside id="sidebar" class="sidebar">
     <ul>
-        <li *ngIf="_commonService.userLicense === 'Creator'">
+        <li>
             <a [routerLink]="['/dashboard']" routerLinkActive="active">
                 <span><img src="assets/img/home.png" alt="" /></span>
                 Home
             </a>
         </li>
-        <li *ngIf="_commonService.userLicense === 'Creator'">
+        <li *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
             <a [routerLink]="['/inventory']" routerLinkActive="active">
                 <span><img src="assets/img/catalogs.png" alt="" /></span>
                 Inventory
-            </a>
-        <li *ngIf="_commonService.userLicense === 'Creator'">
+        </a>
+        <li>
             <a [routerLink]="['/karta/all']" routerLinkActive="active">
                 <span><img src="assets/img/kartas.png" alt="" /></span>
                 Kartas
             </a>
         </li>
-        <li *ngIf="_commonService.userLicense === 'Creator' || _commonService.userLicense === 'Champion'">
+        <li *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
             <a [routerLink]="['/my-kpi']" routerLinkActive="active">
                 <span><img src="assets/img/mykpi.png" alt="" /></span>
                 My KPIs
@@ -29,7 +29,7 @@
                 Market Place
             </a>
         </li>
-        <li *ngIf="_commonService.userRole === 'company_admin' || _commonService.userRole === 'department_admin'">
+        <li *ngIf="_commonService.getUserRole() !== 'user'">
             <a [routerLink]="['/members']" routerLinkActive="active">
                 <span><img src="assets/img/members.png" alt="" /></span>
                 Members

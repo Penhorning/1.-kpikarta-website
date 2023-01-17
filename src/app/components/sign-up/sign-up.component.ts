@@ -35,6 +35,7 @@ export class SignUpComponent implements OnInit {
     mobile: [{}, Validators.required],
     companyName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
   });
+
   get form() { return this.signupForm.controls; }
 
   constructor(
@@ -43,7 +44,11 @@ export class SignUpComponent implements OnInit {
     private _signupService: SignupService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    if(this._signupService.getSignUpSession().stage >= 1) {
+      window.onpopstate = function (e: any) { window.history.forward(); }
+    }
+  }
 
   ngOnInit(): void {
     this.user.userId = this.route.snapshot.queryParamMap.get("userId") || "";
@@ -66,11 +71,8 @@ export class SignUpComponent implements OnInit {
 
   // On submit
   onSubmit() {
-
     this.submitted = true;
-
     if (this.signupForm.valid) {
-
       if (!this.user.userId) {
         if (this.signupForm.value.password !== this.signupForm.value.confirmPassword) {
           this._commonService.errorToaster("Password and Confirm Password are not matching");
@@ -84,7 +86,8 @@ export class SignUpComponent implements OnInit {
                 token: token.id,
                 email,
                 stage: 1,
-                emailVerified: false
+                emailVerified: false,
+                userId: ""
               }
               this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/sign-up/verification']);
@@ -110,7 +113,7 @@ export class SignUpComponent implements OnInit {
               stage: 1
             }
             this._signupService.setSignUpSession(sessionData);
-            this.router.navigate(['/thank-you']);
+            this.router.navigate(['/subscription-plan']);
           },
           (error: any) => { }
         ).add(() => this.submitFlag = false );

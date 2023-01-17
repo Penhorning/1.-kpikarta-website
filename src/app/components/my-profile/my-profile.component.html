@@ -27,9 +27,9 @@
     
                     <!-- Settings Tabs -->
                     <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item nav-item-cus" [ngStyle]="{'width': _commonService.userRole === 'company_admin' ? '50%' : '100%'}"> <a class="nav-link nav-link-cus active" data-toggle="tab"
+                        <li class="nav-item nav-item-cus" [ngStyle]="{'width': _commonService.getUserRole() === 'company_admin' ? '50%' : '100%'}"> <a class="nav-link nav-link-cus active" data-toggle="tab"
                                 href="#tabs-1" role="tab">Personal Details</a> </li>
-                        <li class="nav-item nav-item-cus" *ngIf="_commonService.userRole === 'company_admin'"> <a class="nav-link nav-link-cus" data-toggle="tab" href="#tabs-2"
+                        <li class="nav-item nav-item-cus" *ngIf="_commonService.getUserRole() === 'company_admin'"> <a class="nav-link nav-link-cus" data-toggle="tab" href="#tabs-2"
                                 role="tab">Company Details</a> </li>
     
                     </ul>
@@ -193,7 +193,7 @@
                         <!--End Tab Personal Details-->
     
                         <!--Company Details-->
-                        <div class="tab-pane" id="tabs-2" role="tabpanel" *ngIf="_commonService.userRole === 'company_admin'">
+                        <div class="tab-pane" id="tabs-2" role="tabpanel" *ngIf="this._commonService.getUserRole() === 'company_admin'">
                             <form [formGroup]="companyForm" (ngSubmit)="onCompanySubmit()">
                                 <div class="row">
                                     <div class="col-md-12">
