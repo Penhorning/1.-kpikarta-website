@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
@@ -16,7 +16,6 @@ declare const $: any;
   styleUrls: ['./my-kpi.component.scss'],
 })
 export class MyKpiComponent implements OnInit {
-
   karta: any = [];
   kpis: any = [];
   totalAssignedKPIs: number = 0;
@@ -143,6 +142,8 @@ export class MyKpiComponent implements OnInit {
     actualValue: [0, [Validators.required, Validators.pattern('^[0-9]*$')]]
   });
 
+  @ViewChild('fileUploader')
+  fileUploader!: ElementRef;
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
     this.maxDate = new Date();
   }
@@ -742,12 +743,19 @@ export class MyKpiComponent implements OnInit {
     // }
   }
 
+  //check etension
+  isValidCSVFile(file: any) {
+    return file.name.endsWith(".csv");
+  }
+
   // Select Csv file
   onFileChange(event: any) {
     /* wire up file reader */
     this.tableData = [];
     this.tableTitle = [];
     this.nodes = '';
+    let files = event.srcElement.files;
+    if (this.isValidCSVFile(files[0])) {
     const target: DataTransfer = <DataTransfer>(<unknown>event.target);
     if (target.files.length !== 1) {
       throw new Error('Cannot use multiple files');
@@ -795,6 +803,13 @@ export class MyKpiComponent implements OnInit {
         this._commonService.errorToaster("Please select current KPI file.");
       }
     };
+   }
+   else {
+    this._commonService.errorToaster("Please import valid .csv file.");
+    this.tableData = [];
+    this.tableTitle = [];
+    this.nodes = '';
+  }
   }
 
   // Metrics formula calculation

@@ -1302,8 +1302,6 @@
                  <td class="excelTable" [ngStyle]="{'background-color':data.ac ?  'red' : ''}">
                   {{ data['__EMPTY_8']}}
                 </td>
-                
-                
                 </tr>
               </ng-container>
             </table>
@@ -1311,7 +1309,12 @@
         </div>
         <div class="row">
           <div class="align-self-center col-lg-6">
-            <input type="file" (change)="onFileChange($event)" multiple="false" />
+            <!-- <input type="file" (change)="onFileChange($event)" multiple="false" /> -->
+            <!-- <button (click)="fileUploader.value = ''">Import file</button> -->
+            <div class="file">
+              <label for="file-input">Import file</label>
+              <input type="file" id="file-input" (change)="onFileChange($event)" multiple="false">
+            </div>
           </div>
         </div>
       </div>
