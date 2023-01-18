@@ -33,8 +33,9 @@ export function disableChart() {
 }
 // Enable chart
 export function enableChart() {
-    const isZoomed = getAttribute("#karta-svg svg g", "transform");
-    if (!isZoomed) $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+    // const isZoomed = getAttribute("#karta-svg svg g", "transform");
+    // if (!isZoomed) $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+    $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
 }
 // Show modal
 export function showModal(id) {
