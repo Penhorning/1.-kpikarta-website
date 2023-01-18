@@ -125,18 +125,21 @@ export class BillingComponent implements OnInit {
         ...this.cardForm.value
       };
 
-      this._signupService.saveCard(requestObj).subscribe(
-        (response: any) => {
-          this._commonService.successToaster("Card saved successfully..!!");
-          this.getCardDetails();
-          this.resetFormModal();
-          this.submitFlag = false;
-        },
-        (err) => {
-          console.log(err);
-          this.submitFlag = false;
-        }
-      )
+      const result = confirm(" Are you sure you want to replace your previous card?");
+      if(result) {
+        this._signupService.saveCard(requestObj).subscribe(
+          (response: any) => {
+            this._commonService.successToaster("Card saved successfully..!!");
+            this.getCardDetails();
+            this.resetFormModal();
+            this.submitFlag = false;
+          },
+          (err) => {
+            console.log(err);
+            this.submitFlag = false;
+          }
+        )
+      }
     }
   }
 
