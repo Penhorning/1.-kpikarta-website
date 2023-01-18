@@ -571,7 +571,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     // Export as image
     function exportAsImage(name) {
+        // svg.selectAll('.karta_divider').remove();
         saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2)});
+        // Draw phase lines
+        // buildKartaDivider();
     }
     // Export as pdf
     function exportAsPDF(name) {
