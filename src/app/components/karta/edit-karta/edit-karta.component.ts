@@ -1081,7 +1081,6 @@ export class EditKartaComponent implements OnInit {
       data.node_type = "measure";
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
-      // data.threshold_value = 70;
       data.is_achieved_modified = false;
       data.days_to_calculate = "all";
       data.alert_type = "";
@@ -1208,6 +1207,7 @@ export class EditKartaComponent implements OnInit {
     }
     data.draggingNode = JSON.parse(this.removeCircularData(draggingNode));
 
+    jqueryFunctions.disableChart();
     this._kartaService.updateNodeAndWeightage(data).subscribe(
       (response: any) => {
         this._kartaService.getKarta(this.kartaId).subscribe(
@@ -1217,7 +1217,7 @@ export class EditKartaComponent implements OnInit {
             this.karta.node.border_color = this.setColors(this.karta.node.percentage);
             this.D3SVG.rerender(this.karta.node);
           }
-        );
+        ).add(() => jqueryFunctions.enableChart());
       }
     );
   }
@@ -1456,8 +1456,9 @@ export class EditKartaComponent implements OnInit {
     jqueryFunctions.disableChart();
     this._kartaService.addNodeByInventory(data).subscribe(
       (response: any) => {
-        this.getKartaInfo();
-        setTimeout(() => jqueryFunctions.removeKarta(), 2000);
+        this.updateNewPercentage();
+        // this.getKartaInfo();
+        // setTimeout(() => jqueryFunctions.removeKarta(), 2000);
         jqueryFunctions.enableChart();
         jqueryFunctions.hideLeftSidebar();
       },
@@ -1694,7 +1695,8 @@ export class EditKartaComponent implements OnInit {
               this.colorSettings = response;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              this.reRenderKarta();
+              // this.reRenderKarta();
+              this.updateNewPercentage();
             }
           ).add(() => this.colorSubmitFlag = false);
         } else {
@@ -1708,7 +1710,8 @@ export class EditKartaComponent implements OnInit {
               this.colorSettings = response;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              this.reRenderKarta();
+              // this.reRenderKarta();
+              this.updateNewPercentage();
             }
           ).add(() => this.colorSubmitFlag = false);
         }
