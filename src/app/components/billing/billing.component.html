@@ -132,7 +132,7 @@
       <div class="modal-content p-4">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">
-            Add Card
+            + Add Card
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetFormModal()">
             <span aria-hidden="true">&times;</span>
@@ -162,7 +162,7 @@
                         class="invalid-feedback">
                         <div *ngIf="form.cardNumber.errors.required">Credit card number is required!</div>
                         <div *ngIf="form.cardNumber.errors.pattern">Blank space is not allowed!</div>
-                        <div *ngIf="form.cardNumber.errors.minlength">Credit card number should be of 14 digits!</div>
+                        <div *ngIf="form.cardNumber.errors.minlength">Credit card number should be 14-16 digits!</div>
                         <div *ngIf="form.cardNumber.errors.maxlength">Credit card number should be of 16 digits!</div>
                         <div *ngIf="form.cardNumber.errors.numerror">Credit card number should be a digit value!</div>
                     </div>
@@ -177,24 +177,24 @@
                         [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }">
                     <div *ngIf="(submitted || form.expirationDate.touched) && form.expirationDate.errors"
                         class="invalid-feedback">
-                        <div *ngIf="form.expirationDate.errors.required">Expiration Date is required!</div>
+                        <div *ngIf="form.expirationDate.errors.required">Expiration date is required!</div>
                         <div *ngIf="form.expirationDate.errors.pattern">Blank space is not allowed!</div>
-                        <div *ngIf="form.expirationDate.errors.expiration">Wrong sequence.!!</div>
+                        <div *ngIf="form.expirationDate.errors.expiration">Please enter valid expiration date..!!</div>
                     </div>
                   </div>
                 </div>
                 <div class="col-lg-6">
                   <div class="form-group">
-                    <label for="cvc">CVC <span class="text-danger">*</span></label>
+                    <label for="cvc">CVV/CVC <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" autocomplete="off" id="cvc" formControlName="cvc" min="0" [minlength]="3" [maxlength]="4"
                         [ngClass]="{ 'is-invalid': (submitted || form.cvc.touched) && form.cvc.errors }">
                     <div *ngIf="(submitted || form.cvc.touched) && form.cvc.errors"
                         class="invalid-feedback">
-                        <div *ngIf="form.cvc.errors.required">CVC is required!</div>
+                        <div *ngIf="form.cvc.errors.required">CVV/CVC is required!</div>
                         <div *ngIf="form.cvc.errors.pattern">Blank space is not allowed!</div>
-                        <div *ngIf="form.cvc.errors.minlength">CVC should be of 3-4 digits!</div>
-                        <div *ngIf="form.cvc.errors.maxlength">CVC should be of 4 digits!</div>
-                        <div *ngIf="form.cvc.errors.numerror">CVC should be a digit value!</div>
+                        <div *ngIf="form.cvc.errors.minlength">CVV/CVC should be of 3-4 digits!</div>
+                        <div *ngIf="form.cvc.errors.maxlength">CVV/CVC should be of 4 digits!</div>
+                        <div *ngIf="form.cvc.errors.numerror">CVV/CVC should be a digit value!</div>
                     </div>
                   </div>
                 </div>
