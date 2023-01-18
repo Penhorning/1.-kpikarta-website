@@ -1,5 +1,39 @@
 /* billing CSS */
 /*Supriya css start*/
+.card-bg {
+  height: 200px;
+  width: 90%;
+  border-radius: 10px;
+  background-color: #5186c2;
+  box-shadow: 0 4px 14px rgba(127, 127, 127, 0.6);
+}
+
+.add-card-bg {
+  height: 200px;
+  width: 90%;
+  border-radius: 10px;
+  background-color: white;
+  border: 2px dotted #5186c2;
+  transition: .2s;
+}
+
+.change-card-label {
+  color: #5186c2;
+}
+
+.card-num-size {
+  font-size: 18px;
+  word-spacing: 10px;
+}
+
+.add-card-bg:hover {
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(81, 134, 194, 0.4);
+}
+
+.card-bg .card-label {
+  color: #243864;
+}
 
 .overview{
     padding: 20px;

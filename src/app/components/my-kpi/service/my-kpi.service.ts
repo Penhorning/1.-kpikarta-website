@@ -33,5 +33,11 @@ export class MyKpiService {
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
   }
+  updateCsv(data: any) {
+    return this._httpService.POST('/karta_nodes/update-kpi-nodes', data);
+  }
+  getNodesDetails(data: any) {
+    return this._httpService.POST('/karta_nodes/get-nodes-details', data);
+  }
 }
 

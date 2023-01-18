@@ -41,18 +41,29 @@
                     </a>
                     <div class="dropdown-menu custom-top-dropdwon-menu" aria-labelledby="navbarDropdownMenuLink">
                       <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                      <a class="dropdown-item" [routerLink]="['/my-profile']"><img src="assets/img/my-profile.svg"
-                          class="mr-2"> My Profile</a>
-                      <a class="dropdown-item" [routerLink]="['/my-suggestion']"><img src="assets/img/Suggestion.svg"
-                          class="mr-2"> My Suggestion</a>
-                      <a class="dropdown-item" *ngIf="_commonService.userRole === 'company_admin' || _commonService.userRole === 'billing_staff'" [routerLink]="['/billing']">
-                        <img src="assets/img/plan.svg" class="mr-2">
-                        Billing
+                      <a class="dropdown-item" [routerLink]="['/my-profile']">
+                        <img src="assets/img/my-profile.svg" class="mr-2">
+                        My Profile
                       </a>
-                      <a class="dropdown-item" [routerLink]="['/settings']"><img src="assets/img/Settings-blue.svg" class="mr-2">
-                        Settings</a>
-                      <a class="dropdown-item logout-custom" href="javascript:void(0);" (click)="logout()">
-                        <img src="assets/img/logout.svg" class="mr-1"> Log Out
+                      <ng-container *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+                        <a class="dropdown-item" [routerLink]="['/my-suggestion']">
+                          <img src="assets/img/Suggestion.svg" class="mr-2">
+                          My Suggestion
+                        </a>
+                      </ng-container>
+                      <ng-container *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'billing_staff'">
+                        <a class="dropdown-item" [routerLink]="['/billing']">
+                          <img src="assets/img/plan.svg" class="mr-2">
+                          Billing
+                        </a>
+                      </ng-container>
+                      <a class="dropdown-item" [routerLink]="['/settings']">
+                        <img src="assets/img/Settings-blue.svg" class="mr-2">
+                        Settings
+                      </a>
+                      <a class="dropdown-item logout-custom cursor_pointer" (click)="logout()">
+                        <img src="assets/img/logout.svg" class="mr-1">
+                        Log Out
                       </a>
                     </div>
                   </li>

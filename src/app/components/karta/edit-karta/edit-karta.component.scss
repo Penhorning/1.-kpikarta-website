@@ -50,6 +50,24 @@
     flex: 1 1 auto;
 }
 
+.phase_column ul li a {
+    position: relative;
+    max-width: 200px;
+}
+.phase_column ul li a:hover .phase_action {
+    display: block;
+}
+.phase_action {
+    position: absolute;
+    right: 15px;
+    top: 2px;
+    display: none;
+    i {
+        cursor: pointer;
+        margin-left: 5px;
+    }
+}
+
 .karta_dummy_lines {
     height: 65px;
     padding-right: 1rem;
@@ -294,7 +312,5 @@
     text-decoration: none;
     display: block;
   }
-  
-//   .dropdown a:hover {background-color: #ddd;}
   
   .show {display: block;}

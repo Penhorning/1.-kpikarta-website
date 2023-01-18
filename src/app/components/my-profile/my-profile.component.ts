@@ -35,7 +35,7 @@ export class MyProfileComponent implements OnInit {
   // Cropper variables
   imageChangedEvent: any;
   croppedImage: string = "";
-  cropperModel = {
+  cropperModal = {
     type: "",
     staticWidth: 0,
     staticHeight: 0
@@ -213,9 +213,9 @@ export class MyProfileComponent implements OnInit {
     }
   }
   resetCropModel(type: string, width: number, height: number) {
-    this.cropperModel.type = type;
-    this.cropperModel.staticWidth = width;
-    this.cropperModel.staticHeight = height;
+    this.cropperModal.type = type;
+    this.cropperModal.staticWidth = width;
+    this.cropperModal.staticHeight = height;
     this.imageChangedEvent = "";
   }
   fileChangeEvent(event: any): void {
@@ -248,7 +248,7 @@ export class MyProfileComponent implements OnInit {
     return new Blob(byteArrays, {type: mime});
   }
   uploadFile() {
-    if (this.cropperModel.type == "company") {
+    if (this.cropperModal.type == "company") {
       this.companyLogo.fileImageUrl = this.croppedImage;
       this.companyLogo.fileUploading = true;
     } else {
@@ -259,9 +259,9 @@ export class MyProfileComponent implements OnInit {
     const blob = this.base64ToBlob(base64ImageContent, 'image/png');         
     const formData = new FormData();
     formData.append('photo', blob);
-    this._profileService.uploadFile(formData, this.cropperModel.type).subscribe(
+    this._profileService.uploadFile(formData, this.cropperModal.type).subscribe(
       (response: any) => {
-      if (this.cropperModel.type == "company") {
+      if (this.cropperModal.type == "company") {
         this.companyLogo.newImage = response.result.files.photo[0].name;
       } else {
         this.profileImage.newImage = response.result.files.photo[0].name;
@@ -306,8 +306,8 @@ export class MyProfileComponent implements OnInit {
             (response: any) => {
               this.user = response;
               this.setRegion();
-              this._commonService.updateUserNameInSession(this.profileForm.value.fullName);
-              if (this.profileImage.newImage) this._commonService.updateUserImageInSession(this.profileImage.newImage);
+              this._commonService.updateSession('name', this.profileForm.value.fullName);
+              if (this.profileImage.newImage) this._commonService.updateSession('profilePic', this.profileImage.newImage);
               this._commonService.successToaster("Profile updated successfully");
               this.profileImage.oldImage = response.profilePic;
               this.resetPictureModal();
@@ -342,7 +342,7 @@ export class MyProfileComponent implements OnInit {
           this.companySubmitFlag = true;
           this._profileService.updateCompany(this.companyForm.value, this.company.id).subscribe(
             (response: any) => {
-              if (this.companyLogo.newImage) this._commonService.updateCompanyLogoInSession(this.companyLogo.newImage);
+              if (this.companyLogo.newImage) this._commonService.updateSession('companyLogo', this.companyLogo.newImage);
               this._commonService.successToaster("Company details updated successfully");
               this.companyLogo.oldImage = response.logo;
               this.resetPictureModal();

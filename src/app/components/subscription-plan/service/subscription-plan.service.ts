@@ -13,6 +13,9 @@ export class SubscriptionPlanService {
   assignPlan(data: any) {
     return this._httpService.POST(`/users/assign-plan?access_token=${this._signupService.getSignUpSession().token}`, data);
   }
+  getCreatorPrices() {
+    return this._httpService.GET(`/subscriptions/get-prices`);
+  }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }

@@ -49,7 +49,7 @@ export function calculateFormula(event, suggestionsLength, tempObj, formValidati
     let checkFrag = false;
 
     value.forEach((y) => {
-        if (y) {
+        if (y && !parseInt(y)) {
             if (tempObj[y] || tempObj[y] == 0) {
                 newValue = newValue ? newValue.replace(y, tempObj[y]) : originalValue.replace(y, tempObj[y]);
             } else {
@@ -67,7 +67,7 @@ export function calculateFormula(event, suggestionsLength, tempObj, formValidati
                 message: "Invalid Formula..!!"
             }
         } else {
-            total = eval(newValue);
+            total = eval(newValue).toFixed(2);
 
             if( total < 0 ) {
                 $('#formula-field').addClass('is-invalid');
