@@ -1038,6 +1038,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getColorSettingsByKarta(data).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
+        if (this.kartaId !== response.color_settings.kartaId) this.colorSettings.is_global = false;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
         this.getPhases();
         this.percentageObj = new CalculatePercentage(this.colorSettings, "", 0);
@@ -1674,7 +1675,12 @@ export class EditKartaComponent implements OnInit {
     }
   }
   toggleColorSettings(e: any) {
-    this._kartaService.updateColorSetting({ is_global: e.target.checked }, this.colorSettings.id).subscribe(
+    const data = {
+      colorId: this.colorSettings.id,
+      userId: this._commonService.getUserId(),
+      is_global: e.target.checked
+    }
+    this._kartaService.toggleGlobalColorSetting(data).subscribe(
       (response: any) => {
         if (e.target.checked) {
           this._commonService.successToaster("Success! Now this settings will apply in all other places.");
@@ -1689,7 +1695,7 @@ export class EditKartaComponent implements OnInit {
     if (this.colorForm.valid) {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
-        if (this.colorSettings.hasOwnProperty("userId") && this.colorSettings.hasOwnProperty("kartaId")) {
+        if (this.colorSettings.hasOwnProperty("userId") && (this.colorSettings.hasOwnProperty("kartaId") && this.colorSettings.kartaId === this.kartaId)) {
           this._kartaService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
             (response: any) => {
               this.colorSettings = response;

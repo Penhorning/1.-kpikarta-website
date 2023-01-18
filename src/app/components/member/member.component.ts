@@ -298,7 +298,7 @@ export class MemberComponent implements OnInit {
 
   // Activate user
   activateUser(user: any) {
-    const result = confirm("Are you sure, Do you want to Activate this user?");
+    const result = confirm("Are you sure, you want to Activate this user?");
     if (result) {
       this._memberService.activateUser({ userId: user._id }).subscribe(
         (response: any) => {
@@ -315,7 +315,7 @@ export class MemberComponent implements OnInit {
   }
   // Deactivate user
   deactivateUser(user: any) {
-    const result = confirm("Are you sure, Do you want to Deactivate this user?");
+    const result = confirm("Are you sure, you want to Deactivate this user?");
     if (result) {
       this._memberService.deactivateUser({ userId: user._id }).subscribe(
         (response: any) => {
@@ -332,7 +332,7 @@ export class MemberComponent implements OnInit {
   }
   // Delete user
   deleteUser(user: any) {
-    const result = confirm("Are you sure, Do you want to Delete this user?");
+    const result = confirm("Are you sure, you want to Delete this user?");
     if (result) {
       this._memberService.deleteUser({ userId: user._id }).subscribe(
         (response: any) => {

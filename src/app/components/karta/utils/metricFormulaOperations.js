@@ -48,7 +48,6 @@ export function calculateFormula(event, suggestionsLength, tempObj, formValidati
     let total = 0;
     let checkFrag = false;
 
-    console.log(value, 'value');
     value.forEach((y) => {
         if (y && !parseInt(y)) {
             if (tempObj[y] || tempObj[y] == 0) {
