@@ -196,7 +196,7 @@ export class MyKpiComponent implements OnInit {
     }
     let tempObj: any = {};
     let originalValue = this.metricsForm.value.formula.trim();
-    let newValue = '10 + 20 + 30';
+    let newValue = '';
     let value = this.metricsForm.value.formula.trim().split(/[\s() */%+-]+/g);
 
     let total: any = 0;
