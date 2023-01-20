@@ -1,8 +1,11 @@
 .user_label_name {
     max-width: 100px;
     position: relative;
-    top: 13px;
 }
 .navbar-list-4 {
     right: 0 !important;
+}
+.dropdown-menu.custom-top-dropdwon-menu{
+    left: unset;
+    right: 0;
 }
