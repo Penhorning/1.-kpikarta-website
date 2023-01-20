@@ -196,6 +196,15 @@ export class MemberComponent implements OnInit {
       if (this.checkFormType === "CREATE") {
         this._memberService.inviteMember({ data: formData }).subscribe(
           (response: any) => {
+            let licenseName = this.licenses.filter((lsc: any) => {
+              return lsc.id == this.inviteForm.value.licenseId ? lsc.name : null;
+            });
+            if(licenseName[0].name != "Spectator") {
+              this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: licenseName[0].name, type: "add"}).subscribe(
+                (result) => {},
+                (err) => console.log(err)
+              );
+            }
             this.resetFormModal();
             this._commonService.successToaster("Member invited successfully!");
           },
@@ -288,39 +297,51 @@ export class MemberComponent implements OnInit {
   }
 
   // Activate user
-  activateUser(userId: string) {
-    const result = confirm("Are you sure, Do you want to Activate this user?");
+  activateUser(user: any) {
+    const result = confirm("Are you sure, you want to Activate this user?");
     if (result) {
-      this._memberService.activateUser({ userId }).subscribe(
+      this._memberService.activateUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
+          this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: user.license.name, type: "add"}).subscribe(
+            (result) => {},
+            (err) => console.log(err)
+          );
           this._commonService.successToaster("User activated successfully!");
         }
       );
     }
   }
   // Deactivate user
-  deactivateUser(userId: string) {
-    const result = confirm("Are you sure, Do you want to Deactivate this user?");
+  deactivateUser(user: any) {
+    const result = confirm("Are you sure, you want to Deactivate this user?");
     if (result) {
-      this._memberService.deactivateUser({ userId }).subscribe(
+      this._memberService.deactivateUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
+          this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: user.license.name, type: "remove"}).subscribe(
+            (result) => {},
+            (err) => console.log(err)
+          );
           this._commonService.successToaster("User deactivated successfully!");
         }
       );
     }
   }
   // Delete user
-  deleteUser(userId: string) {
-    const result = confirm("Are you sure, Do you want to Delete this user?");
+  deleteUser(user: any) {
+    const result = confirm("Are you sure, you want to Delete this user?");
     if (result) {
-      this._memberService.deleteUser({ userId }).subscribe(
+      this._memberService.deleteUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
+          this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: user.license.name, type: "remove"}).subscribe(
+            (result) => {},
+            (err) => console.log(err)
+          );
           this._commonService.successToaster("User deleted successfully!");
         }
       );

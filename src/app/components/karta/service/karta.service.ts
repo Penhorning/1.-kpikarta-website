@@ -126,6 +126,9 @@ export class KartaService {
   updateColorSetting(data: any, settingId: string) {
     return this._httpService.PATCH(`/color_settings/${settingId}`, data);
   }
+  toggleGlobalColorSetting(data: any) {
+    return this._httpService.POST('/color_settings/toggle-global', data);
+  }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }

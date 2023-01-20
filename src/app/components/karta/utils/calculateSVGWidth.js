@@ -45,8 +45,8 @@ export function calculateSVGWidth(tree) {
     tree.hw = 0;
     tree = calculateWidth(tree, 1);
     
-    let width = 0;
-    // console.log(leftMostLeafNodes)
+    let width = 100;
+    console.log(leftMostLeafNodes)
     for (let key in leftMostLeafNodes) {
       width += 100 * leftMostLeafNodes[key];
     }

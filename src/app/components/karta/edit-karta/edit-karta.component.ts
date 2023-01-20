@@ -10,7 +10,6 @@ import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 import * as MetricOperations from '../utils/metricFormulaOperations';
 import { CalculatePercentage } from '../utils/calculatePercentage';
-import { addInvisibleNodes } from '../utils/addInvisibleNodes';
 
 declare const $: any;
 
@@ -968,7 +967,6 @@ export class EditKartaComponent implements OnInit {
         if (this.karta.node) {
           this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
           this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-          this.karta.node = addInvisibleNodes(this.karta.node, this.phases);
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           this.setKartaDimension();
           this.showSVG = true;
@@ -1040,6 +1038,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getColorSettingsByKarta(data).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
+        if (this.kartaId !== response.color_settings.kartaId) this.colorSettings.is_global = false;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
         this.getPhases();
         this.percentageObj = new CalculatePercentage(this.colorSettings, "", 0);
@@ -1083,7 +1082,6 @@ export class EditKartaComponent implements OnInit {
       data.node_type = "measure";
       data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
       data.achieved_value = 0;
-      // data.threshold_value = 70;
       data.is_achieved_modified = false;
       data.days_to_calculate = "all";
       data.alert_type = "";
@@ -1156,7 +1154,6 @@ export class EditKartaComponent implements OnInit {
         this.karta = response;
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-        this.karta.node = addInvisibleNodes(this.karta.node, this.phases);
         this.D3SVG.update(this.karta.node, true);
       }
     );
@@ -1211,6 +1208,7 @@ export class EditKartaComponent implements OnInit {
     }
     data.draggingNode = JSON.parse(this.removeCircularData(draggingNode));
 
+    jqueryFunctions.disableChart();
     this._kartaService.updateNodeAndWeightage(data).subscribe(
       (response: any) => {
         this._kartaService.getKarta(this.kartaId).subscribe(
@@ -1220,7 +1218,7 @@ export class EditKartaComponent implements OnInit {
             this.karta.node.border_color = this.setColors(this.karta.node.percentage);
             this.D3SVG.rerender(this.karta.node);
           }
-        );
+        ).add(() => jqueryFunctions.enableChart());
       }
     );
   }
@@ -1459,8 +1457,9 @@ export class EditKartaComponent implements OnInit {
     jqueryFunctions.disableChart();
     this._kartaService.addNodeByInventory(data).subscribe(
       (response: any) => {
-        this.getKartaInfo();
-        setTimeout(() => jqueryFunctions.removeKarta(), 2000);
+        this.updateNewPercentage();
+        // this.getKartaInfo();
+        // setTimeout(() => jqueryFunctions.removeKarta(), 2000);
         jqueryFunctions.enableChart();
         jqueryFunctions.hideLeftSidebar();
       },
@@ -1676,7 +1675,12 @@ export class EditKartaComponent implements OnInit {
     }
   }
   toggleColorSettings(e: any) {
-    this._kartaService.updateColorSetting({ is_global: e.target.checked }, this.colorSettings.id).subscribe(
+    const data = {
+      colorId: this.colorSettings.id,
+      userId: this._commonService.getUserId(),
+      is_global: e.target.checked
+    }
+    this._kartaService.toggleGlobalColorSetting(data).subscribe(
       (response: any) => {
         if (e.target.checked) {
           this._commonService.successToaster("Success! Now this settings will apply in all other places.");
@@ -1691,13 +1695,14 @@ export class EditKartaComponent implements OnInit {
     if (this.colorForm.valid) {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
-        if (this.colorSettings.hasOwnProperty("userId") && this.colorSettings.hasOwnProperty("kartaId")) {
+        if (this.colorSettings.hasOwnProperty("userId") && (this.colorSettings.hasOwnProperty("kartaId") && this.colorSettings.kartaId === this.kartaId)) {
           this._kartaService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
             (response: any) => {
               this.colorSettings = response;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              this.reRenderKarta();
+              // this.reRenderKarta();
+              this.updateNewPercentage();
             }
           ).add(() => this.colorSubmitFlag = false);
         } else {
@@ -1711,7 +1716,8 @@ export class EditKartaComponent implements OnInit {
               this.colorSettings = response;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
-              this.reRenderKarta();
+              // this.reRenderKarta();
+              this.updateNewPercentage();
             }
           ).add(() => this.colorSubmitFlag = false);
         }

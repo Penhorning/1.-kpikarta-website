@@ -38,5 +38,8 @@ export class MemberService {
   deleteUser(data: any) {
     return this._httpService.PUT('/users/delete', data);
   }
+  updateSubscription(data: any) {
+    return this._httpService.POST('/subscriptions/update-subscription', data);
+  }
   /*============================== API FUNCTIONS ENDS ==============================*/
 }

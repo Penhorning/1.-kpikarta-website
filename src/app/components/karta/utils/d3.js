@@ -10,11 +10,11 @@ var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStart
 var dragErrorMsg = "You cannot drag this node here";
 
 const getSVGSize = (tree) => {
-    let calculatedSVGWidth = calculateSVGWidth(tree);
+    // let calculatedSVGWidth = calculateSVGWidth(tree);
     // width2 = $(".karta_column").width();
     // height2 = totalPhases * 65;
-    kartaColumnWidth = $(".karta_column").width();
-    width = calculatedSVGWidth > kartaColumnWidth ? calculatedSVGWidth : kartaColumnWidth;
+    width = kartaColumnWidth = $(".karta_column").width();
+    // width = calculatedSVGWidth > kartaColumnWidth ? calculatedSVGWidth : kartaColumnWidth;
     height = totalPhases * 65;
     // return {
     //     width: calculatedSVGWidth > width2 ? calculatedSVGWidth : width2,
@@ -137,12 +137,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     // Define the zoom function for the zoomable tree
     function zoom() {
-        $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
+        // $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
         svg.selectAll('.karta_divider').remove();
         svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
     // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+    var zoomListener = d3.behavior.zoom().scaleExtent([0.5, 3]).on("zoom", zoom);
     // Reset the zoom, when click on reset button
     $(document).on('click', '#reset_zoom_btn', function () {
         let g_attribute = d3.select("g").attr("transform");
@@ -156,7 +156,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 buildKartaDivider();
                 // Make chart editable based on the current chart mode
                 let current_chart_mode = $("#chartMode").val();
-                if (current_chart_mode === "enable") $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+                // if (current_chart_mode === "enable") $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
             }
         }
     });
@@ -571,7 +571,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     // Export as image
     function exportAsImage(name) {
+        // svg.selectAll('.karta_divider').remove();
         saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF", left: -(width/2)});
+        // Draw phase lines
+        // buildKartaDivider();
     }
     // Export as pdf
     function exportAsPDF(name) {

@@ -14,7 +14,8 @@ export class AuthGuard implements CanActivateChild {
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      if (this._commonService.getSession() && this._commonService.getSession().token) {
+      if (state.url.indexOf('view') !== -1) { return true; }
+      else if (this._commonService.getSession() && this._commonService.getSession().token) {
         // Get role
         const roles = childRoute.data.roles;
         const currentRole = this._commonService.getUserRole();
@@ -61,7 +62,7 @@ export class LoginGuard implements CanActivateChild {
       if (this._commonService.getSession() && this._commonService.getSession().token) {
         this.router.navigate(['/dashboard']);
         return false;
-      } else return true
+      } else return true;
   }
 
 }
