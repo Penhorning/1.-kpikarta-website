@@ -390,7 +390,7 @@ export class MyProfileComponent implements OnInit {
     this._profileService.verifyMobile(this.phoneNumberForm.value).subscribe(
       (response: any) => {
         $('#phoneModal').modal('hide');
-        this._commonService.successToaster("Mobile Number is verified successfully");
+        this._commonService.successToaster("Mobile Number is verified successfully!");
         this.numberType = "Change";
         this.resetModal(phoneNumber);
       },

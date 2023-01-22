@@ -124,4 +124,18 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  toggleShowPassword() {
+    let x: any = document.getElementById("password");
+    let icon: any = document.getElementById("password_icon");
+    if (x.type === "password") {
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+      x.type = "text";
+    } else {
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+      x.type = "password";
+    }
+  }
+
 }

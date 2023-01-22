@@ -67,10 +67,19 @@ export class MemberComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getAllMembers();
-    this.getRoles();
-    this.getDepartments();
-    this.getLicenses();
+    this._commonService.getUserInfo().subscribe(
+      (response: any) => {
+        this.user = response;
+        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'department_admin') {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.getAllMembers();
+          this.getRoles();
+          this.getDepartments();
+          this.getLicenses();
+        }
+      }
+    );
   }
 
   // Get all members users

@@ -1,1106 +1,1109 @@
 <!-- main-section -->
-<div class="wrapper">
-
+<div class="wrapper" *ngIf="unauthorizedUser === true">
+  <div id="content" class="karta-edit-contnet">
+    <div class="main-center-content d-flex" style="margin-left: 100px;">
+      <div class="alert alert-danger w-100 m-2 text-center">
+        You are not authorized to edit this karta!
+     </div>
+    </div>
+  </div>
+</div>
+<div class="wrapper main_wrapper" [ngClass]="{'visible': unauthorizedUser === false}">
   <!-- <app-edit-karta-inventory
-    [kartaId]="kartaId"
-    [versionId]="versionId"
-    [showSVG]="showSVG"
-    [isRtNodDrgingFrmSide]="isRtNodDrgingFrmSide">
-  </app-edit-karta-inventory> -->
+     [kartaId]="kartaId"
+     [versionId]="versionId"
+     [showSVG]="showSVG"
+     [isRtNodDrgingFrmSide]="isRtNodDrgingFrmSide">
+     </app-edit-karta-inventory> -->
   <!-- Sidebar  -->
-<nav id="sidebar-two">
-  <div class="box-inner">
-     <div class="row mt-3 mb-3">
-        <div class="col-lg-12">
-           <div class="search-bar">
-              <form class="search-form">
-                 <div class="form-group search-filed side-bar-search m-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search cursor_pointer"
-                       viewBox="0 0 16 16" (click)="inventorySearch()">
+  <nav id="sidebar-two">
+     <div class="box-inner">
+        <div class="row mt-3 mb-3">
+           <div class="col-lg-12">
+              <div class="search-bar">
+                 <form class="search-form">
+                    <div class="form-group search-filed side-bar-search m-0">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search cursor_pointer"
+                          viewBox="0 0 16 16" (click)="inventorySearch()">
+                          <path
+                             d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                          </path>
+                       </svg>
+                       <input type="text" class="form-control" name="search" [(ngModel)]="inventory_search_text" id="search" placeholder="Search...">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                       class="bi bi-x-lg clear_search_icon" viewBox="0 0 16 16" *ngIf="inventory_search_text" (click)="clearInventorySearch()">
                        <path
-                          d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
-                       </path>
-                    </svg>
-                    <input type="text" class="form-control" name="search" [(ngModel)]="inventory_search_text" id="search" placeholder="Search...">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                     class="bi bi-x-lg clear_search_icon" viewBox="0 0 16 16" *ngIf="inventory_search_text" (click)="clearInventorySearch()">
-                     <path
-                        d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                     </svg>
+                          d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                       </svg>
+                    </div>
+                 </form>
+              </div>
+           </div>
+        </div>
+     </div>
+     <!-- <div class="row mb-3">
+        <div class="col-lg-6 text-left">
+          <div class="slider-top-text">
+            <p>Nodes</p>
+          </div>
+        </div>
+        <div class="col-lg-6 text-right">
+          <div class="slider-top-text">
+            <a href="javascript:void(0);">See All</a>
+          </div>
+        </div>
+        </div> -->
+     <!-- <div class="row">
+        <div class="col-lg-12">
+          <div class="item p-2">
+            <div class="card custom-card side-bar-card ">
+              <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
+                <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
+                <p class="pt-2">Empty</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div> -->
+     <div class="row">
+        <div class="col-lg-12">
+           <div class="inventory_sidebar_accordion">
+              <div id="accordion">
+                 <div class="card custom_accordion">
+                    <div class="card-header accordion_header_custom" id="headingOne">
+                       <h5 class="mb-0">
+                          <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                             aria-controls="collapseOne">
+                          Branches
+                          </button>
+                          <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
+                             aria-expanded="true" aria-controls="collapseOne">
+                          See All
+                          </button>
+                       </h5>
+                    </div>
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                       <div class="card-body">
+                          <div class="row">
+                             <div class="col-lg-6 mb-2" *ngIf="!showSVG">
+                                <div class="card custom-card side-bar-card">
+                                   <div class="goal-img cursor_pointer" id="root" draggable="true" (dragstart)="onRootDragStart('root', true)">
+                                      <img src="assets/img/root.png" class="img-fluid">
+                                      <p>Empty</p>
+                                   </div>
+                                </div>
+                             </div>
+                             <ng-container *ngFor="let inventory of inventories; let i=index">
+                                <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'branch'">
+                                   <div class="card custom-card side-bar-card ">
+                                      <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onRootDragStart(inventory, false)">
+                                         <img [src]="inventory.thumbnail" class="img-fluid">
+                                         <p>{{ inventory?.name }}</p>
+                                      </div>
+                                   </div>
+                                </div>
+                             </ng-container>
+                          </div>
+                       </div>
+                    </div>
                  </div>
-              </form>
+                 <div class="line-slide-bar"></div>
+                 <div class="card custom_accordion">
+                    <div class="card-header accordion_header_custom" id="headingTwo">
+                       <h5 class="mb-0">
+                          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                             aria-expanded="false" aria-controls="collapseTwo">
+                          Measure
+                          </button>
+                          <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseTwo"
+                             aria-expanded="true" aria-controls="collapseOne">
+                          See All
+                          </button>
+                       </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                       <div class="card-body">
+                          <div class="row">
+                             <ng-container *ngFor="let inventory of inventories; let i=index">
+                                <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'measure'">
+                                   <div class="card custom-card side-bar-card ">
+                                      <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
+                                         <img [src]="inventory.thumbnail" class="img-fluid">
+                                         <p>{{ inventory?.name }}</p>
+                                      </div>
+                                   </div>
+                                </div>
+                             </ng-container>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="line-slide-bar"></div>
+                 <div class="card custom_accordion">
+                    <div class="card-header accordion_header_custom" id="headingThree">
+                       <h5 class="mb-0">
+                          <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
+                             aria-expanded="false" aria-controls="collapseThree">
+                          Metric
+                          </button>
+                          <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseThree"
+                             aria-expanded="true" aria-controls="collapseOne">
+                          See All
+                          </button>
+                       </h5>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                       <div class="card-body">
+                          <div class="row">
+                             <ng-container *ngFor="let inventory of inventories; let i=index">
+                                <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'metrics'">
+                                   <div class="card custom-card side-bar-card ">
+                                      <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
+                                         <img [src]="inventory.thumbnail" class="img-fluid">
+                                         <p class="pt-2">{{ inventory?.name }}</p>
+                                      </div>
+                                   </div>
+                                </div>
+                             </ng-container>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+     <div class="line-slide-bar"></div>
+  </nav>
+  <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle sidebar_collapsible_btn">
+  <img src="assets/img/side-arrow-right.svg" alt="">
+  </button>
+  <!-- Page Content  -->
+  <div id="content" class="karta-edit-contnet">
+     <div class="karta-edit-header">
+        <div class="row no-gutters">
+           <div class="col-lg-6">
+              <div class="row">
+                 <div class="col-lg-3 pr-0">
+                    <div class="karta-name">
+                       <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
+                    </div>
+                 </div>
+                 <div class="col-lg-2 pl-0">
+                    <div class="select-karta-name">
+                       <select class="form-control custom-select-karta" (change)="versionRollback($event)"
+                       [(ngModel)]="versionId">
+                       <option *ngFor="let ver of version" [value]="ver.id">Version {{ver.name}}</option>
+                       </select>
+                    </div>
+                 </div>
+                 <div class="col-lg-2 align-self-center undo_redo_btn">
+                    <a title="Undo" id="UndoAnchor" (click)="undoRedoFlag ? null : undoKarta()"><img src="assets/img/Undo.svg"
+                       [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
+                    <a title="Redo" id="RedoAnchor" (click)="undoRedoFlag ? null : redoKarta()"><img src="assets/img/Redo.svg"
+                       [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
+                    <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
+                 </div>
+                 <div class="col-lg-4 p-0">
+                    <div class="time-select-karta">
+                       <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'d/M/yy, H:mm'}}</span>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           <div class="col-lg-6">
+              <div class="row no-gutters">
+                 <div class="col-lg-3">
+                    <div class="select-karta-name">
+                       <select class="form-control custom-select-karta-mode" id="chartMode" (change)="changeMode($event)">
+                          <option value="enable">Editor Mode</option>
+                          <option value="disable">Viewer Mode</option>
+                       </select>
+                    </div>
+                 </div>
+                 <div class="col-lg-2 text-center">
+                    <button type="button" class="btn bg-light border" disabled data-toggle="modal" data-target="#viewKartaModal">View</button>
+                 </div>
+                 <div class="col-lg-3 p-0">
+                    <div class="icon-karta">
+                       <!-- Share karta -->
+                       <a href="javascript:void(0);" data-toggle="modal" data-target="#shareKartaModal" title="Share" (click)="onShare()"><img
+                          src="assets/img/share-icon.svg"></a>
+                       <!-- Export Karta -->
+                       <div class="dropdown show">
+                          <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                             aria-haspopup="true" aria-expanded="false" title="Export">
+                          <img src="assets/img/download-icon.svg">
+                          </a>
+                          <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
+                             <img src="assets/img/drop-arrow.svg" class="drop-arrow">
+                             <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('csv')">
+                             <img src="assets/img/csv.svg" class="mr-2"> Export to CSV
+                             </a>
+                             <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('pdf')">
+                             <img src="assets/img/pdf.svg" class="mr-2"> Export to PDF
+                             </a>
+                             <a class="dropdown-item border-0" href="javascript:void(0);" (click)="exportKarta('image')">
+                             <img src="assets/img/img.svg" class="mr-2"> Export to Image
+                             </a>
+                          </div>
+                       </div>
+                       <!-- Filter Karta -->
+                       <div class="dropdown filter-option m-0">
+                          <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                             id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Filter">
+                          <img src="assets/img/filter.svg" class="">
+                          </button>
+                          <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
+                             <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
+                             <div class="fillter-inner-white-box ">
+                                <div class="row pb-3">
+                                   <div class="col-6">
+                                      <h6 class="pl-2 m-0 pt-1">All</h6>
+                                   </div>
+                                   <div class="col-6 text-right">
+                                      <div class="form-check custom-box mr-2">
+                                         <input type="radio" class="form-check-input" id="exampleCheck1">
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="row pb-3">
+                                   <div class="col-6">
+                                      <h6 class="pl-2 m-0 pt-1">Weekly</h6>
+                                   </div>
+                                   <div class="col-6 text-right">
+                                      <div class="form-check custom-box mr-2">
+                                         <input type="radio" class="form-check-input" id="exampleCheck1">
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="row pb-3">
+                                   <div class="col-6">
+                                      <h6 class="pl-2 m-0 pt-1">Monthly</h6>
+                                   </div>
+                                   <div class="col-6 text-right">
+                                      <div class="form-check custom-box mr-2">
+                                         <input type="radio" class="form-check-input" id="exampleCheck1">
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="row pb-3">
+                                   <div class="col-6">
+                                      <h6 class="pl-2 m-0 pt-1">Quarterly</h6>
+                                   </div>
+                                   <div class="col-6 text-right">
+                                      <div class="form-check custom-box mr-2">
+                                         <input type="radio" class="form-check-input" id="exampleCheck1">
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="row pb-3">
+                                   <div class="col-6">
+                                      <h6 class="pl-2 m-0 pt-1">Yearly</h6>
+                                   </div>
+                                   <div class="col-6 text-right">
+                                      <div class="form-check custom-box mr-2">
+                                         <input type="radio" class="form-check-input" id="exampleCheck1">
+                                      </div>
+                                   </div>
+                                </div>
+                                <hr>
+                                <div class="row ">
+                                   <div class="col-6">
+                                      <div class="clear-text pl-3">
+                                         <a href="javascript:void(0);">Clear</a>
+                                      </div>
+                                   </div>
+                                   <div class="col-6 text-right">
+                                      <button class="Apply-btn karta-edit ">Apply</button>
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+                 <div class="col-lg-4">
+                    <div class="save-setting-btn">
+                       <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
+                       <div class="dropdown">
+                          <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg"></button>
+                          <div class="dropdown-menu keep-open dropdown-content custom-drop" aria-labelledby="dropdownMenuButton">
+                             <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
+                             <div class="fillter-inner-white-box p-2">
+                                <div class="row ">
+                                   <div class="col-6">
+                                      <div class="pl-1">
+                                         <p>Apply Global</p>
+                                      </div>
+                                   </div>
+                                   <div class="col-6 text-right">
+                                      <div class="toggle-tab-karta-edit ">
+                                         <label class="switch" for="checkbox">
+                                            <input type="checkbox" id="checkbox" [checked]="colorSettings.is_global" (change)="toggleColorSettings($event)">
+                                            <div class="slider round karta-edit"></div>
+                                         </label>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="row">
+                                   <div class="col-lg-12">
+                                      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                         <div class="panel panel-default">
+                                            <div class="panel-heading" role="tab" id="headingOne">
+                                               <p class="panel-title">
+                                                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                                                     aria-expanded="true" aria-controls="collapseOne">
+                                                  Color Settings
+                                                  </a>
+                                               </p>
+                                            </div>
+                                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
+                                               aria-labelledby="headingOne">
+                                               <div class="panel-body">
+                                                  <form [formGroup]="colorForm" (ngSubmit)="onColorSubmit()">
+                                                  <div class="color-box">
+                                                     <div class="row">
+                                                        <div class="col-lg-12">
+                                                           <div class="color-range">
+                                                              <p class="d-flex">
+                                                                 <span class="align-self-center pr-4">Color Range</span>
+                                                                 <input type="color" class="cursor_pointer" id="colorPicker" formControlName="color">
+                                                              </p>
+                                                           </div>
+                                                        </div>
+                                                     </div>
+                                                     <div class="container">
+                                                        <div class="row">
+                                                           <div class="col-sm-12">
+                                                              <ngx-slider [options]="options" [value]="minValue" [highValue]="maxValue"
+                                                              (valueChange)="onMinValueChange($event)"
+                                                              (highValueChange)="onMaxValueChange($event)">
+                                                              </ngx-slider>
+                                                           </div>
+                                                        </div>
+                                                     </div>
+                                                     <div class="row">
+                                                        <div class="col-lg-12 text-right">
+                                                           <div class="add-btn">
+                                                              <button class="add-button">Add</button>
+                                                           </div>
+                                                        </div>
+                                                     </div>
+                                                  </div>
+                                                  </form>
+                                               </div>
+                                            </div>
+                                         </div>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="row">
+                                   <div class="col-lg-12">
+                                      <div class="color-box-plus-min">
+                                         <ng-container *ngFor="let setting of colorSettings?.settings; let i = index">
+                                            <div class="row" [ngClass]="{'mt-2' : i > 0}">
+                                               <div class="col-lg-6">
+                                                  <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
+                                                     <h6>100%+</h6>
+                                                  </ng-container>
+                                                  <ng-template #not100>
+                                                     <h6>{{setting.min}}-{{setting.max}}%</h6>
+                                                  </ng-template>
+                                               </div>
+                                               <div class="col-lg-6 text-right">
+                                                  <div class="float-right d-flex">
+                                                     <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
+                                                        <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"
+                                                        [style.background]="selectedColor2">
+                                                  </div>
+                                                  <div class="plus-minus above100">
+                                                  <label for="colorPicker2"><img src="assets/img/edit.png"></label>
+                                                  <input type="color" id="colorPicker2" value="#000000"
+                                                  [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
+                                                  </div>
+                                                  </ng-container>
+                                                  <ng-template #not100Color>
+                                                     <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
+                                                     <div class="plus-minus cursor_pointer" (click)="removeColor(i)">
+                                                        <img src="assets/img/minus.png">
+                                                     </div>
+                                                  </ng-template>
+                                               </div>
+                                            </div>
+                                      </div>
+                                      </ng-container>
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                    <a href="javascript:void(0);" title="Info"><img src="assets/img/information.svg"></a>
+                 </div>
+              </div>
+           </div>
+        </div>
+     </div>
+      </div>
+  <!-- Main content -->
+  <div class="main-center-content d-flex mb-3" style="margin-left: 100px;">
+     <div class="center-content mt-4 w-100">
+        <div class="row tab-content-center">
+           <div class="phase_column">
+              <div class="vertical-tabs">
+                 <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" *ngFor="let phase of phases; let i = index">
+                       <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
+                       <ng-container *ngIf="phase.is_child">
+                          <div class="phase_action">
+                             <i class="fa fa-pencil" (click)="makePhaseEditable(phase.id)"></i>
+                             <i class="fa fa-trash" (click)="deletePhase(phase.id, i)"></i>
+                          </div>
+                       </ng-container>
+                       <div (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name)">{{phase?.name}}
+              </div>
+              </a>
+              </li>
+              </ul>
+           </div>
+        </div>
+        <div class="karta_column">
+           <div class="tab-pane active">
+              <ng-container *ngIf="loadingKarta">
+                 <div class="p-5" [innerHtml]="loader"></div>
+              </ng-container>
+              <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
+              <div *ngIf="!showSVG && !loadingKarta">
+                 <ng-container *ngFor="let phase of phases; let i = index">
+                    <div class="karta_dummy_lines" [id]="'svg_line_' + phase?.id" [attr.name]="phase?.name" (drop)="onDrop($event)"
+                    (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                    (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
+                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide && phase?.global_name !== 'KPI'" (click)="addRootNode($event)"><i
+                       class="fa fa-plus-circle"></i> Node</button>
+              </div>
+              </ng-container>
            </div>
         </div>
      </div>
   </div>
-  <!-- <div class="row mb-3">
-     <div class="col-lg-6 text-left">
-       <div class="slider-top-text">
-         <p>Nodes</p>
-       </div>
-     </div>
-     <div class="col-lg-6 text-right">
-       <div class="slider-top-text">
-         <a href="javascript:void(0);">See All</a>
-       </div>
-     </div>
-     </div> -->
   <!-- <div class="row">
-     <div class="col-lg-12">
-       <div class="item p-2">
-         <div class="card custom-card side-bar-card ">
-           <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
-             <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
-             <p class="pt-2">Empty</p>
+     <div class="col-lg-12 text-center">
+       <div class="zooming-section">
+     
+         <div class="row">
+           <div class="col-3">
+             <a href="javascript:void(0);" (click)="undoKarta()"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
+             <a href="javascript:void(0);" (click)="redoKarta()"><img src="assets/img/Redo.svg" class="img-fluid ml-1"></a>
+           </div>
+     
+           <div class="col-lg-6">
+             <div class="range-custom">
+               <input type="range" id="seek-slider" max="100" value="0">
+             </div>
+             <div class="range">%0</div>
+     
+           </div>
+           <div class="col-lg-3">
+             <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" style="cursor: pointer;"
+               id="reset_zoom_btn">
            </div>
          </div>
        </div>
      </div>
      </div> -->
+</div>
+<div class="right_sidebar_overlay"></div>
+<div class="right-side-bar" id="rightSidebar">
+  <!-- <div class="test">
+     <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle">
+       <img src="assets/img/side-arrow-new-bar1.svg" alt="">
+     </button>
+     </div> -->
   <div class="row">
      <div class="col-lg-12">
-        <div class="inventory_sidebar_accordion">
-           <div id="accordion">
-              <div class="card custom_accordion">
-                 <div class="card-header accordion_header_custom" id="headingOne">
-                    <h5 class="mb-0">
-                       <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-                          aria-controls="collapseOne">
-                       Branches
-                       </button>
-                       <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseOne"
-                          aria-expanded="true" aria-controls="collapseOne">
-                       See All
-                       </button>
-                    </h5>
+        <div class="goal-name mt-3">
+           <h6>{{currentNode?.phase?.name}}</h6>
+        </div>
+     </div>
+  </div>
+  <div class="row">
+     <div class="col-lg-12">
+        <div class="search-sugg mt-3">
+           <input type="text" class="form-control" [(ngModel)]="currentNodeName" (blur)="changeNodeName()"
+           [ngClass]="{'is-invalid': !currentNodeName}">
+           <div class="invalid-feedback d-block" *ngIf="!currentNodeName">Please enter name!</div>
+        </div>
+     </div>
+  </div>
+  <!-- Weightage -->
+  <ng-container *ngIf="currentNode?.phase?.global_name !== 'Goal'">
+     <div class="row">
+        <div class="col-lg-12">
+           <div class="goal-name mt-3">
+              <h6>Weighting</h6>
+           </div>
+        </div>
+     </div>
+     <div class="row">
+        <div class="col-lg-12">
+           <div class="search-sugg mt-3">
+              <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
+              [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
+              <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please
+                 enter weighting!
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weighting cannot be greater than
+                 100!
+              </div>
+           </div>
+        </div>
+     </div>
+  </ng-container>
+  <div class="row mt-4">
+     <div class="col-lg-12">
+        <div class="right-side-bar-content">
+           <h5>Definition</h5>
+           <p>{{suggestion?.definition}}</p>
+        </div>
+     </div>
+  </div>
+  <div class="row mt-4">
+     <div class="col-lg-12">
+        <div class="right-side-bar-content">
+           <h5>Suggestions</h5>
+           <div class="description_div">
+              <ng-container *ngFor="let x of suggestion?.descriptions">
+                 <p>{{x?.description}}</p>
+              </ng-container>
+           </div>
+        </div>
+     </div>
+  </div>
+  <hr>
+  <div class="row">
+     <div class="col-md-12">
+        <h5>Typography</h5>
+     </div>
+     <!-- <div class="col-lg-8">
+        <div class="">
+          <h5>Typography</h5>
+        </div>
+        </div>
+        <div class="col-lg-4">
+        <div class="minus-btn-r-side text-right">
+          <img src="assets/img/minus-r-side.svg" class="img-fluid" alt="">
+        </div>
+        </div> -->
+  </div>
+  <div class="row mt-4">
+     <div class="col-lg-5">
+        <h6 class="pt-2">Font Style</h6>
+     </div>
+     <div class="col-lg-7">
+        <select class="form-control font-style" [(ngModel)]="selectedFont" (change)="changeFontStyle()">
+        <option value="system-ui">System-UI</option>
+        <option value="sans-serif">Sans-Serif</option>
+        <option value="monospace">Monospace</option>
+        </select>
+     </div>
+  </div>
+  <div class="row mt-4">
+     <div class="col-lg-5">
+        <h6 class="pt-2">Alignment</h6>
+     </div>
+     <div class="col-lg-7">
+        <div>
+           <span>
+           <a style="cursor: pointer;" (click)="changeAlignment('left')">
+           <img src="assets/img/left-align.svg" class="img-fluid mr-2 font_alignment_img"
+              [ngClass]="{'selected_alignment': selectedAlignment === 'left'}">
+           </a>
+           </span>
+           <span>
+           <a style="cursor: pointer;" (click)="changeAlignment('center')">
+           <img src="assets/img/center-align.svg" class="img-fluid font_alignment_img"
+              [ngClass]="{'selected_alignment': selectedAlignment === 'center'}">
+           </a>
+           </span>
+           <span>
+           <a style="cursor: pointer;" (click)="changeAlignment('right')">
+           <img src="assets/img/right-align.svg" class="img-fluid ml-2 font_alignment_img"
+              [ngClass]="{'selected_alignment': selectedAlignment === 'right'}">
+           </a>
+           </span>
+        </div>
+     </div>
+  </div>
+  <div class="row mt-4">
+     <div class="col-lg-5">
+        <h6 class="pt-2">Text Color</h6>
+     </div>
+     <div class="col-lg-7">
+        <div class="color-picker">
+           <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor"
+           (change)="changeTextColor()" style="cursor: pointer;">
+        </div>
+     </div>
+  </div>
+  <div *ngIf="showKPICalculation">
+     <hr>
+     <div class="row">
+        <div class="col-lg-12">
+           <h5>Type</h5>
+        </div>
+     </div>
+     <div class="row mt-3">
+        <div class="col-lg-12">
+           <select class="form-control type-select" [(ngModel)]="kpiType">
+           <option value="measure">Measure</option>
+           <option value="metrics">Metrics</option>
+           </select>
+        </div>
+     </div>
+     <!-- Common Values -->
+     <div class="common">
+        <!-- Start Date -->
+        <div class="row mt-3">
+           <div class="col-lg-6">
+              <div class="selct-option-side-r">
+                 <label>Start Date</label>
+                 <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
+                 (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
+                 <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
+              </div>
+           </div>
+           <div class="col-lg-6">
+              <div class="selct-option-side-r">
+                 <label>Days to Calculate</label>
+                 <select class="form-control" [value]="currentNode.days_to_calculate"
+                 (change)="changeDaysToCalculate($event)">
+                 <option value="all">All Days</option>
+                 <option value="business">Business Days</option>
+                 </select>
+              </div>
+           </div>
+        </div>
+        <!-- Fiscal Year -->
+        <div class="row mt-3">
+           <div class="col-lg-12">
+              <h5>Fiscal Year</h5>
+              <div class="row">
+                 <div class="col-lg-6">
+                    <div class="selct-option-side-r">
+                       <label>Start Date</label>
+                       <input type="date" class="form-control"  [min]="maxFiscalStartDate"
+                       [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'"
+                       (change)="changeFiscalStartDate($event)">
+                    </div>
                  </div>
-                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="card-body">
-                       <div class="row">
-                          <div class="col-lg-6 mb-2" *ngIf="!showSVG">
-                             <div class="card custom-card side-bar-card">
-                                <div class="goal-img cursor_pointer" id="root" draggable="true" (dragstart)="onRootDragStart('root', true)">
-                                <img src="assets/img/root.png" class="img-fluid">
-                                <p>Empty</p>
-                             </div>
-                          </div>
-                        </div>
-                       <ng-container *ngFor="let inventory of inventories; let i=index">
-                         <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'branch'">
-                            <div class="card custom-card side-bar-card ">
-                               <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onRootDragStart(inventory, false)">
-                                  <img [src]="inventory.thumbnail" class="img-fluid">
-                                  <p>{{ inventory?.name }}</p>
-                               </div>
-                            </div>
-                         </div>
-                       </ng-container>
+                 <div class="col-lg-6">
+                    <div class="selct-option-side-r">
+                       <label>End Date</label>
+                       <input type="date" class="form-control"
+                       [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'"
+                       (change)="changeFiscalEndDate($event)">
                     </div>
                  </div>
               </div>
            </div>
-           <div class="line-slide-bar"></div>
-           <div class="card custom_accordion">
-              <div class="card-header accordion_header_custom" id="headingTwo">
-                 <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
-                       aria-expanded="false" aria-controls="collapseTwo">
-                    Measure
-                    </button>
-                    <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseTwo"
-                       aria-expanded="true" aria-controls="collapseOne">
-                    See All
-                    </button>
-                 </h5>
+        </div>
+        <hr>
+        <!-- Target Value -->
+        <label class="text-nowrap font_weight_500">Target Value</label>
+        <ng-container *ngFor="let t of target; let i = index">
+           <div class="row mt-2 mb-4">
+              <div class="col-lg-5 pr-0">
+                 <div class="target_select selct-option-side-r">
+                    <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
+                    <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
+                    <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
+                    <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
+                    <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
+                    </select>
+                 </div>
               </div>
-              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                 <div class="card-body">
-                    <div class="row">
-                       <ng-container *ngFor="let inventory of inventories; let i=index">
-                        <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'measure'">
-                           <div class="card custom-card side-bar-card ">
-                              <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
-                                 <img [src]="inventory.thumbnail" class="img-fluid">
-                                 <p>{{ inventory?.name }}</p>
-                              </div>
-                           </div>
-                        </div>
-                      </ng-container>
+              <div class="col-lg-4 px-2">
+                 <div class="custom-input-side-r-flow">
+                    <input type="number" class="form-control" [value]="t.value" (blur)="setTarget('value', $event, i)">
+                    <!-- <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
+                       [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
+                       <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please enter weightage!</div>
+                       <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greater than 100!</div> -->
+                 </div>
+              </div>
+              <div class="col-lg-3 d-flex px-2">
+                 <div class="cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
+                 <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
+              </div>
+              <div class="cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
+              <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
+           </div>
+     </div>
+  </div>
+  </ng-container>
+  <!-- Target Label -->
+  <input type="text" class="form-control" [(ngModel)]="currentNode.target_label" (blur)="changeTargetLabel($event)">
+  <!-- Achieved Value -->
+  <div class="row mt-3" *ngIf="kpiType === 'measure'">
+     <div class="col-lg-12">
+        <div class="form-group">
+           <label class="font_weight_500">Achieved Value</label>
+           <input type="number" class="form-control" [(ngModel)]="currentNodeAchievedValue"
+           (blur)="changeAchievedValue()"
+           [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null || currentNodeAchievedValue > 9999 }">
+           <div class="invalid-feedback d-block"
+              *ngIf="currentNodeAchievedValue < 0 || currentNodeAchievedValue === null">Please enter achieved
+              value!
+           </div>
+           <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue > 9999">Achieved value cannot be
+              greater than 9999!
+           </div>
+        </div>
+     </div>
+  </div>
+  <hr>
+  <!-- KPI Calculation Periods -->
+  <div class="row mt-3">
+     <div class="col-lg-12">
+        <div class="selct-option-side-r">
+           <label>KPI Calculation Periods</label>
+           <select class="form-control" [(ngModel)]="currentNode.kpi_calc_period"
+           (change)="changeKPIPeriods($event)">
+           <option value="monthly">One-time monthly target</option>
+           <option value="month-to-date">Month to date</option>
+           <option value="year-to-date">Year to date</option>
+           <option value="month-over-month">Month over month</option>
+           <option value="year-over-year">Year over year</option>
+           <option value="entire-history">Entire history</option>
+           </select>
+        </div>
+     </div>
+  </div>
+  <hr>
+  <!-- Metrics div -->
+  <ng-container *ngIf="kpiType === 'metrics' ">
+     <!-- Formula div -->
+     <form [formGroup]="formulaGroup">
+        <div class="row my-3">
+           <div class="col-lg-8">
+              <h5>Formula</h5>
+           </div>
+           <div class="col-lg-4">
+              <div class="text-right">
+                 <!-- <a href=""><img src="assets/img/q-mark.svg" class="img-fluid"></a> -->
+                 <img src="assets/img/q-mark.svg" class="img-fluid">
+              </div>
+           </div>
+        </div>
+        <div formArrayName="fields">
+           <div class="mb-2" *ngFor="let fieldForm of fields.controls; let i = index">
+              <div class="row" [formGroupName]="i">
+                 <div class="col-lg-8">
+                    <div class="form-group">
+                       <div class="d-flex justify-content-between align-items-center">
+                          <label (keypress)="setLimitForContentEditable($event)" (blur)="setFieldValues(i)"
+                          contenteditable="false" [id]="'fd'+i"
+                          [class]="checkFieldStatus('fd'+i) ? 'mb-2 border rename_label_width' : 'mb-2 rename_label_width'"
+                          (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
+                          <a class="mb-2" role="button" (click)="editFieldStatus(i, true)"
+                          *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"
+                             class="img-fluid edit-btn-r"></a>
+                       </div>
+                       <input type="number" class="form-control" placeholder="" min="0" (blur)="metricOperations.recheckFormula()"
+                       formControlName="fieldValue"
+                       [ngClass]="{ 'is-invalid': formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched) }" />
+                       <div class="invalid-feedback d-block"
+                          *ngIf="formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched)">
+                          Please enter value greater than 0
+                       </div>
+                    </div>
+                 </div>
+                 <div class="col-lg-4 d-flex flex-column justify-content-end align-items-center pb-3">
+                    <div class="custom-add-minus">
+                       <a id="addIcon" class="add-icon mr-2" *ngIf="fields.length == i+1 && fields.length < 5"
+                       (click)="formulaFlag ? null : addFormulaGroup()"><img src="assets/img/plus-field-side-r.svg"
+                          class="img-fluid mr-3"></a>
+                       <a id="removeIcon" class="remove-icon" *ngIf="fields.length > 1" (click)="formulaFlag ? null : deleteFormulaGroup(i)"><img
+                          src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>
                     </div>
                  </div>
               </div>
            </div>
-           <div class="line-slide-bar"></div>
-           <div class="card custom_accordion">
-              <div class="card-header accordion_header_custom" id="headingThree">
-                 <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree"
-                       aria-expanded="false" aria-controls="collapseThree">
-                    Metric
-                    </button>
-                    <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseThree"
-                       aria-expanded="true" aria-controls="collapseOne">
-                    See All
-                    </button>
-                 </h5>
+        </div>
+        <div class="row mt-3">
+           <div class="col-lg-12 row">
+              <div class="col-lg-10">
+                 <input type="text" class="form-control font-weight-bold" id="formula-field" autocomplete="off"
+                 formControlName="formula" (input)="filterFieldSuggestions($event)"
+                 (blur)="calculateFormula($event)"
+                 [ngClass]="( formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)) || (formulaGroup.get('calculatedValue').value <= 0 && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)) ? 'is-invalid' : (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched) ? 'is-valid' : ''" />
+                 <div class="invalid-feedback d-block"
+                    *ngIf="formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)">
+                    Please enter formula!
+                 </div>
+                 <p class="d-flex flex-column" *ngIf="formulaFieldSuggestions.length > 0">
+                    <span class="field-options border py-1 pl-2" *ngFor="let field of formulaFieldSuggestions"
+                    (click)="concatenateFieldValue(field)">{{field ? field?.fieldName : ''}}</span>
+                 </p>
+                 <div *ngIf="formulaError" class="invalid-feedback d-block is-invalid">{{formulaError}}</div>
               </div>
-              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                 <div class="card-body">
-                    <div class="row">
-                      <ng-container *ngFor="let inventory of inventories; let i=index">
-                        <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'metrics'">
-                           <div class="card custom-card side-bar-card ">
-                              <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
-                                 <img [src]="inventory.thumbnail" class="img-fluid">
-                                 <p class="pt-2">{{ inventory?.name }}</p>
-                              </div>
-                           </div>
-                        </div>
-                      </ng-container>
+              <!-- <div class="col-lg-2" *ngIf="formulaGroup.get('calculatedValue').value > 0">
+                 <img src="assets/img/tick-mark-side-r.svg" class="img-fluid tick-custom">
+                 </div> -->
+           </div>
+        </div>
+        <div class="row mt-3">
+           <div class="col-lg-12 h5">
+              <span class="h5">= {{formulaGroup.get('calculatedValue').value}}</span>
+           </div>
+        </div>
+     </form>
+  </ng-container>
+  <hr *ngIf="kpiType === 'metrics' ">
+  <!-- Contributor -->
+  <div class="row mt-3">
+     <div class="col-lg-6">
+        <h5>Contributor</h5>
+     </div>
+  </div>
+  <div class="row">
+     <div class="col-lg-12">
+        <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select user"
+        (change)="changeContributor($event)"  [ngClass]="{ 'is-invalid': !currentNode.contributorId }">
+        <ng-option *ngFor="let user of contributors" [value]="user._id">
+        {{ user?.fullName }} ({{ user?.email }})
+        </ng-option>
+        </ng-select>
+        <div class="invalid-feedback d-block" *ngIf="!currentNode.contributorId">Contributor is required!</div>
+     </div>
+  </div>
+</div>
+<hr>
+<!-- Person to Notify -->
+<div class="row">
+  <div class="col-lg-12">
+     <div class="selct-option-side-r">
+        <label>Person to Notify</label>
+        <select class="form-control" (change)="setNotifyUser()" [(ngModel)]="notifyType">
+        <option value="" selected>Select</option>
+        <option value="owner">KPI Owner</option>
+        <option value="specific">Specific Person</option>
+        </select>
+        <ng-container *ngIf="notifyType === 'specific'">
+           <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user"
+           (change)="selectNotifyUser($event)">
+           <ng-option *ngFor="let user of members" [value]="user._id">
+           {{ user?.fullName }} ({{ user?.email }})
+           </ng-option>
+           </ng-select>
+        </ng-container>
+     </div>
+  </div>
+</div>
+<hr>
+<!-- Alerts div -->
+<div class="row mt-3">
+  <div class="col-lg-12">
+     <h5>Alerts</h5>
+  </div>
+  <div class="col-lg-6">
+     <div class="selct-option-side-r">
+        <label>Period</label>
+        <select class="form-control" [(ngModel)]="currentNode.alert_frequency"
+        (change)="changeAlertFrequency($event)">
+        <option value="" selected>Select period</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="quarterly">Quarterly</option>
+        <option value="yearly">Yearly</option>
+        </select>
+     </div>
+  </div>
+  <div class="col-lg-6">
+     <div class="selct-option-side-r">
+        <label>Type</label>
+        <select class="form-control" [(ngModel)]="currentNode.alert_type" (change)="changeAlertType($event)">
+        <option value="" selected>Select type</option>
+        <option value="notification">Notify at login</option>
+        <option value="email">On email</option>
+        </select>
+     </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Main content -->
+</div>
+<!-- Page content -->
+</div>
+<!-- Wrapper -->
+<!-- Share karta modal -->
+<div class="modal fade" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+     <div class="modal-content p-4">
+        <div class="modal-header">
+           <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Karta</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+              (click)="selectedSharedUsers = undefined">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <div class="share-link-modal mt-3">
+              <div class="form-group">
+                 <label class="short_text max_width_500">{{sharingKarta?.name}}</label>
+                 <div class="row">
+                    <div class="col-lg-12">
+                       <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
+                       [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
+                       <ng-template ng-tag-tmp let-search="searchTerm">
+                          <b>Add new email</b>: {{search}}
+                       </ng-template>
+                       </ng-select>
                     </div>
+                 </div>
+              </div>
+              <div style="border-color: unset;" data-dismiss="" aria-label="">
+                 <span aria-hidden="true">
+                    <button type="button" class="send-btn" (click)="shareKarta()"
+                    [disabled]="selectedSharedUsers?.length < 1  || sharedSubmitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
+                       <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
+                    </button>
+                 </span>
+              </div>
+           </div>
+        </div>
+        <div class="row">
+           <div class="col-lg-12 text-left">
+              <div class="shared-with" style="display:flex;">
+                 <span>Shared with:</span>
+                 <ng-container *ngIf="sharingKartaCount">
+                    <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
+                    <span class="ml-2">
+                       <div class="user-counter">
+                          <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
+                       </div>
+                    </span>
+                 </ng-container>
+                 <span class="mode-btn">
+                    <div class="select-karta-name">
+                       <select class="form-control custom-select-karta-mode" [(ngModel)]="changeModeType" (change)="changeSharingMode($event)">
+                       <option value="view">View Only</option>
+                       <option value="edit" [disabled]='changetype'>Edit Only</option>
+                       </select>
+                    </div>
+                 </span>
+              </div>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+<!-- Save catalog modal -->
+<div class="modal fade" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+     <div class="modal-content p-4">
+        <div class="modal-header">
+           <h5 class="modal-title pt-0" id="staticBackdropLabel">Save {{ catalogForm?.value?.node_type | titlecase }}</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetCatalogForm()">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <div class="share-link-modal mt-3">
+              <div class="row">
+                 <div class="col-lg-12">
+                    <form [formGroup]="catalogForm" (ngSubmit)="onCatalogSubmit()">
+                    <div class="form-group">
+                       <label for="name" class="font-weight-bold">Name</label>
+                       <input type="text" id="name" class="form-control" placeholder="Enter name" formControlName="name" [maxlength]="50"
+                       [ngClass]="{ 'is-invalid': (catalogSubmitted || catalog.name.touched) && catalog.name.errors }">
+                       <div *ngIf="(catalogSubmitted || catalog.name.touched) && catalog.name.errors" class="invalid-feedback">
+                          <div *ngIf="catalog.name.errors.required">Name is required!</div>
+                          <div *ngIf="catalog.name.errors.pattern">Blank space is not allowed!</div>
+                       </div>
+                    </div>
+                    <button class="send-btn" [disabled]="catalogSubmitFlag">
+                       <div class="spinner-border text-light align-top" role="status" *ngIf="catalogSubmitFlag">
+                          <span class="sr-only">Loading...</span>
+                       </div>
+                       <ng-container *ngIf="!catalogSubmitFlag">SAVE</ng-container>
+                    </button>
+                    </form>
                  </div>
               </div>
            </div>
         </div>
      </div>
   </div>
-  </div>
-  <div class="line-slide-bar"></div>
-</nav>
-
-<button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle sidebar_collapsible_btn">
-<img src="assets/img/side-arrow-right.svg" alt="">
-</button>
-
-  <!-- Page Content  -->
-  <div id="content" class="karta-edit-contnet">
-
-    <div class="karta-edit-header">
-      <div class="row no-gutters">
-        <div class="col-lg-6">
-          <div class="row">
-            <div class="col-lg-3 pr-0">
-              <div class="karta-name">
-                <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
-              </div>
-            </div>
-            <div class="col-lg-2 pl-0">
-              <div class="select-karta-name">
-                <select class="form-control custom-select-karta" (change)="versionRollback($event)"
-                  [(ngModel)]="versionId">
-                  <option *ngFor="let ver of version" [value]="ver.id">Version {{ver.name}}</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-lg-2 align-self-center undo_redo_btn">
-              <a title="Undo" id="UndoAnchor" (click)="undoRedoFlag ? null : undoKarta()"><img src="assets/img/Undo.svg"
-                [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
-              <a title="Redo" id="RedoAnchor" (click)="undoRedoFlag ? null : redoKarta()"><img src="assets/img/Redo.svg"
-                  [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'"></a>
-              <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
-            </div>
-            <div class="col-lg-4 p-0">
-              <div class="time-select-karta">
-                <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'d/M/yy, H:mm'}}</span>
-              </div>
-            </div>
-          </div>
+</div>
+<!-- Vew karta modal -->
+<div class="modal fade" id="viewKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+     <div class="modal-content p-4">
+        <div class="modal-header">
+           <h5 class="modal-title pt-0" id="staticBackdropLabel">View Karta</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+           </button>
         </div>
-        <div class="col-lg-6">
-          <div class="row no-gutters">
-            <div class="col-lg-3">
-              <div class="select-karta-name">
-                <select class="form-control custom-select-karta-mode" id="chartMode" (change)="changeMode($event)">
-                  <option value="enable">Editor Mode</option>
-                  <option value="disable">Viewer Mode</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-lg-2 text-center">
-              <button type="button" class="btn bg-light border" disabled data-toggle="modal" data-target="#viewKartaModal" (click)="onShare(sharedKartaStr)">View</button>
-            </div>
-            <div class="col-lg-3 p-0">
-              <div class="icon-karta">
-                <!-- Share karta -->
-                <a href="javascript:void(0);" data-toggle="modal" data-target="#shareKartaModal" title="Share" (click)="onShare(sharedKartaStr)"><img
-                    src="assets/img/share-icon.svg"></a>
-                <!-- Export Karta -->
-                <div class="dropdown show">
-                  <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false" title="Export">
-                    <img src="assets/img/download-icon.svg">
-                  </a>
-                  <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
-                    <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                    <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('csv')">
-                      <img src="assets/img/csv.svg" class="mr-2"> Export to CSV
-                    </a>
-                    <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('pdf')">
-                      <img src="assets/img/pdf.svg" class="mr-2"> Export to PDF
-                    </a>
-                    <a class="dropdown-item border-0" href="javascript:void(0);" (click)="exportKarta('image')">
-                      <img src="assets/img/img.svg" class="mr-2"> Export to Image
-                    </a>
-                  </div>
-                </div>
-                <!-- Filter Karta -->
-                <div class="dropdown filter-option m-0">
-                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Filter">
-                    <img src="assets/img/filter.svg" class="">
-                  </button>
-                  <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
-                    <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
-
-                    <div class="fillter-inner-white-box ">
-                      <div class="row pb-3">
-                        <div class="col-6">
-                          <h6 class="pl-2 m-0 pt-1">All</h6>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="form-check custom-box mr-2">
-                            <input type="radio" class="form-check-input" id="exampleCheck1">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row pb-3">
-                        <div class="col-6">
-                          <h6 class="pl-2 m-0 pt-1">Weekly</h6>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="form-check custom-box mr-2">
-                            <input type="radio" class="form-check-input" id="exampleCheck1">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row pb-3">
-                        <div class="col-6">
-                          <h6 class="pl-2 m-0 pt-1">Monthly</h6>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="form-check custom-box mr-2">
-                            <input type="radio" class="form-check-input" id="exampleCheck1">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row pb-3">
-                        <div class="col-6">
-                          <h6 class="pl-2 m-0 pt-1">Quarterly</h6>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="form-check custom-box mr-2">
-                            <input type="radio" class="form-check-input" id="exampleCheck1">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row pb-3">
-                        <div class="col-6">
-                          <h6 class="pl-2 m-0 pt-1">Yearly</h6>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="form-check custom-box mr-2">
-                            <input type="radio" class="form-check-input" id="exampleCheck1">
-                          </div>
-                        </div>
-                      </div>
-                      <hr>
-                      <div class="row ">
-                        <div class="col-6">
-                          <div class="clear-text pl-3">
-                            <a href="javascript:void(0);">Clear</a>
-                          </div>
-                        </div>
-                        <div class="col-6 text-right">
-                          <button class="Apply-btn karta-edit ">Apply</button>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <div class="col-lg-4">
-              <div class="save-setting-btn">
-                <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
-                <div class="dropdown">
-                  <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg"></button>
-                  
-                  <div class="dropdown-menu keep-open dropdown-content custom-drop" aria-labelledby="dropdownMenuButton">
-                    <img src="assets/img/drop-arrow.svg" class="drop-arrow filter">
-                    <div class="fillter-inner-white-box p-2">
-                      <div class="row ">
-                        <div class="col-6"> 
-                          <div class="pl-1">
-                            <p>Apply Global</p>
-                          </div>
-                        </div>
-                        <div class="col-6 text-right">
-                          <div class="toggle-tab-karta-edit ">
-                            <label class="switch" for="checkbox">
-                              <input type="checkbox" id="checkbox" [checked]="colorSettings.is_global" (change)="toggleColorSettings($event)">
-                              <div class="slider round karta-edit"></div>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                            <div class="panel panel-default">
-                              <div class="panel-heading" role="tab" id="headingOne">
-                                <p class="panel-title">
-                                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                                    aria-expanded="true" aria-controls="collapseOne">
-                                    Color Settings
-                                  </a>
-                                </p>
-                              </div>
-                              <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
-                                aria-labelledby="headingOne">
-                                <div class="panel-body">
-                                  <form [formGroup]="colorForm" (ngSubmit)="onColorSubmit()">
-                                    <div class="color-box">
-                                      <div class="row">
-                                        <div class="col-lg-12">
-                                          <div class="color-range">
-                                            <p class="d-flex">
-                                              <span class="align-self-center pr-4">Color Range</span>
-                                              <input type="color" class="cursor_pointer" id="colorPicker" formControlName="color">
-                                            </p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="container">
-                                        <div class="row">
-                                          <div class="col-sm-12">
-                                            <ngx-slider [options]="options" [value]="minValue" [highValue]="maxValue"
-                                              (valueChange)="onMinValueChange($event)"
-                                              (highValueChange)="onMaxValueChange($event)">
-                                            </ngx-slider>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="row">
-                                        <div class="col-lg-12 text-right">
-                                          <div class="add-btn">
-                                            <button class="add-button">Add</button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-lg-12">
-                          <div class="color-box-plus-min">
-                            <ng-container *ngFor="let setting of colorSettings?.settings; let i = index">
-                              <div class="row" [ngClass]="{'mt-2' : i > 0}">
-                                <div class="col-lg-6">
-                                  <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100">
-                                    <h6>100%+</h6>
-                                  </ng-container>
-                                  <ng-template #not100>
-                                    <h6>{{setting.min}}-{{setting.max}}%</h6>
-                                  </ng-template>
-                                </div>
-                                <div class="col-lg-6 text-right">
-                                  <div class="float-right d-flex">
-                                    <ng-container *ngIf="setting.min == 101 && setting.max == 101; else not100Color">
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"
-                                        [style.background]="selectedColor2"></div>
-                                      <div class="plus-minus above100">
-                                        <label for="colorPicker2"><img src="assets/img/edit.png"></label>
-                                        <input type="color" id="colorPicker2" value="#000000"
-                                          [(ngModel)]="selectedColor2" (change)="onColorChange2(selectedColor2, i)">
-                                      </div>
-                                    </ng-container>
-                                    <ng-template #not100Color>
-                                      <div class="color-box-two" [ngStyle]="{'background-color': setting.color}"></div>
-                                      <div class="plus-minus cursor_pointer" (click)="removeColor(i)">
-                                        <img src="assets/img/minus.png">
-                                      </div>
-                                    </ng-template>
-                                  </div>
-                                </div>
-                              </div>
-                            </ng-container>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <a href="javascript:void(0);" title="Info"><img src="assets/img/information.svg"></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="main-center-content d-flex mb-3" style="margin-left: 100px;">
-      <div class="center-content mt-4 w-100">
-        <div class="row tab-content-center">
-          <div class="phase_column">
-            <div class="vertical-tabs">
-              <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item" *ngFor="let phase of phases; let i = index">
-                  <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
-                    <ng-container *ngIf="phase.is_child">
-                      <div class="phase_action">
-                        <i class="fa fa-pencil" (click)="makePhaseEditable(phase.id)"></i>
-                        <i class="fa fa-trash" (click)="deletePhase(phase.id, i)"></i>
-                      </div>
-                    </ng-container>
-                    <div (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name)">{{phase?.name}}</div>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="karta_column">
-            <div class="tab-pane active">
-              <ng-container *ngIf="loadingKarta">
-                <div class="p-5" [innerHtml]="loader"></div>
-              </ng-container>
-              <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
-              <div *ngIf="!showSVG && !loadingKarta">
-                <ng-container *ngFor="let phase of phases; let i = index">
-                  <div class="karta_dummy_lines" [id]="'svg_line_' + phase?.id" [attr.name]="phase?.name" (drop)="onDrop($event)"
-                    (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
-                    (mouseover)="onMouseOverKartaLines($event)" (mouseleave)="onMouseLeaveKartaLines($event)">
-                    <button class="btn btn-sm btn-light" *ngIf="!isRtNodDrgingFrmSide && phase?.global_name !== 'KPI'" (click)="addRootNode($event)"><i
-                        class="fa fa-plus-circle"></i> Node</button>
-                  </div>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- <div class="row">
-          <div class="col-lg-12 text-center">
-            <div class="zooming-section">
-
+        <div class="modal-body">
+           <div class="share-link-modal mt-3">
               <div class="row">
-                <div class="col-3">
-                  <a href="javascript:void(0);" (click)="undoKarta()"><img src="assets/img/Undo.svg" class="img-fluid mr-1"></a>
-                  <a href="javascript:void(0);" (click)="redoKarta()"><img src="assets/img/Redo.svg" class="img-fluid ml-1"></a>
-                </div>
-
-                <div class="col-lg-6">
-                  <div class="range-custom">
-                    <input type="range" id="seek-slider" max="100" value="0">
-                  </div>
-                  <div class="range">%0</div>
-
-                </div>
-                <div class="col-lg-3">
-                  <img src="assets/img/Add-Layer.svg" class="img-fluid" title="Reset Zoom" style="cursor: pointer;"
-                    id="reset_zoom_btn">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-      </div>
-
-
-
-
-      <div class="right_sidebar_overlay"></div>
-      <div class="right-side-bar" id="rightSidebar">
-        <!-- <div class="test">
-          <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle">
-            <img src="assets/img/side-arrow-new-bar1.svg" alt="">
-          </button>
-        </div> -->
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="goal-name mt-3">
-              <h6>{{currentNode?.phase?.name}}</h6>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <div class="search-sugg mt-3">
-              <input type="text" class="form-control" [(ngModel)]="currentNodeName" (blur)="changeNodeName()"
-              [ngClass]="{'is-invalid': !currentNodeName}">
-              <div class="invalid-feedback d-block" *ngIf="!currentNodeName">Please enter name!</div>
-            </div>
-          </div>
-        </div>
-        <!-- Weightage -->
-        <ng-container *ngIf="currentNode?.phase?.global_name !== 'Goal'">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="goal-name mt-3">
-                <h6>Weighting</h6>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="search-sugg mt-3">
-                <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
-                  [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please
-                  enter weighting!</div>
-                <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weighting cannot be greater than
-                  100!</div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-        <div class="row mt-4">
-          <div class="col-lg-12">
-            <div class="right-side-bar-content">
-              <h5>Definition</h5>
-              <p>{{suggestion?.definition}}</p>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-lg-12">
-            <div class="right-side-bar-content">
-              <h5>Suggestions</h5>
-              <div class="description_div">
-                <ng-container *ngFor="let x of suggestion?.descriptions">
-                  <p>{{x?.description}}</p>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-        </div>
-        <hr>
-        <div class="row">
-          <div class="col-md-12">
-            <h5>Typography</h5>
-          </div>
-          <!-- <div class="col-lg-8">
-          <div class="">
-            <h5>Typography</h5>
-          </div>
-        </div>
-        <div class="col-lg-4">
-          <div class="minus-btn-r-side text-right">
-            <img src="assets/img/minus-r-side.svg" class="img-fluid" alt="">
-          </div>
-        </div> -->
-        </div>
-        <div class="row mt-4">
-          <div class="col-lg-5">
-            <h6 class="pt-2">Font Style</h6>
-          </div>
-          <div class="col-lg-7">
-            <select class="form-control font-style" [(ngModel)]="selectedFont" (change)="changeFontStyle()">
-              <option value="system-ui">System-UI</option>
-              <option value="sans-serif">Sans-Serif</option>
-              <option value="monospace">Monospace</option>
-            </select>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-lg-5">
-            <h6 class="pt-2">Alignment</h6>
-          </div>
-          <div class="col-lg-7">
-            <div>
-              <span>
-                <a style="cursor: pointer;" (click)="changeAlignment('left')">
-                  <img src="assets/img/left-align.svg" class="img-fluid mr-2 font_alignment_img"
-                    [ngClass]="{'selected_alignment': selectedAlignment === 'left'}">
-                </a>
-              </span>
-              <span>
-                <a style="cursor: pointer;" (click)="changeAlignment('center')">
-                  <img src="assets/img/center-align.svg" class="img-fluid font_alignment_img"
-                    [ngClass]="{'selected_alignment': selectedAlignment === 'center'}">
-                </a>
-              </span>
-              <span>
-                <a style="cursor: pointer;" (click)="changeAlignment('right')">
-                  <img src="assets/img/right-align.svg" class="img-fluid ml-2 font_alignment_img"
-                    [ngClass]="{'selected_alignment': selectedAlignment === 'right'}">
-                </a>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-lg-5">
-            <h6 class="pt-2">Text Color</h6>
-          </div>
-          <div class="col-lg-7">
-            <div class="color-picker">
-              <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor"
-                (change)="changeTextColor()" style="cursor: pointer;">
-            </div>
-          </div>
-        </div>
-
-        <div *ngIf="showKPICalculation">
-          <hr>
-          <div class="row">
-            <div class="col-lg-12">
-              <h5>Type</h5>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-lg-12">
-              <select class="form-control type-select" [(ngModel)]="kpiType">
-                <option value="measure">Measure</option>
-                <option value="metrics">Metrics</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Common Values -->
-          <div class="common">
-            <!-- Start Date -->
-            <div class="row mt-3">
-              <div class="col-lg-6">
-                <div class="selct-option-side-r">
-                  <label>Start Date</label>
-                  <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'"
-                    (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }">
-                  <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="selct-option-side-r">
-                  <label>Days to Calculate</label>
-                  <select class="form-control" [value]="currentNode.days_to_calculate"
-                    (change)="changeDaysToCalculate($event)">
-                    <option value="all">All Days</option>
-                    <option value="business">Business Days</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- Fiscal Year -->
-            <div class="row mt-3">
-              <div class="col-lg-12">
-                <h5>Fiscal Year</h5>
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="selct-option-side-r">
-                      <label>Start Date</label>
-                      <input type="date" class="form-control"  [min]="maxFiscalStartDate"
-                        [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'"
-                        (change)="changeFiscalStartDate($event)">
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="selct-option-side-r">
-                      <label>End Date</label>
-                      <input type="date" class="form-control"
-                        [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'"
-                        (change)="changeFiscalEndDate($event)">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <!-- Target Value -->
-            <label class="text-nowrap font_weight_500">Target Value</label>
-            <ng-container *ngFor="let t of target; let i = index">
-              <div class="row mt-2 mb-4">
-                <div class="col-lg-5 pr-0">
-                  <div class="target_select selct-option-side-r">
-                    <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
-                      <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
-                      <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
-                      <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
-                      <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-lg-4 px-2">
-                  <div class="custom-input-side-r-flow">
-                    <input type="number" class="form-control" [value]="t.value" (blur)="setTarget('value', $event, i)">
-                    <!-- <input type="number" class="form-control" [(ngModel)]="currentNodeWeight" (blur)="changeWeightage()"
-                    [ngClass]="{ 'is-invalid': currentNodeWeight < 0 || currentNodeWeight === null || currentNodeWeight > 100 }">
-                  <div class="invalid-feedback d-block" *ngIf="currentNodeWeight < 0 || currentNodeWeight === null">Please enter weightage!</div>
-                  <div class="invalid-feedback d-block" *ngIf="currentNodeWeight > 100">Weightage cannot be greater than 100!</div> -->
-                  </div>
-                </div>
-                <div class="col-lg-3 d-flex px-2">
-                  <div class="cursor_pointer" (click)="removeTarget(i)" *ngIf="target.length > 1">
-                    <img src="assets/img/icons8-remove-30.png" id="delete_btn" class="img-fluid">
-                  </div>
-                  <div class="cursor_pointer" (click)="addMoreTarget()" *ngIf="target.length < 4">
-                    <img src="assets/img/add-btn-side-r.svg" class="img-fluid">
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-            <!-- Target Label -->
-            <input type="text" class="form-control" [(ngModel)]="currentNode.target_label" (blur)="changeTargetLabel($event)">
-            <!-- Achieved Value -->
-            <div class="row mt-3" *ngIf="kpiType === 'measure'">
-              <div class="col-lg-12">
-                <div class="form-group">
-                  <label class="font_weight_500">Achieved Value</label>
-                  <input type="number" class="form-control" [(ngModel)]="currentNodeAchievedValue"
-                    (blur)="changeAchievedValue()"
-                    [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null || currentNodeAchievedValue > 9999 }">
-                  <div class="invalid-feedback d-block"
-                    *ngIf="currentNodeAchievedValue < 0 || currentNodeAchievedValue === null">Please enter achieved
-                    value!</div>
-                  <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue > 9999">Achieved value cannot be
-                    greater than 9999!</div>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <!-- KPI Calculation Periods -->
-            <div class="row mt-3">
-              <div class="col-lg-12">
-                <div class="selct-option-side-r">
-                  <label>KPI Calculation Periods</label>
-                  <select class="form-control" [(ngModel)]="currentNode.kpi_calc_period"
-                    (change)="changeKPIPeriods($event)">
-                    <option value="monthly">One-time monthly target</option>
-                    <option value="month-to-date">Month to date</option>
-                    <option value="year-to-date">Year to date</option>
-                    <option value="month-over-month">Month over month</option>
-                    <option value="year-over-year">Year over year</option>
-                    <option value="entire-history">Entire history</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <hr>
-
-            <!-- Metrics div -->
-            <ng-container *ngIf="kpiType === 'metrics' ">
-              <!-- Formula div -->
-              <form [formGroup]="formulaGroup">
-                <div class="row my-3">
-                  <div class="col-lg-8">
-                    <h5>Formula</h5>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="text-right">
-                      <!-- <a href=""><img src="assets/img/q-mark.svg" class="img-fluid"></a> -->
-                      <img src="assets/img/q-mark.svg" class="img-fluid">
-                    </div>
-                  </div>
-                </div>
-                <div formArrayName="fields">
-                  <div class="mb-2" *ngFor="let fieldForm of fields.controls; let i = index">
-                    <div class="row" [formGroupName]="i">
-                      <div class="col-lg-8">
-                        <div class="form-group">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <label (keypress)="setLimitForContentEditable($event)" (blur)="setFieldValues(i)"
-                              contenteditable="false" [id]="'fd'+i"
-                              [class]="checkFieldStatus('fd'+i) ? 'mb-2 border rename_label_width' : 'mb-2 rename_label_width'"
-                              (input)="saveFieldValuesTemporarily(i, $event)">{{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}</label>
-                            <a class="mb-2" role="button" (click)="editFieldStatus(i, true)"
-                              *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg"
-                                class="img-fluid edit-btn-r"></a>
-                          </div>
-                          <input type="number" class="form-control" placeholder="" min="0" (blur)="metricOperations.recheckFormula()"
-                            formControlName="fieldValue"
-                            [ngClass]="{ 'is-invalid': formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched) }" />
-                          <div class="invalid-feedback d-block"
-                            *ngIf="formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched)">
-                            Please enter value greater than 0</div>
-                        </div>
-                      </div>
-                      <div class="col-lg-4 d-flex flex-column justify-content-end align-items-center pb-3">
-                        <div class="custom-add-minus">
-                          <a id="addIcon" class="add-icon mr-2" *ngIf="fields.length == i+1 && fields.length < 5"
-                            (click)="formulaFlag ? null : addFormulaGroup()"><img src="assets/img/plus-field-side-r.svg"
-                              class="img-fluid mr-3"></a>
-                          <a id="removeIcon" class="remove-icon" *ngIf="fields.length > 1" (click)="formulaFlag ? null : deleteFormulaGroup(i)"><img
-                              src="assets/img/minus-field-side-r.svg" class="img-fluid"></a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="col-lg-12 row">
-                    <div class="col-lg-10">
-                      <input type="text" class="form-control font-weight-bold" id="formula-field" autocomplete="off"
-                        formControlName="formula" (input)="filterFieldSuggestions($event)"
-                        (blur)="calculateFormula($event)"
-                        [ngClass]="( formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)) || (formulaGroup.get('calculatedValue').value <= 0 && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)) ? 'is-invalid' : (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched) ? 'is-valid' : ''" />
-                      <div class="invalid-feedback d-block"
-                        *ngIf="formulaGroup.get('formula').invalid && (formulaGroup.get('formula').dirty || formulaGroup.get('formula').touched)">
-                        Please enter formula!</div>
-                      <p class="d-flex flex-column" *ngIf="formulaFieldSuggestions.length > 0">
-                        <span class="field-options border py-1 pl-2" *ngFor="let field of formulaFieldSuggestions"
-                          (click)="concatenateFieldValue(field)">{{field ? field?.fieldName : ''}}</span>
-                      </p>
-
-                      <div *ngIf="formulaError" class="invalid-feedback d-block is-invalid">{{formulaError}}</div>
-                    </div>
-                    <!-- <div class="col-lg-2" *ngIf="formulaGroup.get('calculatedValue').value > 0">
-                      <img src="assets/img/tick-mark-side-r.svg" class="img-fluid tick-custom">
-                    </div> -->
-                  </div>
-                </div>
-                <div class="row mt-3">
-                  <div class="col-lg-12 h5">
-                    <span class="h5">= {{formulaGroup.get('calculatedValue').value}}</span>
-                  </div>
-                </div>
-              </form>
-            </ng-container>
-            <hr *ngIf="kpiType === 'metrics' ">
-
-            <!-- Contributor -->
-            <div class="row mt-3">
-              <div class="col-lg-6">
-                <h5>Contributor</h5>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-12">
-                <ng-select [(ngModel)]="currentNode.contributorId" placeholder="Select user"
-                  (change)="changeContributor($event)"  [ngClass]="{ 'is-invalid': !currentNode.contributorId }">
-                  <ng-option *ngFor="let user of contributors" [value]="user._id">
-                    {{ user?.fullName }} ({{ user?.email }})
-                  </ng-option>
-                </ng-select>
-                <div class="invalid-feedback d-block" *ngIf="!currentNode.contributorId">Contributor is required!</div>
-              </div>
-            </div>
-          </div>
-          <hr>
-
-          <!-- Person to Notify -->
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="selct-option-side-r">
-                <label>Person to Notify</label>
-                <select class="form-control" (change)="setNotifyUser()" [(ngModel)]="notifyType">
-                  <option value="" selected>Select</option>
-                  <option value="owner">KPI Owner</option>
-                  <option value="specific">Specific Person</option>
-                </select>
-                <ng-container *ngIf="notifyType === 'specific'">
-                  <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user"
-                    (change)="selectNotifyUser($event)">
-                    <ng-option *ngFor="let user of members" [value]="user._id">
-                      {{ user?.fullName }} ({{ user?.email }})
-                    </ng-option>
-                  </ng-select>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-          <hr>
-          <!-- Alerts div -->
-          <div class="row mt-3">
-            <div class="col-lg-12">
-              <h5>Alerts</h5>
-            </div>
-            <div class="col-lg-6">
-              <div class="selct-option-side-r">
-                <label>Period</label>
-                <select class="form-control" [(ngModel)]="currentNode.alert_frequency"
-                  (change)="changeAlertFrequency($event)">
-                  <option value="" selected>Select period</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="quarterly">Quarterly</option>
-                  <option value="yearly">Yearly</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="selct-option-side-r">
-                <label>Type</label>
-                <select class="form-control" [(ngModel)]="currentNode.alert_type" (change)="changeAlertType($event)">
-                  <option value="" selected>Select type</option>
-                  <option value="notification">Notify at login</option>
-                  <option value="email">On email</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Share karta modal -->
-      <div class="modal fade" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content p-4">
-            <div class="modal-header">
-              <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Karta</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                (click)="selectedSharedUsers = undefined">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="share-link-modal mt-3">
-                <div class="form-group">
-                  <label class="short_text max_width_500">{{sharingKarta?.name}}</label>
-                  <div class="row">
-                    <div class="col-lg-12">
-                      <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
-                        [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
-                        <ng-template ng-tag-tmp let-search="searchTerm">
-                          <b>Add new email</b>: {{search}}
-                        </ng-template>
-                      </ng-select>
-                    </div>
-                  </div>
-                </div>
-                <div style="border-color: unset;" data-dismiss="" aria-label="">
-                  <span aria-hidden="true">
-                    <button type="button" class="send-btn" (click)="shareKarta()"
-                      [disabled]="selectedSharedUsers?.length < 1  || sharedSubmitFlag">
-                      <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
-                        <span class="sr-only">Loading...</span>
-                      </div>
-                      <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
-                    </button>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-12 text-left">
-                <div class="shared-with" style="display:flex;">
-                  <span>Shared with:</span>
-                  <ng-container *ngIf="sharingKartaCount">
-                    <span class="ml-2"><img src="../../../assets/img/user-icon.svg"></span>
-                    <span class="ml-2">
-                      <div class="user-counter">
-                        <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
-                      </div>
-                    </span>
-                  </ng-container>
-                  <span class="mode-btn">
-                    <div class="select-karta-name">
-                       <select class="form-control custom-select-karta-mode" [(ngModel)]="changeModeType" (change)="changeSharingMode($event)">
-                          <option value="view">View Only</option>
-                          <option value="edit" [disabled]='changetype'>Edit Only</option>
-                         </select>
-                      </div>
-                   </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Save catalog modal -->
-      <div class="modal fade" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content p-4">
-            <div class="modal-header">
-              <h5 class="modal-title pt-0" id="staticBackdropLabel">Save {{ catalogForm?.value?.node_type | titlecase }}</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetCatalogForm()">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="share-link-modal mt-3">
-                <div class="row">
-                  <div class="col-lg-12">
-                    <form [formGroup]="catalogForm" (ngSubmit)="onCatalogSubmit()">
-                      <div class="form-group">
-                        <label for="name" class="font-weight-bold">Name</label>
-                        <input type="text" id="name" class="form-control" placeholder="Enter name" formControlName="name" [maxlength]="50"
-                        [ngClass]="{ 'is-invalid': (catalogSubmitted || catalog.name.touched) && catalog.name.errors }">
-                        <div *ngIf="(catalogSubmitted || catalog.name.touched) && catalog.name.errors" class="invalid-feedback">
-                          <div *ngIf="catalog.name.errors.required">Name is required!</div>
-                          <div *ngIf="catalog.name.errors.pattern">Blank space is not allowed!</div>
-                        </div>
-                      </div>
-                      <button class="send-btn" [disabled]="catalogSubmitFlag">
-                        <div class="spinner-border text-light align-top" role="status" *ngIf="catalogSubmitFlag">
-                          <span class="sr-only">Loading...</span>
-                        </div>
-                        <ng-container *ngIf="!catalogSubmitFlag">SAVE</ng-container>
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vew karta modal -->
-      <div class="modal fade" id="viewKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content p-4">
-            <div class="modal-header">
-              <h5 class="modal-title pt-0" id="staticBackdropLabel">View Karta</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="share-link-modal mt-3">
-                <div class="row">
-                  <div class="col-lg-12">
+                 <div class="col-lg-12">
                     <form [formGroup]="viewKartaForm" (ngSubmit)="onViewKartaSubmit()">
-                      <div class="row">
-                        <div class="col-lg-6">
+                    <div class="row">
+                       <div class="col-lg-6">
                           <div class="form-group">
-                            <label>Type <span class="text-danger">*</span></label>
-                            <select class="form-control custom-select-option" formControlName="type" (change)="viewKartaType($event)"
-                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors }">
-                              <option value="" selected>Select</option>
-                              <option value="month">Month</option>
-                              <option value="week">Week</option>
-                              <option value="quarter">Quarter</option>
-                            </select>
-                            <div *ngIf="(viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors"
-                              class="invalid-feedback">
-                              <div *ngIf="viewKarta.type.errors.required">Type is required!</div>
-                            </div>
+                             <label>Type <span class="text-danger">*</span></label>
+                             <select class="form-control custom-select-option" formControlName="type" (change)="viewKartaType($event)"
+                             [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors }">
+                             <option value="" selected>Select</option>
+                             <option value="month">Month</option>
+                             <option value="week">Week</option>
+                             <option value="quarter">Quarter</option>
+                             </select>
+                             <div *ngIf="(viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors"
+                                class="invalid-feedback">
+                                <div *ngIf="viewKarta.type.errors.required">Type is required!</div>
+                             </div>
                           </div>
-                        </div>
-                        <div class="col-lg-6" *ngIf="showViewKartaNumber">
+                       </div>
+                       <div class="col-lg-6" *ngIf="showViewKartaNumber">
                           <div class="form-group">
-                            <label>Number <span class="text-danger">*</span></label>
-                            <select class="form-control custom-select-option" formControlName="number"
-                              [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors }">
-                              <option value="" selected>Select</option>
-                              <option *ngFor="let number of viewKartaNumbers" [value]="number.value">{{ number?.name }}
-                              </option>
-                            </select>
-                            <div *ngIf="(viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors"
-                              class="invalid-feedback">
-                              <div *ngIf="viewKarta.number.errors.required">Number is required!</div>
-                            </div>
+                             <label>Number <span class="text-danger">*</span></label>
+                             <select class="form-control custom-select-option" formControlName="number"
+                                [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors }">
+                                <option value="" selected>Select</option>
+                                <option *ngFor="let number of viewKartaNumbers" [value]="number.value">{{ number?.name }}
+                                </option>
+                             </select>
+                             <div *ngIf="(viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors"
+                                class="invalid-feedback">
+                                <div *ngIf="viewKarta.number.errors.required">Number is required!</div>
+                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <button class="send-btn" [disabled]="viewKartaSubmitFlag">
-                        <div class="spinner-border text-light align-top" role="status" *ngIf="viewKartaSubmitFlag">
+                       </div>
+                    </div>
+                    <button class="send-btn" [disabled]="viewKartaSubmitFlag">
+                       <div class="spinner-border text-light align-top" role="status" *ngIf="viewKartaSubmitFlag">
                           <span class="sr-only">Loading...</span>
-                        </div>
-                        <ng-container *ngIf="!viewKartaSubmitFlag">SUBMIT</ng-container>
-                      </button>
+                       </div>
+                       <ng-container *ngIf="!viewKartaSubmitFlag">SUBMIT</ng-container>
+                    </button>
                     </form>
-                  </div>
-                </div>
+                 </div>
               </div>
-            </div>
-          </div>
+           </div>
         </div>
-      </div>
+     </div>
+  </div>
+</div>

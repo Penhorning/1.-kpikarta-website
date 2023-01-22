@@ -21,6 +21,7 @@ declare const $: any;
 })
 export class EditKartaComponent implements OnInit {
 
+  unauthorizedUser: any;
   kartaId: string = '';
   karta: any;
   currentNode: any = {};
@@ -149,7 +150,6 @@ export class EditKartaComponent implements OnInit {
 
   // Share karta
   members: any = [];
-  sharedKartaStr: any = [];
   kartas: any = [];
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
@@ -256,7 +256,7 @@ export class EditKartaComponent implements OnInit {
             this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
             // this.D3SVG.updateNode(this.karta.node, true);
-            this.setKartaDimension();
+            // this.setKartaDimension();
             jqueryFunctions.disableChart();
             jqueryFunctions.setValue("#chartMode", "disable");
             jqueryFunctions.setAttribute("#chartMode", "disabled", true);
@@ -582,10 +582,12 @@ export class EditKartaComponent implements OnInit {
     }
     this._kartaService.getAllMembers(data).subscribe(
       (response: any) => {
-        this.contributors = response.members[0].data;
         if (response.members[0].data.length > 0) {
           this.members = response.members[0].data.filter((x: any) => {
             return x.email != this._commonService.getEmailId();
+          });
+          this.contributors = response.members[0].data.filter((x: any) => {
+            if (x.Role.name !== "billing_staff" && x.license.name !== "Spectator") return x;
           });
         } else this.members = [];
       },
@@ -817,7 +819,7 @@ export class EditKartaComponent implements OnInit {
         (response: any) => {
           this.phases.splice(index, 1);
           this.updateNewPercentage();
-          this.setKartaDimension();
+          // this.setKartaDimension();
         }
       );
     }
@@ -963,18 +965,28 @@ export class EditKartaComponent implements OnInit {
 
   // Get karta details including all nodes
   getKartaInfo() {
+    const setKartaDetails = (response: any) => {
+      this.karta = response;
+      this.versionId = response.versionId;
+      if (this.karta.node) {
+        this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+        this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+        BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+        // this.setKartaDimension();
+        this.showSVG = true;
+        jqueryFunctions.enableChart();
+      }
+    }
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
-        this.karta = response;
-        this.versionId = response.versionId;
-        this.sharedKartaStr = response;
-        if (this.karta.node) {
-          this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
-          this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-          BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
-          this.setKartaDimension();
-          this.showSVG = true;
-          jqueryFunctions.enableChart();
+        if (response.userId === this._commonService.getUserId()) {
+          this.unauthorizedUser = false;
+          setKartaDetails(response);
+        } else if (response.sharedTo.length > 0 && response.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType === "edit") {
+          this.unauthorizedUser = false;
+          setKartaDetails(response);
+        } else {
+          this.unauthorizedUser = true;
         }
       }
     ).add(() => (this.loadingKarta = false));
@@ -1052,18 +1064,20 @@ export class EditKartaComponent implements OnInit {
 
   // Divide weightage
   divideWeightage(param: any, phase: any, extraLength = 0) {
+    const children = (param.children || param._children || []);
     let weightage = 0;
-    if (param.hasOwnProperty("children") && param.children.length > 0) {
+    if (children.length > 0) {
       let haveFurtherChildren = false;
-      param.children.forEach((element: any) => {
-        if (element.hasOwnProperty("children") && element.children.length > 0 && element.phaseId === phase.id) {
+      children.forEach((element: any) => {
+        const nestedChildren = (element.children || element._children || []);
+        if (nestedChildren.length > 0 && element.phaseId === phase.id) {
           weightage = 0;
           haveFurtherChildren = true;
         }
       });
       if (!haveFurtherChildren) {
-        weightage = + (100 / (param.children.length + extraLength)).toFixed(2);
-        param.children.forEach((item: any) => {
+        weightage = + (100 / (children.length + extraLength)).toFixed(2);
+        children.forEach((item: any) => {
           item.weightage = weightage;
         });
       }
@@ -1282,7 +1296,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.removeNode(data).subscribe((response: any) => {
       this.D3SVG.update(param.parent);
       this.updateNewPercentage();
-      this.setKartaDimension();
+      // this.setKartaDimension();
       // this.D3SVG.removeOneKartaDivider();
       let kpi_check_obj = {
         target: "target",
@@ -1560,8 +1574,9 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Sharing karta
-  onShare(param: any) {
-    delete param.node
+  onShare() {
+    let param = this.karta;
+    delete param.node;
     this.selectedSharedUsers = [];
     this.sharingKarta = param;
     if (param.sharedTo) this.sharingKartaCount = param.sharedTo.length;
@@ -1625,7 +1640,7 @@ export class EditKartaComponent implements OnInit {
 
       this._kartaService.shareKarta(data).subscribe(
         (response: any) => {
-          this._commonService.successToaster("Your have shared karta successfully");
+          this._commonService.successToaster("Your have shared karta successfully!");
           jqueryFunctions.hideModal('shareKartaModal');
           email_array.forEach((element: any) => {
             this.karta.sharedTo.push({ email: element });
@@ -1768,7 +1783,7 @@ export class EditKartaComponent implements OnInit {
                     this.currentNode.phase = "";
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
-                    this.setKartaDimension();
+                    // this.setKartaDimension();
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
                     this.undoRedoFlag = false;
@@ -1894,7 +1909,7 @@ export class EditKartaComponent implements OnInit {
                     this.currentNode.phase = "";
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
-                    this.setKartaDimension();
+                    // this.setKartaDimension();
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
                     this.undoRedoFlag = false;
