@@ -8,7 +8,7 @@ export class DashboardService {
 
   constructor(private _httpService: HttpService) { }
 
-  getSubscribedUsers(userId: string) {
-    return this._httpService.POST(`/subscriptions/get-subscription-users`, { userId });
+  getSubscribedUsers(companyId: string) {
+    return this._httpService.POST(`/subscriptions/get-subscription-users`, { companyId });
   }
 }

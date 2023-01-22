@@ -104,7 +104,8 @@ export class LoginComponent implements OnInit {
               profilePic,
               companyLogo: response.user.company.logo,
               role: response.user.role.name,
-              license: response.user.license.name
+              license: response.user.license.name,
+              companyId: response.user.companyId
             }
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({ email: this.loginForm.value.email });

@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
   // Get Subscribed Users
   getSubscribedUsers() {
     this.loadingSubscribers = true;
-    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(
+    this._dashboardService.getSubscribedUsers(this._commonService.getCompanyId()).subscribe(
       (response: any) => {
       if (response) {
         let iconMapping = [

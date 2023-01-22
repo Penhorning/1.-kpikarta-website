@@ -506,6 +506,10 @@ export class EditKartaComponent implements OnInit {
                   }
               );
           }
+        } else {
+          this.formulaFlag = false;
+          jqueryFunctions.enableElement("#addIcon");
+          jqueryFunctions.enableElement("#removeIcon");
         }
       }, 1000);
   }

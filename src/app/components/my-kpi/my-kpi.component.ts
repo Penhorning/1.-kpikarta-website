@@ -823,7 +823,7 @@ export class MyKpiComponent implements OnInit {
     } else {
       return false;
     }
-    total = eval(newValue);
+    total = eval(newValue).toFixed(2);
     if (total > 0) {
       let percentage = (total / +values.__EMPTY_6) * 100;
       let abc = {
