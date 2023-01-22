@@ -23,9 +23,14 @@ export class AllKartasComponent implements OnInit {
   selectedUsers: any = [];
   sharingKartaCount: any = 0;
   emails: any = [];
+  // Share page var
+  sharedKartas: any = [];
+  sharedPageIndex: number = 0;
+  sharedPageSize: number = 8;
+  sharedTotalKartas: number = 0;
   // Page var
   pageIndex: number = 0;
-  pageSize: number = 8;
+  pageSize: number = 1;
   totalKartas: number = 0;
   search_text: string = "";
   // Loding var
@@ -47,20 +52,20 @@ export class AllKartasComponent implements OnInit {
     if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
       this.getAllKartas();
       this.getAllMembers();
-    } else this.clickSharedTab();
+    } else this.clickTab2();
 
     this.route.fragment.subscribe(f => {
-      if (f === "tabs-2") this.clickSharedTab();
+      if (f === "tabs-2") this.clickTab2();
     });
   }
 
-  // Shared tab clicked
-  clickSharedTab() {
+  // Tab 2 clicked
+  clickTab2() {
     setTimeout(() => {
-      $("#assigned_tab").removeClass("active");
+      $("#tab_1 a").removeClass("active");
     }, 100);
-    $("#shared_tab").click();
-    $("#shared_tab a").addClass("active");
+    $("#tab_2").click();
+    $("#tab_2 a").click();
   }
   // Navigate to create karta
   navigateToKarta() {
@@ -72,7 +77,7 @@ export class AllKartasComponent implements OnInit {
     let data = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
-      findBy: this.kartaType === 'owned' ? this._commonService.getUserId() : this._commonService.getEmailId(),
+      findBy: this._commonService.getUserId(),
       searchQuery: this.search_text,
       type: this.kartaType
     }
@@ -83,10 +88,38 @@ export class AllKartasComponent implements OnInit {
 
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
-        this.kartas = response.kartas[0].data;
-        if (response.kartas[0].metadata.length > 0) {
-          this.totalKartas = response.kartas[0].metadata[0].total; 
+        if (response.kartas[0].data.length > 0) {
+          this.kartas = response.kartas[0].data;
+          this.totalKartas = response.kartas[0].metadata[0].total;
         } else this.totalKartas = 0;
+      }
+    ).add(() => this.loading = false);
+  }
+
+  // Get all shared kartas
+  getAllSharedKartas() {
+    let data = {
+      page: this.sharedPageIndex + 1,
+      limit: this.sharedPageSize,
+      findBy: this._commonService.getEmailId(),
+      searchQuery: this.search_text,
+      type: this.kartaType
+    }
+
+    this.loading = true;
+    this.sharedKartas = [];
+    this.sharedPageIndex = 0;
+
+    this._kartaService.getAllKartas(data).subscribe(
+      (response: any) => {
+        if (response.kartas[0].data.length > 0) {
+          response.kartas[0].data = response.kartas[0].data.map((item: any) => {
+            item.accessType = item.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType;
+            return item;
+          });
+          this.sharedKartas = response.kartas[0].data;
+          this.sharedTotalKartas = response.kartas[0].metadata[0].total;
+        } else this.sharedTotalKartas = 0;
       }
     ).add(() => this.loading = false);
   }
@@ -218,36 +251,66 @@ export class AllKartasComponent implements OnInit {
     let data = {
       page: this.pageIndex + 1,
       limit: this.pageSize,
-      findBy: this.kartaType === 'owned' ? this._commonService.getUserId() : this._commonService.getEmailId()
+      type: this.kartaType,
+      findBy: this._commonService.getUserId()
     }
     this.loading = true;
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
-        if (response) {
+        if (response.kartas[0].data.length > 0) {
           this.kartas.push(...response.kartas[0].data);
-          if (response.kartas[0].metadata.length > 0) {
-            this.totalKartas = response.kartas[0].metadata[0].total; 
-          } else this.totalKartas = 0;
-        }
+          this.totalKartas = response.kartas[0].metadata[0].total;
+        } else this.totalKartas = 0;
+      }
+    ).add(() => this.loading = false);
+  }
+
+  // Shared view more
+  sharedViewMore() {
+    this.sharedPageIndex++;
+    let data = {
+      page: this.sharedPageIndex + 1,
+      limit: this.sharedPageSize,
+      type: this.kartaType,
+      findBy: this._commonService.getEmailId()
+    }
+    this.loading = true;
+    this._kartaService.getAllKartas(data).subscribe(
+      (response: any) => {
+        if (response.kartas[0].data.length > 0) {
+          response.kartas[0].data = response.kartas[0].data.map((item: any) => {
+            item.accessType = item.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType;
+            return item;
+          });
+          this.sharedKartas.push(...response.kartas[0].data);
+          this.sharedTotalKartas = response.kartas[0].metadata[0].total;
+        } else this.sharedTotalKartas = 0;
       }
     ).add(() => this.loading = false);
   }
 
   // Tab switch
-  onTabSwitch(type: string) {
+  onTabSwitch() {
+    this.kartaType = "owned";
     this.search_text = "";
-    this.kartaType = type;
     this.getAllKartas();
   }
+  // Tab switch shared
+  onTabSwitchShared() {
+    this.kartaType = "shared";
+    this.search_text = "";
+    this.getAllSharedKartas();
+  }
 
+  // Search
   search() {
-    if (this.search_text) {
-      this.getAllKartas();
-    }
+    if (this.search_text && this.kartaType === "owned") this.getAllKartas();
+    else if (this.search_text && this.kartaType === "shared") this.getAllSharedKartas();
   }
   clearSearch() {
     this.search_text = "";
-    this.getAllKartas();
+    if (this.kartaType === "owned") this.getAllKartas();
+    else if (this.kartaType === "shared") this.getAllSharedKartas();
   }
 
    // Rename karta

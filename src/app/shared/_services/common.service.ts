@@ -82,6 +82,9 @@ export class CommonService {
   getUserId() {
     return this.getSession().userId;
   }
+  getCompanyId() {
+    return this.getSession().companyId;
+  }
   getEmailId() {
     return this.getSession().email;
   }

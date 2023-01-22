@@ -25,12 +25,18 @@ export class CatalogComponent implements OnInit {
     { name: "Metrics", value: "metrics" }
   ]
   // Share var
-  dropdownSettings: any = {};
   sharingCatalog: any;
   shareSubmitFlag: boolean = false;
   selectedUsers: any = [];
-  selectedSharedUsers: any = []
+  selectedSharedUsers: any = [];
   sharingCatalogCount: any = 0;
+  dropdownSettings: any = {};
+
+  // Share page var
+  sharedCatalogs: any = [];
+  sharedPageIndex: number = 0;
+  sharedPageSize: number = 8;
+  sharedTotalCatalogs: number = 0;
   // Page var
   search_text: string = "";
   pageIndex: number = 0;
@@ -45,7 +51,7 @@ export class CatalogComponent implements OnInit {
   constructor(private _catalogService: CatalogService, private _commonService: CommonService, private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.getCatalogs();
+    this.getAllCatalogs();
     this.getAllMembers();
 
     // Ng Multi Select Dropdown properties
@@ -70,11 +76,11 @@ export class CatalogComponent implements OnInit {
     else this.nodeTypeFilter = this.nodeTypeFilter.filter((item: any) => item !== value);
   }
   applyFilter() {
-    this.getCatalogs();
+    this.getAllCatalogs();
   }
 
   // Get all catalogs
-  getCatalogs() {
+  getAllCatalogs() {
     let data = {
       page: 1,
       limit: this.pageSize,
@@ -95,6 +101,31 @@ export class CatalogComponent implements OnInit {
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
         this.changeDetectorRef.detectChanges();
+      }
+    ).add(() => this.loading = false);
+  }
+
+  // Get all shared catalogs
+  getAllSharedCatalogs() {
+    let data = {
+      page: 1,
+      limit: this.sharedPageSize,
+      userId: this._commonService.getUserId(),
+      searchQuery: this.search_text,
+      nodeTypes: this.nodeTypeFilter,
+      type: this.catalogType
+    }
+
+    this.loading = true;
+    this.sharedCatalogs = [];
+    this.sharedPageIndex = 0;
+
+    this._catalogService.getCatalogs(data).subscribe(
+      (response: any) => {
+        if (response.catalogs[0].data.length > 0) {
+          this.sharedCatalogs = response.catalogs[0].data;
+          this.sharedTotalCatalogs = response.catalogs[0].metadata[0].total;
+        } else this.sharedTotalCatalogs = 0;
       }
     ).add(() => this.loading = false);
   }
@@ -136,7 +167,7 @@ export class CatalogComponent implements OnInit {
       this._catalogService.deleteCatalog({ catalogId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Inventory deleted successfully!");
-          this.getCatalogs();
+          this.getAllCatalogs();
         }
       );
     }
@@ -164,26 +195,48 @@ export class CatalogComponent implements OnInit {
     ).add(() => this.loading = false);
   }
 
-  catalogTimer: any = null;
-  onHandleSwitch(type: string) {
-    clearTimeout(this.catalogTimer);
-    this.catalogTimer = setTimeout(() => this.onTabSwitch(type), 500);
+  // Shared view more
+  sharedViewMore() {
+    this.sharedPageIndex++;
+    let data = {
+      page: this.sharedPageIndex + 1,
+      limit: this.sharedPageSize,
+      userId: this._commonService.getUserId(),
+      type: this.catalogType
+    }
+    this.loading = true;
+    this._catalogService.getCatalogs(data).subscribe(
+      (response: any) => {
+        if (response.catalogs[0].data.length > 0) {
+          this.sharedCatalogs.push(...response.catalogs[0].data);
+          this.sharedTotalCatalogs = response.catalogs[0].metadata[0].total;
+        } else this.sharedTotalCatalogs = 0;
+      }
+    ).add(() => this.loading = false);
   }
+
   // Tab switch
-  onTabSwitch(type: string) {
+  onTabSwitch() {
+    this.catalogType = "owned";
     this.search_text = "";
-    this.catalogType = type;
-    this.catalogs.length = 0;
-    this.getCatalogs();
+    this.getAllCatalogs();
+  }
+  // Tab switch shared
+  onTabSwitchShared() {
+    this.catalogType = "shared";
+    this.search_text = "";
+    this.getAllSharedCatalogs();
   }
 
   // Search
   search() {
-    if (this.search_text) this.getCatalogs();
+    if (this.search_text && this.catalogType === "owned") this.getAllCatalogs();
+    else if (this.search_text && this.catalogType === "shared") this.getAllSharedCatalogs();
   }
   clearSearch() {
     this.search_text = "";
-    this.getCatalogs();
+    if (this.catalogType === "owned") this.getAllCatalogs();
+    else if (this.catalogType === "shared") this.getAllSharedCatalogs();
   }
 
   // Ng Multi Select Dropdown
@@ -238,7 +291,7 @@ export class CatalogComponent implements OnInit {
         this._commonService.successToaster("Your have shared Inventory successfully!");
         $('#shareCatalogModal').modal('hide');
         this.resetSharingCatalog();
-        this.getCatalogs();
+        this.getAllCatalogs();
       },
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);

@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
   // Get Subscribed Users
   getSubscribedUsers() {
     this.loadingSubscribers = true;
-    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(
+    this._dashboardService.getSubscribedUsers(this._commonService.getCompanyId()).subscribe(
       (response: any) => {
       if (response) {
         let iconMapping = [
@@ -118,7 +118,11 @@ export class DashboardComponent implements OnInit {
     };
     this.loadingSharedKartas = true;
     this._kartaService.getAllKartas(data).subscribe((response: any) => {
-      if (response) {
+      if (response.kartas[0].data.length > 0) {
+        response.kartas[0].data = response.kartas[0].data.map((item: any) => {
+          item.accessType = item.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType;
+          return item;
+        });
         this.sharedKartas = response.kartas[0].data;
       } else this.sharedKartas = [];
     }).add(() => this.loadingSharedKartas = false );

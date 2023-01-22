@@ -17,6 +17,7 @@ export class BillingComponent implements OnInit {
 
   user: any;
   userId: string = this._commonService.getUserId();
+  companyId: string = this._commonService.getCompanyId();
   noDataAvailable: any = this._commonService.noDataAvailable;
   cards: any = [];
   overview: any;
@@ -45,7 +46,7 @@ export class BillingComponent implements OnInit {
   get form() { return this.cardForm.controls; }
 
   getCardDetails() {
-    this._billingService.getCards(this.userId).subscribe(
+    this._billingService.getCards(this.companyId).subscribe(
       (response) => {
         if (response.data && response.data.data.length > 0) {
           this.cards = response.data.data;
@@ -59,7 +60,7 @@ export class BillingComponent implements OnInit {
 
   getSubscribedUsersDetail() {
     this.loadingOverview = true;
-    this._billingService.getSubscribedUsers(this.userId).subscribe(
+    this._billingService.getSubscribedUsers(this.companyId).subscribe(
       (response) => {
         this.overview = response.data.data;
         this.loadingOverview = false;
@@ -72,7 +73,7 @@ export class BillingComponent implements OnInit {
   }
 
   getInvoicesDetails() {
-    this._billingService.getInvoices(this.userId).subscribe(
+    this._billingService.getInvoices(this.companyId).subscribe(
       (response) => {
         if(response.data.data.length > 0) {
           this.invoices = response.data.data;
