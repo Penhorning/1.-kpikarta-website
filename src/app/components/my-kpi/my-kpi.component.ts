@@ -74,6 +74,7 @@ export class MyKpiComponent implements OnInit {
   importSubmitFlag: boolean = false;
   nodes: any = []
   openState: boolean = false;
+  wsname:any;
   // Target filter
   target: any = [
     { frequency: "", value: 0, percentage: 0 }
@@ -731,7 +732,8 @@ export class MyKpiComponent implements OnInit {
     this.tableRecords = [];
     this.tableTitle = [];
     this.tableData = [];
-    this.validationtitleHead = ''
+    this.validationtitleHead = '';
+    this.nodes = '';
   }
 
   // Number validation
@@ -758,6 +760,8 @@ export class MyKpiComponent implements OnInit {
     this.tableData = [];
     this.tableTitle = [];
     this.nodes = '';
+    this.wsname = '';
+   
     if (!event.target.files && !event.target.files[0]) {
       this._commonService.errorToaster("File not found!");
       event.target.value = "";
@@ -773,8 +777,8 @@ export class MyKpiComponent implements OnInit {
         const wb: XLSX.WorkBook = XLSX.read(binarystr, { type: 'binary', raw: true, dense: true, cellNF: true, cellDates: true });
 
         /* selected the first sheet */
-        const wsname: string = wb.SheetNames[0];
-        const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+        this.wsname = wb.SheetNames[0];
+        const ws: XLSX.WorkSheet = wb.Sheets[this.wsname];
 
         /* save data */
         const data = <AOA>(XLSX.utils.sheet_to_json(ws)); // to get 2d array pass 2nd parameter as object {header: 1}
@@ -838,7 +842,7 @@ export class MyKpiComponent implements OnInit {
       let percentage = (total / +values.__EMPTY_6) * 100;
       let abc = {
         "id": values['My KPI Export'],
-        "achieved_value": Math.round(percentage),
+        "achieved_value": total,
         "node_formula": {
           "fields": tempObj,
           "formula": values.__EMPTY_5,
@@ -849,7 +853,8 @@ export class MyKpiComponent implements OnInit {
             "frequency": values.__EMPTY_8,
             "percentage": Math.round(percentage),
             "value": values.__EMPTY_6
-          }]
+          }],
+          "percentage": Math.round(percentage)
       }
       return abc;
     } else {
@@ -858,7 +863,6 @@ export class MyKpiComponent implements OnInit {
   }
 
   calculateCSVData(csvData: any) {
-    console.log("csvData", csvData)
     //     this.importNodeIds = csvData.filter((obj: any) => {
     //       if(obj.__EMPTY_3 == "metrics")
 
@@ -879,7 +883,8 @@ export class MyKpiComponent implements OnInit {
                 "percentage": Math.round(percentage),
                 "value": +element.__EMPTY_6
               }
-            ]
+            ],
+            "percentage": Math.round(percentage)
           }
         } else {
 
@@ -903,6 +908,7 @@ export class MyKpiComponent implements OnInit {
       }
     })
     this.nodes.splice(0, 1)
+    console.log("node", this.nodes )
   }
 
   // Upload csv function
