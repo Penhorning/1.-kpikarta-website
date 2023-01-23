@@ -688,8 +688,8 @@ export class MyKpiComponent implements OnInit {
       element.targetPercentage = clacTarget.map((element: any) => { return element.percentage });
       element.targetFrequency = clacTarget.map((element: any) => { return element.frequency });
       if (element.hasOwnProperty("node_formula")) {
-        element.matrixData = element?.node_formula.fields.map((element: any) => { return element.fieldValue });
-        element.achieved_value = element.matrixData ? element.matrixData.toString() : "";
+        element.metricsData = element?.node_formula.fields.map((element: any) => { return element.fieldValue });
+        element.achieved_value = element.metricsData ? element.metricsData.join("|") : "";
       }
       element.targetValue = element.targetdata[0].toString();
       this.csvKartaData.push(element);
@@ -714,7 +714,6 @@ export class MyKpiComponent implements OnInit {
     
    // Filter out those kpis whose target is greater than 0
    let kpis = this.kpis.filter((item: any) => item.target[0].value > 0);
-
    // Copy with deep objects
    let kpis2 = JSON.parse(JSON.stringify(kpis));
 
@@ -748,18 +747,11 @@ export class MyKpiComponent implements OnInit {
 
   // Number validation
   isNumeric(value: any) {
-
-    const isNumericData = (value: string): boolean => !new RegExp(/[^\d,]/g).test(value.trim());
+    const isNumericData = (value: string): boolean => !new RegExp(/[^\d|]/g).test(value.trim());
     return isNumericData(value);
-    // if (isNumericData(value)) {
-    //   return ''
-    // } else {
-    //   this._commonService.errorToaster("Please enter positive integer value in Target Value and Achieved Value");
-    //   return '#BD362F' 
-    // }
   }
 
-  //check etension
+  // Check extension
   isValidCSVFile(file: any) {
     return file.name.endsWith(".csv");
   }
@@ -794,29 +786,39 @@ export class MyKpiComponent implements OnInit {
         const data = <AOA>(XLSX.utils.sheet_to_json(ws)); // to get 2d array pass 2nd parameter as object {header: 1}
 
         if (data.length > 0) {
-          let title = Object.values(data);
-          // Validation for csv file header.
-          this.validationtitleHead = Object.values(title[0])
+          let is_data_wrong = false;
+          // Validation for csv file header
+          this.validationtitleHead = Object.values(data[0])
           if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
             this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
             this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
-            this.calculateCSVData(data)
-            for (let title in data[0]) {
-              this.tableTitle.push(data[0][title])
-            }
-            this.tableTitle.splice(0, 2);
-            this.isTableDataWrong = false;
-            this.tableData = data.map((item: any, i: any) => {
-              delete item.__EMPTY;
-              delete item['My KPI Export'];
-              if (!this.isNumeric(item.__EMPTY_4) && i !== 0) {
-                item.ac = true;
-                this.isTableDataWrong = true;
-              } else {
-                item.ac = false;
+            data.forEach((item: any, index: number) => {
+              let key = Object.keys(item);
+              if (index > 0 && key.length !== 10) {
+                is_data_wrong = true;
               }
-              return item;
-            })
+            });
+            if (is_data_wrong) {
+              this._commonService.errorToaster("Invalid data found in a file.");
+            } else {
+              this.calculateCSVData(data)
+              for (let title in data[0]) {
+                this.tableTitle.push(data[0][title])
+              }
+              this.tableTitle.splice(0, 2);
+              this.isTableDataWrong = false;
+              this.tableData = data.map((item: any, i: any) => {
+                delete item.__EMPTY;
+                delete item['My KPI Export'];
+                if (!this.isNumeric(item.__EMPTY_4) && i !== 0) {
+                  item.ac = true;
+                  this.isTableDataWrong = true;
+                } else {
+                  item.ac = false;
+                }
+                return item;
+              });
+            }
           } else {
             this._commonService.errorToaster("Invalid data found in a file.");
           }
@@ -834,9 +836,23 @@ export class MyKpiComponent implements OnInit {
     let newValue = '';
     let value = values.__EMPTY_5.trim().split(/[\s() */%+-]+/g);
     let total: any = 0;
-    let formulaValues = values.__EMPTY_4.split(",");
-    if (value.length == formulaValues.length) {
-      value.forEach((x: any, index: number) => {
+    let formulaValues = values.__EMPTY_4.split("|");
+    // if (value.length == formulaValues.length) {
+    //   value.forEach((x: any, index: number) => {
+    //     let obj = {
+    //       "fieldName": x,
+    //       "fieldValue": formulaValues[index]
+    //     }
+    //     tempObj.push(obj)
+    //     newValue = newValue
+    //       ? newValue.replace(x, formulaValues[index])
+    //       : originalValue.replace(x, formulaValues[index]);
+    //   });
+    // } else {
+    //   return false;
+    // }
+    value.filter((item: any) => item !== "").forEach((x: any, index: number) => {
+      if (x && !parseInt(x)) {
         let obj = {
           "fieldName": x,
           "fieldValue": formulaValues[index]
@@ -844,11 +860,9 @@ export class MyKpiComponent implements OnInit {
         tempObj.push(obj)
         newValue = newValue
           ? newValue.replace(x, formulaValues[index])
-          : originalValue.replace(x, formulaValues[index]);
-      });
-    } else {
-      return false;
-    }
+          : originalValue.replace(x, formulaValues[index]); 
+      }
+    });
     total = eval(newValue).toFixed(2);
     if (total > 0) {
       let percentage = (total / +values.__EMPTY_6) * 100;

@@ -114,7 +114,7 @@
                       </svg>                      
                     </span>
                   </td>
-                  <td *ngIf="!user.creatorId">--------------</td>
+                  <td *ngIf="(_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin') && !user.creatorId">--------------</td>
                 </tr>
               </tbody>
             </table>

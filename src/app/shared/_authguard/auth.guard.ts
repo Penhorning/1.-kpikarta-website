@@ -14,7 +14,9 @@ export class AuthGuard implements CanActivateChild {
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      if (state.url.indexOf('view') !== -1) { return true; }
+      // Checking for marketplace url
+      if (state.url.indexOf('view') !== -1) return true;
+      // Checking for other urls
       else if (this._commonService.getSession() && this._commonService.getSession().token) {
         // Get role
         const roles = childRoute.data.roles;
