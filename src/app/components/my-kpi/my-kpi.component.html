@@ -1762,17 +1762,6 @@
       </div>
       <div class="modal-body" style="overflow: auto;  max-height: 300px;">
         <div class="row">
-          <div class="col-md-12 mb-2">
-            <button type="button" class="btn btn-secondary" data-html="true" data-toggle="tooltip" data-placement="left" title="
-            <div>1) Download the current KPIs.
-               <br/> 2) Once the KPI file is downloaded, open it in Microsoft Excel and make your changes into the file.
-               <br/> 3) After making your changes, save the file in CSV format.
-              <br/> 4) Submit the updated CSV file.</div>
-              ">
-            Instructions
-          </button>
-        </div>
-        
           <div class="col-md-12 text-center">
             <table cellspacing="0" cellpadding="0">
               <tr>
@@ -1787,7 +1776,7 @@
                     {{ data['__EMPTY_2']}}
                   </td>
                   <td class="excelTable">
-                    {{ data['__EMPTY_3']}}
+                    {{ data['__EMPTY_3'] | titlecase }}
                   </td>
                   <td class="excelTable" [ngStyle]="{'background-color':data.ac ?  'red' : ''}">
                     {{ data['__EMPTY_4']}}
@@ -1802,7 +1791,7 @@
                     {{ data['__EMPTY_7']}}
                   </td>
                   <td class="excelTable" [ngStyle]="{'background-color':data.ac ?  'red' : ''}">
-                    {{ data['__EMPTY_8']}}
+                    {{ data['__EMPTY_8'] | titlecase }}
                   </td>
                 </tr>
               </ng-container>
@@ -1814,18 +1803,30 @@
             <input type="file" (change)="onFileChange($event)" accept=".csv" multiple="false" />
           </div>
         </div> -->
-        <div class="col-auto mt-4 px-0">
-          <label class="sr-only" for="inlineFormInputGroup">Choose Files</label>
-          <div class="input-group mb-2">
-            <div class="input-group-prepend">
-            </div>
-
-            <div class="input-group custom-file-button">
-              <label class="input-group-text" for="inputGroupFile">Import</label>
-              <input type="file" class="form-control" id="inputGroupFile" (change)="onFileChange($event)" accept=".csv"
-                multiple="false">
+        <div class="row">
+          <div class="col-md-6 mt-4">
+            <label class="sr-only" for="inlineFormInputGroup">Choose Files</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+              </div>
+  
+              <div class="input-group custom-file-button">
+                <label class="input-group-text" for="inputImportFile">Import</label>
+                <input type="file" class="form-control" id="inputImportFile" (change)="onFileChange($event)" accept=".csv"
+                  multiple="false">
+              </div>
             </div>
           </div>
+          <div class="col-md-6 mt-4">
+            <button type="button" class="btn btn-secondary float-right" data-html="true" data-toggle="tooltip" data-placement="left" title="
+            <div>1) Download the current KPIs.
+               <br/> 2) Once the KPI file is downloaded, open it in Microsoft Excel and make your changes into the file.
+               <br/> 3) After making your changes, save the file in CSV format.
+              <br/> 4) Submit the updated CSV file.</div>
+              ">
+            Instructions
+          </button>
+        </div>
         </div>
       </div>
 

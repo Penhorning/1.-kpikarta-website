@@ -16,6 +16,7 @@ declare const $: any;
   styleUrls: ['./my-kpi.component.scss'],
 })
 export class MyKpiComponent implements OnInit {
+
   karta: any = [];
   kpis: any = [];
   totalAssignedKPIs: number = 0;
@@ -59,6 +60,7 @@ export class MyKpiComponent implements OnInit {
   sharedSubmitFlag: boolean = false;
   // import export
   tableData: any;
+  isTableDataWrong: boolean = false;
   tableTitle: any = [];
   tableHeader: any = [];
   customPagination = 1;
@@ -734,6 +736,8 @@ export class MyKpiComponent implements OnInit {
     this.tableData = [];
     this.validationtitleHead = '';
     this.nodes = '';
+    $('#importExportModal').modal('hide');
+    $("#inputImportFile").val("");
   }
 
   // Number validation
@@ -786,7 +790,6 @@ export class MyKpiComponent implements OnInit {
         if (data.length > 0) {
           let title = Object.values(data);
           this.validationtitleHead = Object.values(title[0])
-          console.log("validationtitleHead", this.validationtitleHead)
           if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
             this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
             this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
@@ -794,12 +797,14 @@ export class MyKpiComponent implements OnInit {
             for (let title in data[0]) {
               this.tableTitle.push(data[0][title])
             }
-            this.tableTitle.splice(0, 2)
+            this.tableTitle.splice(0, 2);
+            this.isTableDataWrong = false;
             this.tableData = data.map((item: any, i: any) => {
               delete item.__EMPTY;
               delete item['My KPI Export'];
-              if (!this.isNumeric(item.__EMPTY_4)) {
+              if (!this.isNumeric(item.__EMPTY_4) && i !== 0) {
                 item.ac = true;
+                this.isTableDataWrong = true;
               } else {
                 item.ac = false;
               }
@@ -913,24 +918,28 @@ export class MyKpiComponent implements OnInit {
 
   // Upload csv function
   submitCSV() {
-    if (this.nodes.length > 0) {
-      let data = { "nodes": this.nodes }
-      this.importSubmitFlag = true;
-      this._myKpiService.updateCsv(data).subscribe(
-        (response: any) => {
-          if (response) this._commonService.successToaster("KPIs imported successfully.");
-          $('#importExportModal').modal('hide');
-          this.pageIndex = 0;
-          this.tableData = [];
-          this.tableTitle = [];
-          this.validationtitleHead = '';
-          this.nodes = '';
-          this.getMyKPIsList();
-        },
-        (error: any) => {
-          this.importSubmitFlag = false;
-        }
-      ).add(() => this.importSubmitFlag = false);
+    if (this.isTableDataWrong) {
+      this._commonService.errorToaster("Invalid data found in CSV file!");
+    } else {
+      if (this.nodes.length > 0) {
+        let data = { "nodes": this.nodes }
+        this.importSubmitFlag = true;
+        this._myKpiService.updateCsv(data).subscribe(
+          (response: any) => {
+            if (response) this._commonService.successToaster("KPIs imported successfully.");
+            this.closeImportModal();
+            this.pageIndex = 0;
+            this.tableData = [];
+            this.tableTitle = [];
+            this.validationtitleHead = '';
+            this.nodes = '';
+            this.getMyKPIsList();
+          },
+          (error: any) => {
+            this.importSubmitFlag = false;
+          }
+        ).add(() => this.importSubmitFlag = false);
+      }
     }
   }
 
