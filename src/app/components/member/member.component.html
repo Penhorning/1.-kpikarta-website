@@ -72,7 +72,7 @@
                     <span *ngIf="!user.active" class="table_btn_status bg-danger">Inactive</span>
                   </td>
                   <td>{{ user?.createdAt | date }}</td>
-                  <td *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin'">
+                  <td *ngIf="(_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin') && user.creatorId">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                       class="bi bi-pencil-fill" viewBox="0 0 16 16" data-toggle="modal" data-target="#memberModal"
                       (click)="setFormType('UPDATE', user)" style="cursor: pointer;">
@@ -114,6 +114,7 @@
                       </svg>                      
                     </span>
                   </td>
+                  <td *ngIf="!user.creatorId">--------------</td>
                 </tr>
               </tbody>
             </table>

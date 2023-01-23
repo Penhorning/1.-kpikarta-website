@@ -8,17 +8,17 @@ export class BillingService {
 
   constructor(private _httpService: HttpService) { }
 
-  getCards(userId: string) {
-    return this._httpService.POST(`/subscriptions/get-cards`, { userId });
+  getCards(companyId: string) {
+    return this._httpService.POST(`/subscriptions/get-cards`, { companyId });
   }
 
-  getSubscribedUsers(userId: string) {
-    return this._httpService.POST(`/subscriptions/get-subscription-users`, { userId });
+  getSubscribedUsers(companyId: string) {
+    return this._httpService.POST(`/subscriptions/get-subscription-users`, { companyId });
   }
 
-  getInvoices(userId?: string) {
+  getInvoices(companyId?: string) {
     const query: any = {};
-    userId ? query['userId'] = userId : {};
+    companyId ? query['companyId'] = companyId : {};
     return this._httpService.POST(`/subscriptions/get-invoices`, query );
   }
 }

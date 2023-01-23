@@ -56,7 +56,7 @@ export class CalculatePercentage {
         // Set target value according to monthly
         if (element.kpi_calc_period === "monthly" && !checkOtherPeriods()) {
           if (findTarget('monthly')) targetValue = findTarget('monthly').value;
-          else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
+          else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
           else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
           targetValue = targetValue;
@@ -64,7 +64,7 @@ export class CalculatePercentage {
         // Set target value according to month to date
         else if (element.kpi_calc_period === "month-to-date" && !checkOtherPeriods()) {
           if (findTarget('monthly')) targetValue = findTarget('monthly').value;
-          else if (findTarget('annually')) targetValue = findTarget('annually').value / 12;
+          else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
           else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
           if (element.days_to_calculate === "business") {
@@ -73,7 +73,7 @@ export class CalculatePercentage {
         }
         // Set target value according to year to date
         else if (element.kpi_calc_period === "year-to-date" && !checkOtherPeriods()) {
-          if (findTarget('annually')) targetValue = findTarget('annually').value;
+          if (findTarget('yearly')) targetValue = findTarget('yearly').value;
           else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
           else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;

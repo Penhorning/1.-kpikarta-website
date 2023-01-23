@@ -30,11 +30,13 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span
                   class="navbar-toggler-icon"></span> </button>
               <div class="collapse navbar-collapse" id="navbar-list-4">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ml-2 d-flex align-items-center">
+                  <li class="nav-item">
+                    <label class="m-0 user_label_name short_text">{{_commonService.getSession().name}}</label>
+                  </li> 
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="navbarDropdownMenuLink" role="button"
                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <label class="mr-2 user_label_name short_text">{{_commonService.getSession().name}}</label>
                       <img
                         [src]="_commonService.getSession().profilePic ? _commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic : 'assets/img/avatar.png'"
                         class="rounded-circle login_profile">
