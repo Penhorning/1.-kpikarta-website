@@ -2870,6 +2870,15 @@ button.send-btn {
   border-radius: 5px;
 }
 
+button.export-btn {
+  background-color: #e7eff6;
+  border: 0;
+  color: #243864;
+  padding: 8px 34px;
+  border-radius: 5px;
+}
+
+
 button.import-submit-btn {
   background-color: #28a745;
   border: 0;
