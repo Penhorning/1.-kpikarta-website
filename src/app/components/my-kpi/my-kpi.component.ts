@@ -847,7 +847,7 @@ export class MyKpiComponent implements OnInit {
       let percentage = (total / +values.__EMPTY_6) * 100;
       let abc = {
         "id": values['My KPI Export'],
-        "achieved_value": total,
+        "achieved_value": Math.round(total),
         "node_formula": {
           "fields": tempObj,
           "formula": values.__EMPTY_5,
