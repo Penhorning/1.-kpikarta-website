@@ -30,7 +30,7 @@ export class AllKartasComponent implements OnInit {
   sharedTotalKartas: number = 0;
   // Page var
   pageIndex: number = 0;
-  pageSize: number = 1;
+  pageSize: number = 8;
   totalKartas: number = 0;
   search_text: string = "";
   // Loding var
