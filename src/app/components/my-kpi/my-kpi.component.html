@@ -1784,13 +1784,13 @@
                   <td class="excelTable">
                     {{ data['__EMPTY_5']}}
                   </td>
-                  <td class="excelTable">
+                  <td class="excelTable" [ngStyle]="{'background-color':data.ac ?  'red' : ''}">
                     {{ data['__EMPTY_6']}}
                   </td>
                   <td class="excelTable">
                     {{ data['__EMPTY_7']}}
                   </td>
-                  <td class="excelTable" [ngStyle]="{'background-color':data.ac ?  'red' : ''}">
+                  <td class="excelTable">
                     {{ data['__EMPTY_8'] | titlecase }}
                   </td>
                 </tr>

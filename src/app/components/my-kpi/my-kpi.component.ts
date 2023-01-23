@@ -19,6 +19,7 @@ export class MyKpiComponent implements OnInit {
 
   karta: any = [];
   kpis: any = [];
+  exportKpis: any = [];
   totalAssignedKPIs: number = 0;
   colorSettings: any = [];
   members: any = [];
@@ -325,7 +326,8 @@ export class MyKpiComponent implements OnInit {
     this.loading = true;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        this.kpis = response.kpi_nodes[0].data;
+        this.kpis = Array.from(response.kpi_nodes[0].data)
+        this.exportKpis = Array.from(response.kpi_nodes[0].data)
         if (response.kpi_nodes[0].metadata.length > 0) {
           this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
@@ -592,6 +594,7 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         this.kpis.push(...response.kpi_nodes[0].data);
+        this.exportKpis.push(...response.kpi_nodes[0].data);
         if (response.kpi_nodes[0].metadata.length > 0) {
           this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
@@ -659,19 +662,19 @@ export class MyKpiComponent implements OnInit {
     $('#assigned_tab').trigger('click')
   }
 
-
   // Export to CSV
   csvKartaData: any = [
     {
       _id: "",
-      kartaId: "",
-      name: "",
-      kartaName: "",
-      node_type: "",
-      achieved_value: "",
-      targetValue: "",
-      targetPercentage: "",
-      targetFrequency: ""
+        kartaId: "",
+        name: "",
+        kartaName: "",
+        node_type: "",
+        formula: "",
+        achieved_value: "",
+        targetValue: "",
+        targetPercentage: "",
+        targetFrequency: ""
     }
   ];
 
@@ -684,8 +687,6 @@ export class MyKpiComponent implements OnInit {
       element.targetdata = clacTarget.map((element: any) => { return element.value });
       element.targetPercentage = clacTarget.map((element: any) => { return element.percentage });
       element.targetFrequency = clacTarget.map((element: any) => { return element.frequency });
-
-      // element.target = element.target;
       if (element.hasOwnProperty("node_formula")) {
         element.matrixData = element?.node_formula.fields.map((element: any) => { return element.fieldValue });
         element.achieved_value = element.matrixData ? element.matrixData.toString() : "";
@@ -710,9 +711,14 @@ export class MyKpiComponent implements OnInit {
         targetFrequency: ""
       }
     ];
-    // Filter out those kpis whose target is 0
-    let kpis = this.kpis.filter((item: any) => item.target[0].value > 0);
-    this.pushCSVData(kpis);
+    
+   // Filter out those kpis whose target is greater than 0
+   let kpis = this.kpis.filter((item: any) => item.target[0].value > 0);
+
+   // Copy with deep objects
+   let kpis2 = JSON.parse(JSON.stringify(kpis));
+
+   this.pushCSVData(kpis2);
     const options = {
       fieldSeparator: ',',
       quoteStrings: '"',
@@ -789,6 +795,7 @@ export class MyKpiComponent implements OnInit {
 
         if (data.length > 0) {
           let title = Object.values(data);
+          // Validation for csv file header.
           this.validationtitleHead = Object.values(title[0])
           if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
             this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
@@ -847,7 +854,7 @@ export class MyKpiComponent implements OnInit {
       let percentage = (total / +values.__EMPTY_6) * 100;
       let abc = {
         "id": values['My KPI Export'],
-        "achieved_value": total,
+        "achieved_value": Math.round(total),
         "node_formula": {
           "fields": tempObj,
           "formula": values.__EMPTY_5,
@@ -913,7 +920,6 @@ export class MyKpiComponent implements OnInit {
       }
     })
     this.nodes.splice(0, 1)
-    console.log("node", this.nodes )
   }
 
   // Upload csv function
@@ -950,7 +956,6 @@ export class MyKpiComponent implements OnInit {
     this.importSubmitFlag = true;
     this._myKpiService.getNodesDetails(data).subscribe(
       (response: any) => {
-        console.log("data", response)
       }).add(() => this.importSubmitFlag = false);
   }
 
