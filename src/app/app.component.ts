@@ -6,6 +6,7 @@ import { filter, map, mergeMap } from 'rxjs/operators';
 import { CommonService } from './shared/_services/common.service';
 
 declare const $: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

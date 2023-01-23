@@ -47,6 +47,7 @@ export class LoginComponent implements OnInit {
         email: this.route.snapshot.queryParamMap.get("email") || "",
         profilePic: this.route.snapshot.queryParamMap.get("profilePic") || "",
         companyLogo: this.route.snapshot.queryParamMap.get("companyLogo") || "",
+        companyId: this.route.snapshot.queryParamMap.get("companyId") || "",
         role: this.route.snapshot.queryParamMap.get("role") || "",
         license: this.route.snapshot.queryParamMap.get("license") || "",
         _2faEnabled: this.route.snapshot.queryParamMap.get("_2faEnabled") || "false",
