@@ -70,7 +70,7 @@ export class MemberComponent implements OnInit {
     this._commonService.getUserInfo().subscribe(
       (response: any) => {
         this.user = response;
-        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'department_admin') {
+        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'department_admin' && this.user.roles[0].name !== 'billing_staff') {
           this.router.navigate(['/dashboard']);
         } else {
           this.getAllMembers();
