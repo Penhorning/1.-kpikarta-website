@@ -122,7 +122,7 @@ export class MyProfileComponent implements OnInit {
       (response: any) => {
         this.user = response;
         this.setRegion();
-
+     console.log("data Profile", this.profileForm)
         this.profileForm.patchValue({
           fullName: this.user.fullName,
           email: this.user.email,

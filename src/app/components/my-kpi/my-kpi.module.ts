@@ -14,7 +14,6 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 // Filter pipe
 import { FilterPipe } from '../../shared/_pipes/filter.pipe';
-
 @NgModule({
   declarations: [
     MyKpiComponent,

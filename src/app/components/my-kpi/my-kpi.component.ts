@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
@@ -16,7 +16,6 @@ declare const $: any;
   styleUrls: ['./my-kpi.component.scss'],
 })
 export class MyKpiComponent implements OnInit {
-
   karta: any = [];
   kpis: any = [];
   totalAssignedKPIs: number = 0;
@@ -74,6 +73,8 @@ export class MyKpiComponent implements OnInit {
   importNodeIds: any = [];
   importSubmitFlag: boolean = false;
   nodes: any = []
+  openState: boolean = false;
+  wsname:any;
   // Target filter
   target: any = [
     { frequency: "", value: 0, percentage: 0 }
@@ -143,11 +144,16 @@ export class MyKpiComponent implements OnInit {
     actualValue: [0, [Validators.required, Validators.pattern('^[0-9]*$')]]
   });
 
+  @ViewChild('fileUploader')
+  fileUploader!: ElementRef;
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
     this.maxDate = new Date();
   }
 
   ngOnInit(): void {
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
     this.getColorSettings();
     this.getAllMembers();
     this.getKpiStats();
@@ -703,7 +709,7 @@ export class MyKpiComponent implements OnInit {
       }
     ];
     // Filter out those kpis whose target is 0
-    let kpis = this.kpis.filter((item: any) => item.target[0].value > 0 );
+    let kpis = this.kpis.filter((item: any) => item.target[0].value > 0);
     this.pushCSVData(kpis);
     const options = {
       fieldSeparator: ',',
@@ -726,12 +732,13 @@ export class MyKpiComponent implements OnInit {
     this.tableRecords = [];
     this.tableTitle = [];
     this.tableData = [];
-    this.validationtitleHead = ''
+    this.validationtitleHead = '';
+    this.nodes = '';
   }
 
   // Number validation
   isNumeric(value: any) {
-     
+
     const isNumericData = (value: string): boolean => !new RegExp(/[^\d,]/g).test(value.trim());
     return isNumericData(value);
     // if (isNumericData(value)) {
@@ -742,16 +749,23 @@ export class MyKpiComponent implements OnInit {
     // }
   }
 
+  //check etension
+  isValidCSVFile(file: any) {
+    return file.name.endsWith(".csv");
+  }
+
   // Select Csv file
   onFileChange(event: any) {
     /* wire up file reader */
     this.tableData = [];
     this.tableTitle = [];
     this.nodes = '';
+    this.wsname = '';
+   
     if (!event.target.files && !event.target.files[0]) {
       this._commonService.errorToaster("File not found!");
       event.target.value = "";
-    } else if (event.target.files[0].type !== "application/vnd.ms-excel") {
+    } else if (!this.isValidCSVFile(event.target.files[0])) {
       this._commonService.errorToaster("Only CSV file accepted!");
       event.target.value = "";
     } else {
@@ -761,30 +775,30 @@ export class MyKpiComponent implements OnInit {
         /* create workbook */
         const binarystr: string = e.target.result;
         const wb: XLSX.WorkBook = XLSX.read(binarystr, { type: 'binary', raw: true, dense: true, cellNF: true, cellDates: true });
-  
+
         /* selected the first sheet */
-        const wsname: string = wb.SheetNames[0];
-        const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-  
+        this.wsname = wb.SheetNames[0];
+        const ws: XLSX.WorkSheet = wb.Sheets[this.wsname];
+
         /* save data */
         const data = <AOA>(XLSX.utils.sheet_to_json(ws)); // to get 2d array pass 2nd parameter as object {header: 1}
-  
+
         if (data.length > 0) {
           let title = Object.values(data);
           this.validationtitleHead = Object.values(title[0])
           console.log("validationtitleHead", this.validationtitleHead)
           if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
-          this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
-          this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
+            this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
+            this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
             this.calculateCSVData(data)
-            for(let title in data[0]){
-                this.tableTitle.push(data[0][title])
-              }
-              this.tableTitle.splice(0,2)
-              this.tableData = data.map((item: any , i:any) => {
+            for (let title in data[0]) {
+              this.tableTitle.push(data[0][title])
+            }
+            this.tableTitle.splice(0, 2)
+            this.tableData = data.map((item: any, i: any) => {
               delete item.__EMPTY;
               delete item['My KPI Export'];
-              if(!  this.isNumeric(item.__EMPTY_4)){
+              if (!this.isNumeric(item.__EMPTY_4)) {
                 item.ac = true;
               } else {
                 item.ac = false;
@@ -828,7 +842,7 @@ export class MyKpiComponent implements OnInit {
       let percentage = (total / +values.__EMPTY_6) * 100;
       let abc = {
         "id": values['My KPI Export'],
-        "achieved_value": Math.round(percentage),
+        "achieved_value": total,
         "node_formula": {
           "fields": tempObj,
           "formula": values.__EMPTY_5,
@@ -839,7 +853,8 @@ export class MyKpiComponent implements OnInit {
             "frequency": values.__EMPTY_8,
             "percentage": Math.round(percentage),
             "value": values.__EMPTY_6
-          }]
+          }],
+          "percentage": Math.round(percentage)
       }
       return abc;
     } else {
@@ -848,13 +863,12 @@ export class MyKpiComponent implements OnInit {
   }
 
   calculateCSVData(csvData: any) {
- console.log("csvData", csvData)
-//     this.importNodeIds = csvData.filter((obj: any) => {
-//       if(obj.__EMPTY_3 == "metrics")
+    //     this.importNodeIds = csvData.filter((obj: any) => {
+    //       if(obj.__EMPTY_3 == "metrics")
 
-//         // return obj;
-//     });
-    
+    //         // return obj;
+    //     });
+
 
     csvData.forEach((element: any, index: number) => {
       if (index > 0) {
@@ -869,13 +883,14 @@ export class MyKpiComponent implements OnInit {
                 "percentage": Math.round(percentage),
                 "value": +element.__EMPTY_6
               }
-            ]
+            ],
+            "percentage": Math.round(percentage)
           }
         } else {
 
           // this.importNodeIds.push(element['My KPI Export'])
           // let formulaList =  this.getNodesDetail(this.importNodeIds);
-          
+
           // setTimeout(() => {
           // }, 5000)
           // console.log(" this.importNodeIds",  this.importNodeIds)
@@ -883,7 +898,7 @@ export class MyKpiComponent implements OnInit {
           let data = this.calculateMetricFormulaForCSV(element)
           if (data) {
             element.node = data;
-          } 
+          }
         }
       }
     });
@@ -893,6 +908,7 @@ export class MyKpiComponent implements OnInit {
       }
     })
     this.nodes.splice(0, 1)
+    console.log("node", this.nodes )
   }
 
   // Upload csv function
@@ -921,7 +937,6 @@ export class MyKpiComponent implements OnInit {
   getNodesDetail(importNodeIds: any) {
     let data = {
       nodeIds: importNodeIds
-    
     }
     this.importSubmitFlag = true;
     this._myKpiService.getNodesDetails(data).subscribe(
@@ -929,4 +944,6 @@ export class MyKpiComponent implements OnInit {
         console.log("data", response)
       }).add(() => this.importSubmitFlag = false);
   }
+
+
 }
