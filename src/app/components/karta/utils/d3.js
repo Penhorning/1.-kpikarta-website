@@ -104,7 +104,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 case selectedPhase.global_name === lastActionPhase.global_name && draggingNodeType === "branch":
                     dragErrorMsg = "You can only drop Measure or Metrics node on Action Phase..!!";
                     return false;
-                case selectedPhase.global_name !== lastActionPhase.global_name && (draggingNodeType === "measure" || draggingNodeType === "metric"):
+                case selectedPhase.global_name !== lastActionPhase.global_name && (draggingNodeType === "measure" || draggingNodeType === "metrics"):
                     dragErrorMsg = "You cannot drop any Branch on Action Phase..!!";
                     return false;
                 case selectedPhase.global_name !== lastActionPhase.global_name && draggingNodeType === "branch" && (draggingDepth + selectedDepth) > totalPhases-2:
