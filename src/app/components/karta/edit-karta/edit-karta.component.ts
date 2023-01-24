@@ -1170,6 +1170,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
         this.karta = response;
+        this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, 0);
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
