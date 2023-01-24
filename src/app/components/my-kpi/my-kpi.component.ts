@@ -62,6 +62,7 @@ export class MyKpiComponent implements OnInit {
   // import export
   tableData: any;
   isTableDataWrong: boolean = false;
+  importedNodeIds: any  = [];
   tableTitle: any = [];
   tableHeader: any = [];
   customPagination = 1;
@@ -719,6 +720,7 @@ export class MyKpiComponent implements OnInit {
 
    this.pushCSVData(kpis2);
     const options = {
+      filename: 'KPIs',
       fieldSeparator: ',',
       quoteStrings: '"',
       decimalSeparator: '.',
@@ -808,8 +810,8 @@ export class MyKpiComponent implements OnInit {
               this.tableTitle.splice(0, 2);
               this.isTableDataWrong = false;
               this.tableData = data.map((item: any, i: any) => {
-                delete item.__EMPTY;
-                delete item['My KPI Export'];
+                // delete item.__EMPTY;
+                // delete item['My KPI Export'];
                 if (!this.isNumeric(item.__EMPTY_4) && i !== 0) {
                   item.ac = true;
                   this.isTableDataWrong = true;
@@ -830,29 +832,17 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Metrics formula calculation
-  calculateMetricFormulaForCSV(values: any) {
+calculateMetricFormulaForCSV(values: any, originalValues: any) {
     let tempObj: any = [];
-    let originalValue = values.__EMPTY_5.trim();
+    let originalValue = originalValues.node_formula.formula.trim();
     let newValue = '';
-    let value = values.__EMPTY_5.trim().split(/[\s() */%+-]+/g);
+    let value = originalValues.node_formula.formula.trim().split(/[\s() */%+-]+/g);
     let total: any = 0;
     let formulaValues = values.__EMPTY_4.split("|");
-    // if (value.length == formulaValues.length) {
-    //   value.forEach((x: any, index: number) => {
-    //     let obj = {
-    //       "fieldName": x,
-    //       "fieldValue": formulaValues[index]
-    //     }
-    //     tempObj.push(obj)
-    //     newValue = newValue
-    //       ? newValue.replace(x, formulaValues[index])
-    //       : originalValue.replace(x, formulaValues[index]);
-    //   });
-    // } else {
-    //   return false;
-    // }
+    let fieldCount = 0;
     value.filter((item: any) => item !== "").forEach((x: any, index: number) => {
       if (x && !parseInt(x)) {
+        fieldCount += 1;
         let obj = {
           "fieldName": x,
           "fieldValue": formulaValues[index]
@@ -863,77 +853,87 @@ export class MyKpiComponent implements OnInit {
           : originalValue.replace(x, formulaValues[index]); 
       }
     });
-    total = eval(newValue).toFixed(2);
-    if (total > 0) {
-      let percentage = (total / +values.__EMPTY_6) * 100;
-      let abc = {
-        "id": values['My KPI Export'],
-        "achieved_value": Math.round(total),
-        "node_formula": {
-          "fields": tempObj,
-          "formula": values.__EMPTY_5,
-          "metrics": true
-        },
-        "target": [
-          {
-            "frequency": values.__EMPTY_8,
-            "percentage": Math.round(percentage),
-            "value": values.__EMPTY_6
-          }],
-          "percentage": Math.round(percentage)
-      }
-      return abc;
-    } else {
+    if (fieldCount !== formulaValues.length) {
+      this.tableData.map((item: any) => {
+        if (item["My KPI Export"] === originalValues.id) item.ac = true;
+        return item;
+      });
+      this.isTableDataWrong = true;
       return false;
+    } else {
+      total = eval(newValue).toFixed(2);
+      if (total > 0) {
+        let percentage = (total / +originalValues.target[0].value) * 100;
+        let abc = {
+          "id": values['My KPI Export'],
+          "achieved_value": Math.round(total),
+          "node_formula": {
+            "fields": tempObj,
+            "formula": originalValues.node_formula.formula,
+            "metrics": true
+          },
+          "target": [
+            {
+              "frequency": originalValues.target[0].frequency,
+              "percentage": Math.round(percentage),
+              "value": originalValues.target[0].value
+            }],
+            "percentage": Math.round(percentage)
+        }
+        return abc;
+      } else {
+        this.isTableDataWrong = true;
+        return false;
+      }
     }
   }
 
   calculateCSVData(csvData: any) {
-    //     this.importNodeIds = csvData.filter((obj: any) => {
-    //       if(obj.__EMPTY_3 == "metrics")
-
-    //         // return obj;
-    //     });
-
-
-    csvData.forEach((element: any, index: number) => {
-      if (index > 0) {
-        if (element.__EMPTY_3 == "measure") {
-          let percentage = (+element.__EMPTY_4 / +element.__EMPTY_6) * 100;
-          element.node = {
-            "id": element['My KPI Export'],
-            "achieved_value": +element.__EMPTY_4,
-            "target": [
-              {
-                "frequency": element.__EMPTY_8,
-                "percentage": Math.round(percentage),
-                "value": +element.__EMPTY_6
+    // Push all ids into separate variable for getting node details
+    csvData.map((item: any, i: any) => {
+      if (i > 0) this.importedNodeIds.push(item["My KPI Export"]);
+    });
+    // Call api for getting node details
+    let data = {
+      nodeIds: this.importedNodeIds
+    }
+    this._myKpiService.getNodesDetails(data).subscribe(
+      (response: any) => {
+        if (response && response.nodes) {
+          csvData.forEach((element: any, index: number) => {
+            if (index > 0) {
+              let originalElement = response.nodes.find((item: any) => item.id === element['My KPI Export']);
+              if (originalElement.node_type == "measure") {
+                let percentage = (+element.__EMPTY_4 / +originalElement.target[0].value) * 100;
+                element.node = {
+                  "id": element['My KPI Export'],
+                  "achieved_value": +element.__EMPTY_4,
+                  "target": [
+                    {
+                      "frequency": originalElement.target[0].frequency,
+                      "percentage": Math.round(percentage),
+                      "value": +originalElement.target[0].value
+                    }
+                  ],
+                  "percentage": Math.round(percentage)
+                }
+              } else {
+                let data = this.calculateMetricFormulaForCSV(element, originalElement);
+                if (data) {
+                  element.node = data;
+                } else this._commonService.errorToaster("Invalid data found in CSV file!");
               }
-            ],
-            "percentage": Math.round(percentage)
-          }
-        } else {
-
-          // this.importNodeIds.push(element['My KPI Export'])
-          // let formulaList =  this.getNodesDetail(this.importNodeIds);
-
-          // setTimeout(() => {
-          // }, 5000)
-          // console.log(" this.importNodeIds",  this.importNodeIds)
-          // console.log("formula", formulaList)
-          let data = this.calculateMetricFormulaForCSV(element)
-          if (data) {
-            element.node = data;
-          }
+            }
+          });
+          this.nodes = csvData.map((elm: any, index: number) => {
+            if (index > 0) {
+              return elm.node
+            }
+          })
+          this.nodes.splice(0, 1)
         }
       }
-    });
-    this.nodes = csvData.map((elm: any, index: number) => {
-      if (index > 0) {
-        return elm.node
-      }
-    })
-    this.nodes.splice(0, 1)
+    );
   }
 
   // Upload csv function
@@ -962,16 +962,5 @@ export class MyKpiComponent implements OnInit {
       }
     }
   }
-
-  getNodesDetail(importNodeIds: any) {
-    let data = {
-      nodeIds: importNodeIds
-    }
-    this.importSubmitFlag = true;
-    this._myKpiService.getNodesDetails(data).subscribe(
-      (response: any) => {
-      }).add(() => this.importSubmitFlag = false);
-  }
-
 
 }

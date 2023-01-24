@@ -131,10 +131,12 @@ export class LoginComponent implements OnInit {
     if (x.type === "password") {
       icon.classList.remove("fa-eye");
       icon.classList.add("fa-eye-slash");
+      icon.setAttribute("title", "Hide password");
       x.type = "text";
     } else {
       icon.classList.remove("fa-eye-slash");
       icon.classList.add("fa-eye");
+      icon.setAttribute("title", "Show password");
       x.type = "password";
     }
   }

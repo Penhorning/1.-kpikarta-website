@@ -1,6 +1,11 @@
+.password_input.form-control.is-invalid, .was-validated .password_input.form-control:invalid  {
+    padding-right: calc(1.5em + 1rem) !important;
+    background-position: right calc(.375em + 1.75rem) center;
+}
+
 .show_password {
     color: white;
-    top: 0;
+    top: -1.5px;
     right: 0;
     position: absolute;
     padding: 9px;
