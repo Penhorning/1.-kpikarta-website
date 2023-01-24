@@ -25,10 +25,10 @@
               <div class="form-group">
                 <label for="password">Password</label>
                 <div class="position-relative d-flex align-items-center">
-                  <input type="password" class="form-control form-control1" id="password" formControlName="password" [maxlength]="32"
+                  <input type="password" class="form-control form-control1 password_input" id="password" formControlName="password" [maxlength]="32"
                   [ngClass]="{ 'is-invalid': (submitted || form.password.touched) && form.password.errors }">
-                  <span class="show_password"  (click)="toggleShowPassword()">
-                    <i class="fa fa-eye" id="password_icon"></i>
+                  <span class="show_password" (click)="toggleShowPassword()">
+                    <i class="fa fa-eye" id="password_icon" title="Show password"></i>
                   </span>
                 </div>
                 <div *ngIf="(submitted || form.password.touched) && form.password.errors" class="invalid-feedback d-block">
