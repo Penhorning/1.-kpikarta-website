@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
   // Get Subscribed Users
   getSubscribedUsers() {
     this.loadingSubscribers = true;
-    this._dashboardService.getSubscribedUsers(this._commonService.getCompanyId()).subscribe(
+    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(
       (response: any) => {
       if (response) {
         let iconMapping = [
@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit {
           "assets/img/total-champion.svg",
           "assets/img/total-spectators.svg",
         ];
-        let mappedData = response.data.data.userDetails.map((user: any, index: number) => {
+        let mappedData = response.data.userDetails.map((user: any, index: number) => {
           return {
             ...user,
             icon: iconMapping[index]

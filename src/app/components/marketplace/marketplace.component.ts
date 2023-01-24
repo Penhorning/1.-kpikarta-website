@@ -24,6 +24,11 @@ export class MarketplaceComponent implements OnInit {
     { name: "Measures", value: "measure" },
     { name: "Metrics", value: "metrics" }
   ]
+  // Karta page var
+  kartas: any = [];
+  kartaPageIndex: number = 0;
+  kartaPageSize: number = 8;
+  totalKartas: number = 0;
   // Page var
   search_text: string = "";
   pageIndex: number = 0;
@@ -38,7 +43,7 @@ export class MarketplaceComponent implements OnInit {
   constructor(private _marketplaceService: MarketplaceService, private _commonService: CommonService) { }
 
   ngOnInit(): void {
-    this.getCatalogs();
+    this.getAllCatalogs();
   }
 
   // Apply filter
@@ -50,35 +55,49 @@ export class MarketplaceComponent implements OnInit {
     else this.nodeTypeFilter = this.nodeTypeFilter.filter((item: any) => item !== value);
   }
   applyFilter() {
-    this.getCatalogs();
+    this.getAllCatalogs();
   }
 
   // Get all catalogs
-  getCatalogs() {
+  getAllCatalogs() {
     let data: any = {
       page: 1,
       limit: this.pageSize,
       searchQuery: this.search_text
     }
 
-    let url = "";
-    if (this.catalogType === 'inventory') {
-      url = '/karta_catalogs/get-all-public';
-      data["nodeTypes"] = this.nodeTypeFilter;
-    } else {
-      url = "/karta/get-all-public"
-    }
-
     this.loading = true;
     this.catalogs = [];
     this.pageIndex = 0;
     
-    this._marketplaceService.getCatalogs(data, url).subscribe(
+    this._marketplaceService.getAllCatalogs(data).subscribe(
       (response: any) => {
-        this.catalogs = response.catalogs[0].data;
-        if (response.catalogs[0].metadata.length > 0) {
-          this.totalCatalogs = response.catalogs[0].metadata[0].total; 
+        if (response.catalogs[0].data.length > 0) {
+          this.catalogs = response.catalogs[0].data;
+          this.totalCatalogs = response.catalogs[0].metadata[0].total;
         } else this.totalCatalogs = 0;
+      }
+    ).add(() => this.loading = false);
+  }
+
+  // Get all kartas
+  getAllKartas() {
+    let data = {
+      page: 1,
+      limit: this.kartaPageSize,
+      searchQuery: this.search_text
+    }
+
+    this.loading = true;
+    this.kartas = [];
+    this.kartaPageIndex = 0;
+
+    this._marketplaceService.getAllKartas(data).subscribe(
+      (response: any) => {
+        if (response.kartas[0].data.length > 0) {
+          this.kartas = response.kartas[0].data;
+          this.totalKartas = response.kartas[0].metadata[0].total;
+        } else this.totalKartas = 0;
       }
     ).add(() => this.loading = false);
   }
@@ -96,45 +115,62 @@ export class MarketplaceComponent implements OnInit {
       limit: this.pageSize,
       searchQuery: this.search_text
     }
-    let url = "";
-    if (this.catalogType === 'inventory') {
-      url = '/karta_catalogs/get-all-public';
-      data["nodeTypes"] = this.nodeTypeFilter;
-    } else {
-      url = "/karta/get-all-public"
-    }
 
     this.loading = true;
-    this._marketplaceService.getCatalogs(data, url).subscribe(
+
+    this._marketplaceService.getAllCatalogs(data).subscribe(
       (response: any) => {
-        this.catalogs.push(...response.catalogs[0].data);
-        if (response.catalogs[0].metadata.length > 0) {
+        if (response.catalogs[0].data > 0) {
+          this.catalogs.push(...response.catalogs[0].data);
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
       }
     ).add(() => this.loading = false);
   }
 
-  catalogTimer: any = null;
-  onHandleSwitch(type: string) {
-    clearTimeout(this.catalogTimer);
-    this.catalogTimer = setTimeout(() => this.onTabSwitch(type), 500);
+  // Karta view more
+  kartaViewMore() {
+    this.kartaPageIndex++;
+    let data = {
+      page: this.kartaPageIndex + 1,
+      limit: this.kartaPageSize,
+      searchQuery: this.search_text
+    }
+    
+    this.loading = true;
+
+    this._marketplaceService.getAllKartas(data).subscribe(
+      (response: any) => {
+        if (response.kartas[0].data.length > 0) {
+          this.kartas.push(...response.kartas[0].data);
+          this.totalKartas = response.kartas[0].metadata[0].total;
+        } else this.totalKartas = 0;
+      }
+    ).add(() => this.loading = false);
   }
+
   // Tab switch
-  onTabSwitch(type: string) {
+  onTabSwitch() {
+    this.catalogType = "inventory";
     this.search_text = "";
-    this.catalogType = type;
-    this.catalogs.length = 0;
-    this.getCatalogs();
+    this.getAllCatalogs();
+  }
+  // Tab switch karta
+  onTabSwitchKarta() {
+    this.catalogType = "karta";
+    this.search_text = "";
+    this.getAllKartas();
   }
 
   // Search
   search() {
-    if (this.search_text) this.getCatalogs();
+    if (this.search_text && this.catalogType === "inventory") this.getAllCatalogs();
+    else if (this.search_text && this.catalogType === "karta") this.getAllKartas();
   }
   clearSearch() {
     this.search_text = "";
-    this.getCatalogs();
+    if (this.catalogType === "inventory") this.getAllCatalogs();
+    else if (this.catalogType === "karta") this.getAllKartas();
   }
 
 }
