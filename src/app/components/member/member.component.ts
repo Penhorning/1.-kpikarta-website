@@ -209,7 +209,7 @@ export class MemberComponent implements OnInit {
               return lsc.id == this.inviteForm.value.licenseId ? lsc.name : null;
             });
             if(licenseName[0].name != "Spectator") {
-              this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: licenseName[0].name, type: "add"}).subscribe(
+              this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: licenseName[0].name, type: "add"}).subscribe(
                 (result) => {},
                 (err) => console.log(err)
               );
@@ -313,7 +313,7 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: user.license.name, type: "add"}).subscribe(
+          this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: user.license.name, type: "add"}).subscribe(
             (result) => {},
             (err) => console.log(err)
           );
@@ -330,7 +330,7 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: user.license.name, type: "remove"}).subscribe(
+          this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: user.license.name, type: "remove"}).subscribe(
             (result) => {},
             (err) => console.log(err)
           );
@@ -347,7 +347,7 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.updateSubscription({userId: this._commonService.getUserId(), licenseType: user.license.name, type: "remove"}).subscribe(
+          this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: user.license.name, type: "remove"}).subscribe(
             (result) => {},
             (err) => console.log(err)
           );
