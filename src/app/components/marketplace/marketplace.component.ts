@@ -26,12 +26,12 @@ export class MarketplaceComponent implements OnInit {
   ]
   // Karta page var
   kartas: any = [];
-  kartaPageIndex: number = 0;
+  kartaPageIndex: number = 1;
   kartaPageSize: number = 8;
   totalKartas: number = 0;
   // Page var
   search_text: string = "";
-  pageIndex: number = 0;
+  pageIndex: number = 1;
   pageSize: number = 8;
   totalCatalogs: number = 0;
   // Loding var
@@ -61,14 +61,14 @@ export class MarketplaceComponent implements OnInit {
   // Get all catalogs
   getAllCatalogs() {
     let data: any = {
-      page: 1,
+      page: this.pageIndex,
       limit: this.pageSize,
       searchQuery: this.search_text
     }
 
     this.loading = true;
     this.catalogs = [];
-    this.pageIndex = 0;
+    this.pageIndex = 1;
     
     this._marketplaceService.getAllCatalogs(data).subscribe(
       (response: any) => {
@@ -83,14 +83,14 @@ export class MarketplaceComponent implements OnInit {
   // Get all kartas
   getAllKartas() {
     let data = {
-      page: 1,
+      page: this.kartaPageIndex,
       limit: this.kartaPageSize,
       searchQuery: this.search_text
     }
 
     this.loading = true;
     this.kartas = [];
-    this.kartaPageIndex = 0;
+    this.kartaPageIndex = 1;
 
     this._marketplaceService.getAllKartas(data).subscribe(
       (response: any) => {
@@ -109,18 +109,16 @@ export class MarketplaceComponent implements OnInit {
 
   // View more
   viewMore() {
-    this.pageIndex++;
     let data: any = {
-      page: this.pageIndex + 1,
+      page: ++this.pageIndex,
       limit: this.pageSize,
       searchQuery: this.search_text
     }
 
     this.loading = true;
-
     this._marketplaceService.getAllCatalogs(data).subscribe(
       (response: any) => {
-        if (response.catalogs[0].data > 0) {
+        if (response.catalogs[0].data.length > 0) {
           this.catalogs.push(...response.catalogs[0].data);
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
@@ -130,15 +128,13 @@ export class MarketplaceComponent implements OnInit {
 
   // Karta view more
   kartaViewMore() {
-    this.kartaPageIndex++;
     let data = {
-      page: this.kartaPageIndex + 1,
+      page: ++this.kartaPageIndex,
       limit: this.kartaPageSize,
       searchQuery: this.search_text
     }
     
     this.loading = true;
-
     this._marketplaceService.getAllKartas(data).subscribe(
       (response: any) => {
         if (response.kartas[0].data.length > 0) {

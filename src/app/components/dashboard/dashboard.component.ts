@@ -17,6 +17,8 @@ export class DashboardComponent implements OnInit {
 
   kartas: any = [];
   users: any = [];
+  findType: string = "";
+  pageLimit: number = 6;
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
@@ -44,12 +46,16 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this._commonService.getUserLicense() === 'Creator' && this._commonService.getUserRole() !== 'billing_staff') {
+    if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
+      if (this._commonService.getUserLicense() === 'Champion') {
+        this.findType = "contributor";
+        this.pageLimit = 8;
+      }
       this.getAllKartas();
     }
     if (this._commonService.getUserRole() !== 'user') {
       this.getSubscribedUsers();
-    }
+    } else this.pageLimit = 8;
     this.getAllMembers();
     this.getAllSharedKartas();
   }
@@ -85,8 +91,9 @@ export class DashboardComponent implements OnInit {
   getAllKartas() {
     let data = {
       page: 1,
-      limit: 3,
+      limit: this.pageLimit,
       findBy: this._commonService.getUserId(),
+      findType: this.findType
     };
     this.loadingKartas = true;
     this._kartaService.getAllKartas(data).subscribe((response: any) => {
@@ -112,7 +119,7 @@ export class DashboardComponent implements OnInit {
   getAllSharedKartas() {
     let data = {
       page: 1,
-      limit: 6,
+      limit: this.pageLimit,
       findBy: this._commonService.getEmailId(),
       type: "shared"
     };

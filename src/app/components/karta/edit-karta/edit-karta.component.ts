@@ -120,7 +120,10 @@ export class EditKartaComponent implements OnInit {
   kpiType: string = 'measure';
   kpiPercentage: number = 0;
   showKPICalculation: boolean = false;
-  kpiCalculationPeriod = 'monthly';
+  kpiCalculationPeriod = {
+    frequency: 'monthly',
+    nodeId: ''
+  };
   previousTargetFrequency: string = "";
   targetOptions: any = [
     { name: "Weekly", value: "weekly", disabled: false },
@@ -713,6 +716,8 @@ export class EditKartaComponent implements OnInit {
     // Show Measure and metrics when KPI's node selected
     if (this.currentNode.phase.global_name === 'KPI') {
       this.showKPICalculation = true;
+      this.kpiCalculationPeriod.frequency = param.kpi_calc_period;
+      this.kpiCalculationPeriod.nodeId = param.id;
       
       /* ===== Formula Code starts ===== */
       if (param.hasOwnProperty("node_formula") && param.node_formula) {
@@ -893,7 +898,10 @@ export class EditKartaComponent implements OnInit {
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
-    this.kpiCalculationPeriod = el.target.value;
+    this.kpiCalculationPeriod = {
+      "frequency": el.target.value,
+      "nodeId": this.currentNode.id
+    }
     let node = this.currentNode;
     if (el.target.value === "monthly" || el.target.value === "month-to-date" || el.target.value === "year-to-date") {
       this.updateNode('kpi_calc_period', el.target.value, 'node_updated', node);
@@ -1057,7 +1065,10 @@ export class EditKartaComponent implements OnInit {
         if (this.kartaId !== response.color_settings.kartaId) this.colorSettings.is_global = false;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
         this.getPhases();
-        this.percentageObj = new CalculatePercentage(this.colorSettings, "", 0);
+        this.percentageObj = new CalculatePercentage(this.colorSettings, {
+          frequency: 'monthly',
+          nodeId: ''
+        }, 0);
       }
     );
   }
