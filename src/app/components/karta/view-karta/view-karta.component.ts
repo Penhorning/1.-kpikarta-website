@@ -135,7 +135,10 @@ export class ViewKartaComponent implements OnInit {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
         this.getPhases();
-        this.percentageObj = new CalculatePercentage(this.colorSettings, "", 0);
+        this.percentageObj = new CalculatePercentage(this.colorSettings, {
+          frequency: 'monthly',
+          nodeId: ''
+        }, 0);
       }
     );
   }
