@@ -16,6 +16,7 @@ export class AllKartasComponent implements OnInit {
   kartas: any = [];
   members: any = [];
   kartaType: string = "owned";
+  findType: string = "";
 
   // Share var
   sharingKarta: any;
@@ -25,11 +26,11 @@ export class AllKartasComponent implements OnInit {
   emails: any = [];
   // Share page var
   sharedKartas: any = [];
-  sharedPageIndex: number = 0;
+  sharedPageIndex: number = 1;
   sharedPageSize: number = 8;
   sharedTotalKartas: number = 0;
   // Page var
-  pageIndex: number = 0;
+  pageIndex: number = 1;
   pageSize: number = 8;
   totalKartas: number = 0;
   search_text: string = "";
@@ -50,9 +51,13 @@ export class AllKartasComponent implements OnInit {
 
   ngOnInit(): void {
     if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
+      if (this._commonService.getUserLicense() === 'Champion') this.findType = "contributor";
       this.getAllKartas();
       this.getAllMembers();
-    } else this.clickTab2();
+    } else {
+      this.clickTab2();
+      this.onTabSwitchShared();
+    }
 
     this.route.fragment.subscribe(f => {
       if (f === "tabs-2") this.clickTab2();
@@ -75,16 +80,17 @@ export class AllKartasComponent implements OnInit {
   // Get all kartas
   getAllKartas() {
     let data = {
-      page: this.pageIndex + 1,
+      page: this.pageIndex,
       limit: this.pageSize,
       findBy: this._commonService.getUserId(),
       searchQuery: this.search_text,
-      type: this.kartaType
+      type: this.kartaType,
+      findType: this.findType
     }
 
     this.loading = true;
     this.kartas = [];
-    this.pageIndex = 0;
+    this.pageIndex = 1;
 
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
@@ -99,7 +105,7 @@ export class AllKartasComponent implements OnInit {
   // Get all shared kartas
   getAllSharedKartas() {
     let data = {
-      page: this.sharedPageIndex + 1,
+      page: this.sharedPageIndex,
       limit: this.sharedPageSize,
       findBy: this._commonService.getEmailId(),
       searchQuery: this.search_text,
@@ -108,7 +114,7 @@ export class AllKartasComponent implements OnInit {
 
     this.loading = true;
     this.sharedKartas = [];
-    this.sharedPageIndex = 0;
+    this.sharedPageIndex = 1;
 
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
@@ -247,13 +253,13 @@ export class AllKartasComponent implements OnInit {
 
   // View more
   viewMore() {
-    this.pageIndex++;
     let data = {
-      page: this.pageIndex + 1,
+      page: ++this.pageIndex,
       limit: this.pageSize,
       type: this.kartaType,
       findBy: this._commonService.getUserId()
     }
+
     this.loading = true;
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {
@@ -267,13 +273,13 @@ export class AllKartasComponent implements OnInit {
 
   // Shared view more
   sharedViewMore() {
-    this.sharedPageIndex++;
     let data = {
-      page: this.sharedPageIndex + 1,
+      page: ++this.sharedPageIndex,
       limit: this.sharedPageSize,
       type: this.kartaType,
       findBy: this._commonService.getEmailId()
     }
+    
     this.loading = true;
     this._kartaService.getAllKartas(data).subscribe(
       (response: any) => {

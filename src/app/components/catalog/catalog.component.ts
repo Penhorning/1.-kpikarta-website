@@ -34,12 +34,12 @@ export class CatalogComponent implements OnInit {
 
   // Share page var
   sharedCatalogs: any = [];
-  sharedPageIndex: number = 0;
+  sharedPageIndex: number = 1;
   sharedPageSize: number = 8;
   sharedTotalCatalogs: number = 0;
   // Page var
   search_text: string = "";
-  pageIndex: number = 0;
+  pageIndex: number = 1;
   pageSize: number = 8;
   totalCatalogs: number = 0;
   // Loding var
@@ -82,7 +82,7 @@ export class CatalogComponent implements OnInit {
   // Get all catalogs
   getAllCatalogs() {
     let data = {
-      page: 1,
+      page: this.pageIndex,
       limit: this.pageSize,
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text,
@@ -92,15 +92,14 @@ export class CatalogComponent implements OnInit {
 
     this.loading = true;
     this.catalogs = [];
-    this.pageIndex = 0;
+    this.pageIndex = 1;
     
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
-        this.catalogs = response.catalogs[0].data;
-        if (response.catalogs[0].metadata.length > 0) {
+        if (response.catalogs[0].data.length > 0) {
+          this.catalogs = response.catalogs[0].data;
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
-        this.changeDetectorRef.detectChanges();
       }
     ).add(() => this.loading = false);
   }
@@ -108,7 +107,7 @@ export class CatalogComponent implements OnInit {
   // Get all shared catalogs
   getAllSharedCatalogs() {
     let data = {
-      page: 1,
+      page: this.sharedPageSize,
       limit: this.sharedPageSize,
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text,
@@ -118,7 +117,7 @@ export class CatalogComponent implements OnInit {
 
     this.loading = true;
     this.sharedCatalogs = [];
-    this.sharedPageIndex = 0;
+    this.sharedPageIndex = 1;
 
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
@@ -175,20 +174,20 @@ export class CatalogComponent implements OnInit {
 
   // View more
   viewMore() {
-    this.pageIndex++;
     let data = {
-      page: this.pageIndex + 1,
+      page: ++this.pageIndex,
       limit: this.pageSize,
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text,
       nodeTypes: this.nodeTypeFilter,
       type: this.catalogType
     }
+
     this.loading = true;
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {
-        this.catalogs.push(...response.catalogs[0].data);
-        if (response.catalogs[0].metadata.length > 0) {
+        if (response.catalogs[0].data.length > 0) {
+          this.catalogs.push(...response.catalogs[0].data);
           this.totalCatalogs = response.catalogs[0].metadata[0].total; 
         } else this.totalCatalogs = 0;
       }
@@ -197,13 +196,13 @@ export class CatalogComponent implements OnInit {
 
   // Shared view more
   sharedViewMore() {
-    this.sharedPageIndex++;
     let data = {
-      page: this.sharedPageIndex + 1,
+      page: ++this.sharedPageIndex,
       limit: this.sharedPageSize,
       userId: this._commonService.getUserId(),
       type: this.catalogType
     }
+
     this.loading = true;
     this._catalogService.getCatalogs(data).subscribe(
       (response: any) => {

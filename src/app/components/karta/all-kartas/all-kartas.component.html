@@ -60,10 +60,15 @@
                                     <div class="col-8">
                                        <div class="own d-flex">
                                           <img src="assets/img/own-icon.svg">
-                                          <p>Own</p>
+                                          <ng-container *ngIf="findType === 'contributor'; else own">
+                                             <p class="short_text">{{karta?.user?.fullName}}</p>
+                                          </ng-container>
+                                          <ng-template #own>
+                                             <p>Own</p>
+                                          </ng-template>
                                        </div>
                                     </div>
-                                    <div class="col-4 text-right">
+                                    <div class="col-4 text-right" *ngIf="findType !== 'contributor'">
                                        <div class="dropdown show">
                                           <a class=" dropdown-toggle three-dots cursor_pointer" role="button"
                                              id="dropdownMenuLink" data-toggle="dropdown"
@@ -107,9 +112,16 @@
                                  <div class="row">
                                     <div class="col-lg-12 text-center">
                                        <div class="edit-btn-img">
-                                          <a [routerLink]="['/karta/edit', karta._id]">
-                                          <img src="assets/img/edit--icon-blue.svg">
-                                          </a>
+                                          <ng-container *ngIf="findType === 'contributor'; else edit">
+                                             <a [routerLink]="['/karta/view', karta._id]">
+                                                <img src="assets/img/View-blue.svg">
+                                             </a>
+                                          </ng-container>
+                                          <ng-template #edit>
+                                             <a [routerLink]="['/karta/edit', karta._id]">
+                                                <img src="assets/img/edit--icon-blue.svg">
+                                             </a>
+                                          </ng-template>
                                        </div>
                                     </div>
                                  </div>
@@ -134,12 +146,18 @@
                                  <div class="row">
                                     <div class="col-lg-6 text-left">
                                        <div class="dropdown show">
-                                          <a class="dropdown-toggle three-dots change-acc text-body cursor_pointer" role="button" id="dropdownMenuLink"
-                                             data-toggle="dropdown" aria-haspopup="true"
-                                             aria-expanded="false">
-                                          Change access 
-                                          <img src="assets/img/down-arrow.svg" class="ml-2">
-                                          </a>
+                                          <ng-container *ngIf="findType === 'contributor'; else editAccess">
+                                             <a class=" dropdown-toggle three-dots change-acc text-body cursor_default" role="button">
+                                             Change access <img src="assets/img/down-arrow.svg" class="ml-2">
+                                             </a>
+                                          </ng-container>
+                                          <ng-template #editAccess>
+                                             <a class=" dropdown-toggle three-dots change-acc text-body cursor_pointer"
+                                             role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                                             aria-haspopup="true" aria-expanded="false">
+                                             Change access <img src="assets/img/down-arrow.svg" class="ml-2">
+                                             </a>
+                                          </ng-template>
                                           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                              <a class="dropdown-item cursor_pointer"
                                                 (click)="updateKarta('private', karta?._id, i)">Private</a>
