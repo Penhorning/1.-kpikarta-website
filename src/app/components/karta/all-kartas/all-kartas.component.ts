@@ -80,7 +80,7 @@ export class AllKartasComponent implements OnInit {
   // Get all kartas
   getAllKartas() {
     let data = {
-      page: this.pageIndex,
+      page: 1,
       limit: this.pageSize,
       findBy: this._commonService.getUserId(),
       searchQuery: this.search_text,
@@ -105,7 +105,7 @@ export class AllKartasComponent implements OnInit {
   // Get all shared kartas
   getAllSharedKartas() {
     let data = {
-      page: this.sharedPageIndex,
+      page: 1,
       limit: this.sharedPageSize,
       findBy: this._commonService.getEmailId(),
       searchQuery: this.search_text,

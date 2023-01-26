@@ -61,7 +61,7 @@ export class MarketplaceComponent implements OnInit {
   // Get all catalogs
   getAllCatalogs() {
     let data: any = {
-      page: this.pageIndex,
+      page: 1,
       limit: this.pageSize,
       searchQuery: this.search_text
     }
@@ -83,7 +83,7 @@ export class MarketplaceComponent implements OnInit {
   // Get all kartas
   getAllKartas() {
     let data = {
-      page: this.kartaPageIndex,
+      page: 1,
       limit: this.kartaPageSize,
       searchQuery: this.search_text
     }

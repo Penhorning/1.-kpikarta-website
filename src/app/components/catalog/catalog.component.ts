@@ -82,7 +82,7 @@ export class CatalogComponent implements OnInit {
   // Get all catalogs
   getAllCatalogs() {
     let data = {
-      page: this.pageIndex,
+      page: 1,
       limit: this.pageSize,
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text,
@@ -107,7 +107,7 @@ export class CatalogComponent implements OnInit {
   // Get all shared catalogs
   getAllSharedCatalogs() {
     let data = {
-      page: this.sharedPageSize,
+      page: 1,
       limit: this.sharedPageSize,
       userId: this._commonService.getUserId(),
       searchQuery: this.search_text,
