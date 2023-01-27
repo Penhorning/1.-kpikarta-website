@@ -865,7 +865,7 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
         let percentage = (total / +originalValues.target[0].value) * 100;
         let nodeObj = {
           "id": values['My KPI Export'],
-          "achieved_value": Math.round(total),
+          "achieved_value": total,
           "node_formula": {
             "fields": modifiedFieldArray,
             "formula": originalValues.node_formula.formula,
