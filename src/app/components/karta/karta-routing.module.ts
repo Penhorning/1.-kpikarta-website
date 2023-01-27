@@ -10,13 +10,7 @@ const routes: Routes = [
   { path: '', redirectTo:'/dashboard', pathMatch: 'full' },
   { path: '', component: KartaComponent,
     children: [
-      { path: 'all', component: AllKartasComponent,
-        data: {
-          title: "All Kartas - KPI Karta",
-          roles: ["company_admin", "department_admin", "billing_staff", "user"],
-          licenses: ["Creator", "Champion", "Spectator"]
-        }
-      },
+      { path: 'all', component: AllKartasComponent, data: { title: "All Kartas - KPI Karta" } },
       { path: 'create', component: CreateKartaComponent,
         data: {
           title: "Create - KPI Karta",

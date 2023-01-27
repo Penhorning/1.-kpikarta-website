@@ -839,21 +839,20 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
     let value = originalValues.node_formula.formula.trim().split(/[\s() */%+-]+/g);
     let total: any = 0;
     let formulaValues = values.__EMPTY_4.split("|");
-    let fieldCount = 0;
+    let modifiedFieldArray: any;
     value.filter((item: any) => item !== "").forEach((x: any, index: number) => {
       if (x && !parseInt(x)) {
-        fieldCount += 1;
-        let obj = {
-          "fieldName": x,
-          "fieldValue": formulaValues[index]
-        }
-        tempObj.push(obj)
+        if (modifiedFieldArray) originalValues.node_formula.fields = modifiedFieldArray;
+        modifiedFieldArray = originalValues.node_formula.fields.map((item: any) => {
+          if (item.fieldName === x) item.fieldValue = formulaValues[index];
+          return item;
+        });
         newValue = newValue
           ? newValue.replace(x, formulaValues[index])
           : originalValue.replace(x, formulaValues[index]); 
       }
     });
-    if (fieldCount !== formulaValues.length) {
+    if (originalValues.node_formula.fields.length !== formulaValues.length) {
       this.tableData.map((item: any) => {
         if (item["My KPI Export"] === originalValues.id) item.ac = true;
         return item;
@@ -864,23 +863,17 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
       total = eval(newValue).toFixed(2);
       if (total > 0) {
         let percentage = (total / +originalValues.target[0].value) * 100;
-        let abc = {
+        let nodeObj = {
           "id": values['My KPI Export'],
           "achieved_value": Math.round(total),
           "node_formula": {
-            "fields": tempObj,
+            "fields": modifiedFieldArray,
             "formula": originalValues.node_formula.formula,
             "metrics": true
           },
-          "target": [
-            {
-              "frequency": originalValues.target[0].frequency,
-              "percentage": Math.round(percentage),
-              "value": originalValues.target[0].value
-            }],
-            "percentage": Math.round(percentage)
+          "percentage": Math.round(percentage)
         }
-        return abc;
+        return nodeObj;
       } else {
         this.isTableDataWrong = true;
         return false;
@@ -908,13 +901,6 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
                 element.node = {
                   "id": element['My KPI Export'],
                   "achieved_value": +element.__EMPTY_4,
-                  "target": [
-                    {
-                      "frequency": originalElement.target[0].frequency,
-                      "percentage": Math.round(percentage),
-                      "value": +originalElement.target[0].value
-                    }
-                  ],
                   "percentage": Math.round(percentage)
                 }
               } else {

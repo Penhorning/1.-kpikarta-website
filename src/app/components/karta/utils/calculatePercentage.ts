@@ -3,10 +3,13 @@ import * as moment from 'moment';
 export class CalculatePercentage {
 
   colorSettings: any = {};
-  kpiCalculationPeriod: string = "";
+  kpiCalculationPeriod: any = {
+    frequency: "",
+    nodeId: ""
+  }
   kpiPercentage: number = 0;
 
-  constructor(color_settings: object, kpi_calculation_period: string, kpi_percentage: number) {
+  constructor(color_settings: object, kpi_calculation_period: object, kpi_percentage: number) {
     this.colorSettings = color_settings;
     this.kpiCalculationPeriod = kpi_calculation_period;
     this.kpiPercentage = kpi_percentage;
@@ -51,7 +54,7 @@ export class CalculatePercentage {
           return element.target.find((item: any) => item.frequency === type);
         }
         const checkOtherPeriods = () => {
-          return (this.kpiCalculationPeriod === "month-over-month" || this.kpiCalculationPeriod === "year-over-year");
+          return (this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year");
         }
         // Set target value according to monthly
         if (element.kpi_calc_period === "monthly" && !checkOtherPeriods()) {
@@ -68,8 +71,8 @@ export class CalculatePercentage {
           else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
           if (element.days_to_calculate === "business") {
-            targetValue = dayOfMonth * (targetValue / businessDaysInMonth);
-          } else targetValue = businessDayOfMonth * (targetValue / daysInMonth);
+            targetValue = businessDayOfMonth * (targetValue / businessDaysInMonth);
+          } else targetValue = dayOfMonth * (targetValue / daysInMonth);
         }
         // Set target value according to year to date
         else if (element.kpi_calc_period === "year-to-date" && !checkOtherPeriods()) {
@@ -78,12 +81,12 @@ export class CalculatePercentage {
           else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
           else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
           if (element.days_to_calculate === "business") {
-            targetValue = dayOfYear * (targetValue / businessDaysInYear);
-          } else targetValue = businessDayOfYear * (targetValue / daysInYear);
+            targetValue = businessDayOfYear * (targetValue / businessDaysInYear);
+          } else targetValue = dayOfYear * (targetValue / daysInYear);
         }
         // Set percentage for month-over-month and year-over-year
-        else if (this.kpiCalculationPeriod === "month-over-month" || this.kpiCalculationPeriod === "year-over-year") {
-          element.percentage = this.kpiPercentage;
+        else if (this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year") {
+          if (element.id === this.kpiCalculationPeriod.nodeId) element.percentage = this.kpiPercentage;
         }
         // Set percentage for other kpi calculation periods
         if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {
