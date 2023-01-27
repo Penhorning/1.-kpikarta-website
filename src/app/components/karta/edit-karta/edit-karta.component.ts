@@ -1156,6 +1156,19 @@ export class EditKartaComponent implements OnInit {
             "parentId": param.phaseId,
             "phaseId": mainPhaseId
           }
+
+          let history_data = {
+            event: "phase_created",
+            eventValue: data,
+            kartaNodeId: response.id,
+            userId: this._commonService.getUserId(),
+            versionId: this.versionId,
+            kartaId: this.kartaId,
+            parentNodeId: param.phaseId,
+            historyType: 'main'
+          }
+          this._kartaService.addKartaHistoryObject(history_data).subscribe(() => {});
+
           this.phases.splice((currentPhaseIndex + 1), 0, resopnse_data);
           this.addNode(param);
         }
