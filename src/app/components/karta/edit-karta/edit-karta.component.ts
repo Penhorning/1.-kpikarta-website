@@ -10,6 +10,7 @@ import { Options } from '@angular-slider/ngx-slider';
 import * as moment from 'moment';
 import * as MetricOperations from '../utils/metricFormulaOperations';
 import { CalculatePercentage } from '../utils/calculatePercentage';
+import { addInvisibleNodes } from '../utils/addInvisibleNodes';
 
 declare const $: any;
 
@@ -814,7 +815,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Delete only child phase
   deletePhase(id: string, index: number) {
-    const result = confirm("Are you sure you want to delete this phase?");
+    const result = confirm("Are you sure you want to delete this phase? If yes, then all the associated nodes to this phase will also delete.");
     if (result) {
       const data = {
         phaseId: id,
@@ -893,8 +894,17 @@ export class EditKartaComponent implements OnInit {
   }
   // Change fiscal year end date
   changeFiscalEndDate(el: any) {
-    let node = this.currentNode;
-    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated', node);
+    if (!this.currentNode.fiscal_year_start_date) {
+      this._commonService.errorToaster("Please define the start date first!");
+    } else {
+      const startDate = moment(this.currentNode.fiscal_year_start_date);
+      const endDate = moment(el.target.value);
+      const totalDays = endDate.diff(startDate, 'days') + 1;
+      if (totalDays === 366 || totalDays === 365) {
+        let node = this.currentNode;
+        this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated', node);
+      } else this._commonService.errorToaster("Difference between start and end date should be of complete 1 year!");
+    }
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
@@ -979,6 +989,7 @@ export class EditKartaComponent implements OnInit {
       if (this.karta.node) {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+        // this.karta.node = addInvisibleNodes(this.karta.node)
         BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
         // this.setKartaDimension();
         this.showSVG = true;
@@ -1702,7 +1713,7 @@ export class EditKartaComponent implements OnInit {
       this._commonService.errorToaster("You cannot add this range of color!");
     } else {
       if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
-      else this.colorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
+      else this.colorSettings.settings.push(this.colorForm.value);
     }
   }
   toggleColorSettings(e: any) {
@@ -1714,7 +1725,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.toggleGlobalColorSetting(data).subscribe(
       (response: any) => {
         if (e.target.checked) {
-          this._commonService.successToaster("Success! Now this settings will apply in all other places.");
+          this._commonService.successToaster("Success! These settings will apply in all instances. ");
         }
       },
       (error: any) => {

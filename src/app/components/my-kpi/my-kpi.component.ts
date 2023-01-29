@@ -78,7 +78,8 @@ export class MyKpiComponent implements OnInit {
   importSubmitFlag: boolean = false;
   nodes: any = []
   openState: boolean = false;
-  wsname:any;
+  wsname: any;
+
   // Target filter
   target: any = [
     { frequency: "", value: 0, percentage: 0 }
@@ -112,14 +113,25 @@ export class MyKpiComponent implements OnInit {
   ];
   // Header list
   headerList = [
-    { name: 'Karta', sort: '' },
-    { name: 'KPI', sort: '' },
-    { name: 'Target', sort: '' },
-    { name: 'Actual', sort: '' },
-    { name: 'Last Edited', sort: '' },
-    { name: 'Due Date', sort: '' },
-    { name: 'Days Left', sort: '' },
-    { name: 'Completion', sort: '' }
+    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'KPI', sortBy: 'name', sort: '' },
+    { name: 'Target', sortBy: 'value', sort: '', filter: true },
+    { name: 'Actual', sortBy: 'achieved_value', sort: '' },
+    { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
+    { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
+    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
+  ];
+  headerList2 = [
+    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'KPI', sortBy: 'name', sort: '' },
+    { name: 'Target', sortBy: 'value', sort: '', filter: true },
+    { name: 'Actual', sortBy: 'achieved_value', sort: '' },
+    { name: 'Contributor', sortBy: 'contributor.email', sort: '' },
+    { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
+    { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
+    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   // Sort var
   sortDir = 1;
@@ -150,6 +162,7 @@ export class MyKpiComponent implements OnInit {
 
   @ViewChild('fileUploader')
   fileUploader!: ElementRef;
+  
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
     this.maxDate = new Date();
   }
