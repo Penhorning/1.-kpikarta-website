@@ -64,9 +64,6 @@ export class EditKartaComponent implements OnInit {
       addNode: (d: any) => {
         this.addNode(d);
       },
-      addNodeRight: (d: any) => {
-        this.addNodeRight(d);
-      },
       updateDraggedNode: (draggingNode: any) => {
         this.currentNode = draggingNode;
         if (draggingNode.parent.id && draggingNode.phaseId) {
@@ -814,7 +811,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Delete only child phase
   deletePhase(id: string, index: number) {
-    const result = confirm("Are you sure you want to delete this phase?");
+    const result = confirm("Are you sure you want to delete this phase? If yes, then all the associated nodes to this phase will also delete.");
     if (result) {
       const data = {
         phaseId: id,
@@ -823,6 +820,11 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.deletePhase(data).subscribe(
         (response: any) => {
           this.phases.splice(index, 1);
+          // Reconnect child phase to another parent
+          if (this.phases[index].is_child) {
+            this.phases[index].parentId = this.phases[index-1].id;
+          }
+          this.reArrangePhases(this.phases);
           this.updateNewPercentage();
           // this.setKartaDimension();
         }
@@ -889,12 +891,8 @@ export class EditKartaComponent implements OnInit {
   // Change fiscal year start date
   changeFiscalStartDate(el: any) {
     let node = this.currentNode;
-    this.updateNode('fiscal_year_start_date', el.target.value, 'node_updated', node);
-  }
-  // Change fiscal year end date
-  changeFiscalEndDate(el: any) {
-    let node = this.currentNode;
-    this.updateNode('fiscal_year_end_date', el.target.value, 'node_updated', node);
+    this.currentNode.fiscal_year_end_date = node.fiscal_year_end_date = moment(el.target.value).endOf('day').add(1, 'years').subtract(1, 'day');
+    this.updateNode('fiscal_year_start_date', moment(el.target.value).endOf('day'), 'node_updated', node);
   }
   // Change kpi calculation periods
   changeKPIPeriods(el: any) {
@@ -1025,7 +1023,7 @@ export class EditKartaComponent implements OnInit {
             this.phases.push(childPhase);
             array.splice(array.findIndex((a: any) => a.id === childPhase.id) , 1);
             findSubPhase(array, childPhase.id);
-          }
+          } else this.phases[this.phases.length-1].lastChildren = true;
         }
         // Iterate phases
         for (let phase of response) {
@@ -1130,63 +1128,69 @@ export class EditKartaComponent implements OnInit {
     ).add(() => jqueryFunctions.enableChart());
   }
 
-  // Add right node
-  addNodeRight(param: any) {
-    let currentPhaseIndex = this.phaseIndex(param.phaseId);
-    const isExists = this.phases.filter((item: any): any => {
-      if (item.hasOwnProperty("parentId")) return item.parentId === param.phaseId;
-    });
-    if (isExists.length <= 0) {
-      let mainPhaseId: string = "";
-      if (this.phases[currentPhaseIndex].hasOwnProperty("phaseId")) mainPhaseId = this.phases[currentPhaseIndex].phaseId;
-      else mainPhaseId = this.phases[currentPhaseIndex].id;
-      // Set new phase name
-      let nameString, lastString, num, joinedName, newName;
-      nameString = this.phases[currentPhaseIndex].name.split(" ");
-      lastString = parseInt(nameString[nameString.length - 1]);
-      num = lastString ? lastString + 1 : 1;
-      lastString ? nameString.pop() : nameString;
-      joinedName = nameString.join(" ");
-      newName = `${joinedName} ${num}`;
-      let data = {
-        "name": newName,
-        "kartaId": this.kartaId,
-        "is_child": true,
-        "parentId": param.phaseId,
-        "phaseId": mainPhaseId,
-        "userId": this._commonService.getUserId()
-      }
-      this._kartaService.addPhase(data).subscribe(
-        (response: any) => {
-          let resopnse_data = {
-            "id": response.id,
-            "name": response.name,
-            "global_name": response.name,
-            "is_child": response.is_child,
-            "kartaId": this.kartaId,
-            "parentId": param.phaseId,
-            "phaseId": mainPhaseId
-          }
+  reArrangePhases(phases: any) {
+    let phaseResult: any = [];
+    // Find sub phase
+    const findSubPhase = (array: any, phaseId: string) => {
+      let childPhase = array.find((item: any) => item.parentId === phaseId);
+      if (childPhase) {
+        delete childPhase.lastChildren;
+        phaseResult.push(childPhase);
+        array.splice(array.findIndex((a: any) => a.id === childPhase.id) , 1);
+        findSubPhase(array, childPhase.id);
+      } else phaseResult[phaseResult.length-1].lastChildren = true;
+    }
+    // Iterate phases
+    for (let phase of phases) {
+      delete phase.lastChildren;
+      phaseResult.push(phase);
+      findSubPhase(phases, phase.id);
+    }
+    // Assign phaseResult to phases
+    this.phases = phaseResult;
+  }
 
-          let history_data = {
-            event: "phase_created",
-            eventValue: data,
-            kartaNodeId: response.id,
-            userId: this._commonService.getUserId(),
-            versionId: this.versionId,
-            kartaId: this.kartaId,
-            parentNodeId: param.phaseId,
-            historyType: 'main'
-          }
-          this._kartaService.addKartaHistoryObject(history_data).subscribe(() => {});
+  // Add additional phase
+  addChildPhase(phase: any, index: number) {
+    let mainPhaseId: string = "";
+    if (this.phases[index].hasOwnProperty("phaseId")) mainPhaseId = this.phases[index].phaseId;
+    else mainPhaseId = this.phases[index].id;
+    // Set new phase name
+    let nameString, lastString, num, joinedName, newName;
+    nameString = this.phases[index].name.split(" ");
+    lastString = parseInt(nameString[nameString.length - 1]);
+    num = lastString ? lastString + 1 : 1;
+    lastString ? nameString.pop() : nameString;
+    joinedName = nameString.join(" ");
+    newName = `${joinedName} ${num}`;
 
-          this.phases.splice((currentPhaseIndex + 1), 0, resopnse_data);
-          this.addNode(param);
+    let data = {
+      "name": newName,
+      "kartaId": this.kartaId,
+      "is_child": true,
+      "parentId": phase.id,
+      "phaseId": mainPhaseId,
+      "userId": this._commonService.getUserId(),
+      "nextPhaseId": this.phases[index + 1].id,
+      "addEmptyNodes": true
+    }
+    this._kartaService.addPhase(data).subscribe(
+      (response: any) => {
+        let resopnse_data = {
+          "id": response.id,
+          "name": response.name,
+          "global_name": response.name,
+          "is_child": response.is_child,
+          "kartaId": this.kartaId,
+          "parentId": phase.id,
+          "phaseId": mainPhaseId
         }
-      );
-    } else this.addNode(param, 'Child 2');
-    // this.setKartaDimension();
-    this.D3SVG.buildOneKartaDivider();
+        this.phases.splice((index + 1), 0, resopnse_data);
+        this.reArrangePhases(this.phases);
+        this.D3SVG.buildOneKartaDivider();
+        this.updateNewPercentage();
+      }
+    );
   }
 
   // Update new percentage
@@ -1211,6 +1215,7 @@ export class EditKartaComponent implements OnInit {
       this.kpiType = type;
     }
     if (key === "notifyUserId") data["notify_type"] = type;
+    if (key === "fiscal_year_start_date") data["fiscal_year_end_date"] = updatingNode.fiscal_year_end_date;
     // Send update node request
     this._kartaService.updateNode(updatingNode.id, data).subscribe(
       async (response: any) => {
@@ -1450,7 +1455,7 @@ export class EditKartaComponent implements OnInit {
       }
       let phase = this.phases[this.phaseIndex(phaseId.substring(9))];
       let data = {
-        name: "Empty",
+        name: "Root",
         phaseId: phaseId.substring(9),
         kartaId: this.kartaId
       };
@@ -1495,7 +1500,8 @@ export class EditKartaComponent implements OnInit {
       node,
       parent,
       kartaId: this.kartaId,
-      nodeType: this.draggingInventoryNode.node_type
+      nodeType: this.draggingInventoryNode.node_type,
+      addByInventory: true
     }
     data.node = JSON.parse(this.removeCircularData(node));
     data.parent = JSON.parse(this.removeCircularData(parent));
@@ -1718,7 +1724,7 @@ export class EditKartaComponent implements OnInit {
       this._commonService.errorToaster("You cannot add this range of color!");
     } else {
       if (this.findColorInRange(this.colorForm.value.color)) this._commonService.errorToaster("This color has aleady been taken by other ranges!");
-      else this.colorSettings.settings.push(this.colorForm.value); this.saveColorSetting();
+      else this.colorSettings.settings.push(this.colorForm.value);
     }
   }
   toggleColorSettings(e: any) {
@@ -1730,7 +1736,7 @@ export class EditKartaComponent implements OnInit {
     this._kartaService.toggleGlobalColorSetting(data).subscribe(
       (response: any) => {
         if (e.target.checked) {
-          this._commonService.successToaster("Success! Now this settings will apply in all other places.");
+          this._commonService.successToaster("Success! These settings will apply in all instances. ");
         }
       },
       (error: any) => {
