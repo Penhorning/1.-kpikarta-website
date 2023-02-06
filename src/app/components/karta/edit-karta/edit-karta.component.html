@@ -443,8 +443,9 @@
                                <li class="nav-item" *ngFor="let phase of phases; let i = index">
                                    <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
                                        <div class="phase_action">
-                                          <i class="fa fa-pencil" *ngIf="phase.global_name !== 'KPI'" (click)="makePhaseEditable(phase.id)"></i>
-                                          <i class="fa fa-trash" *ngIf="phase.is_child" (click)="deletePhase(phase.id, i)"></i>
+                                            <i class="fa fa-plus" *ngIf="phase.global_name !== 'KPI' && phase.global_name !== 'Goal' && phase.lastChildren" (click)="addChildPhase(phase, i)"></i>
+                                            <i class="fa fa-pencil" *ngIf="phase.global_name !== 'KPI' && phase.global_name !== 'Goal'" (click)="makePhaseEditable(phase.id)"></i>
+                                            <i class="fa fa-trash" *ngIf="phase.is_child" (click)="deletePhase(phase.id, i)"></i>
                                        </div>
                                        <div (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name)">{{phase?.name}}</div>
                                    </a>
@@ -688,7 +689,7 @@
                                    <div class="col-lg-6">
                                        <div class="selct-option-side-r">
                                            <label>End Date</label>
-                                           <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'" (change)="changeFiscalEndDate($event)" />
+                                           <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'" disabled />
                                        </div>
                                    </div>
                                </div>

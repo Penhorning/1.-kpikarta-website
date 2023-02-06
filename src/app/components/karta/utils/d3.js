@@ -496,7 +496,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("class", "karta_divider")
             .attr('stroke', 'lightgrey')
             .attr('stroke-width', '1px')
-            .attr('d', pathGenerator([[-width2, 65], [width2, 65]]));
+            .attr('d', pathGenerator([[-width, 65], [width, 65]]));
     }
     // Remove horizontal lines for phases, when child phase deleted
     function removeOneKartaDivider() {
@@ -591,7 +591,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Chart events
     var events = {
         addNode: (d) => { },
-        addNodeRight: (d) => { },
         removeNode: (d) => {
             d.parent.children = d.parent.children.filter(c => {
                 return c.id != d.id;
