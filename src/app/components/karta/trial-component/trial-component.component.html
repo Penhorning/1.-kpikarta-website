@@ -1,0 +1,125 @@
+<!-- main-section -->
+<div class="wrapper">
+    <!-- Page Content  -->
+    <div id="content" class="karta-edit-contnet">
+       <!-- Karta header -->
+       <div class="karta-edit-header" [ngStyle]="{'padding-left': (_commonService.getSession() && _commonService.getSession().token) ? '118px': '18px' }">
+          <div class="row no-gutters">
+             <div class="col-lg-12">
+                <div class="row no-gutters">
+                  <div class="col-lg-6">
+                     <div class="row">
+                        <div class="col-lg-3 pr-0">
+                           <div class="karta-name">
+                              <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
+                           </div>
+                        </div>
+                        <div class="col-lg-2 pl-0">
+                           <div class="select-karta-name">
+                              <select class="form-control custom-select-karta"
+                              [(ngModel)]="versionId">
+                              <option *ngFor="let ver of version" [value]="ver.id">Version {{ver.name}}</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="col-lg-2 align-self-center undo_redo_btn">
+                           <a title="Undo" id="UndoAnchor"><img src="assets/img/Undo.svg"
+                              class="img-fluid"></a>
+                           <a title="Redo" id="RedoAnchor"><img src="assets/img/Redo.svg"
+                              class="img-fluid"></a>
+                           <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn">
+                        </div>
+                        <div class="col-lg-4 p-0">
+                           <div class="time-select-karta">
+                              <span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'d/M/yy, H:mm'}}</span>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-lg-6">
+                     <div class="row no-gutters">
+                        <div class="col-lg-3">
+                           <div class="select-karta-name">
+                              <select class="form-control custom-select-karta-mode" id="chartMode">
+                                 <option value="enable">Editor Mode</option>
+                                 <option value="disable">Viewer Mode</option>
+                              </select>
+                           </div>
+                        </div>
+                        <div class="col-lg-2 text-center">
+                           <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal">View</button>
+                        </div>
+                        <div class="col-lg-3 p-0">
+                           <div class="icon-karta">
+                              <!-- Share karta -->
+                              <a href="javascript:void(0);" data-toggle="modal" data-target="#shareKartaModal" title="Share"><img
+                                 src="assets/img/share-icon.svg"></a>
+                              <!-- Export Karta -->
+                              <div class="dropdown show">
+                                 <a class=" dropdown-toggle three-dots" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false" title="Export">
+                                 <img src="assets/img/download-icon.svg">
+                                 </a>
+                                 <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
+                                    <img src="assets/img/drop-arrow.svg" class="drop-arrow">
+                                    <a class="dropdown-item" href="javascript:void(0);">
+                                    <img src="assets/img/csv.svg" class="mr-2"> Export to CSV
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0);">
+                                    <img src="assets/img/pdf.svg" class="mr-2"> Export to PDF
+                                    </a>
+                                    <a class="dropdown-item border-0" href="javascript:void(0);">
+                                    <img src="assets/img/img.svg" class="mr-2"> Export to Image
+                                    </a>
+                                 </div>
+                              </div>
+                              <!-- Filter Karta -->
+                              <div class="dropdown filter-option m-0">
+                                 <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Filter">
+                                 <img src="assets/img/filter.svg" class="">
+                                 </button>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-lg-4">
+                           <div class="save-setting-btn">
+                              <button type="button" class="save-btn-karta mr-1">Save</button>
+                              <div class="dropdown">
+                                 <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg"></button>
+                              </div>
+                              <a href="javascript:void(0);" title="Info"><img src="assets/img/information.svg"></a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                </div>
+             </div>
+          </div>
+       </div>
+       <!-- Karta SVG Chart -->
+       <div class="main-center-content d-flex mb-3" [ngStyle]="{'margin-left': (_commonService.getSession() && _commonService.getSession().token) ? '100px': '0' }">
+          <div class="center-content mt-4 w-100">
+             <div class="row tab-content-center">
+                <div class="phase_column">
+                   <div class="vertical-tabs">
+                      <ul class="nav nav-tabs" role="tablist">
+                         <li class="nav-item" *ngFor="let phase of phases">
+                            <a class="nav-link text-nowrap">{{phase?.name}}</a>
+                         </li>
+                      </ul>
+                   </div>
+                </div>
+                <div class="karta_column">
+                   <div class="tab-pane active">
+                      <ng-container *ngIf="loadingKarta">
+                         <div class="p-5" [innerHtml]="loader"></div>
+                      </ng-container>
+                      <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>

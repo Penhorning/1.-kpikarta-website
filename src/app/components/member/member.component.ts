@@ -39,6 +39,7 @@ export class MemberComponent implements OnInit {
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
   loading = true;
+  defaultEmail: string = "";
 
   // ngx-intl-tel-input config
   separateDialCode = true;
@@ -177,6 +178,7 @@ export class MemberComponent implements OnInit {
         mobile: data.mobile ? data.mobile : {},
         roleId: data.Role._id ? data.Role._id : '',
       });
+      this.defaultEmail = data.email ? data.email : ''; 
     }
   }
 
@@ -228,10 +230,14 @@ export class MemberComponent implements OnInit {
       else if (this.checkFormType === "UPDATE") {
         formData.type = "invited_user";
         formData.userId = this.currentUser._id;
+        if(formData.email !== this.defaultEmail) {
+          formData.defaultEmail = this.defaultEmail;
+        }
         if (!this.showDepartment) formData.departmentId = "";
         this._memberService.updateUser(formData, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
+            this.defaultEmail = "";
             this._commonService.successToaster("Member updated successfully!");
           },
           (error: any) => {

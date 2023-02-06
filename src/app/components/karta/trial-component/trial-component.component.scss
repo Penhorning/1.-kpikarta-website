@@ -1,0 +1,60 @@
+.main-center-content {
+    margin-left: 100px;
+}
+.phase_column ul {
+    width: 100%;
+}
+
+.karta_column {
+    width: 77%;
+    flex: 1 1 auto;
+}
+
+.undo_redo_btn img {
+    height: 15px;
+    cursor: pointer;
+}
+.undo_redo_btn a {
+    margin-right: 10px;
+}
+
+.dropdown-content.custom-drop.show {
+    margin-left: -11.5rem;
+}
+.dropbtn {
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropbtn:hover, .dropbtn:focus {
+    background-color: transparent;
+  }
+  
+  .dropbtn.dropdown-toggle::after {
+    display: none;
+  }
+
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 230px;
+    border: 1px solid #ddd;
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }

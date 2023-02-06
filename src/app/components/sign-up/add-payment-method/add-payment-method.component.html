@@ -18,7 +18,7 @@
                                     [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
                                 <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
                                     <div *ngIf="form.fullName.errors.required">Full name is required!</div>
-                                    <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
+                                    <div *ngIf="form.fullName.errors.pattern">Only letters are allowed!</div>
                                 </div>
                             </div>
 

@@ -1461,10 +1461,13 @@ export class EditKartaComponent implements OnInit {
         this.isRtNodDrgingFrmSide = false;
         this.isNodeDropable = false;
         // this.updateNodeProperties(response);
+        let responseData = {...response};
+        delete responseData.id;
+        delete responseData.phase;
   
         let history_data = {
           event: "node_created",
-          eventValue: data,
+          eventValue: responseData,
           kartaNodeId: response.id,
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
