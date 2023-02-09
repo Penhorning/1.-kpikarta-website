@@ -1,8 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonService } from '@app/shared/_services/common.service';
 
-declare const $: any
-
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -27,11 +25,6 @@ export class HeaderComponent implements OnInit {
       (response: any) => { },
       (error: any) => { }
     ).add(() => this._commonService.deleteSession() );
-  }
-
-  openNav() {
-    $("#mySidebar").css("width", "120px");
-    $("#main").css("margin-left", "110px");
   }
 
 }

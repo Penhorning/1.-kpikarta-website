@@ -3096,3 +3096,12 @@ button.btn.btn-link.see_all_btn {
     width: 30%;
   }
 }
+
+
+/*Abhi 08-Feb-2023*/
+.mobile-menu {
+  display: none;
+}
+.mobile-name {
+  display: none;
+}

@@ -733,7 +733,6 @@ export class MyKpiComponent implements OnInit {
 
    this.pushCSVData(kpis2);
     const options = {
-      
       bom: false,
       filename: 'KPIs',
       showLabels: true,
