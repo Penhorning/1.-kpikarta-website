@@ -336,103 +336,42 @@
                   <div [innerHtml]="loader"></div>
                </ng-container>
             </div>
-            <!-- <div class="total-section mt-3" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+            <div class="total-section mt-3" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
                <div class="row">
                   <div class="col-lg-12">
                      <div class="total-inner-section pl-3 pr-3">
                         <div class="row">
                            <div class="col-lg-8 col-6">
-                              <h5>Recently Tagged</h5>
+                              <h5>Recent Activities</h5>
                            </div>
                            <div class="col-lg-4 col-6 text-right">
                               <div class="view-all-text">
-                                 <a href="javascript:void(0);">View All</a>
+                                 <a [routerLink]="['/my-kpi']">View All</a>
                               </div>
                            </div>
                         </div>
                      </div>
                   </div>
                </div>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>ROI</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Price</b></p>
+               <ng-container *ngFor="let kpi of recentKPIs; let i=index">
+                  <div class="row mt-3">
+                     <div class="col-lg-12">
+                        <div class="total-inner-section pl-3 pr-3">
+                           <div class="row">
+                              <div class="col-lg-8 col-6">
+                                 <h6>{{ kpi?.assigned_date | date: 'medium' }}</h6>
+                                 <p class="karata-id"><span class="short_text text-wrap">#{{ kpi?.contributor?.fullName}}</span> <span class="karata-name short_text text-wrap">{{ kpi?.karta?.name | titlecase }}</span></p>
+                              </div>
+                              <div class="col-lg-4 col-6 text-right">
+                                 <p><b class="short_text text-wrap">{{ kpi?.name }}</b></p>
+                              </div>
                            </div>
                         </div>
                      </div>
                   </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Design</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Price</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Price</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div> -->
+                  <hr *ngIf="i <= recentKPIs.length-2">
+               </ng-container>
+            </div>
          </div>
       </div>
    </div>

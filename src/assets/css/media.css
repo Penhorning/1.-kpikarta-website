@@ -1,0 +1,66 @@
+@media (max-width: 991px) {
+    .login_form {
+        padding: 15px;
+    }
+    .my_profile_first_section {
+        max-width: 100%;
+    }
+    .my_profile_second_section {
+        max-width: 100%;
+    }
+    a.nav-link-cus {
+     font-size: 16px;
+    }
+    li.nav-item.nav-item-cus.inventory {
+     width: 50%;
+    }
+    .KPI-dash-tab ul li a {
+     text-align: center;
+    }
+}
+@media (max-width: 767px) {
+     .logo {
+     padding: 20px;
+    }
+    }
+    @media (max-width: 451px) {
+}
+/*media query billing page*/
+@media (max-width:600px){
+    .User_profile.float-right.d-flex label {
+      display: none;
+  }
+    .openbtn {display: block;}
+    a.closebtn {
+      display: block !important;
+      padding: 0;
+      margin: -20px 0px 0 0px;
+      text-align: center;
+  }
+  .sidebar {
+    top: 65px;
+  }
+    .overview{
+      width:100%;
+      height:auto;
+    }
+    .heading{
+      flex-direction: column;
+    }
+    .heading h5{
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    .creators p{
+      font-size: 12px;
+    }
+    .creators{
+      padding:10px;
+    }
+    .creators h6{
+      font-size: 14px;
+    }
+    .overlay{
+      width:100%;
+    }
+  }

@@ -5,8 +5,8 @@ import { KartaService } from '../karta/service/karta.service';
 import { MemberService } from '../member/service/member.service';
 import { DashboardService } from './service/dashboard.service';
 
-
 declare const $: any;
+
 
 @Component({
   selector: 'app-dashboard',
@@ -37,6 +37,8 @@ export class DashboardComponent implements OnInit {
   loading: boolean = false;
   emails: any = [];
 
+  recentKPIs: any = [];
+
   constructor(
     public _commonService: CommonService,
     private _kartaService: KartaService,
@@ -58,6 +60,7 @@ export class DashboardComponent implements OnInit {
     } else this.pageLimit = 8;
     this.getAllMembers();
     this.getAllSharedKartas();
+    this.getRecentKPIs();
   }
 
   // Navigate to create karta
@@ -291,6 +294,20 @@ export class DashboardComponent implements OnInit {
   changeMode(e: any) {
     if (e.target.value === "edit") this.changeModeType = e.target.value;
     else this.changeModeType = e.target.value;
+  }
+
+  // Get recent kpis
+  getRecentKPIs() {
+    let data = {
+      limit: 6,
+      kpiType: "assigned",
+      userId: this._commonService.getUserId()
+    }
+    this._dashboardService.getMyKPIs(data).subscribe(
+      (response: any) => {
+        this.recentKPIs = response.kpi_nodes[0].data;
+      }
+    );
   }
    
 }
