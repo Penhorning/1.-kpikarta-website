@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx'
 
 type AOA = Array<Array<any>>;
 declare const $: any;
@@ -733,15 +733,15 @@ export class MyKpiComponent implements OnInit {
 
    this.pushCSVData(kpis2);
     const options = {
+      
+      bom: false,
       filename: 'KPIs',
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalSeparator: '.',
       showLabels: true,
       showTitle: true,
       title: 'My KPI Export',
       useTextFile: false,
-      useBom: true,
+      useBom: false,
+      encoding: 'UTF-8',
       headers: ['Id', 'Karta Id', 'KPI Name', 'Karta Name', 'Node Type', 'Achieved Value', 'Formula', 'Target Value', 'Percentage', 'Frequency']
     };
 
