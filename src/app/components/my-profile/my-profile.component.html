@@ -90,13 +90,13 @@
                                     <div class="col-md-12" id="phoneNumber">
                                         <div class="form-group">
                                             <label class="w-50" for="mobile">Mobile Number</label>
-                                            <ng-container *ngIf="numberType !== 'Change'">
+                                            <ng-container *ngIf="numberType === 'Change'">
                                                 <div class="float-right">
                                                     <img src="assets/img/check_circle.png" class="align-self-center text-center verified_icon" title="Verified" alt="" />
                                                     <img src="assets/img/edit.png" class="align-self-center text-center ml-2 phone_edit_icon" title="Edit" alt="" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal"/>
                                                 </div>
                                             </ng-container>
-                                            <ng-container *ngIf="numberType === 'Verfy'">
+                                            <ng-container *ngIf="numberType === 'Verify'">
                                                 <span class="phone_verify text-nowrap float-right" title="Verify mobile number" (click)="resetModal(profileForm.getRawValue().mobile)" data-toggle="modal" data-target="#phoneModal">
                                                     Edit and Verify
                                                 </span>

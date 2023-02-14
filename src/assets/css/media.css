@@ -1,122 +1,180 @@
 @charset "utf-8";
+
 /* CSS Document */
 @media (max-width:991px) {
-  .desktop-menu {
-    display: none;
-  }
-  .mobile-menu {
-    display: inline-block;
-  }
-  .mobile-menu nav {
-    background-color: #fff !important;
-    z-index: 99;
-    position: fixed;
-    right: 10px;
-    top: 55px;
-    width: 100%;
-    padding: 0px 25px;
-  }
-  .mobile-menu .navbar-toggler {
-    font-size: 1rem;
-  }
-  .mobile-menu button {
-    margin-top: -55px;
-    margin-right: -15px;
-  }
-  .mobile-menu .navbar-light .navbar-toggler {
-    border-color: #fff !important;
-  }
-  .desktop-name {
-    display: none;
-  }
-  .mobile-name {
-    display: inline-block;
-    font-weight: 500;
-    color: #666;
-    margin-top: 15px;
-  }
-  .sidebar {
-    display: none;
-  }
-  .User_profile {
-    margin-right: 45px;
-  }
-  #header {
-    padding: 0px 15px 0px 15px;
-  }
-  .User_profile .dropdown-toggle::after {
-    display: none;
-  }
-  .main-content {
-    margin-left: auto;
-    padding: 0px;
-    transition: all 0.3s ease;
-    width: 100%;
+    .navbar_logo {
+		min-width: 200px;
+		max-width: 200px;
+	}
+
+	.desktop-menu {
+		display: none;
+	}
+
+	.mobile-menu {
+		display: inline-block;
+	}
+
+	.mobile-menu nav {
+		background-color: #fff !important;
+		z-index: 99;
+		position: fixed;
+		right: 10px;
+		top: 55px;
+		width: 100%;
+		padding: 0px 25px;
+	}
+
+	.mobile-menu .navbar-toggler {
+		font-size: 1rem;
+	}
+
+	.mobile-menu button {
+		margin-top: -55px;
+		margin-right: -15px;
+	}
+
+	.mobile-menu .navbar-light .navbar-toggler {
+		border-color: #fff !important;
+	}
+
+	.desktop-name {
+		display: none;
+	}
+
+	.mobile-name {
+		display: inline-block;
+		font-weight: 500;
+		color: #666;
+		margin-top: 15px;
+	}
+
+	.sidebar {
+		display: none;
+	}
+
+	.User_profile {
+		margin-right: 45px;
+	}
+
+	#header {
+		padding: 0px 15px 0px 15px;
+	}
+
+	.User_profile .dropdown-toggle::after {
+		display: none;
+	}
+
+	.main-content {
+		margin-left: auto;
+		padding: 0px;
+		transition: all 0.3s ease;
+		width: 100%;
+	}
+
+	.my_profile_first_section,
+	.my_profile_second_section {
+		max-width: 100%;
+	}
+
+	.profile-section {
+		display: block !important;
+		text-align: center;
+	}
+
+	.profile_name h3 {
+		font-size: 16px !important;
+	}
+
+	.tab-content-cus>.active {
+		padding: 15px 20px;
+	}
+
+	a.nav-link-cus {
+		font-size: 15px;
+		padding: 10px 4px
+	}
+
+	.KPI-dash-tab ul {
+		width: 100%;
+	}
+
+    .KPI-billing-tab ul li {
+        margin-right: 20px !important;
     }
-    .my_profile_first_section, .my_profile_second_section {
+
+	.KPI-dash-tab .nav-item-cus a {
+		font-size: 15px !important;
+	}
+
+	li.nav-item.nav-item-cus.inventory {
+		width: 50%
+	}
+
+	.KPI-custom-table {
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+	}
+
+	.member-table {
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+	}
+
+    .settings-tab {
         max-width: 100%;
     }
-    .profile-section {
-        display: block !important;
-        text-align: center;
-    }
-    .profile_name h3{
-        font-size: 16px !important;
-    }
-    .tab-content-cus>.active {
-        padding: 15px 20px;
-    }
-    a.nav-link-cus {
-        font-size: 15px;
-        padding: 10px 4px
-    }
-    .KPI-dash-tab ul {
-        width: 100%;
-    }
-    .KPI-dash-tab .nav-item-cus a {
-        font-size: 15px !important;
-    }
-    .KPI-custom-table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-    }
-    .member-table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-    }
+
+	.settings-tab li.nav-item-cus {
+		width: 50%;
+	}
+
+	.factor-cl h5 {
+		font-size: 15px;
+	}
 }
+
 @media (max-width:767px) {
-  .head_logo img {
-    max-width: 150px;
-  }
+	.head_logo img {
+		max-width: 150px;
+	}
 }
+
 /*media query billing page*/
 @media (max-width:600px) {
-  .overview {
-    width: 100%;
-    height: auto;
-  }
-  .heading {
-    flex-direction: column;
-  }
-  .heading h5 {
-    text-align: center;
-    padding-bottom: 20px;
-  }
-  .creators p {
-    font-size: 12px;
-  }
-  .creators {
-    padding: 10px;
-  }
-  .creators h6 {
-    font-size: 14px;
-  }
-  .overlay {
-    width: 100%;
-  }
+	.overview {
+		width: 100%;
+		height: auto;
+	}
+
+	.heading {
+		flex-direction: column;
+	}
+
+	.heading h5 {
+		text-align: center;
+		padding-bottom: 20px;
+	}
+
+	.creators p {
+		font-size: 12px;
+	}
+
+	.creators {
+		padding: 10px;
+	}
+
+	.creators h6 {
+		font-size: 14px;
+	}
+
+	.overlay {
+		width: 100%;
+	}
 }
+
 @media (max-width:481px) {}
+
 /*End*/

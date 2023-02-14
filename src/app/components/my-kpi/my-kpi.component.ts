@@ -127,7 +127,7 @@ export class MyKpiComponent implements OnInit {
     { name: 'KPI', sortBy: 'name', sort: '' },
     { name: 'Target', sortBy: 'value', sort: '', filter: true },
     { name: 'Actual', sortBy: 'achieved_value', sort: '' },
-    { name: 'Contributor', sortBy: 'contributor.email', sort: '' },
+    { name: 'Assigned To', sortBy: 'contributor.email', sort: '' },
     { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
     { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
     { name: 'Days Left', sortBy: 'due_date', sort: '' },
@@ -360,8 +360,9 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Calculate days based on due date
-  calculateDueDays(due_date: string) {
-    return moment(due_date).diff(moment(), 'days') + 1;
+  calculateDueDays(start_date: string, due_date: string) {
+    if (start_date) return moment(due_date).diff(moment(), 'days') + 1;
+    return 0;
   }
 
   // Get all members
@@ -471,22 +472,23 @@ export class MyKpiComponent implements OnInit {
 
   // Submit shared data
   onSubmitSharedData() {
-    let data = {
-      nodeId: this.sharingKarta._id,
-      userIds: this.selectedUsers
-    }
-    this.sharedSubmitFlag = true;
-    this._myKpiService.shareNode(data).subscribe(
-      (response: any) => {
-        if (response) this._commonService.successToaster("Your have shared the node successfully");
-        $('#staticBackdrop').modal('hide');
-        this.sharingKarta = null;
-        this.selectedUsers = []
-        this.pageIndex = 0;
-        this.getMyKPIsList();
-      },
-      (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false);
+    $('#shareModal').modal('hide');
+    // let data = {
+    //   nodeId: this.sharingKarta._id,
+    //   userIds: this.selectedUsers
+    // }
+    // this.sharedSubmitFlag = true;
+    // this._myKpiService.shareNode(data).subscribe(
+    //   (response: any) => {
+    //     if (response) this._commonService.successToaster("Your have shared the node successfully");
+    //     $('#shareModal').modal('hide');
+    //     this.sharingKarta = null;
+    //     this.selectedUsers = []
+    //     this.pageIndex = 0;
+    //     this.getMyKPIsList();
+    //   },
+    //   (error: any) => { }
+    // ).add(() => this.sharedSubmitFlag = false);
   }
 
   // Close model

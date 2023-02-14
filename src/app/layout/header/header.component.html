@@ -98,12 +98,24 @@
                     <a class="navbar-brand" href="#"></a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
                     <div class="collapse navbar-collapse" id="navbarText">
                        <ul class="navbar-nav mr-auto">
-                          <li class="nav-item active"> <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a> </li>
-                          <li class="nav-item"> <a class="nav-link" href="#">Catalogs</a> </li>
-                          <li class="nav-item"> <a class="nav-link" href="#">Kartas</a> </li>
-                          <li class="nav-item"> <a class="nav-link" href="#">Inventory</a> </li>
-                          <li class="nav-item"> <a class="nav-link" href="#">My KPI</a> </li>
-                          <li class="nav-item"> <a class="nav-link pb-5" href="#">Settings</a> </li>
+                          <li class="nav-item" routerLinkActive="active">
+                            <a class="nav-link" [routerLink]="['/dashboard']">Home</a>
+                          </li>
+                          <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+                            <a class="nav-link" [routerLink]="['/inventory']">Inventory</a>
+                          </li>
+                          <li class="nav-item" routerLinkActive="active">
+                            <a class="nav-link" [routerLink]="['/karta/all']">Kartas</a>
+                        </li>
+                        <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
+                            <a class="nav-link" [routerLink]="['/my-kpi']">My KPIs</a>
+                        </li>
+                        <li class="nav-item" routerLinkActive="active">
+                            <a class="nav-link" [routerLink]="['/marketplace']">Market Place</a>
+                        </li>
+                        <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserRole() !== 'user'">
+                            <a class="nav-link" [routerLink]="['/members']">Members</a>
+                        </li>
                        </ul>
                     </div>
                  </nav>
@@ -146,9 +158,6 @@
                               Settings
                             </a>
                           </li>
-                          <li>
-                            <hr class="dropdown-divider">
-                         </li>
                          <li>
                             <a class="dropdown-item logout-custom cursor_pointer" (click)="logout()">
                               <img src="assets/img/logout.svg" class="mr-1">

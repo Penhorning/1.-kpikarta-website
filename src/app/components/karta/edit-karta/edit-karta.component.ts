@@ -1125,7 +1125,7 @@ export class EditKartaComponent implements OnInit {
         this.D3SVG.updateNewNode(param, response);
         this.updateNewPercentage();
       }
-    ).add(() => jqueryFunctions.enableChart());
+    ).add(() => setTimeout(() => jqueryFunctions.enableChart(), 1000));
   }
 
   reArrangePhases(phases: any) {
@@ -1206,7 +1206,6 @@ export class EditKartaComponent implements OnInit {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
-        jqueryFunctions.enableChart();
       }
     );
   }

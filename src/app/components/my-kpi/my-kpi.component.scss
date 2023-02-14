@@ -27,7 +27,11 @@
 } 
 
 #sortBydropdownMenuButton::after{
-right: 13px !important;
+    right: 13px !important;
+}
+
+.all-section h5 {
+    align-self: center;
 }
 
 .form-group .form-control-icon {

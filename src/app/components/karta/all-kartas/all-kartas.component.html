@@ -28,7 +28,7 @@
                </form>
             </div>
          </div>
-         <div class="col-lg-4 text-right" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+         <div class="col-lg-4 text-lg-right" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
             <button class="karta-btn mt-2" (click)="navigateToKarta()"><img src="assets/img/add-karata.svg"
                class="mr-2"> Create a Karta</button>
          </div>
