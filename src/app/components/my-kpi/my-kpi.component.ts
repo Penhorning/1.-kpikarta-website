@@ -165,14 +165,15 @@ export class MyKpiComponent implements OnInit {
 
     // Ng Multi Select Dropdown properties
     this.dropdownSettings = {
-      enableCheckAll: false,
+      enableCheckAll: true,
       singleSelection: false,
       idField: '_id',
       textField: 'nameAndEmail',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
-      disabled: this.isDisabled
+      disabled: this.isDisabled,
+      itemsShowLimit: 3
     }
     this.addMetricsData();
   }
@@ -423,6 +424,15 @@ export class MyKpiComponent implements OnInit {
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
     this.selectedUsers.push({ userId: item._id });
+
+  }
+
+  onSelectAll(items: any) {
+    items.forEach((item: any) => {this.selectedUsers.push({ userId: item._id })});
+  }
+
+  onDeSelectAll(items: any) {
+    this.selectedUsers = []
   }
 
   onItemDeSelect(item: any) {
@@ -458,22 +468,26 @@ export class MyKpiComponent implements OnInit {
 
   // Submit shared data
   onSubmitSharedData() {
-    let data = {
-      nodeId: this.sharingKarta._id,
-      userIds: this.selectedUsers
-    }
-    this.sharedSubmitFlag = true;
-    this._myKpiService.shareNode(data).subscribe(
-      (response: any) => {
-        if (response) this._commonService.successToaster("Your have shared the node successfully");
-        $('#staticBackdrop').modal('hide');
-        this.sharingKarta = null;
-        this.selectedUsers = []
-        this.pageIndex = 0;
-        this.getMyKPIsList();
-      },
-      (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false);
+      if(this.selectedUsers.length === 0){
+        this._commonService.errorToaster('Please select the users!')
+      }else {
+        let data = {
+          nodeId: this.sharingKarta._id,
+          userIds: this.selectedUsers
+        }
+        this.sharedSubmitFlag = true;
+        this._myKpiService.shareNode(data).subscribe(
+          (response: any) => {
+            if (response) this._commonService.successToaster("Your have shared the node successfully!");
+            $('#staticBackdrop').modal('hide');
+            this.sharingKarta = null;
+            this.selectedUsers = []
+            this.pageIndex = 0;
+            this.getMyKPIsList();
+          },
+          (error: any) => { }
+        ).add(() => this.sharedSubmitFlag = false);
+      }
   }
 
   // Close model

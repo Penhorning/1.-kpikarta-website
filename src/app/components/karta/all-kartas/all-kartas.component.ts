@@ -1,3 +1,4 @@
+import { filter, map } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
@@ -157,31 +158,31 @@ export class AllKartasComponent implements OnInit {
 
   // Submit shared data
   shareKarta() {
-    this.selectedUsers.forEach((element: any) => {
-      if (element.email == this._commonService.getEmailId()) {
-        this._commonService.warningToaster("You can not share karta to yourself!");
-        if (element.email !== this._commonService.getEmailId()) { }
-      } else {
-        this.emails.push(element.email);
+    if(this.selectedUsers.length === 0){
+      this._commonService.errorToaster('Please select the users!');
+    }else if(this.selectedUsers.length === 1 && this.selectedUsers[0].email == this._commonService.getEmailId()){
+          this._commonService.warningToaster("You can not share karta to yourself!");
+    } else {
+      this.emails = this.selectedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
+      if (this.emails.length > 0) {
+      let data = {
+        karta: this.sharingKarta,
+        emails: this.emails,
+        accessType: this.changeModeType
       }
-    });
-    if (this.emails.length > 0) {
-    let data = {
-      karta: this.sharingKarta,
-      emails: this.emails,
-      accessType: this.changeModeType
+      this.shareSubmitFlag = true;
+      this._kartaService.shareKarta(data).subscribe(
+        (response: any) => {
+          this._commonService.successToaster("Your have shared karta successfully!");
+          $('#shareLinkModal').modal('hide');
+          this.getAllKartas();
+          this.changetype = false;
+        },
+        (error: any) => { }
+      ).add(() => this.shareSubmitFlag = false);
+      }
     }
-    this.shareSubmitFlag = true;
-    this._kartaService.shareKarta(data).subscribe(
-      (response: any) => {
-        this._commonService.successToaster("Your have shared karta successfully!");
-        $('#shareLinkModal').modal('hide');
-        this.getAllKartas();
-        this.changetype = false;
-      },
-      (error: any) => { }
-    ).add(() => this.shareSubmitFlag = false);
-    }
+   
   }
 
   // Get all members
@@ -193,6 +194,9 @@ export class AllKartasComponent implements OnInit {
     this._kartaService.getAllMembers(data).subscribe(
       (response: any) => {
         this.members = response.members[0].data;
+        this.members.forEach((element: any) => {
+          element['selectedAllGroup'] = 'selectedAllGroup';
+        })
       }
     );
   }
@@ -216,7 +220,6 @@ export class AllKartasComponent implements OnInit {
   onSelectUser() {
     this.changetype = false;
     let emailObject: any = {};
-    
     for (let i=0; i<this.members.length; i++) {
       emailObject[this.members[i].email] = this.members[i].email;
     }
@@ -228,7 +231,7 @@ export class AllKartasComponent implements OnInit {
     }
   }
   // Enable edit option
-  enableEditOption() {
+  enableEditOption(){
     this.changetype = false;
   }
 

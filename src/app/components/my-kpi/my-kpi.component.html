@@ -1576,14 +1576,14 @@
             <div class="row">
               <div class="col-lg-12" *ngIf="sharingKarta">
                 <ng-multiselect-dropdown [placeholder]="'Select users'" [settings]="dropdownSettings" [data]="members"
-                  (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)">
+                  (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)" (onDeSelectAll)="onDeSelectAll($event)" (onSelectAll)="onSelectAll($event)">
                 </ng-multiselect-dropdown>
               </div>
             </div>
           </div>
           <div style="border-color: unset;" data-dismiss="" aria-label="">
             <span aria-hidden="true">
-              <button type="button" class="send-btn" [disabled]="selectedUsers.length < 1  || sharedSubmitFlag"
+              <button type="button" class="send-btn"
                 (click)="onSubmitSharedData()">
                 <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                   <span class="sr-only">Loading...</span>

@@ -105,6 +105,9 @@ export class DashboardComponent implements OnInit {
     this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
         this.users = response.members[0].data;
+        this.users.forEach((element: any) => {
+          element['selectedAllGroup'] = 'selectedAllGroup';
+        })
     });
   }
 
@@ -204,31 +207,30 @@ export class DashboardComponent implements OnInit {
   }
 
   shareKarta() {
-    this.selectedUsers.forEach((element: any) => {
-      if (element.email == this._commonService.getEmailId()) {
-        this._commonService.warningToaster("You can not share karta to yourself!");
-        if (element.email !== this._commonService.getEmailId()) { }
-      } else {
-        this.emails.push(element.email);
+    if(this.selectedUsers.length === 0){
+      this._commonService.errorToaster('Please select the users!');
+    }else if(this.selectedUsers.length === 1 && this.selectedUsers[0].email == this._commonService.getEmailId()){
+      this._commonService.warningToaster("You can not share karta to yourself!");
+   } else {
+     this.emails = this.selectedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
+      if (this.emails.length > 0) {
+        let data = {
+          karta: this.sharingKarta,
+          emails: this.emails,
+          accessType: this.changeModeType
+        }
+        this.sharedSubmitFlag = true;
+  
+        this._kartaService.shareKarta(data).subscribe(
+          (response: any) => {
+            this._commonService.successToaster("You have shared Karta successfully!");
+            $('#shareKartaModal').modal('hide');
+            this.getAllKartas();
+            this.getAllSharedKartas();
+          },
+          (error: any) => { }
+        ).add(() => this.sharedSubmitFlag = false);
       }
-    });
-    if (this.emails.length > 0) {
-      let data = {
-        karta: this.sharingKarta,
-        emails: this.emails,
-        accessType: this.changeModeType
-      }
-      this.sharedSubmitFlag = true;
-
-      this._kartaService.shareKarta(data).subscribe(
-        (response: any) => {
-          this._commonService.successToaster("You have shared Karta successfully!");
-          $('#shareKartaModal').modal('hide');
-          this.getAllKartas();
-          this.getAllSharedKartas();
-        },
-        (error: any) => { }
-      ).add(() => this.sharedSubmitFlag = false);
     }
   }
 
