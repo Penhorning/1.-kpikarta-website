@@ -295,3 +295,13 @@ input[type=number]::-webkit-outer-spin-button {
 .ghostCircle, .activeDrag .ghostCircle{
     display: none;
 }
+
+// .introjs-tooltip {
+//     border-radius: 50% !important;
+//     background-color: red !important;
+// }
+
+.introjs-overlay{
+    background-color: rgba(0,0,0,0.4) !important;
+    opacity: 0.4 !important;
+}

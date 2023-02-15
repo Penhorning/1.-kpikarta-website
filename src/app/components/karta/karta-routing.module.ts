@@ -4,7 +4,7 @@ import { AllKartasComponent } from './all-kartas/all-kartas.component';
 import { CreateKartaComponent } from './create-karta/create-karta.component';
 import { EditKartaComponent } from './edit-karta/edit-karta.component';
 import { KartaComponent } from './karta.component';
-import { TrialComponentComponent } from './trial-component/trial-component.component';
+import { TrialKartaComponent } from './trial-karta/trial-karta.component';
 import { ViewKartaComponent } from './view-karta/view-karta.component';
 
 const routes: Routes = [
@@ -27,7 +27,7 @@ const routes: Routes = [
         }
       },
       { path: 'view/:id', component: ViewKartaComponent, data: { title: 'View Karta - KPI Karta'} },
-      { path: 'trial/:id', component: TrialComponentComponent, data: { title: 'Sample Karta - KPI Karta'} },
+      { path: 'trial/:id', component: TrialKartaComponent, data: { title: 'Sample Karta - KPI Karta'} },
     ]
   }
 ];

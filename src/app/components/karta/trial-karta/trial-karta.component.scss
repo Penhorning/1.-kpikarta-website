@@ -1,6 +1,21 @@
 .main-center-content {
     margin-left: 100px;
 }
+.right_sidebar_overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 994;
+  display: none;
+}
+.right_sidebar_overlay.open {
+  display: block;
+}
+.right-side-bar.open {
+  right: 0;
+}
 .phase_column ul {
     width: 100%;
 }
@@ -58,3 +73,30 @@
     text-decoration: none;
     display: block;
   }
+
+  .sidebar_collapsible_btn {
+    z-index: 999;
+    top: 50%;
+    position: fixed;
+    left: 100px;
+    transition: left 0.2s ease-in-out;
+}
+
+.sidebar_collapsible_btn.show {
+    left: 358px;
+}
+
+.karta_dummy_lines {
+  height: 65px;
+  padding-right: 1rem;
+  align-items: center;
+  justify-content: flex-end;
+  border: 1px solid #dee2e6;
+  display: flex;
+}
+
+::ng-deep #karta-svg .mindmap-node .center-options .add-item i,
+::ng-deep #karta-svg .mindmap-node .center-options .remove-item i,
+::ng-deep #karta-svg .mindmap-node .center-options .toggle-item i{
+    visibility: visible !important;
+}

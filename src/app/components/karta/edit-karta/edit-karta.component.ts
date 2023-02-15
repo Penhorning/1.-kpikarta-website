@@ -806,6 +806,19 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         e.target.textContent = name;
         jqueryFunctions.setAttribute(`#${id} div`,"contenteditable", false);
+
+        let history_data = {
+          event: "phase_updated",
+          eventValue: { name },
+          oldValue: {name : oldName},
+          kartaNodeId: id,
+          userId: this._commonService.getUserId(),
+          versionId: this.versionId,
+          kartaId: this.kartaId,
+          parentNodeId: "None",
+          historyType: 'main'
+        }
+        this._kartaService.addKartaHistoryObject(history_data).subscribe(() => {});
       }
     );
   }
@@ -1005,7 +1018,8 @@ export class EditKartaComponent implements OnInit {
         $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
         $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
         jqueryFunctions.removeElement('#karta-svg svg');
-        this.getKartaInfo();
+        this.getPhases();
+        // this.getKartaInfo();
         MetricOperations.recheckFormula();
       },
       (err) => console.log(err)
@@ -1013,9 +1027,10 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Get all phases
-  getPhases() {
+  getPhases(type? : string) {
     this._kartaService.getPhases(this.kartaId).subscribe(
       (response: any) => {
+        this.phases = [];
         // Find sub phase
         const findSubPhase = (array: any, phaseId: string) => {
           let childPhase = array.find((item: any) => item.parentId === phaseId);
@@ -1031,7 +1046,8 @@ export class EditKartaComponent implements OnInit {
           findSubPhase(response, phase.id);
         }
         // Fetch karta nodes
-        this.getKartaInfo();
+        if(type == "existing") this.updateNewPercentage()
+        else this.getKartaInfo();
       }
     );
   }
@@ -1554,7 +1570,15 @@ export class EditKartaComponent implements OnInit {
           },
           (err: any) => console.log(err)
         )
-        this.getAllVersion();
+        this._kartaService.getAllVersions(this.kartaId).subscribe(
+          (response: any) => {
+            this.version = response;
+            this.versionId = response[response.length - 1].id;
+          },
+          (error: any) => {
+            this.loadingKarta = false;
+          }
+        );
       },
       (err: any) => console.log(err)
     );
@@ -1805,6 +1829,8 @@ export class EditKartaComponent implements OnInit {
     $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
     this._kartaService.undoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
+        console.log(x);
+        
         if(x.data.message != "nothing"){
           if(x.data.message != "final"){
             switch(x.data.data.event){
@@ -1812,16 +1838,22 @@ export class EditKartaComponent implements OnInit {
                 if(x.data.data){
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
-                  this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
-                    this.D3SVG.updateRemovedNode(this.getRemovableNode);
-                    this.currentNode.phase = "";
-                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
-                    kartaNode.phase = phase;
-                    // this.setKartaDimension();
-                    this.getRemovableNode = null;
-                    this.getRemovableNodeId = "";
-                    this.undoRedoFlag = false;
-                  });
+                  if(this.getRemovableNode) {
+                    this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
+                      // this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                      this.getPhases("existing");
+                      // this.currentNode.phase = "";
+                      // let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                      // kartaNode.phase = phase;
+                      // this.setKartaDimension();
+                      this.getRemovableNode = null;
+                      this.getRemovableNodeId = "";
+                      setTimeout(() => {
+                        jqueryFunctions.removeKarta();
+                      }, 1000);
+                      this.undoRedoFlag = false;
+                    });
+                  }
                 }
                 break;
               case "node_updated":
@@ -1834,10 +1866,10 @@ export class EditKartaComponent implements OnInit {
                     this.updateNodeProperties(kartaNode);
                     this.currentNode.phase = "";
                     this.D3SVG.updateNode(this.currentNode);
-                    this.getKartaInfo();
+                    this.getPhases("existing");
                     setTimeout(() => {
                       jqueryFunctions.removeKarta();
-                    }, 2000);
+                    }, 1000);
                     this.undoRedoFlag = false;
                   },
                   (err) => {
@@ -1849,20 +1881,47 @@ export class EditKartaComponent implements OnInit {
               case "node_removed":
                 if(x.data.data) {
                   this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    this.getPhases("existing");
                     let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     kartaNode.phase = phase;
                     this.currentNode.phase = "";
                     this.showSVG = true;
                     this.isRtNodDrgingFrmSide = false;
-                    this.getKartaInfo();
                     setTimeout(() => {
                       jqueryFunctions.removeKarta();
-                    }, 2000);
+                    }, 1000);
                     this.undoRedoFlag = false;
                   },
                   (err) => {
                     console.log(err);
                   });
+                }
+                break;
+              case "phase_created":
+                if(x.data.data) {
+                  this.getPhases("existing");
+                  this.currentNode.phase = "";
+                  this.showSVG = true;
+                  this.isRtNodDrgingFrmSide = false;
+                  this.undoRedoFlag = false;
+                }
+                break;
+              case "phase_updated":
+                if(x.data.data) {
+                  this.getPhases("existing");
+                  this.currentNode.phase = "";
+                  this.showSVG = true;
+                  this.isRtNodDrgingFrmSide = false;
+                  this.undoRedoFlag = false;
+                }
+                break;
+              case "phase_removed":
+                if(x.data.data) {
+                  this.getPhases("existing");
+                  this.currentNode.phase = "";
+                  this.showSVG = true;
+                  this.isRtNodDrgingFrmSide = false;
+                  this.undoRedoFlag = false;
                 }
                 break;
             }
@@ -1893,15 +1952,15 @@ export class EditKartaComponent implements OnInit {
                 if(x.data.data){
                   this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
                     if(kartaNode) {
+                      this.getPhases("existing");
                       this.currentNode.phase = "";
                       let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                       kartaNode.phase = phase;
                       this.showSVG = true;
                       this.isRtNodDrgingFrmSide = false;
-                      this.getKartaInfo();
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
-                      }, 2000);
+                      }, 1000);
                       this.undoRedoFlag = false;
                     }
                   },
@@ -1921,10 +1980,10 @@ export class EditKartaComponent implements OnInit {
                       this.isRtNodDrgingFrmSide = false;
                       this.updateNodeProperties(kartaNode);
                       this.D3SVG.updateNode(this.currentNode);
-                      this.getKartaInfo();
+                      this.getPhases("existing");
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
-                      }, 2000);
+                      }, 1000);
                       this.undoRedoFlag = false;
                     }
                   },
@@ -1939,15 +1998,43 @@ export class EditKartaComponent implements OnInit {
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
                   this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
-                    this.D3SVG.updateRemovedNode(this.getRemovableNode);
-                    this.currentNode.phase = "";
-                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
-                    kartaNode.phase = phase;
+                    this.getPhases("existing");
+                    // this.D3SVG.updateRemovedNode(this.getRemovableNode);
+                    // this.currentNode.phase = "";
+                    // let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    // kartaNode.phase = phase;
                     // this.setKartaDimension();
                     this.getRemovableNode = null;
                     this.getRemovableNodeId = "";
                     this.undoRedoFlag = false;
                   });
+                }
+                break;
+              case "phase_created":
+                if(x.data.data) {
+                  this.getPhases("existing");
+                  this.currentNode.phase = "";
+                  this.showSVG = true;
+                  this.isRtNodDrgingFrmSide = false;
+                  this.undoRedoFlag = false;
+                }
+                break;
+              case "phase_updated":
+                if(x.data.data) {
+                  this.getPhases("existing");
+                  this.currentNode.phase = "";
+                  this.showSVG = true;
+                  this.isRtNodDrgingFrmSide = false;
+                  this.undoRedoFlag = false;
+                }
+                break;
+              case "phase_removed":
+                if(x.data.data) {
+                  this.getPhases("existing");
+                  this.currentNode.phase = "";
+                  this.showSVG = true;
+                  this.isRtNodDrgingFrmSide = false;
+                  this.undoRedoFlag = false;
                 }
                 break;
             }

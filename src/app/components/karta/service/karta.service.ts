@@ -60,6 +60,14 @@ export class KartaService {
     return this._httpService.POST('/karta', data);
   }
 
+  findKartaByUser(userId: any) {
+    return this._httpService.GET(`/karta?filter[where][userId]=${userId}`);
+  }
+
+  getSampleKarta() {
+    return this._httpService.GET('/karta?filter[where][name]=SAMPLE_KARTA');
+  }
+
   // deleteSharedKarta(id: any) {
   //   return this._httpService.POST('/karta/delete-shared-karta', id);
   // }

@@ -18,7 +18,7 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
-import { TrialComponentComponent } from './trial-component/trial-component.component';
+import { TrialKartaComponent } from './trial-karta/trial-karta.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +30,7 @@ import { TrialComponentComponent } from './trial-component/trial-component.compo
     EditKartaInventoryComponent,
     EditKartaHeaderComponent,
     ViewKartaComponent,
-    TrialComponentComponent,
+    TrialKartaComponent,
   ],
   imports: [
     CommonModule,
