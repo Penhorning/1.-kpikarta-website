@@ -404,11 +404,32 @@
                   <label class="font-weight-bold short_text max_width_500">{{sharingKarta?.name}}</label>
                   <div class="row">
                      <div class="col-lg-12">
-                        <ng-select [items]="users" [addTag]="addTagPromise" placeholder="Select users"
-                        [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
+                        <ng-select 
+                        [items]="users"
+                         [addTag]="addTagPromise" 
+                         groupBy="selectedAllGroup"
+                        [selectableGroup]="true" 
+                        [selectableGroupAsModel]="false"
+                        placeholder="Select users" 
+                        [loading]="loading" 
+                        [multiple]="true" 
+                        bindLabel="email" 
+                        [(ngModel)]="selectedUsers" 
+                        (change)="onSelectUser()" 
+                        (clear)="enableEditOption()"
+                        >
                         <ng-template ng-tag-tmp let-search="searchTerm">
                            <b>Add new email</b>: {{search}}
                         </ng-template>
+                        <ng-template 
+                        ng-optgroup-tmp let-item="item" 
+                        let-item$="item$" let-index="index" >
+                        <input id="item-{{index}}" type="checkbox"
+                        [ngModel] ="item$.selected"/> Select All
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                           <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected"/> {{item?.fullName}} ({{item?.email}})
+                       </ng-template>
                         </ng-select>
                      </div>
                   </div>
@@ -416,7 +437,7 @@
                <div style="border-color: unset;" data-dismiss="" aria-label="">
                   <span aria-hidden="true">
                      <button type="button" class="send-btn" (click)="shareKarta()"
-                     [disabled]="selectedUsers?.length < 1  || sharedSubmitFlag">
+                     >
                      <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                         <span class="sr-only">Loading...</span>
                      </div>

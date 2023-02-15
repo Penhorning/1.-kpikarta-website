@@ -937,14 +937,71 @@
 </div>
 <!-- Wrapper -->
 <!-- Share karta modal -->
-<div class="modal fade" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-   <div class="modal-dialog modal-dialog-centered">
-       <div class="modal-content p-4">
-           <div class="modal-header">
-               <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Karta</h5>
-               <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="selectedSharedUsers = undefined">
-                   <span aria-hidden="true">&times;</span>
-               </button>
+<div class="modal fade" id="shareKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+     <div class="modal-content p-4">
+        <div class="modal-header">
+           <h5 class="modal-title pt-0" id="staticBackdropLabel">Share Karta</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+              (click)="selectedSharedUsers = undefined">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <div class="share-link-modal mt-3">
+              <div class="form-group">
+                 <label class="short_text max_width_500">{{sharingKarta?.name}}</label>
+                 <div class="row">
+                    <!-- <div class="col-lg-12">
+                       <ng-select [items]="members" [addTag]="addTagPromise" placeholder="Select users"
+                       [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedSharedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
+                       <ng-template ng-tag-tmp let-search="searchTerm">
+                          <b>Add new email</b>: {{search}}
+                       </ng-template>
+                       </ng-select>
+                    </div> -->
+                    <div class="col-lg-12">
+                     <ng-select 
+                     [items]="members"
+                      [addTag]="addTagPromise" 
+                      groupBy="selectedAllGroup"
+                     [selectableGroup]="true" 
+                     [selectableGroupAsModel]="false"
+                     placeholder="Select users" 
+                     [loading]="loading" 
+                     [multiple]="true" 
+                     bindLabel="email" 
+                     [(ngModel)]="selectedSharedUsers" 
+                     (change)="onSelectUser()" 
+                     (clear)="enableEditOption()"
+                     >
+                     <ng-template ng-tag-tmp let-search="searchTerm">
+                        <b>Add new email</b>: {{search}}
+                     </ng-template>
+                     <ng-template 
+                     ng-optgroup-tmp let-item="item" 
+                     let-item$="item$" let-index="index" >
+                     <input id="item-{{index}}" type="checkbox"
+                     [ngModel] ="item$.selected"/> Select All
+                     </ng-template>
+                     <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                        <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected"/> {{item?.fullName}} ({{item?.email}})
+                    </ng-template>
+                     </ng-select>
+                  </div>
+                 </div>
+              </div>
+              <div style="border-color: unset;" data-dismiss="" aria-label="">
+                 <span aria-hidden="true">
+                    <button type="button" class="send-btn" (click)="shareKarta()">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
+                       <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
+                    </button>
+                 </span>
+              </div>
            </div>
            <div class="modal-body">
                <div class="share-link-modal mt-3">

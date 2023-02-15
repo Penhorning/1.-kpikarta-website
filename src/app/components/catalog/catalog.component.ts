@@ -56,14 +56,15 @@ export class CatalogComponent implements OnInit {
 
     // Ng Multi Select Dropdown properties
     this.dropdownSettings = {
-      enableCheckAll: false,
+      enableCheckAll: true,
       singleSelection: false,
       idField: '_id',
       textField: 'nameAndEmail',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
-      disabled: false
+      disabled: false,
+      itemsShowLimit: 3
     }
   }
 
@@ -242,6 +243,15 @@ export class CatalogComponent implements OnInit {
   onItemSelect(item: any) {
     this.selectedUsers.push({ userId: item._id });
   }
+
+  onSelectAll(items: any) {
+    items.forEach((item: any) => {this.selectedUsers.push({ userId: item._id })});
+  }
+
+  onDeSelectAll(items: any) {
+    this.selectedUsers = []
+  }
+
   onItemDeSelect(item: any) {
     if( this.selectedUsers && this.selectedUsers.length > 0 ) {
       this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
@@ -280,6 +290,9 @@ export class CatalogComponent implements OnInit {
   
   // Share catalog
   shareCatalog() {
+    if(this.selectedUsers.length === 0){
+      this._commonService.errorToaster('Please select the users!')
+    }else {
     let data = {
       catalogId: this.sharingCatalog._id,
       userIds: this.selectedUsers
@@ -295,5 +308,6 @@ export class CatalogComponent implements OnInit {
       (error: any) => { }
     ).add(() => this.shareSubmitFlag = false);
   }
+}
 
 }
