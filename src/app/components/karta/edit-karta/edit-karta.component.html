@@ -54,7 +54,7 @@
            <div class="card custom-card side-bar-card ">
              <div class="goal-img" *ngIf="!showSVG" id="root" draggable="true" (dragstart)="onDragStart($event)" style="cursor: pointer;">
                <img src="assets/img/tutorial-img.png" class="img-fluid" alt="">
-               <p class="pt-2">Empty</p>
+               <p class="pt-2">Root</p>
              </div>
            </div>
          </div>
@@ -82,7 +82,7 @@
                                            <div class="card custom-card side-bar-card">
                                                <div class="goal-img cursor_pointer" id="root" draggable="true" (dragstart)="onRootDragStart('root', true)">
                                                    <img src="assets/img/root.png" class="img-fluid" />
-                                                   <p>Empty</p>
+                                                   <p>Root</p>
                                                </div>
                                            </div>
                                        </div>
@@ -439,7 +439,7 @@
                <div class="row tab-content-center">
                    <div class="phase_column">
                        <div class="vertical-tabs">
-                           <ul class="nav nav-tabs" role="tablist">
+                           <ul class="nav nav-tabs" role="tablist" id="phase_tabs">
                                <li class="nav-item" *ngFor="let phase of phases; let i = index">
                                    <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
                                        <div class="phase_action">
@@ -760,7 +760,6 @@
                                        <option value="year-to-date">Year to date</option>
                                        <option value="month-over-month">Month over month</option>
                                        <option value="year-over-year">Year over year</option>
-                                       <option value="entire-history">Entire history</option>
                                    </select>
                                </div>
                            </div>
@@ -865,7 +864,7 @@
                        <!-- Contributor -->
                        <div class="row mt-3">
                            <div class="col-lg-6">
-                               <h5>Contributor</h5>
+                               <h5>Assign To</h5>
                            </div>
                        </div>
                        <div class="row">
@@ -875,7 +874,7 @@
                                        {{ user?.fullName }} ({{ user?.email }})
                                    </ng-option>
                                </ng-select>
-                               <div class="invalid-feedback d-block" *ngIf="!currentNode.contributorId">Contributor is required!</div>
+                               <div class="invalid-feedback d-block" *ngIf="!currentNode.contributorId">Assign to is required!</div>
                            </div>
                        </div>
                    </div>

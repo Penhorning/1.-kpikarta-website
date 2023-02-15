@@ -1,7 +1,7 @@
-<section id="header" class="header">
+<!-- <section id="header" class="header">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-6 col-6">
         <div class="head_logo">
           <a [routerLink]="['/']">
             <img
@@ -11,8 +11,7 @@
         </div>
       </div>
 
-      <!--User-Profile-->
-      <div class="col-lg-6">
+      <div class="col-lg-6 col-6">
         <ng-container *ngIf="!_commonService.getSession().token">
           <div class="login_link">
             <a [routerLink]="['/login']">Login</a>
@@ -22,7 +21,7 @@
           <div class="User_profile float-right">
             <nav class="navbar navbar-light navbar-expand-sm">
               <a [routerLink]="['/notifications']">
-              <svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;" width="16" height="25" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
+                <svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;" width="16" height="25" fill="currentColor" class="bi bi-bell" viewBox="0 0 16 16">
                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zM8 1.918l-.797.161A4.002 4.002 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4.002 4.002 0 0 0-3.203-3.92L8 1.917zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5.002 5.002 0 0 1 13 6c0 .88.32 4.2 1.22 6z"/>
                 </svg>
               </a>
@@ -75,7 +74,112 @@
           </div>
         </ng-container>
       </div>
-      <!-- End User-Profile -->
     </div>
+  </div>
+</section> -->
+
+<section id="header" class="header">
+  <div class="container-fluid">
+     <div class="row">
+        <div class="col-lg-5 col-md-5 col-5 d-flex align-items-center">
+          <div class="head_logo">
+            <a [routerLink]="['/']">
+              <img
+                [src]="_commonService.getSession().companyLogo ? _commonService.MEDIA_URL+'/company/'+_commonService.getSession().companyLogo : 'assets/img/kpi-karta-logo.png'">
+            </a>
+          </div>
+        </div>
+        <!--User-Profile-->
+        <div class="col-lg-7 col-md-7 col-7">
+           <div class="d-flex flex-row-reverse align-items-center">
+            <!-- Mobile Menu -->
+              <div class="mobile-menu">
+                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <a class="navbar-brand" href="#"></a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+                    <div class="collapse navbar-collapse" id="navbarText">
+                       <ul class="navbar-nav mr-auto">
+                          <li class="nav-item" routerLinkActive="active">
+                            <a class="nav-link" [routerLink]="['/dashboard']">Home</a>
+                          </li>
+                          <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+                            <a class="nav-link" [routerLink]="['/inventory']">Inventory</a>
+                          </li>
+                          <li class="nav-item" routerLinkActive="active">
+                            <a class="nav-link" [routerLink]="['/karta/all']">Kartas</a>
+                        </li>
+                        <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
+                            <a class="nav-link" [routerLink]="['/my-kpi']">My KPIs</a>
+                        </li>
+                        <li class="nav-item" routerLinkActive="active">
+                            <a class="nav-link" [routerLink]="['/marketplace']">Market Place</a>
+                        </li>
+                        <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserRole() !== 'user'">
+                            <a class="nav-link" [routerLink]="['/members']">Members</a>
+                        </li>
+                       </ul>
+                    </div>
+                 </nav>
+              </div>
+              <!-- Desktop Menu -->
+              <div class="User_profile">
+                 <ul class="navbar-nav profile-menu">
+                    <li class="nav-item dropdown">
+                       <a class="nav-link dropdown-toggle cursor_pointer" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img
+                        [src]="_commonService.getSession().profilePic ? _commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic : 'assets/img/avatar.png'"
+                        class="rounded-circle user_profile_img">
+                      </a>
+                       <ul class="dropdown-menu custom_dropdown" aria-labelledby="navbarDropdown">
+                          <li>
+                            <a class="dropdown-item" [routerLink]="['/my-profile']">
+                              <img src="assets/img/my-profile.svg" class="mr-2">
+                              My Profile
+                            </a>
+                          </li>
+                          <ng-container *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+                            <li>
+                              <a class="dropdown-item" [routerLink]="['/my-suggestion']">
+                                <img src="assets/img/Suggestion.svg" class="mr-2">
+                                My Suggestion
+                              </a>
+                            </li>
+                          </ng-container>
+                          <ng-container *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'billing_staff'">
+                            <li>
+                              <a class="dropdown-item" [routerLink]="['/billing']">
+                                <img src="assets/img/plan.svg" class="mr-2">
+                                Billing
+                              </a>
+                            </li>
+                          </ng-container>
+                          <li>
+                            <a class="dropdown-item" [routerLink]="['/settings']">
+                              <img src="assets/img/Settings-blue.svg" class="mr-2">
+                              Settings
+                            </a>
+                          </li>
+                         <li>
+                            <a class="dropdown-item logout-custom cursor_pointer" (click)="logout()">
+                              <img src="assets/img/logout.svg" class="mr-1">
+                              Log Out
+                            </a>
+                         </li>
+                       </ul>
+                    </li>
+                 </ul>
+              </div>
+              <div class="username">
+                <!--<label class="mobile-name mr-0 mr-1">AB</label>-->
+                <label class="mr-2 desktop-name short_text user_label_name">{{_commonService.getSession().name}}</label>
+              </div>
+              <div class="notification mr-2">
+                <a [routerLink]="['/notifications']">
+                  <img src="assets/img/notification.svg">
+                </a>
+              </div>
+           </div>
+        </div>
+        <!-- End User-Profile --> 
+     </div>
   </div>
 </section>

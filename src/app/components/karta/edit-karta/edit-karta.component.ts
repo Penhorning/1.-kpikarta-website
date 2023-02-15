@@ -824,7 +824,7 @@ export class EditKartaComponent implements OnInit {
   }
   // Delete only child phase
   deletePhase(id: string, index: number) {
-    const result = confirm("Are you sure you want to delete this phase? If yes, then all the associated nodes to this phase will also delete.");
+    const result = confirm("Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.");
     if (result) {
       const data = {
         phaseId: id,
@@ -841,7 +841,7 @@ export class EditKartaComponent implements OnInit {
           this.updateNewPercentage();
           // this.setKartaDimension();
         }
-      );
+      ).add(() => jqueryFunctions.enableElement("#phase_tabs"));
     }
   }
 
@@ -1141,7 +1141,7 @@ export class EditKartaComponent implements OnInit {
         this.D3SVG.updateNewNode(param, response);
         this.updateNewPercentage();
       }
-    ).add(() => jqueryFunctions.enableChart());
+    ).add(() => setTimeout(() => jqueryFunctions.enableChart(), 1000));
   }
 
   reArrangePhases(phases: any) {
@@ -1168,45 +1168,49 @@ export class EditKartaComponent implements OnInit {
 
   // Add additional phase
   addChildPhase(phase: any, index: number) {
-    let mainPhaseId: string = "";
-    if (this.phases[index].hasOwnProperty("phaseId")) mainPhaseId = this.phases[index].phaseId;
-    else mainPhaseId = this.phases[index].id;
-    // Set new phase name
-    let nameString, lastString, num, joinedName, newName;
-    nameString = this.phases[index].name.split(" ");
-    lastString = parseInt(nameString[nameString.length - 1]);
-    num = lastString ? lastString + 1 : 1;
-    lastString ? nameString.pop() : nameString;
-    joinedName = nameString.join(" ");
-    newName = `${joinedName} ${num}`;
-
-    let data = {
-      "name": newName,
-      "kartaId": this.kartaId,
-      "is_child": true,
-      "parentId": phase.id,
-      "phaseId": mainPhaseId,
-      "userId": this._commonService.getUserId(),
-      "nextPhaseId": this.phases[index + 1].id,
-      "addEmptyNodes": true
-    }
-    this._kartaService.addPhase(data).subscribe(
-      (response: any) => {
-        let resopnse_data = {
-          "id": response.id,
-          "name": response.name,
-          "global_name": response.name,
-          "is_child": response.is_child,
-          "kartaId": this.kartaId,
-          "parentId": phase.id,
-          "phaseId": mainPhaseId
-        }
-        this.phases.splice((index + 1), 0, resopnse_data);
-        this.reArrangePhases(this.phases);
-        this.D3SVG.buildOneKartaDivider();
-        this.updateNewPercentage();
+    const result = confirm("Are you sure you want to create a new Layer?");
+    if (result) {
+      let mainPhaseId: string = "";
+      if (this.phases[index].hasOwnProperty("phaseId")) mainPhaseId = this.phases[index].phaseId;
+      else mainPhaseId = this.phases[index].id;
+      // Set new phase name
+      let nameString, lastString, num, joinedName, newName;
+      nameString = this.phases[index].name.split(" ");
+      lastString = parseInt(nameString[nameString.length - 1]);
+      num = lastString ? lastString + 1 : 1;
+      lastString ? nameString.pop() : nameString;
+      joinedName = nameString.join(" ");
+      newName = `${joinedName} ${num}`;
+  
+      let data = {
+        "name": newName,
+        "kartaId": this.kartaId,
+        "is_child": true,
+        "parentId": phase.id,
+        "phaseId": mainPhaseId,
+        "userId": this._commonService.getUserId(),
+        "nextPhaseId": this.phases[index + 1].id,
+        "addEmptyNodes": true
       }
-    );
+      jqueryFunctions.disableElement("#phase_tabs");
+      this._kartaService.addPhase(data).subscribe(
+        (response: any) => {
+          let resopnse_data = {
+            "id": response.id,
+            "name": response.name,
+            "global_name": response.name,
+            "is_child": response.is_child,
+            "kartaId": this.kartaId,
+            "parentId": phase.id,
+            "phaseId": mainPhaseId
+          }
+          this.phases.splice((index + 1), 0, resopnse_data);
+          this.reArrangePhases(this.phases);
+          this.D3SVG.buildOneKartaDivider();
+          this.updateNewPercentage();
+        }
+      ).add(() => jqueryFunctions.enableElement("#phase_tabs"));
+    }
   }
 
   // Update new percentage

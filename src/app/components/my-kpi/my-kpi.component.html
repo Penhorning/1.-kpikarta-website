@@ -8,47 +8,53 @@
           <h4 class="pt-3">KPIs Dashboard</h4>
         </div>
       </div>
-      <div class="col-lg-2 pr-2 pl-2">
+      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('')">
-            <div class="col-4">
-              <img src="assets/img/future.svg">
-            </div>
-            <div class="col-4">
-              <h5 class="m-0 ">All</h5>
-            </div>
-            <div class="col-4">
-              <p>{{ stats?.All }}</p>
+            <div class="d-flex align-self-center">
+              <div class="col-4">
+                <img src="assets/img/future.svg">
+              </div>
+              <div class="col-5 p-0">
+                <h5>All KPIs</h5>
+              </div>
+              <div class="col-3">
+                <p>{{ stats?.All }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-2 pr-2 pl-2">
+      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('in_progress')">
-            <div class="col-4">
-              <img src="assets/img/current.svg">
-            </div>
-            <div class="col-5 p-0">
-              <h5 class="m-0 text-nowrap">In Progress</h5>
-            </div>
-            <div class="col-3">
-              <p class="">{{ stats?.InProgress }}</p>
+            <div class="d-flex align-self-center">
+              <div class="col-4">
+                <img src="assets/img/current.svg">
+              </div>
+              <div class="col-5 p-0">
+                <h5 class="text-nowrap">In Progress</h5>
+              </div>
+              <div class="col-3">
+                <p>{{ stats?.InProgress }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-2 pr-2 pl-2">
+      <div class="col-lg-2 col-sm-4 px-2">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('completed')">
-            <div class="col-4">
-              <img src="assets/img/past.svg">
-            </div>
-            <div class="col-5 p-0">
-              <h5 class="m-0">Completed</h5>
-            </div>
-            <div class="col-3">
-              <p class="">{{ stats?.Completed }}</p>
+            <div class="d-flex align-self-center">
+              <div class="col-4">
+                <img src="assets/img/past.svg">
+              </div>
+              <div class="col-5 p-0">
+                <h5>Completed</h5>
+              </div>
+              <div class="col-3">
+                <p class="">{{ stats?.Completed }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -254,7 +260,7 @@
                               {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
-                          <td>{{ kpi?.name }}</td>
+                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0]?.value }}</span>
                             <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
@@ -284,9 +290,9 @@
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
                             <img src="assets/img/Refresh.svg">
-                            <span [style.color]="calculateDueDays(kpi?.due_date) >= 0 ? '' : '#dc3545'">
-                              {{ calculateDueDays(kpi?.due_date) >= 0 ? calculateDueDays(kpi?.due_date) + ' Days left' :
-                              -calculateDueDays(kpi?.due_date) + ' Days overdue' }}
+                            <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
+                              -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
                             </span>
                           </td>
                           <td>
@@ -323,7 +329,7 @@
                           </td>
                           <td>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-share" viewBox="0 0 16 16" data-toggle="modal" data-target="#staticBackdrop"
+                              class="bi bi-share" viewBox="0 0 16 16" data-toggle="modal" data-target="#shareModal"
                               style="cursor: pointer;" (click)="onShareClick(kpi)">
                               <path
                                 d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
@@ -354,7 +360,7 @@
                     <table class="table">
                       <thead class="border-thead">
                         <tr>
-                          <th scope="col" *ngFor="let column of headerList; let i=index">
+                          <th scope="col" *ngFor="let column of headerList2; let i=index">
                             <div class="d-flex">
                               <span class="cursor_pointer text-nowrap" (click)="onSortClick(column.sortBy, i)">
                                 <ng-container [ngSwitch]="column.sort">
@@ -484,12 +490,13 @@
                               {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
-                          <td>{{ kpi?.name }}</td>
+                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0].value }}</span>
                             <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
                           </td>
                           <td style="padding-left: 20px;"><span>{{ kpi?.achieved_value }}</span></td>
+                          <td class="max_width_200 short_text">{{ kpi?.contributor?.fullName || 'N/A' }}</td>
                           <td>{{ kpi?.updatedAt | date }}</td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
@@ -500,9 +507,9 @@
                               <path fill-rule="evenodd"
                                 d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
                             </svg>
-                            <span [style.color]="calculateDueDays(kpi?.due_date) >= 0 ? '' : '#dc3545'">
-                              {{ calculateDueDays(kpi?.due_date) >= 0 ? calculateDueDays(kpi?.due_date) + ' Days left' :
-                              -calculateDueDays(kpi?.due_date) + ' Days overdue' }}
+                            <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
+                              -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
                             </span>
                           </td>
                           <td>
@@ -695,13 +702,13 @@
                               {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
-                          <td>{{ kpi?.name }}</td>
+                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0]?.value }}</span>
                             <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
                           </td>
                           <td>{{ kpi?.achieved_value }}</td>
-                          <td>{{ kpi?.contributor?.email || 'N/A' }}</td>
+                          <td class="max_width_200 short_text">{{ kpi?.contributor?.fullName || 'N/A' }}</td>
                           <td>{{ kpi?.updatedAt | date }}</td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
@@ -712,9 +719,9 @@
                               <path fill-rule="evenodd"
                                 d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
                             </svg>
-                            <span [style.color]="calculateDueDays(kpi?.due_date) >= 0 ? '' : '#dc3545'">
-                              {{ calculateDueDays(kpi?.due_date) >= 0 ? calculateDueDays(kpi?.due_date) + ' Days left' :
-                              -calculateDueDays(kpi?.due_date) + ' Days overdue' }}
+                            <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
+                              -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
                             </span>
                           </td>
                           <td>
@@ -776,13 +783,12 @@
 
 
 <!-- share-link-modal -->
-
-<div class="modal fade share_link" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade share_link" id="shareModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="shareModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content p-4">
       <div class="modal-header">
-        <h5 class="modal-title pt-0" id="staticBackdropLabel">Share KPI</h5>
+        <h5 class="modal-title pt-0" id="shareModalLabel">Share KPI</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -840,7 +846,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content p-4">
       <div class="modal-header">
-        <h5 class="modal-title pt-0" id="staticBackdropLabel">Update Actual Value</h5>
+        <h5 class="modal-title pt-0" id="editActualValueLabel">Update Actual Value</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -941,12 +947,12 @@
 <!-- import-export-modal -->
 
 <div class="modal fade share_link" id="importExportModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  aria-labelledby="importExportLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content p-4">
 
       <div class="modal-header">
-        <h5 class="modal-title pt-0" id="staticBackdropLabel">Import KPIs</h5>
+        <h5 class="modal-title pt-0" id="importExportLabel">Import KPIs</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeImportModal()">
           <span aria-hidden="true">&times;</span>
         </button>

@@ -10,7 +10,7 @@
           <h4 class="pt-3">Members</h4>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-lg-6">
         <div class="search-bar">
           <form class="search-form">
             <div class="form-group search-filed inventory m-0">
@@ -56,7 +56,7 @@
                   <th>Role</th>
                   <th>Department</th>
                   <th>Status</th>
-                  <th>Date added</th>
+                  <th class="text-nowrap">Date Added</th>
                   <th *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin'">Action</th>
                 </tr>
               </thead>
@@ -72,7 +72,7 @@
                     <span *ngIf="!user.active" class="table_btn_status bg-danger">Inactive</span>
                   </td>
                   <td>{{ user?.createdAt | date }}</td>
-                  <td *ngIf="(_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin') && user.creatorId">
+                  <td class="text-nowrap" *ngIf="(_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'department_admin') && user.creatorId">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                       class="bi bi-pencil-fill" viewBox="0 0 16 16" data-toggle="modal" data-target="#memberModal"
                       (click)="setFormType('UPDATE', user)" style="cursor: pointer;">
