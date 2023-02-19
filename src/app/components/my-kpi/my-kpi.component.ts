@@ -482,25 +482,6 @@ export class MyKpiComponent implements OnInit {
 
   // Submit shared data
   onSubmitSharedData() {
-<<<<<<< HEAD
-    $('#shareModal').modal('hide');
-    // let data = {
-    //   nodeId: this.sharingKarta._id,
-    //   userIds: this.selectedUsers
-    // }
-    // this.sharedSubmitFlag = true;
-    // this._myKpiService.shareNode(data).subscribe(
-    //   (response: any) => {
-    //     if (response) this._commonService.successToaster("Your have shared the node successfully");
-    //     $('#shareModal').modal('hide');
-    //     this.sharingKarta = null;
-    //     this.selectedUsers = []
-    //     this.pageIndex = 0;
-    //     this.getMyKPIsList();
-    //   },
-    //   (error: any) => { }
-    // ).add(() => this.sharedSubmitFlag = false);
-=======
       if(this.selectedUsers.length === 0){
         this._commonService.errorToaster('Please select the users!')
       }else {
@@ -512,7 +493,7 @@ export class MyKpiComponent implements OnInit {
         this._myKpiService.shareNode(data).subscribe(
           (response: any) => {
             if (response) this._commonService.successToaster("Your have shared the node successfully!");
-            $('#staticBackdrop').modal('hide');
+            $('#shareModal').modal('hide');
             this.sharingKarta = null;
             this.selectedUsers = []
             this.pageIndex = 0;
@@ -521,7 +502,6 @@ export class MyKpiComponent implements OnInit {
           (error: any) => { }
         ).add(() => this.sharedSubmitFlag = false);
       }
->>>>>>> b03c4b59257faaf5310bd46e4c8955a6eb1319a0
   }
 
   // Close model

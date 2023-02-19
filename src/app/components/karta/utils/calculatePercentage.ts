@@ -8,11 +8,13 @@ export class CalculatePercentage {
     nodeId: ""
   }
   kpiPercentage: number = 0;
+  filterTargetBy: string = "";
 
-  constructor(color_settings: object, kpi_calculation_period: object, kpi_percentage: number) {
+  constructor(color_settings: object, kpi_calculation_period: object, kpi_percentage: number, filterTargetBy: string = "") {
     this.colorSettings = color_settings;
     this.kpiCalculationPeriod = kpi_calculation_period;
     this.kpiPercentage = kpi_percentage;
+    this.filterTargetBy = filterTargetBy;
   }
 
   // Get number of days
@@ -48,6 +50,7 @@ export class CalculatePercentage {
 
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
+    console.log("filter by = ", this.filterTargetBy)
     let total_percentage: number[] = [];
     const children = (params.children || []);
     
@@ -105,39 +108,73 @@ export class CalculatePercentage {
         const findTarget = (type: string) => {
           return element.target.find((item: any) => item.frequency === type);
         }
+        const findAppropirateTarget = (targetType: string) => {
+          switch (targetType) {
+            case "weekly":
+              if (findTarget('weekly')) targetValue = findTarget('weekly').value;
+              else if (findTarget('monthly')) targetValue = findTarget('monthly').value / 4;
+              else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 12;
+              else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 52;
+              break;
+            case "quarterly":
+              if (findTarget('quarterly')) targetValue = findTarget('quarterly').value;
+              else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 12;
+              else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 3;
+              else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 4;
+              break;
+            case "monthly":
+              if (findTarget('monthly')) targetValue = findTarget('monthly').value;
+              else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
+              else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
+              else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
+              break;
+            case "yearly":
+              if (findTarget('yearly')) targetValue = findTarget('yearly').value;
+              else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
+              else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
+              else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
+              break;
+          }
+          return targetValue;
+        }
         const checkOtherPeriods = () => {
           return (this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year");
         }
         // Set target value according to monthly
         if (element.kpi_calc_period === "monthly" && !checkOtherPeriods()) {
-          if (findTarget('monthly')) targetValue = findTarget('monthly').value;
-          else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
-          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
-          targetValue = targetValue;
+          if (this.filterTargetBy) targetValue = findAppropirateTarget(this.filterTargetBy);
+          else {
+            if (findTarget('monthly')) targetValue = findTarget('monthly').value;
+            else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
+            else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
+            else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
+          }
         }
         // Set target value according to month to date
         else if (element.kpi_calc_period === "month-to-date" && !checkOtherPeriods()) {
-          // Find target value
-          if (findTarget('monthly')) targetValue = findTarget('monthly').value;
-          else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
-          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
-          // Set target value
-          targetValue = calculateTargetValue(targetValue, 'month', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate)!;
+          if (this.filterTargetBy) targetValue = findAppropirateTarget(this.filterTargetBy);
+          else {
+            // Find target value
+            if (findTarget('monthly')) targetValue = findTarget('monthly').value;
+            else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
+            else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
+            else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
+            // Set target value
+            targetValue = calculateTargetValue(targetValue, 'month', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate)!; 
+          }
         }
         // Set target value according to year to date
         else if (element.kpi_calc_period === "year-to-date" && !checkOtherPeriods()) {
-          // Find target value
-          if (findTarget('yearly')) targetValue = findTarget('yearly').value;
-          else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
-          else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
-          else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
-          if (element.days_to_calculate === "business") {
-            targetValue = businessDayOfYear * (targetValue / businessDaysInYear);
-          } else targetValue = dayOfYear * (targetValue / daysInYear);
-          // Set target value
-          targetValue = calculateTargetValue(targetValue, 'year', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate)!;
+          if (this.filterTargetBy) targetValue = findAppropirateTarget(this.filterTargetBy);
+          else {
+            // Find target value
+            if (findTarget('yearly')) targetValue = findTarget('yearly').value;
+            else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
+            else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
+            else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
+            // Set target value
+            targetValue = calculateTargetValue(targetValue, 'year', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate)!;
+          }
         }
         // Set percentage for month-over-month and year-over-year
         else if (this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year") {

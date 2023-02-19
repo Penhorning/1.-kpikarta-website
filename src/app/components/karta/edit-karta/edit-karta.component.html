@@ -208,7 +208,7 @@
                            </div>
                        </div>
                        <div class="col-lg-2 text-center">
-                           <button type="button" class="btn bg-light border" disabled data-toggle="modal" data-target="#viewKartaModal">View</button>
+                           <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal">View</button>
                        </div>
                        <div class="col-lg-3 p-0">
                            <div class="icon-karta">
@@ -222,9 +222,9 @@
                                    </a>
                                    <div class="dropdown-menu export" aria-labelledby="dropdownMenuLink">
                                        <img src="assets/img/drop-arrow.svg" class="drop-arrow" />
-                                       <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('csv')"> <img src="assets/img/csv.svg" class="mr-2" /> Export to CSV </a>
-                                       <a class="dropdown-item" href="javascript:void(0);" (click)="exportKarta('pdf')"> <img src="assets/img/pdf.svg" class="mr-2" /> Export to PDF </a>
-                                       <a class="dropdown-item border-0" href="javascript:void(0);" (click)="exportKarta('image')"> <img src="assets/img/img.svg" class="mr-2" /> Export to Image </a>
+                                       <a class="dropdown-item cursor_pointer" (click)="exportKarta('csv')"> <img src="assets/img/csv.svg" class="mr-2" /> Export to CSV </a>
+                                       <a class="dropdown-item cursor_pointer" (click)="exportKarta('pdf')"> <img src="assets/img/pdf.svg" class="mr-2" /> Export to PDF </a>
+                                       <a class="dropdown-item border-0 cursor_pointer" (click)="exportKarta('image')"> <img src="assets/img/img.svg" class="mr-2" /> Export to Image </a>
                                    </div>
                                </div>
                                <!-- Filter Karta -->
@@ -235,7 +235,7 @@
                                    <div class="dropdown-menu select-sec inventory" aria-labelledby="dropdownMenuButton">
                                        <img src="assets/img/drop-arrow.svg" class="drop-arrow filter" />
                                        <div class="fillter-inner-white-box">
-                                           <div class="row pb-3">
+                                           <!-- <div class="row pb-3">
                                                <div class="col-6">
                                                    <h6 class="pl-2 m-0 pt-1">All</h6>
                                                </div>
@@ -244,14 +244,14 @@
                                                        <input type="radio" class="form-check-input" id="exampleCheck1" />
                                                    </div>
                                                </div>
-                                           </div>
+                                           </div> -->
                                            <div class="row pb-3">
                                                <div class="col-6">
                                                    <h6 class="pl-2 m-0 pt-1">Weekly</h6>
                                                </div>
                                                <div class="col-6 text-right">
                                                    <div class="form-check custom-box mr-2">
-                                                       <input type="radio" class="form-check-input" id="exampleCheck1" />
+                                                       <input type="radio" class="form-check-input" id="targetFilter1" name="targetFilter" value="weekly" (change)="montiorBy($event)" />
                                                    </div>
                                                </div>
                                            </div>
@@ -261,7 +261,7 @@
                                                </div>
                                                <div class="col-6 text-right">
                                                    <div class="form-check custom-box mr-2">
-                                                       <input type="radio" class="form-check-input" id="exampleCheck1" />
+                                                       <input type="radio" class="form-check-input" id="targetFilter2" name="targetFilter" value="monthly" (change)="montiorBy($event)" />
                                                    </div>
                                                </div>
                                            </div>
@@ -271,7 +271,7 @@
                                                </div>
                                                <div class="col-6 text-right">
                                                    <div class="form-check custom-box mr-2">
-                                                       <input type="radio" class="form-check-input" id="exampleCheck1" />
+                                                       <input type="radio" class="form-check-input" id="targetFilter3" name="targetFilter" value="quarterly" (change)="montiorBy($event)" />
                                                    </div>
                                                </div>
                                            </div>
@@ -281,7 +281,7 @@
                                                </div>
                                                <div class="col-6 text-right">
                                                    <div class="form-check custom-box mr-2">
-                                                       <input type="radio" class="form-check-input" id="exampleCheck1" />
+                                                       <input type="radio" class="form-check-input" id="targetFilter4" name="targetFilter" value="yearly" (change)="montiorBy($event)" />
                                                    </div>
                                                </div>
                                            </div>
@@ -289,11 +289,11 @@
                                            <div class="row">
                                                <div class="col-6">
                                                    <div class="clear-text pl-3">
-                                                       <a href="javascript:void(0);">Clear</a>
+                                                       <a  class="cursor_pointer" (click)="resetMontiorBy()">Clear</a>
                                                    </div>
                                                </div>
                                                <div class="col-6 text-right">
-                                                   <button class="Apply-btn karta-edit">Apply</button>
+                                                   <button class="Apply-btn karta-edit" (click)="applyMontiorBy()">Apply</button>
                                                </div>
                                            </div>
                                        </div>
@@ -992,7 +992,7 @@
                   </div>
                  </div>
               </div>
-              <div style="border-color: unset;" data-dismiss="" aria-label="">
+              <div class="mb-2" style="border-color: unset;" data-dismiss="" aria-label="">
                  <span aria-hidden="true">
                     <button type="button" class="send-btn" (click)="shareKarta()">
                     <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
@@ -1002,40 +1002,6 @@
                     </button>
                  </span>
               </div>
-           </div>
-           <div class="modal-body">
-               <div class="share-link-modal mt-3">
-                   <div class="form-group">
-                       <label class="short_text max_width_500">{{sharingKarta?.name}}</label>
-                       <div class="row">
-                           <div class="col-lg-12">
-                               <ng-select
-                                   [items]="members"
-                                   [addTag]="addTagPromise"
-                                   placeholder="Select users"
-                                   [loading]="loading"
-                                   [multiple]="true"
-                                   bindLabel="email"
-                                   [(ngModel)]="selectedSharedUsers"
-                                   (change)="onSelectUser()"
-                                   (clear)="enableEditOption()"
-                               >
-                                   <ng-template ng-tag-tmp let-search="searchTerm"> <b>Add new email</b>: {{search}} </ng-template>
-                               </ng-select>
-                           </div>
-                       </div>
-                   </div>
-                   <div style="border-color: unset;" data-dismiss="" aria-label="">
-                       <span aria-hidden="true">
-                           <button type="button" class="send-btn" (click)="shareKarta()" [disabled]="selectedSharedUsers?.length < 1  || sharedSubmitFlag">
-                               <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
-                                   <span class="sr-only">Loading...</span>
-                               </div>
-                               <ng-container *ngIf="!sharedSubmitFlag">SEND</ng-container>
-                           </button>
-                       </span>
-                   </div>
-               </div>
            </div>
            <div class="row">
                <div class="col-lg-12 text-left">
@@ -1062,6 +1028,7 @@
            </div>
        </div>
    </div>
+</div>
 </div>
 <!-- Save catalog modal -->
 <div class="modal fade" id="saveNodeModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

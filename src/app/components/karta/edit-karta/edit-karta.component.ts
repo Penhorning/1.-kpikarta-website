@@ -129,6 +129,7 @@ export class EditKartaComponent implements OnInit {
     { name: "Yearly", value: "yearly", disabled: false }
   ]
   target: any = [];
+  filterKartaBy: string = "";
   // Contributors
   disabled = false;
   ShowFilter = false;
@@ -207,18 +208,18 @@ export class EditKartaComponent implements OnInit {
   viewKartaType(e: any) {
     if (e.target.value === "month") {
       this.viewKartaNumbers = [
-        { name: "January", value: 1 },
-        { name: "February", value: 2 },
-        { name: "March", value: 3 },
-        { name: "April", value: 4 },
-        { name: "May", value: 5 },
-        { name: "June", value: 6 },
-        { name: "July", value: 7 },
-        { name: "August", value: 8 },
-        { name: "September", value: 9 },
-        { name: "October", value: 10 },
-        { name: "November", value: 11 },
-        { name: "December", value: 12 }
+        { name: "January", value: 0 },
+        { name: "February", value: 1 },
+        { name: "March", value: 2 },
+        { name: "April", value: 3 },
+        { name: "May", value: 4 },
+        { name: "June", value: 5 },
+        { name: "July", value: 6 },
+        { name: "August", value: 7 },
+        { name: "September", value: 8 },
+        { name: "October", value: 9 },
+        { name: "November", value: 10 },
+        { name: "December", value: 11 }
       ]
     } else if (e.target.value === "week") {
       const no_of_weeks = moment().week() - (moment().month() * 4);
@@ -249,22 +250,25 @@ export class EditKartaComponent implements OnInit {
     this.viewKartaForm.value.number = parseInt(this.viewKartaForm.value.number);
     this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
       (response: any) => {
-        if (response.data.data) {
-          this.karta = response.data.data;
-          this.versionId = response.data.data.versionId;
+        if (response.data.karta) {
+          this.karta = response.data.karta.kartaData;
+          this.versionId = response.data.karta.kartaData.versionId;
           if (this.karta.node) {
+            this.reArrangePhases(response.data.karta.phases);
             this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+            this.karta.node.border_color = this.setColors(this.karta.node.percentage);
             BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
             // this.D3SVG.updateNode(this.karta.node, true);
             // this.setKartaDimension();
             jqueryFunctions.disableChart();
+            jqueryFunctions.disableElement("#phase_tabs");
             jqueryFunctions.setValue("#chartMode", "disable");
             jqueryFunctions.setAttribute("#chartMode", "disabled", true);
             this.showSVG = true;
             jqueryFunctions.hideModal('viewKartaModal');
             jqueryFunctions.removeKarta();
           }
-        }
+        } else this._commonService.errorToaster(response.data.message);
       }
     );
   }
@@ -295,6 +299,19 @@ export class EditKartaComponent implements OnInit {
     this.getAllVersion();
     // Get all inventories
     this.getInventories();
+  }
+
+  montiorBy(event: any) {
+    this.filterKartaBy = event.target.value;
+  }
+  // Reset monitor by
+  resetMontiorBy() {
+    this.filterKartaBy = "" 
+    this.updateNewPercentage("");
+  }
+  // Apply monitor by
+  applyMontiorBy() {
+    this.updateNewPercentage(this.filterKartaBy);
   }
 
   // Set colors
@@ -1028,28 +1045,14 @@ export class EditKartaComponent implements OnInit {
       (err) => console.log(err)
     ).add(() => this.loadingKarta = false);
   }
-
+  
   // Get all phases
   getPhases(type? : string) {
     this._kartaService.getPhases(this.kartaId).subscribe(
       (response: any) => {
-        this.phases = [];
-        // Find sub phase
-        const findSubPhase = (array: any, phaseId: string) => {
-          let childPhase = array.find((item: any) => item.parentId === phaseId);
-          if (childPhase) {
-            this.phases.push(childPhase);
-            array.splice(array.findIndex((a: any) => a.id === childPhase.id), 1);
-            findSubPhase(array, childPhase.id);
-          } else this.phases[this.phases.length-1].lastChildren = true;
-        }
-        // Iterate phases
-        for (let phase of response) {
-          this.phases.push(phase);
-          findSubPhase(response, phase.id);
-        }
+        this.reArrangePhases(response);
         // Fetch karta nodes
-        if(type == "existing") this.updateNewPercentage()
+        if (type == "existing") this.updateNewPercentage();
         else this.getKartaInfo();
       }
     );
@@ -1217,11 +1220,13 @@ export class EditKartaComponent implements OnInit {
   }
 
   // Update new percentage
-  updateNewPercentage() {
+  updateNewPercentage(filterTargetBy?: string) {
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
         this.karta = response;
-        this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, 0);
+        if (filterTargetBy) {
+          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, 0, filterTargetBy);
+        } else this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, 0);
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
