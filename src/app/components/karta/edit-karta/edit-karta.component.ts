@@ -222,7 +222,9 @@ export class EditKartaComponent implements OnInit {
         { name: "December", value: 11 }
       ]
     } else if (e.target.value === "week") {
-      const no_of_weeks = moment().week() - (moment().month() * 4);
+      const startWeek = moment().startOf('month').isoWeek();
+      const endWeek = moment().endOf('month').isoWeek();
+      const no_of_weeks = endWeek - startWeek + 1;
       this.viewKartaNumbers = [
         { name: "1st Week", value: 1 },
         { name: "2nd Week", value: 2 },
