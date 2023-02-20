@@ -198,7 +198,6 @@ export class MemberComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     if (this.inviteForm.valid) {
-
       this.submitFlag = true;
       let formData = this.inviteForm.getRawValue();
       formData.creatorId = this._commonService.getUserId();
@@ -211,20 +210,22 @@ export class MemberComponent implements OnInit {
               return lsc.id == this.inviteForm.value.licenseId ? lsc.name : null;
             });
             if(licenseName[0].name != "Spectator") {
-              this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: licenseName[0].name, type: "add"}).subscribe(
-                (result) => {},
-                (err) => console.log(err)
+              this._memberService.createSubscription({userId: response.message.data.id}).subscribe(
+              (result) => {},
+              (err) => console.log(err)
               );
             }
             this.resetFormModal();
             this._commonService.successToaster("Member invited successfully!");
+            this.submitFlag = false;
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
               this._commonService.errorToaster("Email is already registered, please try a different one");
+              this.submitFlag = false;
             }
           }
-        ).add(() => this.submitFlag = false);
+        );
       }
       // When update any existing user
       else if (this.checkFormType === "UPDATE") {
@@ -239,13 +240,15 @@ export class MemberComponent implements OnInit {
             this.resetFormModal();
             this.defaultEmail = "";
             this._commonService.successToaster("Member updated successfully!");
+            this.submitFlag = false;
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
               this._commonService.errorToaster("Email is already registered, please try a different one");
+              this.submitFlag = false;
             }
           }
-        ).add(() => this.submitFlag = false);
+        );
       }
     }
   }
@@ -319,7 +322,7 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: user.license.name, type: "add"}).subscribe(
+          this._memberService.unblockSubscription({ userId: user._id }).subscribe(
             (result) => {},
             (err) => console.log(err)
           );
@@ -336,7 +339,7 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: user.license.name, type: "remove"}).subscribe(
+          this._memberService.blockSubscription({ userId: user._id }).subscribe(
             (result) => {},
             (err) => console.log(err)
           );
@@ -353,7 +356,7 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.updateSubscription({companyId: this._commonService.getCompanyId(), licenseType: user.license.name, type: "remove"}).subscribe(
+          this._memberService.blockSubscription({ userId: user._id }).subscribe(
             (result) => {},
             (err) => console.log(err)
           );

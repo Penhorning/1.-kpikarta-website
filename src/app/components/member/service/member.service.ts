@@ -38,8 +38,14 @@ export class MemberService {
   deleteUser(data: any) {
     return this._httpService.PUT('/users/delete', data);
   }
-  updateSubscription(data: any) {
-    return this._httpService.POST('/subscriptions/update-subscription', data);
+  unblockSubscription(userId: any) {
+    return this._httpService.POST('/subscriptions/unblock-subscription', userId);
+  }
+  blockSubscription(userId: any) {
+    return this._httpService.POST('/subscriptions/block-subscription', userId);
+  }
+  createSubscription(data: any) {
+    return this._httpService.POST('/subscriptions/create-subscription', data);
   }
   /*============================== API FUNCTIONS ENDS ==============================*/
 }
