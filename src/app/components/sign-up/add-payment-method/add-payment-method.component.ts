@@ -35,7 +35,7 @@ export class AddPaymentMethodComponent implements OnInit {
 
     // Initializing FormGroup
     this.paymentMethodForm = this.fb.group({
-      fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
+      fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.only_string)]], // Validtion for blank space
       cardNumber: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), Validators.minLength(14), Validators.maxLength(16), this.numberValidation]], // Validtion for blank space
       expirationDate: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), this.expirationDateValidation ]], // Validtion for blank space
       cvc: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space), Validators.minLength(3), Validators.maxLength(4), this.numberValidation]], // Validtion for blank space
@@ -95,6 +95,7 @@ export class AddPaymentMethodComponent implements OnInit {
             plan: this.user.plan,
             // priceId: this.user.plan == "monthly" ? StripeDetails.monthlyPriceId : StripeDetails.yearlyPriceId,
             userId,
+            fullName: this.paymentMethodForm.value.fullName.trim(),
             ...this.paymentMethodForm.value
           };
 

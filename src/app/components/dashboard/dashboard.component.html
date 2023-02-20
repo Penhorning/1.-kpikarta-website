@@ -342,96 +342,45 @@
                      <div class="total-inner-section pl-3 pr-3">
                         <div class="row">
                            <div class="col-lg-8 col-6">
-                              <h5>Recently Tagged</h5>
+                              <h5 class="recent_heading">Recent Activities</h5>
                            </div>
                            <div class="col-lg-4 col-6 text-right">
                               <div class="view-all-text">
-                                 <a href="javascript:void(0);">View All</a>
+                                 <a class="recent_view" [routerLink]="['/my-kpi']">View All</a>
                               </div>
                            </div>
                         </div>
                      </div>
                   </div>
                </div>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>ROI</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Price</b></p>
+               <ng-container *ngFor="let kpi of recentKPIs; let i=index">
+                  <div class="row mt-3">
+                     <div class="col-lg-12">
+                        <div class="total-inner-section pl-3 pr-3">
+                           <div class="row">
+                              <div class="col-lg-12 col-12">
+                                 <h6>{{ kpi?.assigned_date | date: 'medium' }}</h6>
+                                 <div class="karata-id recent_detail">
+                                    <div class="recent_username short_text py-2">
+                                       <img src="assets/img/own-icon.svg" class="mr-2">
+                                       {{ kpi?.contributor?.fullName}}
+                                    </div>
+                                    <div class="recent_karta short_text py-2">
+                                       <img src="assets/img/karta.svg" class="mr-2">
+                                       {{ kpi?.karta?.name | titlecase }}
+                                    </div>
+                                    <div class="recent_node short_text pt-2">
+                                       <img src="assets/img/node.svg" class="mr-2">
+                                       {{ kpi?.name }}
+                                    </div>
+                                 </div>
+                              </div>
                            </div>
                         </div>
                      </div>
                   </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Design</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Price</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-               <hr>
-               <div class="row mt-3">
-                  <div class="col-lg-12">
-                     <div class="total-inner-section pl-3 pr-3">
-                        <div class="row">
-                           <div class="col-lg-8 col-6">
-                              <h6>10-Mar-22 10:30 AM</h6>
-                              <p class="karata-id">#Jack <span class="karata-name">Revenue Karta</span></p>
-                           </div>
-                           <div class="col-lg-4 col-6 text-right">
-                              <p><b>Price</b></p>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-               </div>
+                  <hr *ngIf="i <= recentKPIs.length-2">
+               </ng-container>
             </div>
          </div>
       </div>
@@ -455,11 +404,32 @@
                   <label class="font-weight-bold short_text max_width_500">{{sharingKarta?.name}}</label>
                   <div class="row">
                      <div class="col-lg-12">
-                        <ng-select [items]="users" [addTag]="addTagPromise" placeholder="Select users"
-                        [loading]="loading" [multiple]="true" bindLabel="email" [(ngModel)]="selectedUsers" (change)="onSelectUser()" (clear)="enableEditOption()">
+                        <ng-select 
+                        [items]="users"
+                         [addTag]="addTagPromise" 
+                         groupBy="selectedAllGroup"
+                        [selectableGroup]="true" 
+                        [selectableGroupAsModel]="false"
+                        placeholder="Select users" 
+                        [loading]="loading" 
+                        [multiple]="true" 
+                        bindLabel="email" 
+                        [(ngModel)]="selectedUsers" 
+                        (change)="onSelectUser()" 
+                        (clear)="enableEditOption()"
+                        >
                         <ng-template ng-tag-tmp let-search="searchTerm">
                            <b>Add new email</b>: {{search}}
                         </ng-template>
+                        <ng-template 
+                        ng-optgroup-tmp let-item="item" 
+                        let-item$="item$" let-index="index" >
+                        <input id="item-{{index}}" type="checkbox"
+                        [ngModel] ="item$.selected"/> Select All
+                        </ng-template>
+                        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+                           <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected"/> {{item?.fullName}} ({{item?.email}})
+                       </ng-template>
                         </ng-select>
                      </div>
                   </div>
@@ -467,7 +437,7 @@
                <div style="border-color: unset;" data-dismiss="" aria-label="">
                   <span aria-hidden="true">
                      <button type="button" class="send-btn" (click)="shareKarta()"
-                     [disabled]="selectedUsers?.length < 1  || sharedSubmitFlag">
+                     >
                      <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                         <span class="sr-only">Loading...</span>
                      </div>

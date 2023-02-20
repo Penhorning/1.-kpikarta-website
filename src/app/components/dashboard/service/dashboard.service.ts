@@ -11,4 +11,7 @@ export class DashboardService {
   getSubscribedUsers(userId: string) {
     return this._httpService.POST(`/subscriptions/get-dashboard-users`, { userId });
   }
+  getMyKPIs(data: { "userId": string }) {
+    return this._httpService.POST('/karta_nodes/kpis', data);
+  }
 }

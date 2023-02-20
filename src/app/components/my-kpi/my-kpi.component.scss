@@ -27,7 +27,11 @@
 } 
 
 #sortBydropdownMenuButton::after{
-right: 13px !important;
+    right: 13px !important;
+}
+
+.all-section h5 {
+    align-self: center;
 }
 
 .form-group .form-control-icon {
@@ -133,7 +137,10 @@ a.nav-link-cus {
     right: 30px;
 }
 
-
+.export_kpis_icon {
+    float: right; 
+    margin-left: 20px;
+}
 
 .karta-filter h6 {
     font-size: 15px;

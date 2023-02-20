@@ -15,6 +15,10 @@ export class KartaService {
   getPhases(kartaId: string) {
     return this._httpService.GET(`/karta_phases?filter[where][kartaId]=${kartaId}&filter[where][is_deleted]=false`);
   }
+  getGlobalPhases() {
+    const query = {where: {kartaId: {exists: false }}};
+    return this._httpService.GET(`/karta_phases?filter=${JSON.stringify(query)}`);
+  }
   addPhase(data: any) {
     return this._httpService.POST('/karta_phases', data);
   }
@@ -54,6 +58,14 @@ export class KartaService {
   }
   createKarta(data: any) {
     return this._httpService.POST('/karta', data);
+  }
+
+  findKartaByUser(userId: any) {
+    return this._httpService.GET(`/karta?filter[where][userId]=${userId}`);
+  }
+
+  getSampleKarta() {
+    return this._httpService.GET('/karta?filter[where][name]=SAMPLE_KARTA');
   }
 
   // deleteSharedKarta(id: any) {

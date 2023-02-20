@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this._commonService.logout().subscribe(
-      (response: any) => {},
+      (response: any) => { },
       (error: any) => { }
     ).add(() => this._commonService.deleteSession() );
   }
