@@ -222,6 +222,7 @@ export class EditKartaComponent implements OnInit {
         { name: "December", value: 11 }
       ]
     } else if (e.target.value === "week") {
+      // Get number of weeks in a month
       const startWeek = moment().startOf('month').isoWeek();
       const endWeek = moment().endOf('month').isoWeek();
       const no_of_weeks = endWeek - startWeek + 1;
