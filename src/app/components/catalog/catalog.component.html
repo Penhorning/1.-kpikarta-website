@@ -8,7 +8,7 @@
                <h4 class="pt-2">Inventory</h4>
             </div>
          </div>
-         <div class="col-lg-6">
+         <div class="col-lg-6 col-10">
             <div class="search-bar">
                <form class="search-form">
                   <div class="form-group search-filed inventory m-0">
@@ -28,7 +28,7 @@
                </form>
             </div>
          </div>
-         <div class="col-lg-4 text-right">
+         <div class="col-lg-4 col-2 align-self-center text-right">
             <div class="filter-icon">
                <div class="dropdown filter-option d-inline-block">
                   <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
@@ -68,15 +68,16 @@
             <div class="KPI-dash-tab inventory">
                <!-- KPI Tabs -->
                <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('owned')"> <a
+                  <li class="nav-item nav-item-cus inventory" id="tab_1" (click)="onTabSwitch()"> <a
                      class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1"
                      role="tab">Owned by me</a> </li>
-                  <li class="nav-item nav-item-cus inventory" (click)="onTabSwitch('shared')"> <a
-                     class="nav-link nav-link-cus pl-0" id="shared_tab" data-toggle="tab" href="#tabs-1"
+                  <li class="nav-item nav-item-cus inventory" id="tab_2" (click)="onTabSwitchShared()"> <a
+                     class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2"
                      role="tab">Shared with me</a> </li>
                </ul>
                <!-- Tab panes -->
                <div class="tab-content tab-content-cus inventory">
+                  <!-- Tab 1 -->
                   <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
                      <div class="row mt-4">
                         <!-- card-one -->
@@ -87,19 +88,12 @@
                                     <div class="col-8">
                                        <div class="own d-flex">
                                           <img src="assets/img/own-icon.svg">
-                                          <ng-container *ngIf="catalogType === 'owned'; else nameShared">
-                                             <p class="short_text">Own</p>
-                                          </ng-container>
-                                          <ng-template #nameShared>
-                                             <p class="short_text" [title]="catalog?.user?.fullName">
-                                                {{ catalog?.user?.fullName }}
-                                             </p>
-                                          </ng-template>
+                                          <p class="short_text">Own</p>
                                        </div>
                                     </div>
                                     <div class="col-4 text-right">
                                        <div class="dropdown show">
-                                          <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
+                                          <a class=" dropdown-toggle three-dots cursor_pointer" role="button"
                                              id="dropdownMenuLink" data-toggle="dropdown"
                                              aria-haspopup="true" aria-expanded="false">
                                           <img src="assets/img/dots.svg" class="">
@@ -107,8 +101,7 @@
                                           <div class="dropdown-menu three-dots-drop"
                                              aria-labelledby="dropdownMenuLink">
                                              <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                                             <ng-container *ngIf="catalogType === 'owned'; else optionShared">
-                                                <a class="dropdown-item share" href="javascript:void(0);"
+                                             <a class="dropdown-item share cursor_pointer"
                                                    data-toggle="modal" data-target="#shareCatalogModal"
                                                    (click)="onShare(catalog)">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -119,7 +112,7 @@
                                                    </svg>
                                                    Share
                                                 </a>
-                                                <a class="dropdown-item Delete" href="javascript:void(0);"
+                                                <a class="dropdown-item Delete cursor_pointer"
                                                    (click)="deleteCatalog(catalog?._id)">
                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                       height="16" fill="currentColor"
@@ -129,13 +122,6 @@
                                                    </svg>
                                                    Delete
                                                 </a>
-                                             </ng-container>
-                                             <ng-template #optionShared>
-                                                <a class="dropdown-item" href="javascript:void(0);">
-                                                <img src="assets/img/used.svg" class="mr-2">
-                                                Used <span>(5)</span>
-                                                </a>
-                                             </ng-template>
                                           </div>
                                        </div>
                                     </div>
@@ -143,7 +129,7 @@
                                  <div class="row">
                                     <div class="col-lg-12 text-center">
                                        <div class="edit-btn-img">
-                                          <a href="javascript:void(0);" data-toggle="modal" data-target="#viewCatalogModal"
+                                          <a class="cursor_pointer" data-toggle="modal" data-target="#viewCatalogModal"
                                              (click)="onView(catalog)">
                                           <img src="assets/img/View-blue.svg" class="">
                                           </a>
@@ -166,25 +152,16 @@
                                  <div class="row">
                                     <div class="col-lg-6 text-left">
                                        <div class="dropdown show">
-                                          <ng-container *ngIf="catalogType === 'owned'; else actionShared">
-                                             <a class="dropdown-toggle three-dots change-acc text-body"
-                                                href="javascript:void(0);" role="button" id="dropdownMenuLink"
+                                          <a class="dropdown-toggle three-dots change-acc text-body cursor_pointer" role="button" id="dropdownMenuLink"
                                                 data-toggle="dropdown" aria-haspopup="true"
                                                 aria-expanded="false">
                                              Change access 
                                              <img src="assets/img/down-arrow.svg" class="ml-2">
                                              </a>
-                                          </ng-container>
-                                          <ng-template #actionShared>
-                                             <a class="dropdown-toggle three-dots change-acc text-body cursor_default"
-                                                href="javascript:void(0);" role="button">
-                                             Change access <img src="assets/img/down-arrow.svg" class="ml-2">
-                                             </a>
-                                          </ng-template>
                                           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                             <a class="dropdown-item" href="javascript:void(0);"
+                                             <a class="dropdown-item cursor_pointer"
                                                 (click)="updateCatalog('private', catalog?._id, i)">Private</a>
-                                             <a class="dropdown-item" href="javascript:void(0);"
+                                             <a class="dropdown-item cursor_pointer"
                                                 (click)="updateCatalog('public', catalog?._id, i)">Public</a>
                                           </div>
                                        </div>
@@ -234,6 +211,105 @@
                         </div>
                      </div>
                   </div>
+                  <!-- Tab 2 -->
+                  <div class="tab-pane p-3" id="tabs-2" role="tabpanel">
+                     <div class="row mt-4">
+                        <!-- card-one -->
+                        <ng-container *ngFor="let catalog of sharedCatalogs; let i = index">
+                           <div class="col-lg-3">
+                              <div class="karata-card">
+                                 <div class="row">
+                                    <div class="col-12">
+                                       <div class="own d-flex">
+                                          <img src="assets/img/own-icon.svg">
+                                          <p class="short_text" [title]="catalog?.user?.fullName">
+                                             {{ catalog?.user?.fullName }}
+                                          </p>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-12 text-center">
+                                       <div class="edit-btn-img">
+                                          <a class="cursor_pointer" data-toggle="modal" data-target="#viewCatalogModal"
+                                             (click)="onView(catalog)">
+                                          <img src="assets/img/View-blue.svg" class="">
+                                          </a>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-12 text-center">
+                                       <div class="mt-3">
+                                          <div class="d-flex justify-content-center align-items-center">
+                                             <h5 class="short_text line_height_1_3" [title]="catalog?.name">
+                                                {{catalog?.name}}
+                                             </h5>
+                                          </div>
+                                          <p>{{catalog?.createdAt | date:'mediumDate'}}</p>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <hr>
+                                 <div class="row">
+                                    <div class="col-lg-6 text-left">
+                                       <div class="dropdown show">
+                                          <a class="dropdown-toggle three-dots change-acc text-body cursor_default" role="button">
+                                             Change access <img src="assets/img/down-arrow.svg" class="ml-2">
+                                             </a>
+                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                             <a class="dropdown-item cursor_pointer"
+                                                (click)="updateCatalog('private', catalog?._id, i)">Private</a>
+                                             <a class="dropdown-item cursor_pointer"
+                                                (click)="updateCatalog('public', catalog?._id, i)">Public</a>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                       <div class="private d-flex">
+                                          <p class="text-capitalize">{{catalog?.type}}</p>
+                                          <img src="assets/img/{{catalog?.type}}-icon.svg" class="ml-2">
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-6">
+                                       <div class="Shared-with">
+                                          <h5>Shared with:</h5>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                       <div class="d-flex">
+                                          <ng-container *ngIf="catalog?.sharedTo?.length > 0">
+                                             <div class="user-img">
+                                                <img src="assets/img/user-placeholder.svg">
+                                             </div>
+                                             <div class="user-counter">
+                                                <p>{{ catalog?.sharedTo?.length > 100 ? '100+':
+                                                   catalog?.sharedTo?.length }}
+                                                </p>
+                                             </div>
+                                          </ng-container>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </ng-container>
+                        <!-- Pagination -->
+                        <div class="col-md-12">
+                           <ng-container *ngIf="loading">
+                              <div class="p-5" [innerHtml]="loader"></div>
+                           </ng-container>
+                           <ng-container *ngIf="!loading && sharedCatalogs.length === 0">
+                              <div [innerHtml]="noDataAvailable"></div>
+                           </ng-container>
+                           <div class="text-center" *ngIf="!loading && sharedTotalCatalogs > sharedCatalogs.length">
+                              <p class="view_more" (click)="sharedViewMore()">View More..</p>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </div>
          </div>
@@ -253,22 +329,21 @@
             </button>
          </div>
          <div class="modal-body">
-            <div class="share-link-model mt-3">
+            <div class="share-link-modal mt-3">
                <div class="form-group">
-                  <label class="short_text font-weight-bold" style="max-width: 500px;">{{ sharingCatalog?.name }}</label>
+                  <label class="short_text font-weight-bold max_width_500">{{ sharingCatalog?.name }}</label>
                   <div class="row">
                     <div class="col-lg-12" *ngIf="sharingCatalog">
                         <ng-multiselect-dropdown [placeholder]="'Select users'"
                         [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
-                        (onDeSelect)="onItemDeSelect($event)">
+                        (onDeSelect)="onItemDeSelect($event)" (onDeSelectAll)="onDeSelectAll($event)" (onSelectAll)="onSelectAll($event)">
                         </ng-multiselect-dropdown>
                      </div>
                   </div>
                </div>
                <div style="border-color: unset;" data-dismiss="" aria-label="">
                   <span aria-hidden="true">
-                     <button type="button" class="send-btn" (click)="shareCatalog()"
-                     [disabled]="selectedUsers?.length < 1  || shareSubmitFlag">
+                     <button type="button" class="send-btn" (click)="shareCatalog()">
                      <div class="spinner-border text-light align-top" role="status" *ngIf="shareSubmitFlag">
                         <span class="sr-only">Loading...</span>
                      </div>
@@ -309,7 +384,7 @@ aria-labelledby="staticBackdropLabel" aria-hidden="true">
             </button>
          </div>
          <div class="modal-body p-0">
-            <div class="share-link-model">
+            <div class="share-link-modal">
                <img [src]="viewingCatalog?.thumbnail">
             </div>
          </div>

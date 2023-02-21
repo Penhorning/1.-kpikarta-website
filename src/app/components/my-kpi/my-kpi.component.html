@@ -5,50 +5,56 @@
     <div class="row">
       <div class="col-lg-3">
         <div class="page-heading">
-          <h4 class="pt-3">KPI Dashboard</h4>
+          <h4 class="pt-3">KPIs Dashboard</h4>
         </div>
       </div>
-      <div class="col-lg-2 pr-2 pl-2">
+      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('')">
-            <div class="col-4">
-              <img src="assets/img/future.svg">
-            </div>
-            <div class="col-4">
-              <h5 class="m-0 ">All</h5>
-            </div>
-            <div class="col-4">
-              <p class="">{{ stats?.All }}</p>
+            <div class="d-flex align-self-center">
+              <div class="col-4">
+                <img src="assets/img/future.svg">
+              </div>
+              <div class="col-5 p-0">
+                <h5>All KPIs</h5>
+              </div>
+              <div class="col-3">
+                <p>{{ stats?.All }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-2 pr-2 pl-2">
+      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('in_progress')">
-            <div class="col-4">
-              <img src="assets/img/current.svg">
-            </div>
-            <div class="col-5 p-0">
-              <h5 class="m-0 text-nowrap">In Progress</h5>
-            </div>
-            <div class="col-3">
-              <p class="">{{ stats?.InProgress }}</p>
+            <div class="d-flex align-self-center">
+              <div class="col-4">
+                <img src="assets/img/current.svg">
+              </div>
+              <div class="col-5 p-0">
+                <h5 class="text-nowrap">In Progress</h5>
+              </div>
+              <div class="col-3">
+                <p>{{ stats?.InProgress }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-2 pr-2 pl-2">
+      <div class="col-lg-2 col-sm-4 px-2">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('completed')">
-            <div class="col-4">
-              <img src="assets/img/past.svg">
-            </div>
-            <div class="col-5 p-0">
-              <h5 class="m-0">Completed</h5>
-            </div>
-            <div class="col-3">
-              <p class="">{{ stats?.Completed }}</p>
+            <div class="d-flex align-self-center">
+              <div class="col-4">
+                <img src="assets/img/past.svg">
+              </div>
+              <div class="col-5 p-0">
+                <h5>Completed</h5>
+              </div>
+              <div class="col-3">
+                <p class="">{{ stats?.Completed }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -59,13 +65,13 @@
             <div class="form-group search-filed m-0">
               <input type="text" class="form-control" name="search" [(ngModel)]="search_text" id="search"
                 placeholder="Search...">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg clear_search"
-                viewBox="0 0 16 16" *ngIf="search_text" (click)="clearSearch()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-x-lg clear_search" viewBox="0 0 16 16" *ngIf="search_text" (click)="clearSearch()">
                 <path
                   d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
               </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search cursor_pointer"
-                viewBox="0 0 16 16" (click)="search()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-search cursor_pointer" viewBox="0 0 16 16" >
                 <path
                   d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
               </svg>
@@ -77,10 +83,16 @@
     <div class="row mt-4">
       <div class="col-lg-12">
         <div class="KPI-dash-tab">
+          <a class="export_kpis_icon" role="button" aria-haspopup="true" aria-expanded="false" title="Export"
+            data-target="#importExportModal" data-toggle="modal">
+            <img src="assets/img/download-icon.svg">
+          </a>
+
           <div class="dropdown sort-drop">
             <div>
               <form>
-                <select #id (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom sort_dropdown">
+                <select #id (change)="onSortBy(id.value)"
+                  class="form-select form-select-lg short-dropdown-custom sort_dropdown">
                   <option hidden>Sort by</option>
                   <option value="worst">Worst to Best Performing</option>
                   <option value="best">Best to Worst Performing</option>
@@ -93,13 +105,17 @@
 
           <!-- KPI Tabs -->
           <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item nav-item-cus" (click)="onTabSwitch('assigned')"> <a
-                class="nav-link nav-link-cus pl-0 active" id="assigned_tab" data-toggle="tab" href="#tabs-1"
+            <li class="nav-item nav-item-cus" (click)="onTabSwitch('assigned')">
+              <a class="nav-link nav-link-cus pl-0 active" id="assigned_tab" data-toggle="tab" href="#tabs-1"
                 role="tab">Assigned to me</a>
             </li>
             <li class="nav-item nav-item-cus" (click)="onTabSwitch('shared')"> <a class="nav-link nav-link-cus pl-0"
                 data-toggle="tab" href="#tabs-2" role="tab">Shared with me</a> </li>
+
+            <li class="nav-item nav-item-cus" (click)="onTabSwitch('created')"> <a class="nav-link nav-link-cus pl-0"
+                data-toggle="tab" href="#tabs-3" role="tab">Created KPIs</a> </li>
           </ul>
+
 
           <!-- Tab panes -->
           <div class="tab-content tab-content-cus">
@@ -111,375 +127,123 @@
                     <table class="table">
                       <thead class="border-thead">
                         <tr>
-                          <th scope="col">
+                          <th scope="col" *ngFor="let column of headerList; let i=index">
                             <div class="d-flex">
-                              <span style="cursor: pointer;" (click)="onSortClick('fullName', 0)">
-                                <ng-container [ngSwitch]="headerList[0].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
+                              <span class="cursor_pointer text-nowrap" (click)="onSortClick(column.sortBy, i)">
+                                <ng-container [ngSwitch]="column.sort">
+                                  <!-- Ascending - Arrow down -->
+                                  <img src="assets/img/arrow-down.svg" *ngSwitchCase="'ascending'">
+                                  <!-- Descending - Arrow up -->
+                                  <img src="assets/img/Up-arrow.svg" *ngSwitchCase="'descending'">
+                                  <!-- Default - Arrow down up -->
+                                  <img src="assets/img/arrow-down-up.svg" *ngSwitchDefault>
                                 </ng-container>
-                                {{ headerList[0]?.name }}
+                                {{ column.name }}
                               </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="kartaDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu karta-filter" aria-labelledby="kartaDropdownMenuButton">
-                                    <div class="main">
-                                      <input class="form-control mr-2 ml-2" id="searchInput" placeholder="Search"
-                                        aria-label="Search" [(ngModel)]="searchText">
-                                      <span class="fa fa-search form-control-icon"></span>
-                                    </div>
-                                    <div class="row pb-2" *ngFor="let creator of creators | filter : searchText">
-                                      <div class="col-6">
-                                        <h6 class="pl-2 m-0 pt-1" class="short_text">{{ creator?.fullName }}</h6>
-                                      </div>
-                                      <div class="col-6 text-right">
-                                        <div class="form-check custom-box mr-2">
-                                          <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                            (click)="onKpiSelect( $event, creator.id)">
+                              <!-- FILTERS STARTS-->
+                              <ng-container *ngIf="column.filter">
+                                <span>
+                                  <!-- Filter div starts-->
+                                  <div class="dropdown filter-option">
+                                    <!-- Karta creator filter -->
+                                    <ng-container *ngIf="i === 0">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="creatorDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu karta-filter" aria-labelledby="creatorDropdownMenuButton">
+                                        <div class="main">
+                                          <input class="form-control mr-2 ml-2" id="searchInput" placeholder="Search"
+                                            aria-label="Search" [(ngModel)]="searchText">
+                                          <span class="fa fa-search form-control-icon"></span>
                                         </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span style="cursor:pointer;" (click)="onSortClick('name', 1)">
-                                <ng-container [ngSwitch]="headerList[1].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[1]?.name }}
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span class="text-nowrap" style="cursor:pointer;" (click)="onSortClick('value', 2)">
-                                <ng-container [ngSwitch]="headerList[2].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[2]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
-                                    <div *ngFor="let targets of targetTypesList;">
-                                      <div class="row pb-2">
-                                        <div class="col-6">
-                                          <h6 class="pl-2 m-0 pt-1">{{ targets.name }}</h6>
-                                        </div>
-                                        <div class="col-6 text-right">
-                                          <div class="form-check custom-box mr-2">
-                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                              [(ngModel)]="targets.selected"
-                                              (change)="onTargetSelect($event, targets.value)">
+                                        <div class="row pb-2" *ngFor="let creator of creators | filter : searchText">
+                                          <div class="col-6">
+                                            <h6 class="pl-2 m-0 pt-1" class="short_text">{{ creator?.fullName }}</h6>
+                                          </div>
+                                          <div class="col-6 text-right">
+                                            <div class="form-check custom-box mr-2">
+                                              <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                (click)="onKpiSelect( $event, creator.id)">
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
+                                    </ng-container>
+
+                                    <!-- Target filter-->
+                                    <ng-container *ngIf="i === 2">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="targetDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-sec" aria-labelledby="targetDropdownMenuButton">
+                                        <div *ngFor="let targets of targetTypesList;">
+                                          <div class="row pb-2">
+                                            <div class="col-6">
+                                              <h6 class="pl-2 m-0 pt-1">{{ targets.name }}</h6>
+                                            </div>
+                                            <div class="col-6 text-right">
+                                              <div class="form-check custom-box mr-2">
+                                                <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                  [(ngModel)]="targets.selected"
+                                                  (change)="onTargetSelect($event, targets.value)">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+
+                                    <!-- Last edited filter-->
+                                    <ng-container *ngIf="i === 4">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="lastEditedDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-last-edit" aria-labelledby="lastEditedDropdownMenuButton">
+                                        <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3 d-flex">
+                                          <input class="form-control" id="form-control-last-date"
+                                            placeholder="Daterangepicker" [(ngModel)]="lastEditSelectedDates"
+                                            bsDaterangepicker (ngModelChange)="onDateChange($event)" [maxDate]="maxDate">
+                                          <button type="button" class="btn btn-outline-danger btn-sm ml-2"
+                                            (click)="resetDates()">Clear</button>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+
+                                    <!-- Percentag completion filter-->
+                                    <ng-container *ngIf="i === 7">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="competionDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-sec" aria-labelledby="competionDropdownMenuButton">
+                                        <div *ngFor="let percent of percentageList;">
+                                          <div class="row pb-2">
+                                            <div class="col-8">
+                                              <h6 class="pl-2 m-0 pt-1">{{ percent.name }}</h6>
+                                            </div>
+                                            <div class="col-4 text-right">
+                                              <div class="form-check custom-box mr-2">
+                                                <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                  [(ngModel)]="percent.selected"
+                                                  (change)="onPercentSelect($event, percent.value)">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-container>
                                   </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span class="text-nowrap" style="cursor:pointer;"
-                                (click)="onSortClick('achieved_value', 3)">
-                                <ng-container [ngSwitch]="headerList[3].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[3]?.name }}
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span class="text-nowrap" style="cursor:pointer;" (click)="onSortClick('updatedAt', 4)">
-                                <ng-container [ngSwitch]="headerList[4].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[4]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dateDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-last-edit" aria-labelledby="dateDropdownMenuButton">
-                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
-                                      style="display:flex;">
-                                      <input class="form-control" id="form-control-last-date"
-                                        placeholder="Daterangepicker" [(ngModel)]="lastEditSelectedDates"
-                                        bsDaterangepicker (ngModelChange)="onDateChange($event)" [maxDate]="maxDate">
-                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
-                                        (click)="resetDates()">Clear</button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex" style="cursor: pointer;" (click)="onSortClick('due_date', 5)">
-                              <span class="text-nowrap">
-                                <ng-container [ngSwitch]="headerList[5].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[5]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-date-required"
-                                    aria-labelledby="dateDropdownMenuButton">
-                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
-                                      style="display:flex;">
-                                      <input class="form-control" id="form-control-date-required"
-                                        placeholder="Daterangepicker" [(ngModel)]="dueDateSelectedDates"
-                                        bsDaterangepicker (ngModelChange)="onDueDateChange($event)"
-                                        [bsConfig]="{ showClearButton: true }">
-                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
-                                        (click)="resetDates()">Clear</button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            <span style="cursor: pointer;" (click)="onSortClick('due_date', 6)">
-                              <ng-container [ngSwitch]="headerList[6].sort">
-                                <ng-container *ngSwitchCase="'ascending'">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                      d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                  </svg>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="'descending'">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                      d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                  </svg>
-                                </ng-container>
-                                <ng-container *ngSwitchDefault>
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                  </svg>
-                                </ng-container>
+                                  <!-- Filter div ends-->
+                                </span>
                               </ng-container>
-                              {{ headerList[6]?.name }}
-                            </span>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span style="cursor: pointer;" (click)="onSortClick('percentage', 7)">
-                                <ng-container [ngSwitch]="headerList[7].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[7]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
-                                    <div *ngFor="let percent of percentageList;">
-                                      <div class="row pb-2">
-                                        <div class="col-8">
-                                          <h6 class="pl-2 m-0 pt-1">{{ percent.name }}</h6>
-                                        </div>
-                                        <div class="col-4 text-right">
-                                          <div class="form-check custom-box mr-2">
-                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                              [(ngModel)]="percent.selected"
-                                              (change)="onPercentSelect($event, percent.value)">
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
+                              <!-- FILTERs ENDS -->
                             </div>
                           </th>
                         </tr>
@@ -487,63 +251,48 @@
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis; let i = index;">
                           <td>
-                            <p class="m-0 short_text_with_width">{{ kpi?.karta?.name }}</p>
+                            <a class="short_text_with_width view_karta_link"
+                              [routerLink]="['/karta/view', kpi?.karta?._id]" target="_blank">
+                              {{ kpi?.karta?.name }}
+                            </a>
                             <p class="user-name-iocn short_text_with_width">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                class="bi bi-person-circle" viewBox="0 0 16 16">
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                                <path fill-rule="evenodd"
-                                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-                              </svg>
+                              <img src="assets/img/User.svg">
                               {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
-                          <td>{{ kpi?.name }}</td>
+                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0]?.value }}</span>
                             <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
                           </td>
                           <td>
-                            <!-- <div class="editacval">
-                              <span *ngIf="rowClicked == i ? isHidden : !isHidden" style="cursor:pointer;">
-                                {{ kpi?.achieved_value }}
-                              </span>
-                              <input *ngIf="rowClicked == i ? !isHidden : isHidden" autofocus #ach_val
-                                (blur)="onEditAcheivedValue(ach_val.value, kpi)" value="{{ kpi?.achieved_value }}">
-                              <svg xmlns="http://www.w3.org/2000/svg" (click)="editActualValue(i)"
-                                style="cursor:pointer;" width="16" height="12" fill="currentColor" class="bi bi-pencil"
-                                viewBox="0 0 16 16" data-toggle="modal" data-target="#editActualValueModal">
-                                <path
-                                  d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
-                              </svg>
-                            </div> -->
                             <div class="editacval">
-                              <span style="cursor:pointer;">
-                                {{ kpi?.achieved_value }}
-                              </span>
-                              <!-- <input *ngIf="rowClicked == i ? !isHidden : isHidden" autofocus #ach_val
-                                (blur)="onEditAcheivedValue(ach_val.value, kpi)" value="{{ kpi?.achieved_value }}"> -->
-                              <svg xmlns="http://www.w3.org/2000/svg" (click)="editActualValue(kpis[i])"
-                                style="cursor:pointer;" width="16" height="12" fill="currentColor" class="bi bi-pencil"
-                                viewBox="0 0 16 16" data-toggle="modal" data-target="#editActualValueModal">
-                                <path
-                                  d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
-                              </svg>
+                              {{ kpi?.achieved_value }}
+                              <ng-container *ngIf="kpi.target[0].value > 0; else disableIcon">
+                                <svg xmlns="http://www.w3.org/2000/svg" (click)="editActualValue(kpis[i])" width="16"
+                                  height="12" fill="currentColor" class="bi bi-pencil cursor_pointer"
+                                  viewBox="0 0 16 16" data-toggle="modal" data-target="#editActualValueModal">
+                                  <path
+                                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                                </svg>
+                              </ng-container>
+                              <ng-template #disableIcon>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="12" fill="currentColor"
+                                  class="bi bi-pencil" viewBox="0 0 16 16">
+                                  <title>Target is not defined yet!</title>
+                                  <path
+                                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                                </svg>
+                              </ng-template>
                             </div>
                           </td>
                           <td>{{ kpi?.updatedAt | date }}</td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-arrow-repeat" viewBox="0 0 16 16">
-                              <path
-                                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
-                              <path fill-rule="evenodd"
-                                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
-                            </svg>
-                            <span [style.color]="calculateDueDays(kpi?.due_date) >= 0 ? '' : '#dc3545'">
-                              {{ calculateDueDays(kpi?.due_date) >= 0 ? calculateDueDays(kpi?.due_date) + ' Days left' :
-                              -calculateDueDays(kpi?.due_date) + ' Days overdue' }}
+                            <img src="assets/img/Refresh.svg">
+                            <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
+                              -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
                             </span>
                           </td>
                           <td>
@@ -580,7 +329,7 @@
                           </td>
                           <td>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                              class="bi bi-share" viewBox="0 0 16 16" data-toggle="modal" data-target="#staticBackdrop"
+                              class="bi bi-share" viewBox="0 0 16 16" data-toggle="modal" data-target="#shareModal"
                               style="cursor: pointer;" (click)="onShareClick(kpi)">
                               <path
                                 d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
@@ -593,7 +342,7 @@
                       <div [innerHtml]="loader"></div>
                     </ng-container>
                     <ng-container *ngIf="!loading && kpis.length === 0">
-                        <div [innerHtml]="noDataAvailable"></div>
+                      <div [innerHtml]="noDataAvailable"></div>
                     </ng-container>
                     <div class="text-center" *ngIf="!loading && totalAssignedKPIs > kpis.length">
                       <p class="view_more" (click)="viewMore()">View More..</p>
@@ -611,375 +360,123 @@
                     <table class="table">
                       <thead class="border-thead">
                         <tr>
-                          <th scope="col">
+                          <th scope="col" *ngFor="let column of headerList2; let i=index">
                             <div class="d-flex">
-                              <span style="cursor: pointer;" (click)="onSortClick('fullName', 0)">
-                                <ng-container [ngSwitch]="headerList[0].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
+                              <span class="cursor_pointer text-nowrap" (click)="onSortClick(column.sortBy, i)">
+                                <ng-container [ngSwitch]="column.sort">
+                                  <!-- Ascending - Arrow down -->
+                                  <img src="assets/img/arrow-down.svg" *ngSwitchCase="'ascending'">
+                                  <!-- Descending - Arrow up -->
+                                  <img src="assets/img/Up-arrow.svg" *ngSwitchCase="'descending'">
+                                  <!-- Default - Arrow down up -->
+                                  <img src="assets/img/arrow-down-up.svg" *ngSwitchDefault>
                                 </ng-container>
-                                {{ headerList[0]?.name }}
+                                {{ column.name }}
                               </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="kartaDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu karta-filter" aria-labelledby="kartaDropdownMenuButton">
-                                    <div class="main">
-                                      <input class="form-control mr-2 ml-2" id="searchInput" placeholder="Search"
-                                        aria-label="Search" [(ngModel)]="searchText">
-                                      <span class="fa fa-search form-control-icon"></span>
-                                    </div>
-                                    <div class="row pb-2" *ngFor="let creator of creators | filter : searchText">
-                                      <div class="col-6">
-                                        <h6 class="pl-2 m-0 pt-1" class="short_text">{{ creator?.fullName }}</h6>
-                                      </div>
-                                      <div class="col-6 text-right">
-                                        <div class="form-check custom-box mr-2">
-                                          <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                            (click)="onKpiSelect( $event, creator.id)">
+                              <!-- FILTERS STARTS-->
+                              <ng-container *ngIf="column.filter">
+                                <span>
+                                  <!-- Filter div starts-->
+                                  <div class="dropdown filter-option">
+                                    <!-- Karta creator filter -->
+                                    <ng-container *ngIf="i === 0">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="creatorDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu karta-filter" aria-labelledby="creatorDropdownMenuButton">
+                                        <div class="main">
+                                          <input class="form-control mr-2 ml-2" id="searchInput" placeholder="Search"
+                                            aria-label="Search" [(ngModel)]="searchText">
+                                          <span class="fa fa-search form-control-icon"></span>
                                         </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span style="cursor:pointer;" (click)="onSortClick('name', 1)">
-                                <ng-container [ngSwitch]="headerList[1].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[1]?.name }}
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span class="text-nowrap" style="cursor:pointer;" (click)="onSortClick('value', 2)">
-                                <ng-container [ngSwitch]="headerList[2].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[2]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
-                                    <div *ngFor="let targets of targetTypesList;">
-                                      <div class="row pb-2">
-                                        <div class="col-6">
-                                          <h6 class="pl-2 m-0 pt-1">{{ targets.name }}</h6>
-                                        </div>
-                                        <div class="col-6 text-right">
-                                          <div class="form-check custom-box mr-2">
-                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                              [(ngModel)]="targets.selected"
-                                              (change)="onTargetSelect($event, targets.value)">
+                                        <div class="row pb-2" *ngFor="let creator of creators | filter : searchText">
+                                          <div class="col-6">
+                                            <h6 class="pl-2 m-0 pt-1" class="short_text">{{ creator?.fullName }}</h6>
+                                          </div>
+                                          <div class="col-6 text-right">
+                                            <div class="form-check custom-box mr-2">
+                                              <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                (click)="onKpiSelect( $event, creator.id)">
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
+                                    </ng-container>
+
+                                    <!-- Target filter-->
+                                    <ng-container *ngIf="i === 2">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="targetDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-sec" aria-labelledby="targetDropdownMenuButton">
+                                        <div *ngFor="let targets of targetTypesList;">
+                                          <div class="row pb-2">
+                                            <div class="col-6">
+                                              <h6 class="pl-2 m-0 pt-1">{{ targets.name }}</h6>
+                                            </div>
+                                            <div class="col-6 text-right">
+                                              <div class="form-check custom-box mr-2">
+                                                <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                  [(ngModel)]="targets.selected"
+                                                  (change)="onTargetSelect($event, targets.value)">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+
+                                    <!-- Last edited filter-->
+                                    <ng-container *ngIf="i === 4">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="lastEditedDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-last-edit" aria-labelledby="lastEditedDropdownMenuButton">
+                                        <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3 d-flex">
+                                          <input class="form-control" id="form-control-last-date"
+                                            placeholder="Daterangepicker" [(ngModel)]="lastEditSelectedDates"
+                                            bsDaterangepicker (ngModelChange)="onDateChange($event)" [maxDate]="maxDate">
+                                          <button type="button" class="btn btn-outline-danger btn-sm ml-2"
+                                            (click)="resetDates()">Clear</button>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+
+                                    <!-- Percentag completion filter-->
+                                    <ng-container *ngIf="i === 7">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="competionDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-sec" aria-labelledby="competionDropdownMenuButton">
+                                        <div *ngFor="let percent of percentageList;">
+                                          <div class="row pb-2">
+                                            <div class="col-8">
+                                              <h6 class="pl-2 m-0 pt-1">{{ percent.name }}</h6>
+                                            </div>
+                                            <div class="col-4 text-right">
+                                              <div class="form-check custom-box mr-2">
+                                                <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                  [(ngModel)]="percent.selected"
+                                                  (change)="onPercentSelect($event, percent.value)">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-container>
                                   </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span class="text-nowrap" style="cursor:pointer;"
-                                (click)="onSortClick('achieved_value', 3)">
-                                <ng-container [ngSwitch]="headerList[3].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[3]?.name }}
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span class="text-nowrap" style="cursor:pointer;" (click)="onSortClick('updatedAt', 4)">
-                                <ng-container [ngSwitch]="headerList[4].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[4]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dateDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-last-edit" aria-labelledby="dateDropdownMenuButton">
-                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
-                                      style="display:flex;">
-                                      <input class="form-control" id="form-control-last-date"
-                                        placeholder="Daterangepicker" [(ngModel)]="lastEditSelectedDates"
-                                        bsDaterangepicker (ngModelChange)="onDateChange($event)" [maxDate]="maxDate">
-                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
-                                        (click)="resetDates()">Clear</button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex" style="cursor: pointer;" (click)="onSortClick('due_date', 5)">
-                              <span class="text-nowrap">
-                                <ng-container [ngSwitch]="headerList[5].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[5]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-date-required"
-                                    aria-labelledby="dateDropdownMenuButton">
-                                    <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3"
-                                      style="display:flex;">
-                                      <input class="form-control" id="form-control-date-required"
-                                        placeholder="Daterangepicker" [(ngModel)]="dueDateSelectedDates"
-                                        bsDaterangepicker (ngModelChange)="onDueDateChange($event)"
-                                        [bsConfig]="{ showClearButton: true }">
-                                      <button type="button" class="btn btn-outline-danger btn-sm ml-2"
-                                        (click)="resetDates()">Clear</button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
-                            </div>
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            <span style="cursor: pointer;" (click)="onSortClick('due_date', 6)">
-                              <ng-container [ngSwitch]="headerList[6].sort">
-                                <ng-container *ngSwitchCase="'ascending'">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                      d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                  </svg>
-                                </ng-container>
-                                <ng-container *ngSwitchCase="'descending'">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                      d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                  </svg>
-                                </ng-container>
-                                <ng-container *ngSwitchDefault>
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd"
-                                      d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                  </svg>
-                                </ng-container>
+                                  <!-- Filter div ends-->
+                                </span>
                               </ng-container>
-                              {{ headerList[6]?.name }}
-                            </span>
-                          </th>
-                          <th scope="col">
-                            <div class="d-flex">
-                              <span style="cursor: pointer;" (click)="onSortClick('percentage', 7)">
-                                <ng-container [ngSwitch]="headerList[7].sort">
-                                  <ng-container *ngSwitchCase="'ascending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchCase="'descending'">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
-                                    </svg>
-                                  </ng-container>
-                                  <ng-container *ngSwitchDefault>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-arrow-down-up" viewBox="0 0 16 16">
-                                      <path fill-rule="evenodd"
-                                        d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
-                                    </svg>
-                                  </ng-container>
-                                </ng-container>
-                                {{ headerList[7]?.name }}
-                              </span>
-                              <span>
-                                <div class="dropdown filter-option">
-                                  <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                      class="bi bi-funnel" viewBox="0 0 16 16">
-                                      <path
-                                        d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z" />
-                                    </svg>
-                                  </button>
-                                  <div class="dropdown-menu select-sec" aria-labelledby="dropdownMenuButton">
-                                    <div *ngFor="let percent of percentageList;">
-                                      <div class="row pb-2">
-                                        <div class="col-8">
-                                          <h6 class="pl-2 m-0 pt-1">{{ percent.name }}</h6>
-                                        </div>
-                                        <div class="col-4 text-right">
-                                          <div class="form-check custom-box mr-2">
-                                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
-                                              [(ngModel)]="percent.selected"
-                                              (change)="onPercentSelect($event, percent.value)">
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </span>
+                              <!-- FILTERs ENDS -->
                             </div>
                           </th>
                         </tr>
@@ -989,21 +486,17 @@
                           <td>
                             <p class="m-0 short_text_with_width">{{ kpi?.karta.name }}</p>
                             <p class="user-name-iocn short_text_with_width">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-                                class="bi bi-person-circle" viewBox="0 0 16 16">
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-                                <path fill-rule="evenodd"
-                                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
-                              </svg>
-                              {{ kpi?.karta.user.fullName }}
+                              <img src="assets/img/User.svg">
+                              {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
-                          <td>{{ kpi?.name }}</td>
+                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0].value }}</span>
                             <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
                           </td>
                           <td style="padding-left: 20px;"><span>{{ kpi?.achieved_value }}</span></td>
+                          <td class="max_width_200 short_text">{{ kpi?.contributor?.fullName || 'N/A' }}</td>
                           <td>{{ kpi?.updatedAt | date }}</td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
@@ -1014,9 +507,9 @@
                               <path fill-rule="evenodd"
                                 d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
                             </svg>
-                            <span [style.color]="calculateDueDays(kpi?.due_date) >= 0 ? '' : '#dc3545'">
-                              {{ calculateDueDays(kpi?.due_date) >= 0 ? calculateDueDays(kpi?.due_date) + ' Days left' :
-                              -calculateDueDays(kpi?.due_date) + ' Days overdue' }}
+                            <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
+                              -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
                             </span>
                           </td>
                           <td>
@@ -1058,7 +551,7 @@
                       <div [innerHtml]="loader"></div>
                     </ng-container>
                     <ng-container *ngIf="!loading && kpis.length === 0">
-                        <div [innerHtml]="noDataAvailable"></div>
+                      <div [innerHtml]="noDataAvailable"></div>
                     </ng-container>
                     <div class="text-center" *ngIf="!loading && totalAssignedKPIs > kpis.length">
                       <p class="view_more" (click)="viewMore()">View More..</p>
@@ -1067,6 +560,219 @@
                 </div>
               </div>
             </div>
+
+            <!-- Created TAB -->
+            <div class="tab-pane p-3" id="tabs-3" role="tabpanel">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="KPI-custom-table">
+                    <table class="table">
+                      <thead class="border-thead">
+                        <tr>
+                          <th scope="col" *ngFor="let column of headerList2; let i=index">
+                            <div class="d-flex">
+                              <span class="cursor_pointer text-nowrap" (click)="onSortClick(column.sortBy, i)">
+                                <ng-container [ngSwitch]="column.sort">
+                                  <!-- Ascending - Arrow down -->
+                                  <img src="assets/img/arrow-down.svg" *ngSwitchCase="'ascending'">
+                                  <!-- Descending - Arrow up -->
+                                  <img src="assets/img/Up-arrow.svg" *ngSwitchCase="'descending'">
+                                  <!-- Default - Arrow down up -->
+                                  <img src="assets/img/arrow-down-up.svg" *ngSwitchDefault>
+                                </ng-container>
+                                {{ column.name }}
+                              </span>
+                              <!-- FILTERS STARTS-->
+                              <ng-container *ngIf="column.filter">
+                                <span>
+                                  <!-- Filter div starts-->
+                                  <div class="dropdown filter-option">
+                                    <!-- Karta creator filter -->
+                                    <ng-container *ngIf="i === 0">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="creatorDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu karta-filter" aria-labelledby="creatorDropdownMenuButton">
+                                        <div class="main">
+                                          <input class="form-control mr-2 ml-2" id="searchInput" placeholder="Search"
+                                            aria-label="Search" [(ngModel)]="searchText">
+                                          <span class="fa fa-search form-control-icon"></span>
+                                        </div>
+                                        <div class="row pb-2" *ngFor="let creator of creators | filter : searchText">
+                                          <div class="col-6">
+                                            <h6 class="pl-2 m-0 pt-1" class="short_text">{{ creator?.fullName }}</h6>
+                                          </div>
+                                          <div class="col-6 text-right">
+                                            <div class="form-check custom-box mr-2">
+                                              <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                (click)="onKpiSelect( $event, creator.id)">
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+
+                                    <!-- Target filter-->
+                                    <ng-container *ngIf="i === 2">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="targetDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-sec" aria-labelledby="targetDropdownMenuButton">
+                                        <div *ngFor="let targets of targetTypesList;">
+                                          <div class="row pb-2">
+                                            <div class="col-6">
+                                              <h6 class="pl-2 m-0 pt-1">{{ targets.name }}</h6>
+                                            </div>
+                                            <div class="col-6 text-right">
+                                              <div class="form-check custom-box mr-2">
+                                                <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                  [(ngModel)]="targets.selected"
+                                                  (change)="onTargetSelect($event, targets.value)">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+
+                                    <!-- Last edited filter-->
+                                    <ng-container *ngIf="i === 4">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="lastEditedDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-last-edit" aria-labelledby="lastEditedDropdownMenuButton">
+                                        <div class="col-xs-12 col-12 col-sm-6 col-md-4 form-group mb-3 d-flex">
+                                          <input class="form-control" id="form-control-last-date"
+                                            placeholder="Daterangepicker" [(ngModel)]="lastEditSelectedDates"
+                                            bsDaterangepicker (ngModelChange)="onDateChange($event)" [maxDate]="maxDate">
+                                          <button type="button" class="btn btn-outline-danger btn-sm ml-2"
+                                            (click)="resetDates()">Clear</button>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+
+                                    <!-- Percentag completion filter-->
+                                    <ng-container *ngIf="i === 7">
+                                      <button class="btn btn-secondary dropdown-toggle arrow-hide-filter" type="button"
+                                      id="competionDropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                                      <img src="assets/img/funnel.svg">
+                                      </button>
+                                      <!-- Filter dropdown -->
+                                      <div class="dropdown-menu select-sec" aria-labelledby="competionDropdownMenuButton">
+                                        <div *ngFor="let percent of percentageList;">
+                                          <div class="row pb-2">
+                                            <div class="col-8">
+                                              <h6 class="pl-2 m-0 pt-1">{{ percent.name }}</h6>
+                                            </div>
+                                            <div class="col-4 text-right">
+                                              <div class="form-check custom-box mr-2">
+                                                <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                                  [(ngModel)]="percent.selected"
+                                                  (change)="onPercentSelect($event, percent.value)">
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </ng-container>
+                                  </div>
+                                  <!-- Filter div ends-->
+                                </span>
+                              </ng-container>
+                              <!-- FILTERs ENDS -->
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="border-0">
+                        <tr *ngFor="let kpi of kpis; let i = index;">
+                          <td>
+                            <a class="short_text_with_width view_karta_link"
+                              [routerLink]="['/karta/view', kpi?.karta?._id]" target="_blank">
+                              {{ kpi?.karta?.name }}
+                            </a>
+                            <p class="user-name-iocn short_text_with_width">
+                              <img src="assets/img/User.svg">
+                              {{ kpi?.karta?.user?.fullName }}
+                            </p>
+                          </td>
+                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
+                          <td>
+                            <span>{{ kpi?.target[0]?.value }}</span>
+                            <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
+                          </td>
+                          <td>{{ kpi?.achieved_value }}</td>
+                          <td class="max_width_200 short_text">{{ kpi?.contributor?.fullName || 'N/A' }}</td>
+                          <td>{{ kpi?.updatedAt | date }}</td>
+                          <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
+                          <td>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                              class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                              <path
+                                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                              <path fill-rule="evenodd"
+                                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                            </svg>
+                            <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
+                              -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
+                            </span>
+                          </td>
+                          <td>
+                            <ng-container *ngIf="kpi?.target[0]?.percentage >= 101 ;else second">
+                              <div class="container" style="padding-left:0px; padding-right:0px;">
+                                <div class="progress">
+                                  <div class="progress" style="width:70%; border-radius: 0px; ">
+                                    <div class="progress-bar" style="border-radius: 0px;" aria-valuenow="20"
+                                      aria-valuemin="0" aria-valuemax="100" role="progressbar"
+                                      [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}"
+                                      [style.width]="kpi?.target[0]?.percentage + '%'">
+                                      {{ kpi?.target[0]?.percentage > 100 ? '' : kpi?.target[0]?.percentage + '%' }}
+                                    </div>
+                                  </div>
+                                  <div class="progress" style="width:2%; border-radius: 0px"></div>
+                                  <div class="progress" style="width:28%; border-radius: 0px">
+                                    <div class="progress-bar" style="border-radius: unset; width:100%;"
+                                      aria-valuemin="0" aria-valuemax="0" role="progressbar"
+                                      [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}">
+                                      {{ kpi?.target[0]?.percentage > 100 ? kpi?.target[0]?.percentage + '%' : '' }}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-container>
+                            <ng-template #second>
+                              <div class="progress">
+                                <div class="progress-bar" role="progressbar"
+                                  [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}"
+                                  [style.width]="kpi?.target[0]?.percentage + '%'" aria-valuenow="25" aria-valuemin="0"
+                                  aria-valuemax="100">{{ kpi?.target[0]?.percentage + '%' }}</div>
+                              </div>
+                            </ng-template>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <ng-container *ngIf="loading">
+                      <div [innerHtml]="loader"></div>
+                    </ng-container>
+                    <ng-container *ngIf="!loading && kpis.length === 0">
+                      <div [innerHtml]="noDataAvailable"></div>
+                    </ng-container>
+                    <div class="text-center" *ngIf="!loading && totalAssignedKPIs > kpis.length">
+                      <p class="view_more" (click)="viewMore()">View More..</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -1077,33 +783,32 @@
 
 
 <!-- share-link-modal -->
-
-<div class="modal fade share_link" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
-  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade share_link" id="shareModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="shareModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content p-4">
       <div class="modal-header">
-        <h5 class="modal-title pt-0" id="staticBackdropLabel">Share KPI</h5>
+        <h5 class="modal-title pt-0" id="shareModalLabel">Share KPI</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <div class="share-link-model mt-3">
+        <div class="mt-3">
           <div class="form-group">
-            <label class="short_text" style="font-weight: bold; max-width: 500px;">{{ sharingKarta?.karta?.name }}: {{ sharingKarta?.name }}</label>
+            <label class="short_text" style="font-weight: bold; max-width: 500px;">{{ sharingKarta?.karta?.name }}: {{
+              sharingKarta?.name }}</label>
             <div class="row">
               <div class="col-lg-12" *ngIf="sharingKarta">
-                <ng-multiselect-dropdown [placeholder]="'Select users'"
-                  [settings]="dropdownSettings" [data]="members" (onSelect)="onItemSelect($event)"
-                  (onDeSelect)="onItemDeSelect($event)">
+                <ng-multiselect-dropdown [placeholder]="'Select users'" [settings]="dropdownSettings" [data]="members"
+                  (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)" (onDeSelectAll)="onDeSelectAll($event)" (onSelectAll)="onSelectAll($event)">
                 </ng-multiselect-dropdown>
               </div>
             </div>
           </div>
           <div style="border-color: unset;" data-dismiss="" aria-label="">
             <span aria-hidden="true">
-              <button type="button" class="send-btn" [disabled]="selectedUsers.length < 1  || sharedSubmitFlag"
+              <button type="button" class="send-btn"
                 (click)="onSubmitSharedData()">
                 <div class="spinner-border text-light align-top" role="status" *ngIf="sharedSubmitFlag">
                   <span class="sr-only">Loading...</span>
@@ -1124,7 +829,7 @@
               <span class="ml-2">
                 <div class="user-counter">
                   <p>{{ sharingKartaCount > 100 ? '100+': sharingKartaCount }}</p>
-               </div>
+                </div>
               </span>
             </ng-container>
           </div>
@@ -1141,29 +846,40 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content p-4">
       <div class="modal-header">
-        <h5 class="modal-title pt-0" id="staticBackdropLabel">Update Actual Value</h5>
+        <h5 class="modal-title pt-0" id="editActualValueLabel">Update Actual Value</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <ng-container *ngIf="metricFlag; else measure">
         <div class="modal-body">
-          <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()" class="achieved-val">
+          <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()">
             <div formArrayName="fields">
-              <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
-              <div class="share-link-model mt-3" *ngFor="let field of fields.controls; let i = index"
-                [formGroupName]="i">
-                <div class="form-group">
-                  <div class="row">
-                    <div class="col-lg-12">
-                      <div class="">
-                        <label class="font-weight-bold">{{field.value.fieldName}}</label>
-                        <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue" [maxlength]='4'
-                          [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }">
-                        <div *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors" class="invalid-feedback">
-                          <div *ngIf="field.get('fieldValue')?.hasError('required')">{{field.value.fieldName}} value is required!</div>
-                          <div *ngIf="field.get('fieldValue')?.hasError('pattern')">Value should be a positive number!</div>
+              <h5 class="short_text max_width_500 line_height_1_3">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+              </h5>
+              <h6 class="short_text_metrics_formula max_width_500">{{metricsFormula}} =
+                {{acheivedValueMetrics}}
+              </h6>
+              <div class="achieved_val">
+                <div class="mt-3" *ngFor="let field of fields.controls; let i = index" [formGroupName]="i">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="">
+                          <label class="font-weight-bold">{{field.value.fieldName}}</label>
+                          <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue"
+                            [maxlength]='4'
+                            [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }">
+                          <div
+                            *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors"
+                            class="invalid-feedback">
+                            <div *ngIf="field.get('fieldValue')?.hasError('required')">{{field.value.fieldName}} value
+                              is
+                              required!</div>
+                            <div *ngIf="field.get('fieldValue')?.hasError('pattern')">Value should be a positive number!
+                            </div>
 
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1188,37 +904,156 @@
       <ng-template #measure>
         <div class="modal-body">
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
-          <div class="share-link-model mt-3">
-          <div class="form-group">
-            <h5 class="short_text" style="max-width: 500px;">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}</h5>
-            <div class="row">
-              <div class="col-lg-12">
-                <div class="">
-                  <label for="actualValue" class="font-weight-bold">Actual Value</label>
-                  <input type="text" id="actualValue" class="form-control" formControlName="actualValue" [maxlength]="4"
-                  [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
-                  <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors" class="invalid-feedback">
-                      <div *ngIf="form.actualValue.hasError('required')">Actual value is required!</div>
-                      <div *ngIf="form.actualValue.hasError('pattern')">Actual value should be a positive number!</div>
+            <div class="mt-3">
+              <div class="form-group">
+                <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+                </h5>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="">
+                      <label for="actualValue" class="font-weight-bold">Actual Value</label>
+                      <input type="text" id="actualValue" class="form-control" formControlName="actualValue"
+                        [maxlength]="4"
+                        [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
+                      <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.actualValue.hasError('required')">Actual value is required!</div>
+                        <div *ngIf="form.actualValue.hasError('pattern')">Actual value should be a positive number!
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div style="border-color: unset;" data-dismiss="" aria-label="">
-          <span aria-hidden="true">
-            <button type="submit" class="send-btn" [disabled]="measureSubmitFlag">
-              <div class="spinner-border text-light align-top" role="status" *ngIf="measureSubmitFlag">
-                <span class="sr-only">Loading...</span>
-              </div>
-              <ng-container *ngIf="!measureSubmitFlag">Save</ng-container>
-            </button>
-          </span>
-        </div>
-        </form>
+            <div style="border-color: unset;" data-dismiss="" aria-label="">
+              <span aria-hidden="true">
+                <button type="submit" class="send-btn" [disabled]="measureSubmitFlag">
+                  <div class="spinner-border text-light align-top" role="status" *ngIf="measureSubmitFlag">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                  <ng-container *ngIf="!measureSubmitFlag">Save</ng-container>
+                </button>
+              </span>
+            </div>
+          </form>
         </div>
       </ng-template>
+    </div>
+  </div>
+</div>
+
+
+<!-- import-export-modal -->
+
+<div class="modal fade share_link" id="importExportModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+  aria-labelledby="importExportLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content p-4">
+
+      <div class="modal-header">
+        <h5 class="modal-title pt-0" id="importExportLabel">Import KPIs</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeImportModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="overflow: auto;  max-height: 300px;">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <table cellspacing="0" cellpadding="0">
+              <tr>
+                <th class="excelTable" *ngFor="let headers of tableTitle">{{ headers }}</th>
+              </tr>
+              <ng-container *ngFor="let data of tableData; let i = index">
+                <tr *ngIf="i > 0">
+                  <td class="excelTable">
+                    {{ data['__EMPTY_1']}}
+                  </td>
+                  <td class="excelTable">
+                    {{ data['__EMPTY_2']}}
+                  </td>
+                  <td class="excelTable">
+                    {{ data['__EMPTY_3'] | titlecase }}
+                  </td>
+                  <td class="excelTable" [ngStyle]="{'background-color': data.ac ?  'red' : ''}">
+                    {{ data['__EMPTY_4']}}
+                  </td>
+                  <td class="excelTable">
+                    {{ data['__EMPTY_5']}}
+                  </td>
+                  <td class="excelTable" [ngStyle]="{'background-color': data.ac ?  'red' : ''}">
+                    {{ data['__EMPTY_6']}}
+                  </td>
+                  <td class="excelTable">
+                    {{ data['__EMPTY_7']}}
+                  </td>
+                  <td class="excelTable">
+                    {{ data['__EMPTY_8'] | titlecase }}
+                  </td>
+                </tr>
+              </ng-container>
+            </table>
+          </div>
+        </div>
+        <!-- <div class="row mt-2">
+          <div class="align-self-center col-lg-6">
+            <input type="file" (change)="onFileChange($event)" accept=".csv" multiple="false" />
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col-md-6 mt-4">
+            <label class="sr-only" for="inlineFormInputGroup">Choose Files</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+              </div>
+  
+              <div class="input-group custom-file-button">
+                <label class="input-group-text" for="inputImportFile">Import</label>
+                <input type="file" class="form-control" id="inputImportFile" (change)="onFileChange($event)" accept=".csv"
+                  multiple="false">
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <button type="button" class="btn btn-secondary float-right" data-html="true" data-toggle="tooltip" data-placement="left" title="
+            <div>1) Download the current KPIs.
+               <br/> 2) Once the KPI file is downloaded, open it in Microsoft Excel and make your changes into the file.
+               <br/> 3) After making your changes, save the file in CSV format.
+              <br/> 4) Submit the updated CSV file.</div>
+              ">
+            Instructions
+          </button>
+        </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="no-gutters row w-100">
+          <!-- <div class="col-md-6">
+            <button (click)="submitCSV()" class="btn btn-info btn-sm" style="background-color: #5186c2 ;" [disabled]="importSubmitFlag">
+              <div class="spinner-border text-light align-top" role="status" *ngIf="importSubmitFlag">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <ng-container *ngIf="!importSubmitFlag">Submit</ng-container>
+            </button>
+          </div> -->
+          <div style="border-color: unset;" data-dismiss="" aria-label="" class="col-md-6">
+            <span aria-hidden="true">
+              <button type="submit" (click)="submitCSV()" class="send-btn" [disabled]="importSubmitFlag">
+                <div class="spinner-border text-light align-top" role="status" *ngIf="importSubmitFlag">
+                  <span class="sr-only">Loading...</span>
+                </div>
+                <ng-container *ngIf="!importSubmitFlag">Submit</ng-container>
+              </button>
+            </span>
+          </div>
+          <div class="col-md-6">
+            <button class="float-right export-btn" type="button" (click)="exportCSV()">
+              <i class="fa fa-download"></i> Current KPIs
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

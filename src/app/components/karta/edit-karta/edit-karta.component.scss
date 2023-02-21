@@ -1,3 +1,6 @@
+.wrapper.main_wrapper {
+    visibility: hidden;
+}
 .right_sidebar_overlay {
     position: fixed;
     width: 100%;
@@ -9,6 +12,11 @@
 }
 .right_sidebar_overlay.open {
     display: block;
+}
+
+.inventory_sidebar_accordion .card-body {
+    overflow-y: scroll;
+    height: 250px;
 }
 
 .sidebar_collapsible_btn {
@@ -45,6 +53,24 @@
     flex: 1 1 auto;
 }
 
+.phase_column ul li a {
+    position: relative;
+    max-width: 200px;
+}
+.phase_column ul li a:hover .phase_action {
+    display: block;
+}
+.phase_action {
+    position: absolute;
+    right: 15px;
+    top: 2px;
+    display: none;
+    i {
+        cursor: pointer;
+        margin-left: 5px;
+    }
+}
+
 .karta_dummy_lines {
     height: 65px;
     padding-right: 1rem;
@@ -64,6 +90,9 @@
 
 .selectedPhase {
     background-color: #4c659e80;
+}
+.selectedPhaseError {
+    background-color: rgb(221, 144, 144);
 }
 
 .karta_dummy_lines button {
@@ -181,66 +210,60 @@
     }
 }
 
-.panel-default>.panel-heading {
+  .panel-default>.panel-heading {
     color: #333;
-    background-color: #fff;
+    background-color: #eee;
     border-color: #e4e5e7;
     padding: 0;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-  }
-  
-  .panel-default>.panel-heading a {
-    display: block;
-    padding: 10px 15px;
-  }
-  
-  .panel-default>.panel-heading a:after {
-    content: "";
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    float: right;
-    transition: transform .25s linear;
-    -webkit-transition: -webkit-transform .25s linear;
-  }
-  
-  .panel-default>.panel-heading a[aria-expanded="true"] {
-    background-color: #eee;
-    color: #333;
-  }
-  
-  .panel-default>.panel-heading a[aria-expanded="true"]:after {
-    
-    content: "\002b";
-    -webkit-transform: rotate(180deg);
-    transform: rotate(180deg);
-    background-color: #4c659e;
-    padding: 6px 0px 3px 8px;
-    color: #fff;
-    border-radius: 50px;
-    height: 25px;
-    width: 25px;
-  }
-  
-  .panel-default>.panel-heading a[aria-expanded="false"]:after {
-    content: "\2212";
-    -webkit-transform: rotate(90deg);
-    transform: rotate(180deg);
-    background-color: #4c659e;
-    padding: 6px 0px 3px 8px;
-    color: #fff;
-    border-radius: 50px;
-    height: 25px;
-    width: 25px;
+
+    a {
+        display: block;
+        padding: 10px 15px;
+    }
+
+    a:after {
+        content: "";
+        position: relative;
+        top: 1px;
+        display: inline-block;
+        font-family: 'Glyphicons Halflings';
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transition: transform .25s linear;
+        -webkit-transition: -webkit-transform .25s linear;
+    }
+
+    a[aria-expanded="false"]:after {
+        content: "\002b";
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
+        background-color: #4c659e;
+        padding: 6px 0px 3px 8px;
+        color: #fff;
+        border-radius: 50px;
+        height: 25px;
+        width: 25px;
+        float: right;
+    }
+    a[aria-expanded="true"]:after {
+        content: "\2212";
+        -webkit-transform: rotate(90deg);
+        transform: rotate(180deg);
+        background-color: #4c659e;
+        padding: 6px 0px 3px 8px;
+        color: #fff;
+        border-radius: 50px;
+        height: 25px;
+        width: 25px;
+        float: right;
+    }    
   }
 
   button.btn.btn-default.dropdown-toggle.arrow-hide-setting::after {
@@ -287,7 +310,5 @@
     text-decoration: none;
     display: block;
   }
-  
-//   .dropdown a:hover {background-color: #ddd;}
   
   .show {display: block;}

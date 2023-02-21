@@ -4,16 +4,30 @@ import { AllKartasComponent } from './all-kartas/all-kartas.component';
 import { CreateKartaComponent } from './create-karta/create-karta.component';
 import { EditKartaComponent } from './edit-karta/edit-karta.component';
 import { KartaComponent } from './karta.component';
+import { TrialKartaComponent } from './trial-karta/trial-karta.component';
 import { ViewKartaComponent } from './view-karta/view-karta.component';
 
 const routes: Routes = [
   { path: '', redirectTo:'/dashboard', pathMatch: 'full' },
   { path: '', component: KartaComponent,
     children: [
-      { path: 'all', component: AllKartasComponent, data: { title: 'All Kartas - KPI Karta'} },
-      { path: 'create', component: CreateKartaComponent, data: { title: 'Create Karta - KPI Karta'} },
-      { path: 'edit/:id', component: EditKartaComponent, data: { title: 'Edit Karta - KPI Karta'} },
-      { path: 'view/:id', component: ViewKartaComponent, data: { title: 'View Karta - KPI Karta'} }
+      { path: 'all', component: AllKartasComponent, data: { title: "All Kartas - KPI Karta" } },
+      { path: 'create', component: CreateKartaComponent,
+        data: {
+          title: "Create - KPI Karta",
+          roles: ["company_admin", "department_admin", "user"],
+          licenses: ["Creator"]
+        }
+      },
+      { path: 'edit/:id', component: EditKartaComponent,
+        data: {
+          title: "Edit - KPI Karta",
+          roles: ["company_admin", "department_admin", "user"],
+          licenses: ["Creator"]
+        }
+      },
+      { path: 'view/:id', component: ViewKartaComponent, data: { title: 'View Karta - KPI Karta'} },
+      { path: 'trial/:id', component: TrialKartaComponent, data: { title: 'Sample Karta - KPI Karta'} },
     ]
   }
 ];

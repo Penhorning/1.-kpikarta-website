@@ -1,0 +1,29 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: #fff;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active { /* also works for firefox! */
+    filter: none; /* u need this for firefox */
+    box-shadow: 0 0 0 100px rgb(36, 56, 100) inset;
+}
+
+.password_input.form-control.is-invalid, .was-validated .password_input.form-control:invalid  {
+    padding-right: calc(1.5em + 1rem) !important;
+    background-position: right calc(.375em + 1.75rem) center;
+}
+
+.show_password {
+    color: white;
+    top: -1.5px;
+    right: 0;
+    position: absolute;
+    padding: 9px;
+    cursor: pointer;
+}

@@ -53,7 +53,7 @@ export class ForgotPasswordComponent implements OnInit {
         (response: any) => {
           this.submitted = false;
           this.forgotForm.controls["email"].reset();
-          this.showMessage("An email with password reset instructions has been sent on registered email address", "Success");
+          this.showMessage("An email with password reset instructions has been sent to registered email address", "Success");
         },
         (error: any) => { }
       ).add(() => this.submitFlag = false);

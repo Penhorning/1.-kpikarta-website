@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ExportToCsv } from 'export-to-csv';
+import * as XLSX from 'xlsx'
 
-
+type AOA = Array<Array<any>>;
 declare const $: any;
 
 @Component({
@@ -17,6 +19,7 @@ export class MyKpiComponent implements OnInit {
 
   karta: any = [];
   kpis: any = [];
+  exportKpis: any = [];
   totalAssignedKPIs: number = 0;
   colorSettings: any = [];
   members: any = [];
@@ -56,8 +59,32 @@ export class MyKpiComponent implements OnInit {
   selectedUsers: any = [];
   isDisabled: boolean = false;
   sharedSubmitFlag: boolean = false;
+  // import export
+  tableData: any;
+  isTableDataWrong: boolean = false;
+  importedNodeIds: any  = [];
+  tableTitle: any = [];
+  tableHeader: any = [];
+  customPagination = 1;
+  recordsPerPage = 10;
+  tableRecords = [];
+  pageStartCount = 0;
+  pageEndCount = 10;
+  totalPageCount = 0;
+  currentPage = 0;
+  tableDatavalidation = [];
+  validationtitleHead: any;
+  importNodeIds: any = [];
+  importSubmitFlag: boolean = false;
+  nodes: any = []
+  openState: boolean = false;
+  wsname: any;
+
   // Target filter
   target: any = [
+    { frequency: "", value: 0, percentage: 0 }
+  ]
+  importTarget: any = [
     { frequency: "", value: 0, percentage: 0 }
   ]
   selectedTargetTypes: any = [];
@@ -86,14 +113,25 @@ export class MyKpiComponent implements OnInit {
   ];
   // Header list
   headerList = [
-    { name: 'Karta', sort: '' },
-    { name: 'KPI', sort: '' },
-    { name: 'Target', sort: '' },
-    { name: 'Actual', sort: '' },
-    { name: 'Last Edited', sort: '' },
-    { name: 'Due Date', sort: '' },
-    { name: 'Days Left', sort: '' },
-    { name: 'Completion', sort: '' }
+    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'KPI', sortBy: 'name', sort: '' },
+    { name: 'Target', sortBy: 'value', sort: '', filter: true },
+    { name: 'Actual', sortBy: 'achieved_value', sort: '' },
+    { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
+    { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
+    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
+  ];
+  headerList2 = [
+    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'KPI', sortBy: 'name', sort: '' },
+    { name: 'Target', sortBy: 'value', sort: '', filter: true },
+    { name: 'Actual', sortBy: 'achieved_value', sort: '' },
+    { name: 'Assigned To', sortBy: 'contributor.email', sort: '' },
+    { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
+    { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
+    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   // Sort var
   sortDir = 1;
@@ -110,6 +148,8 @@ export class MyKpiComponent implements OnInit {
   kartaName: any;
   editingKarta: any;
   index: any;
+  metricsFormula: any;
+  acheivedValueMetrics: any;
   metricsForm = this.fb.group({
     fields: this.fb.array([]),
     formula: [''],
@@ -117,14 +157,20 @@ export class MyKpiComponent implements OnInit {
   });
 
   measureForm = this.fb.group({
-    actualValue: [0,[Validators.required, Validators.pattern('^[0-9]*$')]]
+    actualValue: [0, [Validators.required, Validators.pattern('^[0-9]*$')]]
   });
 
-  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder,private route: ActivatedRoute) {
+  @ViewChild('fileUploader')
+  fileUploader!: ElementRef;
+  
+  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
     this.maxDate = new Date();
   }
 
   ngOnInit(): void {
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
     this.getColorSettings();
     this.getAllMembers();
     this.getKpiStats();
@@ -132,14 +178,15 @@ export class MyKpiComponent implements OnInit {
 
     // Ng Multi Select Dropdown properties
     this.dropdownSettings = {
-      enableCheckAll: false,
+      enableCheckAll: true,
       singleSelection: false,
       idField: '_id',
       textField: 'nameAndEmail',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
-      disabled: this.isDisabled
+      disabled: this.isDisabled,
+      itemsShowLimit: 3
     }
     this.addMetricsData();
   }
@@ -171,12 +218,11 @@ export class MyKpiComponent implements OnInit {
       this.submitted = true;
       return;
     }
-
     let tempObj: any = {};
     let originalValue = this.metricsForm.value.formula.trim();
     let newValue = '';
-    let value = this.metricsForm.value.formula.trim().split(/[,.+\-\/% *)(\/\\s]/);
-    
+    let value = this.metricsForm.value.formula.trim().split(/[\s() */%+-]+/g);
+
     let total: any = 0;
     let checkFrag = false;
 
@@ -185,7 +231,7 @@ export class MyKpiComponent implements OnInit {
     });
 
     value.forEach((y: any) => {
-      if (y) {
+      if (y && !parseInt(y)) {
         if (tempObj[y]) {
           newValue = newValue
             ? newValue.replace(y, tempObj[y])
@@ -197,7 +243,7 @@ export class MyKpiComponent implements OnInit {
     });
 
     if (checkFrag) {
-      this._commonService.errorToaster('Please type correct formula');
+      this._commonService.errorToaster('Something went wrong!');
       this.metricsForm.patchValue({ calculatedValue: 0 }); return;
     } else {
       total = eval(newValue);
@@ -230,8 +276,7 @@ export class MyKpiComponent implements OnInit {
     }
   }
 
-
-  onMeasureSubmit(){
+  onMeasureSubmit() {
     if (!this.measureForm.valid) {
       this.measureForm.markAllAsTouched();
       this.submittedMeasure = true;
@@ -262,11 +307,14 @@ export class MyKpiComponent implements OnInit {
 
   // Get color settings
   getColorSettings() {
-    this._myKpiService.getColorSettings().subscribe(
+    this._myKpiService.getColorSettings({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
         this.getMyKPIsList();
+      },
+      (error: any) => {
+        this.loading = false
       }
     );
   }
@@ -293,12 +341,13 @@ export class MyKpiComponent implements OnInit {
     this.loading = true;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        this.kpis = response.kpi_nodes[0].data;
+        this.kpis = Array.from(response.kpi_nodes[0].data)
+        this.exportKpis = Array.from(response.kpi_nodes[0].data)
         if (response.kpi_nodes[0].metadata.length > 0) {
-          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total; 
+          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
       }
-    ).add(() => this.loading = false );
+    ).add(() => this.loading = false);
   }
 
   // Get color for each node percentage
@@ -312,8 +361,9 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Calculate days based on due date
-  calculateDueDays(due_date: string) {
-    return moment(due_date).diff(moment(), 'days') + 1;
+  calculateDueDays(start_date: string, due_date: string) {
+    if (start_date) return moment(due_date).diff(moment(), 'days') + 1;
+    return 0;
   }
 
   // Get all members
@@ -325,10 +375,14 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getAllMembers(data).subscribe(
       (response: any) => {
         this.members = response.members[0].data;
-        this.members?.map((element:any) => {
-          element.nameAndEmail = (element.fullName +' '+ `(${element.email})`);
+        this.members?.map((element: any) => {
+          element.nameAndEmail = (element.fullName + ' ' + `(${element.email})`);
         });
-    });
+      },
+      (error: any) => {
+        this.loading = false
+      }
+    );
   }
 
   // Search
@@ -350,8 +404,8 @@ export class MyKpiComponent implements OnInit {
       this.startDate = e[0];
       this.endDate = e[1];
       this.startDueDate = "",
-      this.endDueDate = "",
-      this.pageIndex = 0;
+        this.endDueDate = "",
+        this.pageIndex = 0;
       this.getMyKPIsList();
     }
   }
@@ -384,6 +438,15 @@ export class MyKpiComponent implements OnInit {
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
     this.selectedUsers.push({ userId: item._id });
+
+  }
+
+  onSelectAll(items: any) {
+    items.forEach((item: any) => {this.selectedUsers.push({ userId: item._id })});
+  }
+
+  onDeSelectAll(items: any) {
+    this.selectedUsers = []
   }
 
   onItemDeSelect(item: any) {
@@ -419,52 +482,58 @@ export class MyKpiComponent implements OnInit {
 
   // Submit shared data
   onSubmitSharedData() {
-    let data = {
-      nodeId: this.sharingKarta._id,
-      userIds: this.selectedUsers
-    }
-    this.sharedSubmitFlag = true;
-    this._myKpiService.shareNode(data).subscribe(
-      (response: any) => {
-        if (response) this._commonService.successToaster("Your have shared the node successfully");
-        $('#staticBackdrop').modal('hide');
-        this.sharingKarta = null;
-        this.selectedUsers = []
-        this.pageIndex = 0;
-        this.getMyKPIsList();
-      },
-      (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false);
+      if(this.selectedUsers.length === 0){
+        this._commonService.errorToaster('Please select the users!')
+      }else {
+        let data = {
+          nodeId: this.sharingKarta._id,
+          userIds: this.selectedUsers
+        }
+        this.sharedSubmitFlag = true;
+        this._myKpiService.shareNode(data).subscribe(
+          (response: any) => {
+            if (response) this._commonService.successToaster("Your have shared the node successfully!");
+            $('#shareModal').modal('hide');
+            this.sharingKarta = null;
+            this.selectedUsers = []
+            this.pageIndex = 0;
+            this.getMyKPIsList();
+          },
+          (error: any) => { }
+        ).add(() => this.sharedSubmitFlag = false);
+      }
   }
 
   // Close model
-  closeModal(){
+  closeModal() {
     this.sharingKarta = undefined;
     this.selectedUsers = []
   }
-  
+
   // On click geting data of acheived value
   editActualValue(node: any) {
     this.editingKarta = node;
-    this.metricFlag = false; 
+    this.metricFlag = false;
     this.metricsData = node.node_formula;
     this.currentNode = node._id;
-    this.kartaName =  node.karta.name;
+    this.kartaName = node.karta.name;
     this.target = node.target
+    this.metricsFormula = node?.node_formula?.formula;
+    this.acheivedValueMetrics = node.achieved_value;
     this.metricsForm.reset();
     this.measureForm.reset();
     this.fields.clear();
     if (node.node_type === "metrics") {
       this.metricFlag = true;
       this.metricsForm.patchValue({
-        calculatedValue: node.node_formula.calculated_value ? node.node_formula.calculated_value : 0 ,
+        calculatedValue: node.node_formula.calculated_value ? node.node_formula.calculated_value : 0,
         achieved_value: node.achieved_value ? node.achieved_value : 0,
         formula: node.node_formula.formula ? node.node_formula.formula : ''
       });
     } else {
       this.metricFlag = false;
       this.measureForm.patchValue({
-        actualValue : node.achieved_value
+        actualValue: node.achieved_value
       });
     }
     this.addMetricsData();
@@ -533,6 +602,9 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getCreators({ userId: this._commonService.getUserId() }).subscribe(
       (response: any) => {
         this.creators = response.creators;
+      },
+      (error: any) => {
+        this.loading = false
       }
     );
   }
@@ -551,8 +623,9 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         this.kpis.push(...response.kpi_nodes[0].data);
+        this.exportKpis.push(...response.kpi_nodes[0].data);
         if (response.kpi_nodes[0].metadata.length > 0) {
-          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total; 
+          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
       }).add(() => this.loading = false);
   }
@@ -617,5 +690,290 @@ export class MyKpiComponent implements OnInit {
     this.getMyKPIsList();
     $('#assigned_tab').trigger('click')
   }
-  
+
+  // Export to CSV
+  csvKartaData: any = [
+    {
+      _id: "",
+        kartaId: "",
+        name: "",
+        kartaName: "",
+        node_type: "",
+        formula: "",
+        achieved_value: "",
+        targetValue: "",
+        targetPercentage: "",
+        targetFrequency: ""
+    }
+  ];
+
+  pushCSVData(data: any) {
+    data.forEach((element: any) => {
+      let clacTarget = [element.target[0]];
+      element.kartaId = element.karta._id;
+      element.kartaName = element.karta.name;
+      element.formula = element?.node_formula?.formula ? element?.node_formula?.formula : 'N/A';
+      element.targetdata = clacTarget.map((element: any) => { return element.value });
+      element.targetPercentage = clacTarget.map((element: any) => { return element.percentage });
+      element.targetFrequency = clacTarget.map((element: any) => { return element.frequency });
+      if (element.hasOwnProperty("node_formula")) {
+        element.metricsData = element?.node_formula.fields.map((element: any) => { return element.fieldValue });
+        element.achieved_value = element.metricsData ? element.metricsData.join("|") : "";
+      }
+      element.targetValue = element.targetdata[0].toString();
+      this.csvKartaData.push(element);
+    });
+  }
+
+  exportCSV() {
+    this.csvKartaData = [
+      {
+        _id: "",
+        kartaId: "",
+        name: "",
+        kartaName: "",
+        node_type: "",
+        achieved_value: "",
+        formula: "",
+        targetValue: "",
+        targetPercentage: "",
+        targetFrequency: ""
+      }
+    ];
+    
+   // Filter out those kpis whose target is greater than 0
+   let kpis = this.kpis.filter((item: any) => item.target[0].value > 0);
+   // Copy with deep objects
+   let kpis2 = JSON.parse(JSON.stringify(kpis));
+
+   this.pushCSVData(kpis2);
+    const options = {
+      bom: false,
+      filename: 'KPIs',
+      showLabels: true,
+      showTitle: true,
+      title: 'My KPI Export',
+      useTextFile: false,
+      useBom: false,
+      encoding: 'UTF-8',
+      headers: ['Id', 'Karta Id', 'KPI Name', 'Karta Name', 'Node Type', 'Achieved Value', 'Formula', 'Target Value', 'Percentage', 'Frequency']
+    };
+
+    const csvExporter = new ExportToCsv(options);
+    csvExporter.generateCsv(this.csvKartaData);
+  }
+
+  // Import Excel File
+  closeImportModal() {
+    this.tableRecords = [];
+    this.tableTitle = [];
+    this.tableData = [];
+    this.validationtitleHead = '';
+    this.nodes = '';
+    $('#importExportModal').modal('hide');
+    $("#inputImportFile").val("");
+  }
+
+  // Number validation
+  isNumeric(value: any) {
+    const isNumericData = (value: string): boolean => !new RegExp(/[^\d|]/g).test(value.trim());
+    return isNumericData(value);
+  }
+
+  // Check extension
+  isValidCSVFile(file: any) {
+    return file.name.endsWith(".csv");
+  }
+
+  // Select Csv file
+  onFileChange(event: any) {
+    /* wire up file reader */
+    this.tableData = [];
+    this.tableTitle = [];
+    this.nodes = '';
+    this.wsname = '';
+   
+    if (!event.target.files && !event.target.files[0]) {
+      this._commonService.errorToaster("File not found!");
+      event.target.value = "";
+    } else if (!this.isValidCSVFile(event.target.files[0])) {
+      this._commonService.errorToaster("Only CSV file accepted!");
+      event.target.value = "";
+    } else {
+      const reader: FileReader = new FileReader();
+      reader.readAsBinaryString(event.target.files[0]);
+      reader.onload = (e: any) => {
+        /* create workbook */
+        const binarystr: string = e.target.result;
+        const wb: XLSX.WorkBook = XLSX.read(binarystr, { type: 'binary', raw: true, dense: true, cellNF: true, cellDates: true });
+
+        /* selected the first sheet */
+        this.wsname = wb.SheetNames[0];
+        const ws: XLSX.WorkSheet = wb.Sheets[this.wsname];
+
+        /* save data */
+        const data = <AOA>(XLSX.utils.sheet_to_json(ws)); // to get 2d array pass 2nd parameter as object {header: 1}
+
+        if (data.length > 0) {
+          let is_data_wrong = false;
+          // Validation for csv file header
+          this.validationtitleHead = Object.values(data[0])
+          if (this.validationtitleHead[0] == 'Id' && this.validationtitleHead[1] == 'Karta Id' && this.validationtitleHead[2] == 'KPI Name' &&
+            this.validationtitleHead[3] == 'Karta Name' && this.validationtitleHead[4] == 'Node Type' && this.validationtitleHead[5] == 'Achieved Value' &&
+            this.validationtitleHead[6] == 'Formula' && this.validationtitleHead[7] == 'Target Value' && this.validationtitleHead[8] == 'Percentage' && this.validationtitleHead[9] == 'Frequency') {
+            data.forEach((item: any, index: number) => {
+              let key = Object.keys(item);
+              if (index > 0 && key.length !== 10) {
+                is_data_wrong = true;
+              }
+            });
+            if (is_data_wrong) {
+              this._commonService.errorToaster("Invalid data found in a file.");
+            } else {
+              this.calculateCSVData(data)
+              for (let title in data[0]) {
+                this.tableTitle.push(data[0][title])
+              }
+              this.tableTitle.splice(0, 2);
+              this.isTableDataWrong = false;
+              this.tableData = data.map((item: any, i: any) => {
+                // delete item.__EMPTY;
+                // delete item['My KPI Export'];
+                if (!this.isNumeric(item.__EMPTY_4) && i !== 0) {
+                  item.ac = true;
+                  this.isTableDataWrong = true;
+                } else {
+                  item.ac = false;
+                }
+                return item;
+              });
+            }
+          } else {
+            this._commonService.errorToaster("Invalid data found in a file.");
+          }
+        } else {
+          this._commonService.errorToaster("Please select current KPI file.");
+        }
+      }
+    }
+  }
+
+  // Metrics formula calculation
+calculateMetricFormulaForCSV(values: any, originalValues: any) {
+    let tempObj: any = [];
+    let originalValue = originalValues.node_formula.formula.trim();
+    let newValue = '';
+    let value = originalValues.node_formula.formula.trim().split(/[\s() */%+-]+/g);
+    let total: any = 0;
+    let formulaValues = values.__EMPTY_4.split("|");
+    let modifiedFieldArray: any;
+    value.filter((item: any) => item !== "").forEach((x: any, index: number) => {
+      if (x && !parseInt(x)) {
+        if (modifiedFieldArray) originalValues.node_formula.fields = modifiedFieldArray;
+        modifiedFieldArray = originalValues.node_formula.fields.map((item: any) => {
+          if (item.fieldName === x) item.fieldValue = formulaValues[index];
+          return item;
+        });
+        newValue = newValue
+          ? newValue.replace(x, formulaValues[index])
+          : originalValue.replace(x, formulaValues[index]); 
+      }
+    });
+    if (originalValues.node_formula.fields.length !== formulaValues.length) {
+      this.tableData.map((item: any) => {
+        if (item["My KPI Export"] === originalValues.id) item.ac = true;
+        return item;
+      });
+      this.isTableDataWrong = true;
+      return false;
+    } else {
+      total = eval(newValue).toFixed(2);
+      if (total > 0) {
+        let percentage = (total / +originalValues.target[0].value) * 100;
+        let nodeObj = {
+          "id": values['My KPI Export'],
+          "achieved_value": total,
+          "node_formula": {
+            "fields": modifiedFieldArray,
+            "formula": originalValues.node_formula.formula,
+            "metrics": true
+          },
+          "percentage": Math.round(percentage)
+        }
+        return nodeObj;
+      } else {
+        this.isTableDataWrong = true;
+        return false;
+      }
+    }
+  }
+
+  calculateCSVData(csvData: any) {
+    // Push all ids into separate variable for getting node details
+    csvData.map((item: any, i: any) => {
+      if (i > 0) this.importedNodeIds.push(item["My KPI Export"]);
+    });
+    // Call api for getting node details
+    let data = {
+      nodeIds: this.importedNodeIds
+    }
+    this._myKpiService.getNodesDetails(data).subscribe(
+      (response: any) => {
+        if (response && response.nodes) {
+          csvData.forEach((element: any, index: number) => {
+            if (index > 0) {
+              let originalElement = response.nodes.find((item: any) => item.id === element['My KPI Export']);
+              if (originalElement.node_type == "measure") {
+                let percentage = (+element.__EMPTY_4 / +originalElement.target[0].value) * 100;
+                element.node = {
+                  "id": element['My KPI Export'],
+                  "achieved_value": +element.__EMPTY_4,
+                  "percentage": Math.round(percentage)
+                }
+              } else {
+                let data = this.calculateMetricFormulaForCSV(element, originalElement);
+                if (data) {
+                  element.node = data;
+                } else this._commonService.errorToaster("Invalid data found in CSV file!");
+              }
+            }
+          });
+          this.nodes = csvData.map((elm: any, index: number) => {
+            if (index > 0) {
+              return elm.node
+            }
+          })
+          this.nodes.splice(0, 1)
+        }
+      }
+    );
+  }
+
+  // Upload csv function
+  submitCSV() {
+    if (this.isTableDataWrong) {
+      this._commonService.errorToaster("Invalid data found in CSV file!");
+    } else {
+      if (this.nodes.length > 0) {
+        let data = { "nodes": this.nodes }
+        this.importSubmitFlag = true;
+        this._myKpiService.updateCsv(data).subscribe(
+          (response: any) => {
+            if (response) this._commonService.successToaster("KPIs imported successfully.");
+            this.closeImportModal();
+            this.pageIndex = 0;
+            this.tableData = [];
+            this.tableTitle = [];
+            this.validationtitleHead = '';
+            this.nodes = '';
+            this.getMyKPIsList();
+          },
+          (error: any) => {
+            this.importSubmitFlag = false;
+          }
+        ).add(() => this.importSubmitFlag = false);
+      }
+    }
+  }
+
 }

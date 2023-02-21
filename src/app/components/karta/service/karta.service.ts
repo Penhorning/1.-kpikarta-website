@@ -12,17 +12,24 @@ export class KartaService {
   getInventories(data: any) {
     return this._httpService.POST('/karta_catalogs/get-all', data);
   }
-  getPhases() {
-    return this._httpService.GET('/karta_phases');
+  getPhases(kartaId: string) {
+    return this._httpService.GET(`/karta_phases?filter[where][kartaId]=${kartaId}&filter[where][is_deleted]=false`);
   }
-  // addSubPhase(data: any) {
-  //   return this._httpService.POST('/karta_sub_phases', data);
-  // }
-  // getSubPhases(kartaId: string) {
-  //   return this._httpService.GET(`/karta_sub_phases?filter[where][kartaId]=${kartaId}&filter[order]=createdAt Desc`);
-  // }
+  getGlobalPhases() {
+    const query = {where: {kartaId: {exists: false }}};
+    return this._httpService.GET(`/karta_phases?filter=${JSON.stringify(query)}`);
+  }
+  addPhase(data: any) {
+    return this._httpService.POST('/karta_phases', data);
+  }
+  updatePhase(phaseId: string, data: any) {
+    return this._httpService.PATCH(`/karta_phases/${phaseId}`, data);
+  }
+  deletePhase(data: { kartaId: string, phaseId: string }) {
+    return this._httpService.POST('/karta_phases/delete', data);
+  }
   getSuggestion(data: any) {
-    return this._httpService.POST('/suggestion-by-phase', data);
+    return this._httpService.POST('/suggestions/by-user', data);
   }
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
@@ -51,6 +58,14 @@ export class KartaService {
   }
   createKarta(data: any) {
     return this._httpService.POST('/karta', data);
+  }
+
+  findKartaByUser(userId: any) {
+    return this._httpService.GET(`/karta?filter[where][userId]=${userId}`);
+  }
+
+  getSampleKarta() {
+    return this._httpService.GET('/karta?filter[where][name]=SAMPLE_KARTA');
   }
 
   // deleteSharedKarta(id: any) {
@@ -115,13 +130,16 @@ export class KartaService {
     return this._httpService.POST('/karta_histories/redo-control', data);
   }
   getColorSettingsByKarta(data: any) {
-    return this._httpService.POST('/color_settings/by-karta', data);
+    return this._httpService.POST('/color_settings/by-user', data);
   }
   createColorSetting(data: any) {
     return this._httpService.POST('/color_settings', data);
   }
   updateColorSetting(data: any, settingId: string) {
     return this._httpService.PATCH(`/color_settings/${settingId}`, data);
+  }
+  toggleGlobalColorSetting(data: any) {
+    return this._httpService.POST('/color_settings/toggle-global', data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
 

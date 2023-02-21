@@ -39,6 +39,7 @@ export class MemberComponent implements OnInit {
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
   loading = true;
+  defaultEmail: string = "";
 
   // ngx-intl-tel-input config
   separateDialCode = true;
@@ -60,7 +61,7 @@ export class MemberComponent implements OnInit {
   constructor(
     private _memberService: MemberService,
     private fb: FormBuilder,
-    private _commonService: CommonService,
+    public _commonService: CommonService,
     private router: Router
   ) {
     
@@ -70,7 +71,7 @@ export class MemberComponent implements OnInit {
     this._commonService.getUserInfo().subscribe(
       (response: any) => {
         this.user = response;
-        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'department_admin') {
+        if (this.user.roles[0].name !== 'company_admin' && this.user.roles[0].name !== 'department_admin' && this.user.roles[0].name !== 'billing_staff') {
           this.router.navigate(['/dashboard']);
         } else {
           this.getAllMembers();
@@ -177,6 +178,7 @@ export class MemberComponent implements OnInit {
         mobile: data.mobile ? data.mobile : {},
         roleId: data.Role._id ? data.Role._id : '',
       });
+      this.defaultEmail = data.email ? data.email : ''; 
     }
   }
 
@@ -196,7 +198,6 @@ export class MemberComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     if (this.inviteForm.valid) {
-
       this.submitFlag = true;
       let formData = this.inviteForm.getRawValue();
       formData.creatorId = this._commonService.getUserId();
@@ -205,32 +206,49 @@ export class MemberComponent implements OnInit {
       if (this.checkFormType === "CREATE") {
         this._memberService.inviteMember({ data: formData }).subscribe(
           (response: any) => {
+            let licenseName = this.licenses.filter((lsc: any) => {
+              return lsc.id == this.inviteForm.value.licenseId ? lsc.name : null;
+            });
+            if(licenseName[0].name != "Spectator") {
+              this._memberService.createSubscription({userId: response.message.data.id}).subscribe(
+              (result) => {},
+              (err) => console.log(err)
+              );
+            }
             this.resetFormModal();
             this._commonService.successToaster("Member invited successfully!");
+            this.submitFlag = false;
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
               this._commonService.errorToaster("Email is already registered, please try a different one");
+              this.submitFlag = false;
             }
           }
-        ).add(() => this.submitFlag = false);
+        );
       }
       // When update any existing user
       else if (this.checkFormType === "UPDATE") {
         formData.type = "invited_user";
         formData.userId = this.currentUser._id;
+        if(formData.email !== this.defaultEmail) {
+          formData.defaultEmail = this.defaultEmail;
+        }
         if (!this.showDepartment) formData.departmentId = "";
         this._memberService.updateUser(formData, this.currentUser._id).subscribe(
           (response: any) => {
             this.resetFormModal();
+            this.defaultEmail = "";
             this._commonService.successToaster("Member updated successfully!");
+            this.submitFlag = false;
           },
           (error: any) => {
             if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
               this._commonService.errorToaster("Email is already registered, please try a different one");
+              this.submitFlag = false;
             }
           }
-        ).add(() => this.submitFlag = false);
+        );
       }
     }
   }
@@ -297,39 +315,51 @@ export class MemberComponent implements OnInit {
   }
 
   // Activate user
-  activateUser(userId: string) {
-    const result = confirm("Are you sure, Do you want to Activate this user?");
+  activateUser(user: any) {
+    const result = confirm("Are you sure, you want to Activate this user?");
     if (result) {
-      this._memberService.activateUser({ userId }).subscribe(
+      this._memberService.activateUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
+          this._memberService.unblockSubscription({ userId: user._id }).subscribe(
+            (result) => {},
+            (err) => console.log(err)
+          );
           this._commonService.successToaster("User activated successfully!");
         }
       );
     }
   }
   // Deactivate user
-  deactivateUser(userId: string) {
-    const result = confirm("Are you sure, Do you want to Deactivate this user?");
+  deactivateUser(user: any) {
+    const result = confirm("Are you sure, you want to Deactivate this user?");
     if (result) {
-      this._memberService.deactivateUser({ userId }).subscribe(
+      this._memberService.deactivateUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
+          this._memberService.blockSubscription({ userId: user._id }).subscribe(
+            (result) => {},
+            (err) => console.log(err)
+          );
           this._commonService.successToaster("User deactivated successfully!");
         }
       );
     }
   }
   // Delete user
-  deleteUser(userId: string) {
-    const result = confirm("Are you sure, Do you want to Delete this user?");
+  deleteUser(user: any) {
+    const result = confirm("Are you sure, you want to Delete this user?");
     if (result) {
-      this._memberService.deleteUser({ userId }).subscribe(
+      this._memberService.deleteUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
+          this._memberService.blockSubscription({ userId: user._id }).subscribe(
+            (result) => {},
+            (err) => console.log(err)
+          );
           this._commonService.successToaster("User deleted successfully!");
         }
       );

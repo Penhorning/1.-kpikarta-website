@@ -22,89 +22,58 @@
               <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
                   <div class="row">
                       <div class="col-lg-12">
-                          <div class="overview mt-4">
+                          <div *ngIf="overview" class="overview mt-4">
                               <div class="heading">
                                   <h5 class="m-0">Member Information</h5>
-                                  <button type="button" class="btn overview-btn">Monthly</button>
+                                  <button *ngIf="overview.interval" type="button" class="btn overview-btn">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
                               </div>
-                              <div class="creators">
+                              <div class="creators" *ngFor="let user of overview.userDetails">
                                   <div class="creaters-header">
-                                      <h6>Creators</h6>
-                                      <p>10 members</p>
+                                      <h6>{{ user.user ? (user.user | titlecase) : "N/A" }}</h6>
+                                      <p>{{ user.quantity ? (user.quantity) : "0" }} {{ user.quantity == 1 ? 'member' : 'members'}}</p>
                                   </div>
-                                  <div class="creaters-info text-right">
-                                      <h6>$190.00</h6>
-                                      <p>$19.00 per Member</p>
-                                  </div>
-                              </div>
-                              <div class="creators">
-                                  <div class="creaters-header">
-                                      <h6>Champions</h6>
-                                      <p>24 members</p>
-                                  </div>
-                                  <div class="creaters-info text-right">
-                                      <h6>$216.00</h6>
-                                      <p>$9.00 per Member</p>
-                                  </div>
-                              </div>
-                              <div class="creators">
-                                  <div class="creaters-header">
-                                      <h6>Spectators</h6>
-                                      <p>55 members</p>
-                                  </div>
-                                  <div class="creaters-info text-right">
-                                      <h6>Free</h6>
-                                      <p>$20.00 per Member</p>
+                                  <div *ngIf="overview.interval" class="creaters-info text-right">
+                                      <h6>{{user.total_amount == "Free" ? null : "$"}}{{ (user.total_amount || user.total_amount == 0) ? (user.total_amount) : "0.00" }}</h6>
+                                      <p>${{ (user.unit_amount || user.unit_amount == 0) ? (user.unit_amount) : "0.00" }} per Member</p>
                                   </div>
                               </div>
                           </div>
+                          <div *ngIf="!overview && !loadingOverview" class="py-5">
+                            <div [innerHtml]="noDataAvailable"></div>
+                          </div>
+                          <ng-container *ngIf="loadingOverview">
+                            <div [innerHtml]="loader" class="mt-4"></div>
+                          </ng-container>
                       </div>
                   </div>
               </div>
               <!--overview end-->
-              <div class="tab-pane tab-content-cus mt-3" id="tabs-2" role="tabpanel">
+              <div class="tab-pane tab-content-cus mt-3" *ngIf="invoices" id="tabs-2" role="tabpanel">
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="KPI-custom-table">
-                      <table class="table">
+                      <table class="table" *ngIf="invoices && invoices.length > 0">
                         <thead class="thead">
                           <tr>
-                            <th scope="col">Period</th>
+                            <th scope="col">Plan Name</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Status</th>
                             <th scope="col">Invoice Date</th>
                           </tr>
                         </thead>
-                        <tbody> 
+                        <tbody *ngFor="let invoice of invoices"> 
                           <tr>
-                            <td>July 01 2022 - Oct 07 2022</td>
-                            <td>$755.00</td>
-                            <td class="paid">Paid</td>
-                            <td>July 07 2022</td>
+                            <!-- <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td> -->
+                            <td>{{invoice.lines.data[0].price.nickname}}</td>
+                            <td>${{invoice.amount_paid / 100}}</td>
+                            <td class="paid">{{invoice.status | titlecase}}</td>
+                            <td>{{invoice.created * 1000 | date}}</td>
                           </tr>
-                       
-                        </tbody>
-                        <tbody class="thead-dark-custom thead">
-                          <tr>
-                              <td>July 01 2022 - Oct 07 2022</td>
-                              <td>$755.00</td>
-                              <td class="paid">Paid</td>
-                              <td>July 07 2022</td>
-                          </tr>
-                       
-                        </tbody>
-                        <tbody class="thead">
-                          <tr>
-                              <td>July 01 2022 - Oct 07 2022</td>
-                              <td>$755.00</td>
-                              <td class="paid">Paid</td>
-                              <td>July 07 2022</td>
-                          </tr>
-                       
                         </tbody>
                       </table>
-                      
-                      
+                      <div *ngIf="!invoices || invoices.length == 0" class="py-5">
+                        <div [innerHtml]="noDataAvailable"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -113,19 +82,40 @@
               <div class="tab-pane mt-4" id="tabs-3" role="tabpanel">
                   <div class="row pt-3">
                       <div class="col-lg-12">
-                          <div class="img-card container p-0">
-                              <img class="img-responsive" src="assets/img/Card.png" alt="card">
-                              <div class="overlay">
-                                  <div class="icon-container">
-                                      <a href="javascript:void(0);" class="icon" title="User Profile">
-                                          <i class="fa fa-edit"></i>
-                                      </a>
-                                      <a href="javascript:void(0);" class="icon" title="User Profile">
-                                      <i class="fa fa-trash"></i>
-                                      </a>
-                                  </div>
+                        <div class="row">
+                          <div class="col-lg-3 p-0" *ngFor="let card of cards">
+                            <div class="card-bg p-4 d-flex flex-column justify-content-between">
+                              <div>
+                                <h4 class="card-label">{{card.brand}}</h4>
+                                <h5 class="text-white card-num-size">**** **** **** {{card.last4}}</h5>
                               </div>
+                              <div class="d-flex justify-content-end">
+                                <div class="d-flex flex-column justify-content-end">
+                                  <p class="text-white p-0 m-0">Expiry date</p>
+                                  <p class="text-white p-0 m-0">{{card.exp_month}}/{{card.exp_year}}</p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
+                          <div class="col-lg-3 p-0">
+                            <div class="add-card-bg p-4 d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#cardModal">
+                              <h4 class="card-label change-card-label">Add Card</h4>
+                            </div>
+                          </div>
+                          <!-- <div class="col-lg-3 p-0">
+                            <img class="img-responsive" src="assets/img/Card.png" alt="card">
+                            <div class="overlay">
+                                <div class="icon-container">
+                                    <a href="javascript:void(0);" class="icon" title="User Profile">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a href="javascript:void(0);" class="icon" title="User Profile">
+                                    <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                          </div> -->
+                        </div>
                       </div>
                   </div>
               </div>
@@ -134,8 +124,97 @@
           </div>
         </div>
       </div>  
-  
-  
-  
+    </div>
+
+    <!-- add -member-Modal -->
+  <div class="modal fade" id="cardModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content p-4">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">
+            + Add Card
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetFormModal()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="share-link-model mt-3">
+            <form [formGroup]="cardForm">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="fullName">Name on Card <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="fullName" formControlName="fullName" [maxlength]="50"
+                        [ngClass]="{ 'is-invalid': (submitted || form.fullName.touched) && form.fullName.errors }">
+                    <div *ngIf="(submitted || form.fullName.touched) && form.fullName.errors" class="invalid-feedback">
+                        <div *ngIf="form.fullName.errors.required">Full name is required!</div>
+                        <div *ngIf="form.fullName.errors.pattern">Blank space is not allowed!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="cardNumber">Credit Card Number <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="cardNumber" formControlName="cardNumber" min="0" [minlength]="14" [maxlength]="16"
+                        [ngClass]="{ 'is-invalid': (submitted || form.cardNumber.touched) && form.cardNumber.errors }">
+                    <div *ngIf="(submitted || form.cardNumber.touched) && form.cardNumber.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.cardNumber.errors.required">Credit card number is required!</div>
+                        <div *ngIf="form.cardNumber.errors.pattern">Blank space is not allowed!</div>
+                        <div *ngIf="form.cardNumber.errors.minlength">Credit card number should be 14-16 digits!</div>
+                        <div *ngIf="form.cardNumber.errors.maxlength">Credit card number should be of 16 digits!</div>
+                        <div *ngIf="form.cardNumber.errors.numerror">Credit card number should be a digit value!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="expirationDate">Expiration Date <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
+                        [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }">
+                    <div *ngIf="(submitted || form.expirationDate.touched) && form.expirationDate.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.expirationDate.errors.required">Expiration date is required!</div>
+                        <div *ngIf="form.expirationDate.errors.pattern">Blank space is not allowed!</div>
+                        <div *ngIf="form.expirationDate.errors.expiration">Please enter valid expiration date..!!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="cvc">CVV/CVC <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" autocomplete="off" id="cvc" formControlName="cvc" min="0" [minlength]="3" [maxlength]="4"
+                        [ngClass]="{ 'is-invalid': (submitted || form.cvc.touched) && form.cvc.errors }">
+                    <div *ngIf="(submitted || form.cvc.touched) && form.cvc.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.cvc.errors.required">CVV/CVC is required!</div>
+                        <div *ngIf="form.cvc.errors.pattern">Blank space is not allowed!</div>
+                        <div *ngIf="form.cvc.errors.minlength">CVV/CVC should be of 3-4 digits!</div>
+                        <div *ngIf="form.cvc.errors.maxlength">CVV/CVC should be of 4 digits!</div>
+                        <div *ngIf="form.cvc.errors.numerror">CVV/CVC should be a digit value!</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-lg-4 text-left">
+                  <button class="btn btn-light btn_default mb-2" (click)="onSubmit()" [disabled]="submitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!submitFlag">SUBMIT</ng-container>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  
+</div>

@@ -15,9 +15,10 @@ export class SignupService {
   getSignUpSession() {
     return JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
   }
-  updateSignUpSession(stageNumber: number) {
-    let session = JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
+  updateSignUpSession(stageNumber: number, userId?: string) {
+    let session = this.getSignUpSession();
     session.stage = stageNumber;
+    userId ? session.userId = userId : null;
     window.sessionStorage.setItem("kpi-karta-signup-session", JSON.stringify(session));
   }
   deleteSignUpSession() {
@@ -30,11 +31,17 @@ export class SignupService {
   signup(data: any) {
     return this._httpService.POST('/users', data);
   }
+  getUserByEmail(email: any) {
+    return this._httpService.GET(`/users?filter[where][email]=${email}`);
+  }
   updateUser(data: any, userId: string, accessToken: string) {
     return this._httpService.PATCH(`/users/${userId}?access_token=${accessToken}`, data);
   }
   verification(data: any) {
     return this._httpService.POST(`/users/verify-email?access_token=${this.getSignUpSession().token}`, data);
+  }
+  paymentVerification() {
+    return this._httpService.POST(`/users/verify-payment?access_token=${this.getSignUpSession().token}`, "");
   }
   resendVerification() {
     return this._httpService.POST(`/users/send-email-code?access_token=${this.getSignUpSession().token}`, "");
@@ -46,5 +53,12 @@ export class SignupService {
     return this._httpService.POST(`/users/verify-mobile?access_token=${this.getSignUpSession().token}`, data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
+
+
+/*============================== API FUNCTIONS STARTS ==============================*/
+  saveCard(data: any) {
+    return this._httpService.POST(`/subscriptions/save-card`, data);
+  }
+/*============================== BILLING FUNCTIONS ENDS ==============================*/
 
 }

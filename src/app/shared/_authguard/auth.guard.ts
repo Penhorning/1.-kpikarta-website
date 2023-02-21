@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
@@ -10,27 +10,45 @@ import { SignupService } from '@app/components/sign-up/service/signup.service';
 export class AuthGuard implements CanActivateChild {
 
   constructor (private _commonService: CommonService, private router: Router) { }
+  
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      if (this._commonService.getSession() && this._commonService.getSession().token) {
+      // Checking for marketplace url
+      if (state.url.indexOf('view') !== -1) return true;
+      // Checking for other urls
+      else if (this._commonService.getSession() && this._commonService.getSession().token) {
+        // Get role
+        const roles = childRoute.data.roles;
+        const currentRole = this._commonService.getUserRole();
+        // Compare role
+        if (roles) {
+          if (roles.indexOf(currentRole) > -1) {
+            // Get license
+            const licenses = childRoute.data.licenses;
+            const currentLicense = this._commonService.getUserLicense();
+            // Compare license
+            if (licenses) {
+              if (licenses.indexOf(currentLicense) > -1) {
+                return true;
+              } else {
+                this.router.navigate(['/']);
+                return false;
+              }
+            }
+            return true;
+          } else {
+            this.router.navigate(['/']);
+            return false;
+          }
+        }
         return true;
       } else {
         this.router.navigate(['/login']);
         return false;
       }
   }
-  // canLoad(
-  //   route: Route,
-  //   segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-  //     if (this._commonService.getSession() && this._commonService.getSession().token) {
-  //       return true;
-  //     } else {
-  //       // this.router.navigate(['']);
-  //       this.router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
-  //       return false;
-  //     }
-  // }
+  
 }
 
 @Injectable({
@@ -46,7 +64,7 @@ export class LoginGuard implements CanActivateChild {
       if (this._commonService.getSession() && this._commonService.getSession().token) {
         this.router.navigate(['/dashboard']);
         return false;
-      } else return true
+      } else return true;
   }
 
 }

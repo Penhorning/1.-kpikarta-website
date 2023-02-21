@@ -39,11 +39,9 @@ export class CommonService {
   formValidation: any  = {
     blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
     email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-    password: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()+=\?;,./{}|\":<>\[\]\\\' ~_-`]).{8,}/
+    password: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()+=\?;,./{}|\":<>\[\]\\\' ~_-`]).{8,}/,
+    only_string: '^[a-zA-Z ]*$',
   }
-  // User variables
-  userRole: string = "";
-  userLicense: string = "";
 
   // Datepicker config
   maxDate: any = moment();
@@ -65,33 +63,42 @@ export class CommonService {
 
 
 
+  // Encode
+  encode(value: any) {
+    return window.btoa(value);
+  }
+  // Decode
+  decode(value: any) {
+    if (value) return window.atob(value);
+    return "{}";
+  }
+
   // Session code starts
   setSession(sessionData: any) {
-    window.localStorage.setItem("kpi-karta-session", JSON.stringify(sessionData));
+    window.localStorage.setItem("kpi-karta-session", this.encode(JSON.stringify(sessionData)));
   }
   getSession() {
-    return JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}");
+    return JSON.parse(this.decode(window.localStorage.getItem("kpi-karta-session")));
   }
   getUserId() {
-    return JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}").userId;
+    return this.getSession().userId;
+  }
+  getCompanyId() {
+    return this.getSession().companyId;
   }
   getEmailId() {
-    return JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}").email;
+    return this.getSession().email;
   }
-  updateUserNameInSession(updatedName: string) {
-    let session = JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}");
-    session.name = updatedName;
-    window.localStorage.setItem("kpi-karta-session", JSON.stringify(session));
+  getUserRole() {
+    return this.getSession().role;
   }
-  updateUserImageInSession(updatedPic: string) {
-    let session = JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}");
-    session.profilePic = updatedPic;
-    window.localStorage.setItem("kpi-karta-session", JSON.stringify(session));
+  getUserLicense() {
+    return this.getSession().license;
   }
-  updateCompanyLogoInSession(updatedLogo: string) {
-    let session = JSON.parse(window.localStorage.getItem("kpi-karta-session") || "{}");
-    session.companyLogo = updatedLogo;
-    window.localStorage.setItem("kpi-karta-session", JSON.stringify(session));
+  updateSession(key: string, value: string) {
+    let session = this.getSession();
+    session[key] = value;
+    this.setSession(session);
   }
   deleteSession() {
     localStorage.removeItem("kpi-karta-session");
@@ -100,10 +107,10 @@ export class CommonService {
 
   // Remember me session
   setRememberMeSession(sessionData: any) {
-    window.localStorage.setItem("kpi-karta-remember-me-session", JSON.stringify(sessionData));
+    window.localStorage.setItem("kpi-karta-remember-me-session", this.encode(JSON.stringify(sessionData)));
   }
   getRememberMeSession() {
-    return JSON.parse(window.localStorage.getItem("kpi-karta-remember-me-session") || "{}");
+    return JSON.parse(this.decode(window.localStorage.getItem("kpi-karta-remember-me-session")));
   }
 
 

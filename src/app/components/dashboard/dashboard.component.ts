@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../karta/service/karta.service';
 import { MemberService } from '../member/service/member.service';
-
+import { DashboardService } from './service/dashboard.service';
 
 declare const $: any;
+
 
 @Component({
   selector: 'app-dashboard',
@@ -16,12 +17,16 @@ export class DashboardComponent implements OnInit {
 
   kartas: any = [];
   users: any = [];
+  findType: string = "";
+  pageLimit: number = 6;
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
+  registeredUsers: any = [];
 
   loadingKartas: boolean = false;
   loadingSharedKartas: boolean = false;
+  loadingSubscribers: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
@@ -32,17 +37,30 @@ export class DashboardComponent implements OnInit {
   loading: boolean = false;
   emails: any = [];
 
+  recentKPIs: any = [];
+
   constructor(
-    private _commonService: CommonService,
+    public _commonService: CommonService,
     private _kartaService: KartaService,
     private _memberService: MemberService,
+    private _dashboardService: DashboardService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.getAllKartas();
+    if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
+      if (this._commonService.getUserLicense() === 'Champion') {
+        this.findType = "contributor";
+        this.pageLimit = 8;
+      }
+      this.getAllKartas();
+    }
+    if (this._commonService.getUserRole() !== 'user') {
+      this.getSubscribedUsers();
+    } else this.pageLimit = 8;
     this.getAllMembers();
     this.getAllSharedKartas();
+    this.getRecentKPIs();
   }
 
   // Navigate to create karta
@@ -50,12 +68,35 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/karta/create']);
   }
 
+  // Get Subscribed Users
+  getSubscribedUsers() {
+    this.loadingSubscribers = true;
+    this._dashboardService.getSubscribedUsers(this._commonService.getUserId()).subscribe(
+      (response: any) => {
+      if (response) {
+        let iconMapping = [
+          "assets/img/total-creator.svg",
+          "assets/img/total-champion.svg",
+          "assets/img/total-spectators.svg",
+        ];
+        let mappedData = response.data.userDetails.map((user: any, index: number) => {
+          return {
+            ...user,
+            icon: iconMapping[index]
+          }
+        });
+        this.registeredUsers = mappedData;
+      } else this.registeredUsers = [];
+    }).add(() => this.loadingSubscribers = false );
+  }
+
   // Get all kartas
   getAllKartas() {
     let data = {
       page: 1,
-      limit: 3,
+      limit: this.pageLimit,
       findBy: this._commonService.getUserId(),
+      findType: this.findType
     };
     this.loadingKartas = true;
     this._kartaService.getAllKartas(data).subscribe((response: any) => {
@@ -74,6 +115,9 @@ export class DashboardComponent implements OnInit {
     this._memberService.getAllMembers(data).subscribe(
       (response: any) => {
         this.users = response.members[0].data;
+        this.users.forEach((element: any) => {
+          element['selectedAllGroup'] = 'selectedAllGroup';
+        })
     });
   }
 
@@ -81,13 +125,17 @@ export class DashboardComponent implements OnInit {
   getAllSharedKartas() {
     let data = {
       page: 1,
-      limit: 6,
+      limit: this.pageLimit,
       findBy: this._commonService.getEmailId(),
       type: "shared"
     };
     this.loadingSharedKartas = true;
     this._kartaService.getAllKartas(data).subscribe((response: any) => {
-      if (response) {
+      if (response.kartas[0].data.length > 0) {
+        response.kartas[0].data = response.kartas[0].data.map((item: any) => {
+          item.accessType = item.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType;
+          return item;
+        });
         this.sharedKartas = response.kartas[0].data;
       } else this.sharedKartas = [];
     }).add(() => this.loadingSharedKartas = false );
@@ -169,31 +217,30 @@ export class DashboardComponent implements OnInit {
   }
 
   shareKarta() {
-    this.selectedUsers.forEach((element: any) => {
-      if (element.email == this._commonService.getEmailId()) {
-        this._commonService.warningToaster("You can not share karta to yourself!");
-        if (element.email !== this._commonService.getEmailId()) { }
-      } else {
-        this.emails.push(element.email);
+    if(this.selectedUsers.length === 0){
+      this._commonService.errorToaster('Please select the users!');
+    }else if(this.selectedUsers.length === 1 && this.selectedUsers[0].email == this._commonService.getEmailId()){
+      this._commonService.warningToaster("You can not share karta to yourself!");
+   } else {
+     this.emails = this.selectedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
+      if (this.emails.length > 0) {
+        let data = {
+          karta: this.sharingKarta,
+          emails: this.emails,
+          accessType: this.changeModeType
+        }
+        this.sharedSubmitFlag = true;
+  
+        this._kartaService.shareKarta(data).subscribe(
+          (response: any) => {
+            this._commonService.successToaster("You have shared Karta successfully!");
+            $('#shareKartaModal').modal('hide');
+            this.getAllKartas();
+            this.getAllSharedKartas();
+          },
+          (error: any) => { }
+        ).add(() => this.sharedSubmitFlag = false);
       }
-    });
-    if (this.emails.length > 0) {
-      let data = {
-        karta: this.sharingKarta,
-        emails: this.emails,
-        accessType: this.changeModeType
-      }
-      this.sharedSubmitFlag = true;
-
-      this._kartaService.shareKarta(data).subscribe(
-        (response: any) => {
-          this._commonService.successToaster("You have shared Karta successfully!");
-          $('#shareKartaModal').modal('hide');
-          this.getAllKartas();
-          this.getAllSharedKartas();
-        },
-        (error: any) => { }
-      ).add(() => this.sharedSubmitFlag = false);
     }
   }
 
@@ -249,6 +296,20 @@ export class DashboardComponent implements OnInit {
   changeMode(e: any) {
     if (e.target.value === "edit") this.changeModeType = e.target.value;
     else this.changeModeType = e.target.value;
+  }
+
+  // Get recent kpis
+  getRecentKPIs() {
+    let data = {
+      limit: 6,
+      kpiType: "assigned",
+      userId: this._commonService.getUserId()
+    }
+    this._dashboardService.getMyKPIs(data).subscribe(
+      (response: any) => {
+        this.recentKPIs = response.kpi_nodes[0].data;
+      }
+    );
   }
    
 }

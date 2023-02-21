@@ -27,7 +27,11 @@
 } 
 
 #sortBydropdownMenuButton::after{
-right: 13px !important;
+    right: 13px !important;
+}
+
+.all-section h5 {
+    align-self: center;
 }
 
 .form-group .form-control-icon {
@@ -133,7 +137,10 @@ a.nav-link-cus {
     right: 30px;
 }
 
-
+.export_kpis_icon {
+    float: right; 
+    margin-left: 20px;
+}
 
 .karta-filter h6 {
     font-size: 15px;
@@ -189,6 +196,10 @@ a.nav-link-cus {
     line-height: 25px;
 }
 
+.view_karta_link:hover {
+    text-decoration: underline;
+}
+
 .editacval svg {
     margin-top: -30px;
     margin-left: -9px;
@@ -208,7 +219,7 @@ a.nav-link-cus {
     float: left;
 }
 
-.achieved-val {
+.achieved_val {
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -224,8 +235,187 @@ a.nav-link-cus {
 select.form-select.form-select-lg.short-dropdown-custom {
     text-align: left !important;
 }
+
 .sort_dropdown {
     height:35px;
     margin-top:3px;
     font-weight: 700;
+}
+
+.short_text_metrics_formula{
+    font-style: italic;
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+// .excelTable{
+//     width: 100%;
+//     min-width: 800px;
+//   }
+.excelTable{
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+
+  button.import-send-btn {
+    background-color: #243864;
+    border: 0;
+    color: #fff;
+    padding: 8px 34px;
+    border-radius: 5px;
+  }
+
+  button.import-submit-import-btn {
+    background-color: #243864;
+    border: 0;
+    color: #fff;
+    padding: 8px 34px;
+    border-radius: 5px;
+  }
+
+  .file-upload-button {
+    background-color: #ff5252;
+    border-radius: 50%;
+    height: 3rem;
+    overflow: hidden;
+    position: relative;
+    width: 3rem;
+
+  &::after {
+    content: '⇪';
+    color: #fff;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  input[type="file"] {
+        font-size: 100px;
+        left: 0;
+        opacity: 0;
+        position: absolute;
+        top: 0;
+    }
+}
+
+.file-info {
+  color: #999;
+  font-family: Lato;
+  margin-left: 0.5rem;
+}
+
+// .file {
+//     position: relative;
+//     height: 40px;
+//     width: 100px;
+//   }
+  
+//   .file > input[type="file"] {
+//     position: absoulte;
+//     // opacity: 0;
+//     top: 0;
+//     left: 0;
+//     right: 0;
+//     bottom: 0
+//   }
+  
+  .file > label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #666;
+    color: #fff;
+    border-radius: 5px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer
+  }
+  
+  .custom-file-button input[type=file] {
+    margin-left: -2px !important;
+  }
+  .custom-file-button input[type=file]::-webkit-file-upload-button {
+    display: none;
+  }
+  .custom-file-button input[type=file]::file-selector-button {
+    display: none;
+  }
+  .custom-file-button:hover label {
+    background-color: #dde0e3;
+    cursor: pointer;
+  }
+
+  .tooltip {
+    display:inline-block;
+    position:relative;
+    border-bottom:1px dotted #666;
+    text-align:left;
+}
+
+ 
+
+.tooltip h3 {margin:12px 0;}
+
+ 
+
+.tooltip .right {
+    min-width:200px;
+    max-width:400px;
+    top:50%;
+    left:100%;
+    margin-left:20px;
+    transform:translate(0, -50%);
+    padding:0;
+    color:#EEEEEE;
+    background-color:#444444;
+    font-weight:normal;
+    font-size:13px;
+    border-radius:8px;
+    position:absolute;
+    z-index:99999999;
+    box-sizing:border-box;
+    box-shadow:0 1px 8px rgba(0,0,0,0.5);
+    visibility:hidden; opacity:0; transition:opacity 0.8s;
+}
+
+ 
+
+.tooltip:hover .right {
+    visibility:visible; opacity:1;
+}
+
+ 
+
+.tooltip .right img {
+    width:400px;
+    border-radius:8px 8px 0 0;
+}
+.tooltip .text-content {
+    padding:10px 20px;
+}
+
+ 
+
+.tooltip .right i {
+    position:absolute;
+    top:50%;
+    right:100%;
+    margin-top:-12px;
+    width:12px;
+    height:24px;
+    overflow:hidden;
+}
+.tooltip .right i::after {
+    content:'';
+    position:absolute;
+    width:12px;
+    height:12px;
+    left:0;
+    top:50%;
+    transform:translate(50%,-50%) rotate(-45deg);
+    background-color:#444444;
+    box-shadow:0 1px 8px rgba(0,0,0,0.5);
 }
