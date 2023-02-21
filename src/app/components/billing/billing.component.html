@@ -55,7 +55,7 @@
                       <table class="table" *ngIf="invoices && invoices.length > 0">
                         <thead class="thead">
                           <tr>
-                            <th scope="col">Period</th>
+                            <th scope="col">Plan Name</th>
                             <th scope="col">Amount</th>
                             <th scope="col">Status</th>
                             <th scope="col">Invoice Date</th>
@@ -63,7 +63,8 @@
                         </thead>
                         <tbody *ngFor="let invoice of invoices"> 
                           <tr>
-                            <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td>
+                            <!-- <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td> -->
+                            <td>{{invoice.lines.data[0].price.nickname}}</td>
                             <td>${{invoice.amount_paid / 100}}</td>
                             <td class="paid">{{invoice.status | titlecase}}</td>
                             <td>{{invoice.created * 1000 | date}}</td>
