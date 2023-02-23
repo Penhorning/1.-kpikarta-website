@@ -44,6 +44,7 @@ export class CatalogComponent implements OnInit {
   totalCatalogs: number = 0;
   // Loding var
   loading: boolean = false;
+  sharedLoading: boolean = false;
   catalogLoading: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
@@ -117,7 +118,7 @@ export class CatalogComponent implements OnInit {
       type: this.catalogType
     }
 
-    this.loading = true;
+    this.sharedLoading = true;
     this.sharedCatalogs = [];
     this.sharedPageIndex = 1;
 
@@ -128,7 +129,7 @@ export class CatalogComponent implements OnInit {
           this.sharedTotalCatalogs = response.catalogs[0].metadata[0].total;
         } else this.sharedTotalCatalogs = 0;
       }
-    ).add(() => this.loading = false);
+    ).add(() => this.sharedLoading = false);
   }
 
   // Get all members

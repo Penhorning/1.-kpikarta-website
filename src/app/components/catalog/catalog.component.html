@@ -298,13 +298,13 @@
                         </ng-container>
                         <!-- Pagination -->
                         <div class="col-md-12">
-                           <ng-container *ngIf="loading">
+                           <ng-container *ngIf="sharedLoading">
                               <div class="p-5" [innerHtml]="loader"></div>
                            </ng-container>
-                           <ng-container *ngIf="!loading && sharedCatalogs.length === 0">
+                           <ng-container *ngIf="!sharedLoading && sharedCatalogs.length === 0">
                               <div [innerHtml]="noDataAvailable"></div>
                            </ng-container>
-                           <div class="text-center" *ngIf="!loading && sharedTotalCatalogs > sharedCatalogs.length">
+                           <div class="text-center" *ngIf="!sharedLoading && sharedTotalCatalogs > sharedCatalogs.length">
                               <p class="view_more" (click)="sharedViewMore()">View More..</p>
                            </div>
                         </div>

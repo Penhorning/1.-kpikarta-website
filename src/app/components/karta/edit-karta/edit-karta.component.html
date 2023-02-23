@@ -193,8 +193,9 @@
                            <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn" />
                        </div>
                        <div class="col-lg-4 p-0">
-                           <div><span class="last-saved">Last Saved:</span><span> {{ karta?.updatedAt | date:'d/M/yy, H:mm' }}</span></div>
-                           <div><span class="last-saved">Last Updated:</span><span> {{ lastUpdatedDate | date:'d/M/yy, H:mm' }}</span></div>
+                           <div class="time-select-karta"><span class="last-saved">Last Saved:</span><span> {{ karta?.updatedAt | date:'d/M/yyyy, H:mm' }}</span></div>
+                           <!-- <div><span class="last-saved">Last Saved:</span><span> {{ karta?.updatedAt | date:'d/M/yyyy, H:mm' }}</span></div>
+                           <div><span class="last-saved">Last Updated:</span><span> {{ lastUpdatedDate | date:'d/M/yyyy, H:mm' }}</span></div> -->
                        </div>
                    </div>
                </div>
