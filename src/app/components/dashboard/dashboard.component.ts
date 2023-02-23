@@ -52,7 +52,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
-      if (this._commonService.getUserLicense() === 'Champion') {
+      if (this._commonService.getUserLicense() !== 'Spectator') {
         this.findType = "contributor";
         this.pageLimit = 8;
       }
@@ -106,7 +106,10 @@ export class DashboardComponent implements OnInit {
       if (response) {
         this.kartas = response.kartas[0].data;
         this.kartasTotal = response.kartas[0].metadata[0].total;
-      } else this.kartas = [];
+      } else {
+        this.kartas = [];
+        this.kartasTotal = 0;
+      }
     }).add(() => this.loadingKartas = false );
   }
 
@@ -141,8 +144,11 @@ export class DashboardComponent implements OnInit {
           return item;
         });
         this.sharedKartas = response.kartas[0].data;
-        this.sharedKartasTotal = response.kartas[0].metadata[0].total;
-      } else this.sharedKartas = [];
+        this.sharedKartasTotal = response.kartas[0].metadata[0].total || 0;
+      } else {
+        this.sharedKartas = [];
+        this.sharedKartasTotal = 0;
+      }
     }).add(() => this.loadingSharedKartas = false );
   }
 
@@ -312,8 +318,13 @@ export class DashboardComponent implements OnInit {
     }
     this._dashboardService.getMyKPIs(data).subscribe(
       (response: any) => {
-        this.recentKPIs = response.kpi_nodes[0].data;
-        this.recentKPIsTotal = response.kpi_nodes[0].metadata[0].total;
+        if (response.kpi_nodes[0].data.length > 0) {
+          this.recentKPIs = response.kpi_nodes[0].data;
+          this.recentKPIsTotal = response.kpi_nodes[0].metadata[0].total;
+        } else {
+          this.recentKPIs = [];
+          this.recentKPIsTotal = 0;
+        }
       }
     );
   }
