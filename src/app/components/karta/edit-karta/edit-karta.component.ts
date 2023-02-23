@@ -1403,19 +1403,19 @@ export class EditKartaComponent implements OnInit {
         kpi_calc_period: 'kpi_calc_period'
       };
 
-      let history_data = {
-        event: 'node_removed',
-        eventValue: { "is_deleted": true },
-        kartaNodeId: param.id,
-        userId: this._commonService.getUserId(),
-        versionId: this.versionId,
-        kartaId: this.kartaId,
-        parentNodeId: param.parentId,
-        historyType: 'main'
-      }
-      this._kartaService.addKartaHistoryObject(history_data).subscribe(
-        (response: any) => { }
-      );
+      // let history_data = {
+      //   event: 'node_removed',
+      //   eventValue: { "is_deleted": true },
+      //   kartaNodeId: param.id,
+      //   userId: this._commonService.getUserId(),
+      //   versionId: this.versionId,
+      //   kartaId: this.kartaId,
+      //   parentNodeId: param.parentId,
+      //   historyType: 'main'
+      // }
+      // this._kartaService.addKartaHistoryObject(history_data).subscribe(
+      //   (response: any) => { }
+      // );
     });
   }
 
@@ -1977,11 +1977,17 @@ export class EditKartaComponent implements OnInit {
           else {
             this._commonService.warningToaster("Maximum Undo limit has reached..!!");
             $("#UndoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+            setTimeout(() => {
+              $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
+            }, 2000);
             this.undoRedoFlag = false;
           }
         } else {
           this._commonService.warningToaster("Maximum Undo limit has reached..!!");
           $("#UndoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+          setTimeout(() => {
+            $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
+          }, 2000);
           this.undoRedoFlag = false;
         }
       }
@@ -2045,17 +2051,17 @@ export class EditKartaComponent implements OnInit {
                 if (x.data.data) {
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
-                  this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
-                    this.getPhases("existing");
+                  this.getPhases("existing");
+                  this.getRemovableNode = null;
+                  this.getRemovableNodeId = "";
+                  this.undoRedoFlag = false;
+                  // this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
                     // this.D3SVG.updateRemovedNode(this.getRemovableNode);
                     // this.currentNode.phase = "";
                     // let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
                     // kartaNode.phase = phase;
                     // this.setKartaDimension();
-                    this.getRemovableNode = null;
-                    this.getRemovableNodeId = "";
-                    this.undoRedoFlag = false;
-                  });
+                  // });
                 }
                 break;
               case "phase_created":
@@ -2090,11 +2096,17 @@ export class EditKartaComponent implements OnInit {
           else {
             this._commonService.warningToaster("Maximum Redo limit has reached..!!");
             $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+            setTimeout(() => {
+              $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
+            }, 2000);
             this.undoRedoFlag = false;
           }
         } else {
           this._commonService.warningToaster("Maximum Redo limit has reached..!!");
           $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+          setTimeout(() => {
+            $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
+          }, 2000);
           this.undoRedoFlag = false;
         }
       }
