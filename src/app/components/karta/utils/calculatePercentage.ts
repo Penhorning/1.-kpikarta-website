@@ -50,7 +50,6 @@ export class CalculatePercentage {
 
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
-    console.log("filter by = ", this.filterTargetBy)
     let total_percentage: number[] = [];
     const children = (params.children || []);
     
@@ -138,7 +137,7 @@ export class CalculatePercentage {
           return targetValue;
         }
         const checkOtherPeriods = () => {
-          return (this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year");
+          return (this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year") && (element.id === this.kpiCalculationPeriod.nodeId)
         }
         // Set target value according to monthly
         if (element.kpi_calc_period === "monthly" && !checkOtherPeriods()) {
@@ -177,8 +176,8 @@ export class CalculatePercentage {
           }
         }
         // Set percentage for month-over-month and year-over-year
-        else if (this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year") {
-          if (element.id === this.kpiCalculationPeriod.nodeId) element.percentage = this.kpiPercentage;
+        else if ((this.kpiCalculationPeriod.frequency === "month-over-month" || this.kpiCalculationPeriod.frequency === "year-over-year") && (element.id === this.kpiCalculationPeriod.nodeId)) {
+          element.percentage = this.kpiPercentage;
         }
         // Set percentage for other kpi calculation periods
         if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {

@@ -9,7 +9,7 @@
          </div>
       </div>
       <div class="row">
-         <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-9': 'col-md-12'">
+         <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-9': 'col-md-12'">
             <!-- Latest Kartas -->
             <div class="white-karata-card" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
                <div class="row">
@@ -18,7 +18,7 @@
                         <h5>Latest Kartas</h5>
                      </div>
                   </div>
-                  <div class="col-lg-6 text-right">
+                  <div class="col-lg-6 text-right" *ngIf="kartasTotal > pageLimit">
                      <div class="view-all-text">
                         <a [routerLink]="['/karta/all']">View All</a>
                      </div>
@@ -27,7 +27,7 @@
                <div class="row mt-4">
                   <!-- card-one -->
                   <ng-container *ngFor="let karta of kartas; let i = index">
-                     <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-4': 'col-md-3'">
+                     <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-4': 'col-md-3'">
                         <div class="karata-card">
                            <div class="row">
                               <div class="col-8">
@@ -179,7 +179,7 @@
                         <h5>Latest Shared Kartas</h5>
                      </div>
                   </div>
-                  <div class="col-lg-6 text-right">
+                  <div class="col-lg-6 text-right" *ngIf="sharedKartasTotal > pageLimit">
                      <div class="view-all-text">
                         <a [routerLink]="['/karta/all']" fragment="tabs-2">View All</a>
                      </div>
@@ -188,7 +188,7 @@
                <div class="row mt-4">
                   <!-- card-one -->
                   <ng-container *ngFor="let karta of sharedKartas; let i = index">
-                     <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-4': 'col-md-3'">
+                     <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-4': 'col-md-3'">
                         <div class="karata-card">
                            <div class="row">
                               <div class="col-8">
@@ -312,8 +312,8 @@
                </ng-container>
             </div>
          </div>
-         <div class="col-lg-3" *ngIf="_commonService.getUserRole() !== 'user'">
-            <div class="total-section">
+         <div class="col-lg-3">
+            <div class="total-section" *ngIf="_commonService.getUserRole() !== 'user'">
                <div *ngFor="let user of registeredUsers; let i = index;">
                   <div class="row">
                      <div class="col-lg-12">
@@ -336,7 +336,7 @@
                   <div [innerHtml]="loader"></div>
                </ng-container>
             </div>
-            <div class="total-section mt-3" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+            <div class="total-section" [ngClass]="_commonService.getUserRole() === 'user' ? '' : 'mt-3'" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
                <div class="row">
                   <div class="col-lg-12">
                      <div class="total-inner-section pl-3 pr-3">
@@ -344,7 +344,7 @@
                            <div class="col-lg-8 col-6">
                               <h5 class="recent_heading">Recent Activities</h5>
                            </div>
-                           <div class="col-lg-4 col-6 text-right">
+                           <div class="col-lg-4 col-6 text-right" *ngIf="recentKPIsTotal > 3">
                               <div class="view-all-text">
                                  <a class="recent_view" [routerLink]="['/my-kpi']">View All</a>
                               </div>
@@ -361,17 +361,17 @@
                               <div class="col-lg-12 col-12">
                                  <h6>{{ kpi?.assigned_date | date: 'medium' }}</h6>
                                  <div class="karata-id recent_detail">
-                                    <div class="recent_username short_text py-2">
+                                    <div class="recent_karta short_text py-2">
                                        <img src="assets/img/own-icon.svg" class="mr-2">
-                                       {{ kpi?.contributor?.fullName}}
+                                       Creator: <span class="font-weight-normal" [title]="kpi?.contributor?.fullName">{{ kpi?.karta?.user?.fullName }}</span>
                                     </div>
                                     <div class="recent_karta short_text py-2">
                                        <img src="assets/img/karta.svg" class="mr-2">
-                                       {{ kpi?.karta?.name | titlecase }}
+                                       Karta: <span class="font-weight-normal" [title]="kpi?.karta?.name">{{ kpi?.karta?.name | titlecase }}</span>
                                     </div>
-                                    <div class="recent_node short_text pt-2">
+                                    <div class="recent_karta short_text pt-2">
                                        <img src="assets/img/node.svg" class="mr-2">
-                                       {{ kpi?.name }}
+                                       KPI: <span class="font-weight-normal" [title]="kpi?.name">{{ kpi?.name }}</span>
                                     </div>
                                  </div>
                               </div>

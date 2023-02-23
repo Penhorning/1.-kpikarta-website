@@ -12,6 +12,9 @@ export class CatalogService {
   getCatalogs(data: any) {
     return this._httpService.POST('/karta_catalogs/get-all', data);
   }
+  getCatalogById(id: string) {
+    return this._httpService.GET_BY_ID('/karta_catalogs/', id);
+  }
   getAllMembers(data: any) {
     return this._httpService.POST('/users/get-all-members', data);
   }
