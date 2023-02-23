@@ -193,7 +193,8 @@
                            <img src="assets/img/reset-zoom.svg" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn" />
                        </div>
                        <div class="col-lg-4 p-0">
-                           <div class="time-select-karta"><span class="last-saved">Last Saved:</span><span> {{karta?.updatedAt | date:'d/M/yy, H:mm'}}</span></div>
+                           <div><span class="last-saved">Last Saved:</span><span> {{ karta?.updatedAt | date:'d/M/yy, H:mm' }}</span></div>
+                           <div><span class="last-saved">Last Updated:</span><span> {{ lastUpdatedDate | date:'d/M/yy, H:mm' }}</span></div>
                        </div>
                    </div>
                </div>
@@ -208,7 +209,7 @@
                            </div>
                        </div>
                        <div class="col-lg-2 text-center">
-                           <button type="button" class="btn bg-light border" data-toggle="modal" data-target="#viewKartaModal">View</button>
+                           <button type="button" class="btn bg-light border" (click)="checkKartaFilter()" [ngClass]="viewKartaFilterApplied ? 'viewFilterActive' : ''">View</button>
                        </div>
                        <div class="col-lg-3 p-0">
                            <div class="icon-karta">
@@ -557,6 +558,20 @@
                        </div>
                    </div>
                </ng-container>
+               <div class="row">
+                    <div class="col-lg-12">
+                        <div class="goal-name mt-3">
+                            <h6>Description</h6>
+                        </div>
+                    </div>
+                </div>
+               <div class="row">
+                <div class="col-lg-12">
+                    <div class="search-sugg mt-3">
+                        <input type="text" class="form-control" [(ngModel)]="currentNodeDescription" (blur)="changeNodeDescription()" />
+                    </div>
+                </div>
+            </div>
                <div class="row mt-4">
                    <div class="col-lg-12">
                        <div class="right-side-bar-content">
@@ -1110,15 +1125,15 @@
                                            </div>
                                        </div>
                                    </div>
-                                   <div class="col-lg-6" *ngIf="showViewKartaNumber">
+                                   <div class="col-lg-6" *ngIf="showViewKartaDuration">
                                        <div class="form-group">
-                                           <label>Number <span class="text-danger">*</span></label>
+                                           <label>Duration <span class="text-danger">*</span></label>
                                            <select class="form-control custom-select-option" formControlName="number" [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors }">
                                                <option value="" selected>Select</option>
                                                <option *ngFor="let number of viewKartaNumbers" [value]="number.value">{{ number?.name }} </option>
                                            </select>
                                            <div *ngIf="(viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors" class="invalid-feedback">
-                                               <div *ngIf="viewKarta.number.errors.required">Number is required!</div>
+                                               <div *ngIf="viewKarta.number.errors.required">Duration is required!</div>
                                            </div>
                                        </div>
                                    </div>

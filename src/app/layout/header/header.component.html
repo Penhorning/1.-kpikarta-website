@@ -91,93 +91,100 @@
         </div>
         <!--User-Profile-->
         <div class="col-lg-7 col-md-7 col-7">
-           <div class="d-flex flex-row-reverse align-items-center">
-            <!-- Mobile Menu -->
-              <div class="mobile-menu">
-                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <a class="navbar-brand" href="#"></a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
-                    <div class="collapse navbar-collapse" id="navbarText">
-                       <ul class="navbar-nav mr-auto">
+          <ng-container *ngIf="!_commonService.getSession().token">
+            <div class="login_link">
+              <a [routerLink]="['/login']">Login</a>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="_commonService.getSession().token">
+            <div class="d-flex flex-row-reverse align-items-center">
+              <!-- Mobile Menu -->
+                <div class="mobile-menu">
+                   <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                      <a class="navbar-brand" href="#"></a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+                      <div class="collapse navbar-collapse" id="navbarText">
+                         <ul class="navbar-nav mr-auto">
+                            <li class="nav-item" routerLinkActive="active">
+                              <a class="nav-link" [routerLink]="['/dashboard']">Home</a>
+                            </li>
+                            <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+                              <a class="nav-link" [routerLink]="['/inventory']">Inventory</a>
+                            </li>
+                            <li class="nav-item" routerLinkActive="active">
+                              <a class="nav-link" [routerLink]="['/karta/all']">Kartas</a>
+                          </li>
+                          <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
+                              <a class="nav-link" [routerLink]="['/my-kpi']">My KPIs</a>
+                          </li>
                           <li class="nav-item" routerLinkActive="active">
-                            <a class="nav-link" [routerLink]="['/dashboard']">Home</a>
+                              <a class="nav-link" [routerLink]="['/marketplace']">Market Place</a>
                           </li>
-                          <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
-                            <a class="nav-link" [routerLink]="['/inventory']">Inventory</a>
+                          <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserRole() !== 'user'">
+                              <a class="nav-link" [routerLink]="['/members']">Members</a>
                           </li>
-                          <li class="nav-item" routerLinkActive="active">
-                            <a class="nav-link" [routerLink]="['/karta/all']">Kartas</a>
-                        </li>
-                        <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
-                            <a class="nav-link" [routerLink]="['/my-kpi']">My KPIs</a>
-                        </li>
-                        <li class="nav-item" routerLinkActive="active">
-                            <a class="nav-link" [routerLink]="['/marketplace']">Market Place</a>
-                        </li>
-                        <li class="nav-item" routerLinkActive="active" *ngIf="_commonService.getUserRole() !== 'user'">
-                            <a class="nav-link" [routerLink]="['/members']">Members</a>
-                        </li>
-                       </ul>
-                    </div>
-                 </nav>
-              </div>
-              <!-- Desktop Menu -->
-              <div class="User_profile">
-                 <ul class="navbar-nav profile-menu">
-                    <li class="nav-item dropdown">
-                       <a class="nav-link dropdown-toggle cursor_pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
-                        <img
-                        [src]="_commonService.getSession().profilePic ? _commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic : 'assets/img/avatar.png'"
-                        class="rounded-circle user_profile_img">
-                      </a>
-                       <ul class="dropdown-menu custom_dropdown" aria-labelledby="navbarDropdown">
-                          <li>
-                            <a class="dropdown-item" [routerLink]="['/my-profile']">
-                              <img src="assets/img/my-profile.svg" class="mr-2">
-                              My Profile
-                            </a>
-                          </li>
-                          <ng-container *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+                         </ul>
+                      </div>
+                   </nav>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="User_profile">
+                   <ul class="navbar-nav profile-menu">
+                      <li class="nav-item dropdown">
+                         <a class="nav-link dropdown-toggle cursor_pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                          <img
+                          [src]="_commonService.getSession().profilePic ? _commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic : 'assets/img/avatar.png'"
+                          class="rounded-circle user_profile_img">
+                        </a>
+                         <ul class="dropdown-menu custom_dropdown" aria-labelledby="navbarDropdown">
                             <li>
-                              <a class="dropdown-item" [routerLink]="['/my-suggestion']">
-                                <img src="assets/img/Suggestion.svg" class="mr-2">
-                                My Suggestion
+                              <a class="dropdown-item" [routerLink]="['/my-profile']">
+                                <img src="assets/img/my-profile.svg" class="mr-2">
+                                My Profile
                               </a>
                             </li>
-                          </ng-container>
-                          <ng-container *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'billing_staff'">
+                            <ng-container *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+                              <li>
+                                <a class="dropdown-item" [routerLink]="['/my-suggestion']">
+                                  <img src="assets/img/Suggestion.svg" class="mr-2">
+                                  My Suggestion
+                                </a>
+                              </li>
+                            </ng-container>
+                            <ng-container *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'billing_staff'">
+                              <li>
+                                <a class="dropdown-item" [routerLink]="['/billing']">
+                                  <img src="assets/img/plan.svg" class="mr-2">
+                                  Billing
+                                </a>
+                              </li>
+                            </ng-container>
                             <li>
-                              <a class="dropdown-item" [routerLink]="['/billing']">
-                                <img src="assets/img/plan.svg" class="mr-2">
-                                Billing
+                              <a class="dropdown-item" [routerLink]="['/settings']">
+                                <img src="assets/img/Settings-blue.svg" class="mr-2">
+                                Settings
                               </a>
                             </li>
-                          </ng-container>
-                          <li>
-                            <a class="dropdown-item" [routerLink]="['/settings']">
-                              <img src="assets/img/Settings-blue.svg" class="mr-2">
-                              Settings
-                            </a>
-                          </li>
-                         <li>
-                            <a class="dropdown-item logout-custom cursor_pointer" (click)="logout()">
-                              <img src="assets/img/logout.svg" class="mr-1">
-                              Log Out
-                            </a>
-                         </li>
-                       </ul>
-                    </li>
-                 </ul>
-              </div>
-              <div class="username">
-                <!--<label class="mobile-name mr-0 mr-1">AB</label>-->
-                <label class="mr-2 desktop-name short_text user_label_name">{{_commonService.getSession().name}}</label>
-              </div>
-              <div class="notification mr-2">
-                <a [routerLink]="['/notifications']">
-                  <img src="assets/img/notification.svg">
-                </a>
-              </div>
-           </div>
+                           <li>
+                              <a class="dropdown-item logout-custom cursor_pointer" (click)="logout()">
+                                <img src="assets/img/logout.svg" class="mr-1">
+                                Log Out
+                              </a>
+                           </li>
+                         </ul>
+                      </li>
+                   </ul>
+                </div>
+                <div class="username">
+                  <!--<label class="mobile-name mr-0 mr-1">AB</label>-->
+                  <label class="mr-2 desktop-name short_text user_label_name">{{_commonService.getSession().name}}</label>
+                </div>
+                <div class="notification mr-2">
+                  <a [routerLink]="['/notifications']">
+                    <img src="assets/img/notification.svg">
+                  </a>
+                </div>
+             </div>
+          </ng-container>
         </div>
         <!-- End User-Profile --> 
      </div>

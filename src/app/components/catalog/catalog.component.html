@@ -385,7 +385,10 @@ aria-labelledby="staticBackdropLabel" aria-hidden="true">
          </div>
          <div class="modal-body p-0">
             <div class="share-link-modal">
-               <img [src]="viewingCatalog?.thumbnail">
+               <ng-container *ngIf="catalogLoading">
+                  <div class="p-5" [innerHtml]="loader"></div>
+               </ng-container>
+               <img [src]="viewingCatalog?.thumbnail" *ngIf="!catalogLoading">
             </div>
          </div>
       </div>

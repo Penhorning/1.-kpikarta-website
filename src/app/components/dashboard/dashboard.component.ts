@@ -16,12 +16,14 @@ declare const $: any;
 export class DashboardComponent implements OnInit {
 
   kartas: any = [];
+  kartasTotal: number = 0;
   users: any = [];
   findType: string = "";
   pageLimit: number = 6;
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
+  sharedKartasTotal: number = 0;
   registeredUsers: any = [];
 
   loadingKartas: boolean = false;
@@ -38,6 +40,7 @@ export class DashboardComponent implements OnInit {
   emails: any = [];
 
   recentKPIs: any = [];
+  recentKPIsTotal: number = 0;
 
   constructor(
     public _commonService: CommonService,
@@ -102,6 +105,7 @@ export class DashboardComponent implements OnInit {
     this._kartaService.getAllKartas(data).subscribe((response: any) => {
       if (response) {
         this.kartas = response.kartas[0].data;
+        this.kartasTotal = response.kartas[0].metadata[0].total;
       } else this.kartas = [];
     }).add(() => this.loadingKartas = false );
   }
@@ -137,6 +141,7 @@ export class DashboardComponent implements OnInit {
           return item;
         });
         this.sharedKartas = response.kartas[0].data;
+        this.sharedKartasTotal = response.kartas[0].metadata[0].total;
       } else this.sharedKartas = [];
     }).add(() => this.loadingSharedKartas = false );
   }
@@ -301,13 +306,14 @@ export class DashboardComponent implements OnInit {
   // Get recent kpis
   getRecentKPIs() {
     let data = {
-      limit: 6,
+      limit: 3,
       kpiType: "assigned",
       userId: this._commonService.getUserId()
     }
     this._dashboardService.getMyKPIs(data).subscribe(
       (response: any) => {
         this.recentKPIs = response.kpi_nodes[0].data;
+        this.recentKPIsTotal = response.kpi_nodes[0].metadata[0].total;
       }
     );
   }

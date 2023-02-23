@@ -23,6 +23,7 @@ export class EditKartaComponent implements OnInit {
 
   unauthorizedUser: any;
   kartaId: string = '';
+  lastUpdatedDate: string = '';
   karta: any;
   currentNode: any = {};
   // currentPhase: any;
@@ -86,7 +87,6 @@ export class EditKartaComponent implements OnInit {
         this.onInventoryDrop(node, parent);
       },
       nodeItem: (d: any) => {
-        console.log(d);
         this.updateNodeProperties(d);
       },
       removeNode: (d: any) => {
@@ -107,6 +107,7 @@ export class EditKartaComponent implements OnInit {
   /* Node properties */
   maxFiscalStartDate: any = `${new Date().getFullYear()}-01-01`;
   currentNodeName: string = '';
+  currentNodeDescription: string = '';
   currentNodeWeight: number = 0;
   currentNodeAchievedValue: number = 0;
   // Typography
@@ -197,9 +198,10 @@ export class EditKartaComponent implements OnInit {
   get catalog() { return this.catalogForm.controls; }
   // View karta variables
   viewKartaNumbers: any = [];
-  showViewKartaNumber: boolean = false;
+  showViewKartaDuration: boolean = false;
   viewKartaSubmitted: boolean = false;
   viewKartaSubmitFlag: boolean = false;
+  viewKartaFilterApplied: boolean = false;
   viewKartaForm = this.fb.group({
     type: ['', [Validators.required]]
   });
@@ -244,7 +246,7 @@ export class EditKartaComponent implements OnInit {
         { name: "4th Quarter", value: 4 }
       ]
     }
-    this.showViewKartaNumber = true;
+    this.showViewKartaDuration = true;
     this.viewKartaForm.addControl("number", this.fb.control('', [Validators.required]));
   }
 
@@ -257,6 +259,7 @@ export class EditKartaComponent implements OnInit {
           this.karta = response.data.karta.kartaData;
           this.versionId = response.data.karta.kartaData.versionId;
           if (this.karta.node) {
+            this.viewKartaFilterApplied = true;
             this.reArrangePhases(response.data.karta.phases);
             this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
             this.karta.node.border_color = this.setColors(this.karta.node.percentage);
@@ -274,6 +277,18 @@ export class EditKartaComponent implements OnInit {
         } else this._commonService.errorToaster(response.data.message);
       }
     );
+  }
+
+  checkKartaFilter() {
+    if (this.viewKartaFilterApplied) {
+      jqueryFunctions.enableChart();
+      jqueryFunctions.enableElement("#phase_tabs");
+      jqueryFunctions.setValue("#chartMode", "enable");
+      jqueryFunctions.setAttribute("#chartMode", "disabled", false);
+      this.viewKartaForm.reset();
+      this.viewKartaFilterApplied = false;
+      this.showViewKartaDuration = false;
+    } else jqueryFunctions.showModal('viewKartaModal');
   }
 
   ngOnInit(): void {
@@ -302,6 +317,8 @@ export class EditKartaComponent implements OnInit {
     this.getAllVersion();
     // Get all inventories
     this.getInventories();
+    // Get last updated kpi node
+    this.lastUpdatedKpiNode();
   }
 
   montiorBy(event: any) {
@@ -357,6 +374,15 @@ export class EditKartaComponent implements OnInit {
   clearInventorySearch() {
     this.inventory_search_text = "";
     this.getInventories();
+  }
+
+  // Get last updated kpi node
+  lastUpdatedKpiNode() {
+    this._kartaService.getLastUpdatedKpiNode({kartaId: this.kartaId}).subscribe(
+      (response: any) => {
+        this.lastUpdatedDate = response.kpi_node.updatedAt;
+      }
+    );
   }
 
   // ---------FormArray Functions defined Below----------
@@ -718,6 +744,7 @@ export class EditKartaComponent implements OnInit {
     this.selectedColor = param.text_color;
     this.selectedAlignment = param.alignment;
     this.currentNodeName = param.name;
+    this.currentNodeDescription = param.node_description;
     this.currentNodeWeight = param.weightage;
     this.currentNodeAchievedValue = param.achieved_value;
 
@@ -873,6 +900,13 @@ export class EditKartaComponent implements OnInit {
     if (this.currentNodeName !== "") {
       let node = this.currentNode;
       this.updateNode('name', this.currentNodeName, 'node_updated', node);
+    }
+  }
+  // Change node description
+  changeNodeDescription() {
+    if (this.currentNodeDescription !== "") {
+      let node = this.currentNode;
+      this.updateNode('node_description', this.currentNodeDescription, 'node_updated', node);
     }
   }
   // Change weightage
@@ -1228,8 +1262,8 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.karta = response;
         if (filterTargetBy) {
-          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, 0, filterTargetBy);
-        } else this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, 0);
+          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy);
+        } else this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);

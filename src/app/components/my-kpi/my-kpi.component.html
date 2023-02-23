@@ -8,7 +8,7 @@
           <h4 class="pt-3">KPIs Dashboard</h4>
         </div>
       </div>
-      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2">
+      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2" *ngIf="showStats">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('')">
             <div class="d-flex align-self-center">
@@ -25,7 +25,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2">
+      <div class="col-lg-2 col-sm-4 mb-lg-0 mb-sm-0 mb-2 px-2" *ngIf="showStats">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('in_progress')">
             <div class="d-flex align-self-center">
@@ -42,7 +42,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-2 col-sm-4 px-2">
+      <div class="col-lg-2 col-sm-4 px-2" *ngIf="showStats">
         <div class="all-section">
           <div class="row cursor_pointer" (click)="filterByStatus('completed')">
             <div class="d-flex align-self-center">
@@ -59,7 +59,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-3">
+      <div class="col-lg-3 ml-auto">
         <div class="search-bar">
           <form action="" class="search-form">
             <div class="form-group search-filed m-0">
