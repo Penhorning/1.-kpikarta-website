@@ -65,7 +65,7 @@
                           <tr>
                             <!-- <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td> -->
                             <td>{{invoice.lines.data[0].price.nickname}}</td>
-                            <td>${{invoice.amount_paid / 100}}</td>
+                            <td>${{invoice.amount_paid}}</td>
                             <td class="paid">{{invoice.status | titlecase}}</td>
                             <td>{{invoice.created * 1000 | date}}</td>
                           </tr>

@@ -1942,11 +1942,17 @@ export class EditKartaComponent implements OnInit {
           else {
             this._commonService.warningToaster("Maximum Undo limit has reached..!!");
             $("#UndoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+            setTimeout(() => {
+              $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
+            }, 2000);
             this.undoRedoFlag = false;
           }
         } else {
           this._commonService.warningToaster("Maximum Undo limit has reached..!!");
           $("#UndoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+          setTimeout(() => {
+            $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
+          }, 2000);
           this.undoRedoFlag = false;
         }
       }
@@ -2055,11 +2061,17 @@ export class EditKartaComponent implements OnInit {
           else {
             this._commonService.warningToaster("Maximum Redo limit has reached..!!");
             $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+            setTimeout(() => {
+              $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
+            }, 2000);
             this.undoRedoFlag = false;
           }
         } else {
           this._commonService.warningToaster("Maximum Redo limit has reached..!!");
           $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
+          setTimeout(() => {
+            $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
+          }, 2000);
           this.undoRedoFlag = false;
         }
       }
