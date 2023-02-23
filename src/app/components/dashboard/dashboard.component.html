@@ -9,7 +9,7 @@
          </div>
       </div>
       <div class="row">
-         <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-9': 'col-md-12'">
+         <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-9': 'col-md-12'">
             <!-- Latest Kartas -->
             <div class="white-karata-card" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
                <div class="row">
@@ -27,7 +27,7 @@
                <div class="row mt-4">
                   <!-- card-one -->
                   <ng-container *ngFor="let karta of kartas; let i = index">
-                     <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-4': 'col-md-3'">
+                     <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-4': 'col-md-3'">
                         <div class="karata-card">
                            <div class="row">
                               <div class="col-8">
@@ -188,7 +188,7 @@
                <div class="row mt-4">
                   <!-- card-one -->
                   <ng-container *ngFor="let karta of sharedKartas; let i = index">
-                     <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-4': 'col-md-3'">
+                     <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-4': 'col-md-3'">
                         <div class="karata-card">
                            <div class="row">
                               <div class="col-8">
@@ -312,8 +312,8 @@
                </ng-container>
             </div>
          </div>
-         <div class="col-lg-3" *ngIf="_commonService.getUserRole() !== 'user'">
-            <div class="total-section">
+         <div class="col-lg-3">
+            <div class="total-section" *ngIf="_commonService.getUserRole() !== 'user'">
                <div *ngFor="let user of registeredUsers; let i = index;">
                   <div class="row">
                      <div class="col-lg-12">
@@ -336,7 +336,7 @@
                   <div [innerHtml]="loader"></div>
                </ng-container>
             </div>
-            <div class="total-section mt-3" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+            <div class="total-section" [ngClass]="_commonService.getUserRole() === 'user' ? '' : 'mt-3'" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
                <div class="row">
                   <div class="col-lg-12">
                      <div class="total-inner-section pl-3 pr-3">
