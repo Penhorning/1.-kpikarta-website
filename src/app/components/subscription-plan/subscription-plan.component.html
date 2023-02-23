@@ -24,13 +24,10 @@
                     </div>
                 </div>
             </div> -->
-            <div class="col-md-5 mx-auto">
+            <div class="col-md-4 mx-auto">
                 <div class="basic_plan">
-                    <!-- <h6>CREATOR</h6> -->
-                    <img src="assets/img/basic.png" alt="" />
-                    <h1>${{prices ? prices.month : ""}}/MONTH</h1>
                     <div class="row">
-                        <div class="col-sm-10 mt-3">Create and edit Karta</div>
+                        <div class="col-sm-10 mt-3">Create and edit Kartas</div>
                         <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
                         <div class="col-sm-10 mt-3">Create Catalogs in which user can save Kartas, Branches, measures,
                             and metrics for reuse</div>
@@ -44,6 +41,29 @@
                         <div class="col-sm-3 mt-3 text-center">
                             <p class="default_color">Unlimited</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mx-auto">
+                <div class="basic_plan">
+                    <!-- <h6>CREATOR</h6> -->
+                    <!-- <img src="assets/img/basic.png" alt="" /> -->
+                    <h1>${{prices ? prices.month : ""}}/MONTHLY</h1>
+                    <div class="row">
+                        <!-- <div class="col-sm-10 mt-3">Create and edit Karta</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Create Catalogs in which user can save Kartas, Branches, measures,
+                            and metrics for reuse</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Share Elements (Catalogs, Kartas, Measures, Metrics) with
+                            Department, Company and Public</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-10 mt-3">Enter and edit KPI Targets and actuals</div>
+                        <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
+                        <div class="col-sm-9 mt-3">Kartas Created</div>
+                        <div class="col-sm-3 mt-3 text-center">
+                            <p class="default_color">Unlimited</p>
+                        </div> -->
                         <div class="col-sm-12 mt-4 text-center">
                             <button class="btn_sty_2" (click)="selectPlan('monthly')">
                                 <div class="spinner-border align-top" role="status" *ngIf="submitFlag">
@@ -57,13 +77,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-5 mx-auto">
+            <div class="col-md-4 mx-auto">
                 <div class="basic_plan">
                     <!-- <h6>CREATOR</h6> -->
-                    <img src="assets/img/basic.png" alt="" />
-                    <h1>${{prices ? prices.year : ""}}/YEAR</h1>
+                    <!-- <img src="assets/img/basic.png" alt="" /> -->
+                    <h1>${{prices ? prices.year : ""}}/ANNUALLY</h1>
                     <div class="row">
-                        <div class="col-sm-10 mt-3">Create and edit Karta</div>
+                        <!-- <div class="col-sm-10 mt-3">Create and edit Karta</div>
                         <div class="col-sm-2 mt-3"><img src="assets/img/check_icon.png" alt="" /></div>
                         <div class="col-sm-10 mt-3">Create Catalogs in which user can save Kartas, Branches, measures,
                             and metrics for reuse</div>
@@ -76,7 +96,7 @@
                         <div class="col-sm-9 mt-3">Kartas Created</div>
                         <div class="col-sm-3 mt-3 text-center">
                             <p class="default_color">Unlimited</p>
-                        </div>
+                        </div> -->
                         <div class="col-sm-12 mt-4 text-center">
                             <button class="btn_sty_2" (click)="selectPlan('yearly')">
                                 <div class="spinner-border align-top" role="status" *ngIf="submitFlag">

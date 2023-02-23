@@ -39,7 +39,8 @@ export class CommonService {
   formValidation: any  = {
     blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
     email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
-    password: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()+=\?;,./{}|\":<>\[\]\\\' ~_-`]).{8,}/
+    password: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()+=\?;,./{}|\":<>\[\]\\\' ~_-`]).{8,}/,
+    only_string: '^[a-zA-Z ]*$',
   }
 
   // Datepicker config

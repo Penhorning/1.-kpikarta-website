@@ -32,19 +32,43 @@ export class CreateKartaComponent implements OnInit {
   // On submit
   onSubmit() {
     this.submitted = true;
-
     if (this.kartaForm.valid) {
       this.submitFlag = true;
-
       this.kartaForm.value.userId = this._commonService.getUserId();
-      this._kartaService.createKarta(this.kartaForm.value).subscribe(
-        (response: any) => {
-          this.router.navigate(['/karta/edit', response.id]);
+      this._kartaService.findKartaByUser(this._commonService.getUserId()).subscribe(
+        count => {
+          if(count.length > 0) {
+            this._kartaService.createKarta(this.kartaForm.value).subscribe(
+              (response: any) => {
+                location.replace(`/karta/edit/${response.id}`);
+              },
+              (error: any) => {
+                this.submitFlag = false;
+              }
+            )
+          } else {
+            this._kartaService.createKarta(this.kartaForm.value).subscribe(
+              (response: any) => {
+                this._commonService.updateSession('newkartaId', response.id);
+                this._kartaService.getSampleKarta().subscribe(
+                  (sample) => {
+                    if(sample.length > 0) {
+                      this.router.navigate(['/karta/trial', sample[0].id]);
+                    }
+                  },
+                  (error: any) => {
+                    this.submitFlag = false;
+                  }
+                )
+              },
+              (error: any) => {
+                this.submitFlag = false;
+            })
+          }
         },
         (error: any) => {
           this.submitFlag = false;
-        }
-      );
+      });
     }
   }
 

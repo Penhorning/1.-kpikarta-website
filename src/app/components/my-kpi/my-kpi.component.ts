@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx'
 
 type AOA = Array<Array<any>>;
 declare const $: any;
@@ -42,6 +42,7 @@ export class MyKpiComponent implements OnInit {
   statusType: any = "";
   // KPI statistics
   stats: any;
+  showStats: boolean = true;
   search_text: string = "";
   maxDate: Date;
   kpiType: string = 'assigned'
@@ -78,7 +79,8 @@ export class MyKpiComponent implements OnInit {
   importSubmitFlag: boolean = false;
   nodes: any = []
   openState: boolean = false;
-  wsname:any;
+  wsname: any;
+
   // Target filter
   target: any = [
     { frequency: "", value: 0, percentage: 0 }
@@ -112,14 +114,25 @@ export class MyKpiComponent implements OnInit {
   ];
   // Header list
   headerList = [
-    { name: 'Karta', sort: '' },
-    { name: 'KPI', sort: '' },
-    { name: 'Target', sort: '' },
-    { name: 'Actual', sort: '' },
-    { name: 'Last Edited', sort: '' },
-    { name: 'Due Date', sort: '' },
-    { name: 'Days Left', sort: '' },
-    { name: 'Completion', sort: '' }
+    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'KPI', sortBy: 'name', sort: '' },
+    { name: 'Target', sortBy: 'value', sort: '', filter: true },
+    { name: 'Actual', sortBy: 'achieved_value', sort: '' },
+    { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
+    { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
+    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
+  ];
+  headerList2 = [
+    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'KPI', sortBy: 'name', sort: '' },
+    { name: 'Target', sortBy: 'value', sort: '', filter: true },
+    { name: 'Actual', sortBy: 'achieved_value', sort: '' },
+    { name: 'Assigned To', sortBy: 'contributor.email', sort: '' },
+    { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
+    { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
+    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   // Sort var
   sortDir = 1;
@@ -150,6 +163,7 @@ export class MyKpiComponent implements OnInit {
 
   @ViewChild('fileUploader')
   fileUploader!: ElementRef;
+  
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
     this.maxDate = new Date();
   }
@@ -165,14 +179,15 @@ export class MyKpiComponent implements OnInit {
 
     // Ng Multi Select Dropdown properties
     this.dropdownSettings = {
-      enableCheckAll: false,
+      enableCheckAll: true,
       singleSelection: false,
       idField: '_id',
       textField: 'nameAndEmail',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       allowSearchFilter: true,
-      disabled: this.isDisabled
+      disabled: this.isDisabled,
+      itemsShowLimit: 3
     }
     this.addMetricsData();
   }
@@ -347,8 +362,9 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Calculate days based on due date
-  calculateDueDays(due_date: string) {
-    return moment(due_date).diff(moment(), 'days') + 1;
+  calculateDueDays(start_date: string, due_date: string) {
+    if (start_date) return moment(due_date).diff(moment(), 'days') + 1;
+    return 0;
   }
 
   // Get all members
@@ -423,6 +439,15 @@ export class MyKpiComponent implements OnInit {
   // Ng Multi Select Dropdown
   onItemSelect(item: any) {
     this.selectedUsers.push({ userId: item._id });
+
+  }
+
+  onSelectAll(items: any) {
+    items.forEach((item: any) => {this.selectedUsers.push({ userId: item._id })});
+  }
+
+  onDeSelectAll(items: any) {
+    this.selectedUsers = []
   }
 
   onItemDeSelect(item: any) {
@@ -458,22 +483,26 @@ export class MyKpiComponent implements OnInit {
 
   // Submit shared data
   onSubmitSharedData() {
-    let data = {
-      nodeId: this.sharingKarta._id,
-      userIds: this.selectedUsers
-    }
-    this.sharedSubmitFlag = true;
-    this._myKpiService.shareNode(data).subscribe(
-      (response: any) => {
-        if (response) this._commonService.successToaster("Your have shared the node successfully");
-        $('#staticBackdrop').modal('hide');
-        this.sharingKarta = null;
-        this.selectedUsers = []
-        this.pageIndex = 0;
-        this.getMyKPIsList();
-      },
-      (error: any) => { }
-    ).add(() => this.sharedSubmitFlag = false);
+      if(this.selectedUsers.length === 0){
+        this._commonService.errorToaster('Please select the users!')
+      }else {
+        let data = {
+          nodeId: this.sharingKarta._id,
+          userIds: this.selectedUsers
+        }
+        this.sharedSubmitFlag = true;
+        this._myKpiService.shareNode(data).subscribe(
+          (response: any) => {
+            if (response) this._commonService.successToaster("Your have shared the node successfully!");
+            $('#shareModal').modal('hide');
+            this.sharingKarta = null;
+            this.selectedUsers = []
+            this.pageIndex = 0;
+            this.getMyKPIsList();
+          },
+          (error: any) => { }
+        ).add(() => this.sharedSubmitFlag = false);
+      }
   }
 
   // Close model
@@ -541,8 +570,10 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Tab switching
-  onTabSwitch(e: string) {
-    this.kpiType = e;
+  onTabSwitch(type: string) {
+    type === "assigned" ? this.showStats = true : this.showStats = false;
+    this.statusType = '';
+    this.kpiType = type;
     this.pageIndex = 0;
     this.getMyKPIsList();
   }
@@ -720,15 +751,14 @@ export class MyKpiComponent implements OnInit {
 
    this.pushCSVData(kpis2);
     const options = {
+      bom: false,
       filename: 'KPIs',
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalSeparator: '.',
       showLabels: true,
       showTitle: true,
       title: 'My KPI Export',
       useTextFile: false,
-      useBom: true,
+      useBom: false,
+      encoding: 'UTF-8',
       headers: ['Id', 'Karta Id', 'KPI Name', 'Karta Name', 'Node Type', 'Achieved Value', 'Formula', 'Target Value', 'Percentage', 'Frequency']
     };
 
