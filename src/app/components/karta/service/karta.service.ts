@@ -12,6 +12,9 @@ export class KartaService {
   getInventories(data: any) {
     return this._httpService.POST('/karta_catalogs/get-all', data);
   }
+  getLastUpdatedKpiNode(data: any) {
+    return this._httpService.POST('/karta_nodes/last-updated-kpi-node', data);
+  }
   getPhases(kartaId: string) {
     return this._httpService.GET(`/karta_phases?filter[where][kartaId]=${kartaId}&filter[where][is_deleted]=false`);
   }

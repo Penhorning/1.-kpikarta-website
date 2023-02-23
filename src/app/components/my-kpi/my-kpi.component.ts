@@ -42,6 +42,7 @@ export class MyKpiComponent implements OnInit {
   statusType: any = "";
   // KPI statistics
   stats: any;
+  showStats: boolean = true;
   search_text: string = "";
   maxDate: Date;
   kpiType: string = 'assigned'
@@ -569,8 +570,10 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Tab switching
-  onTabSwitch(e: string) {
-    this.kpiType = e;
+  onTabSwitch(type: string) {
+    type === "assigned" ? this.showStats = true : this.showStats = false;
+    this.statusType = '';
+    this.kpiType = type;
     this.pageIndex = 0;
     this.getMyKPIsList();
   }

@@ -32,7 +32,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     getSVGSize(treeData);
 
     var i = 0, duration = 750;
-    tree = d3.layout.tree().nodeSize([90, 60]);
+    // tree = d3.layout.tree().nodeSize([90, 60]);
+
+    tree = d3.layout.tree()
+        .nodeSize([93, 60])
+        .separation(function (a, b) {
+            return a.parent == b.parent ? .7 : .7;
+        });
 
     // Options
     options.update = update;

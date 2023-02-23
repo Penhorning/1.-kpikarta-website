@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonService } from '@app/shared/_services/common.service';
 import { CatalogService } from './service/catalog.service';
 
@@ -44,11 +44,13 @@ export class CatalogComponent implements OnInit {
   totalCatalogs: number = 0;
   // Loding var
   loading: boolean = false;
+  sharedLoading: boolean = false;
+  catalogLoading: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
 
-  constructor(private _catalogService: CatalogService, private _commonService: CommonService, private changeDetectorRef: ChangeDetectorRef) { }
+  constructor(private _catalogService: CatalogService, private _commonService: CommonService) { }
 
   ngOnInit(): void {
     this.getAllCatalogs();
@@ -99,7 +101,7 @@ export class CatalogComponent implements OnInit {
       (response: any) => {
         if (response.catalogs[0].data.length > 0) {
           this.catalogs = response.catalogs[0].data;
-          this.totalCatalogs = response.catalogs[0].metadata[0].total; 
+          this.totalCatalogs = response.catalogs[0].metadata[0].total;
         } else this.totalCatalogs = 0;
       }
     ).add(() => this.loading = false);
@@ -116,7 +118,7 @@ export class CatalogComponent implements OnInit {
       type: this.catalogType
     }
 
-    this.loading = true;
+    this.sharedLoading = true;
     this.sharedCatalogs = [];
     this.sharedPageIndex = 1;
 
@@ -127,7 +129,7 @@ export class CatalogComponent implements OnInit {
           this.sharedTotalCatalogs = response.catalogs[0].metadata[0].total;
         } else this.sharedTotalCatalogs = 0;
       }
-    ).add(() => this.loading = false);
+    ).add(() => this.sharedLoading = false);
   }
 
   // Get all members
@@ -148,7 +150,12 @@ export class CatalogComponent implements OnInit {
 
   // View catalog
   onView(catalog: any) {
-    this.viewingCatalog = catalog;
+    this.catalogLoading = true;
+    this._catalogService.getCatalogById(catalog._id).subscribe(
+      (response: any) => {
+        this.viewingCatalog = response;
+      }
+    ).add(() => this.catalogLoading = false);
   }
 
   // Update catalog
