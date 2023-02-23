@@ -40,7 +40,7 @@ export class CreateKartaComponent implements OnInit {
           if(count.length > 0) {
             this._kartaService.createKarta(this.kartaForm.value).subscribe(
               (response: any) => {
-                this.router.navigate(['/karta/edit', response.id]);
+                location.replace(`/karta/edit/${response.id}`);
               },
               (error: any) => {
                 this.submitFlag = false;

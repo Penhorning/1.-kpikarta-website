@@ -169,10 +169,10 @@ export class TrialKartaComponent implements OnInit {
       //   jqueryFunctions.openRightSidebar();
     });
     this.introJS.oncomplete(() => {
-      this.router.navigate(['/karta/edit', this.newkartaId]);
+      location.replace(`/karta/edit/${this.newkartaId}`);
     });
     this.introJS.onexit(() => {
-      this.router.navigate(['/karta/edit', this.newkartaId]);
+      location.replace(`/karta/edit/${this.newkartaId}`);
     });
   }
 
@@ -207,8 +207,6 @@ export class TrialKartaComponent implements OnInit {
         this.karta = response;
         this.versionId = response.versionId;
         if (this.karta.node) {
-          this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
-          this.karta.node.border_color = this.setColors(this.karta.node.percentage);
           BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
           jqueryFunctions.disableChart();
           setTimeout(() => {

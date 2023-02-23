@@ -3,6 +3,7 @@
  * Return the HTML representation of a node.
  */
 export default (node, source) => {
+  console.log("mag a ", node)
   return `
     <div id="nodeItem" nodeid=${node.id} class="d-flex align-self-center ${node.children || node._children ? 'hasChildren' : ''}">
       <div class="center-options" id="${node.phase.name == 'Goal' ? 'step3' : ''}">
