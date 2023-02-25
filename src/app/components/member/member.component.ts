@@ -40,6 +40,7 @@ export class MemberComponent implements OnInit {
   noDataAvailable: any = this._commonService.noDataAvailable;
   loading = true;
   defaultEmail: string = "";
+  defaultLicense: string = "";
 
   // ngx-intl-tel-input config
   separateDialCode = true;
@@ -179,6 +180,7 @@ export class MemberComponent implements OnInit {
         roleId: data.Role._id ? data.Role._id : '',
       });
       this.defaultEmail = data.email ? data.email : ''; 
+      this.defaultLicense = data.license._id ? data.license._id : '';
     }
   }
 
@@ -229,26 +231,75 @@ export class MemberComponent implements OnInit {
       }
       // When update any existing user
       else if (this.checkFormType === "UPDATE") {
+        let flag = false;
+        let newLicenseName = "";
         formData.type = "invited_user";
         formData.userId = this.currentUser._id;
-        if(formData.email !== this.defaultEmail) {
+        if (formData.email !== this.defaultEmail) {
           formData.defaultEmail = this.defaultEmail;
         }
+        
+        // if (formData.licenseId !== this.defaultLicense) {
+        //   let licenseName = this.licenses.filter((lsc: any) => {
+        //     return lsc.id == formData.licenseId ? lsc.name : null;
+        //   });
+        //   if(licenseName[0].name != "Spectator") {
+        //     flag = true;
+        //     newLicenseName = licenseName[0].name
+        //   }
+        // }
         if (!this.showDepartment) formData.departmentId = "";
-        this._memberService.updateUser(formData, this.currentUser._id).subscribe(
-          (response: any) => {
-            this.resetFormModal();
-            this.defaultEmail = "";
-            this._commonService.successToaster("Member updated successfully!");
-            this.submitFlag = false;
-          },
-          (error: any) => {
-            if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-              this._commonService.errorToaster("Email is already registered, please try a different one");
+
+        if(formData.licenseId !== this.defaultLicense) {
+          flag = true;
+          let licenseName = this.licenses.filter((lsc: any) => {
+            return lsc.id == formData.licenseId ? lsc.name : null;
+          });
+
+          newLicenseName = licenseName[0].name;
+        }
+        if(flag) {
+          this._memberService.updateUser(formData, this.currentUser._id).subscribe(
+            (response: any) => {
+              if (flag) {
+                this._memberService.updateSubscription({userId: this.currentUser._id, licenseName: newLicenseName }).subscribe(
+                  (res) => {},
+                  (err) => {
+                    console.log(err);
+                    this._commonService.errorToaster("Something went wrong.. Please try again..!!");
+                    this.submitFlag = false;
+                  }
+                )
+              }
+  
+              this.resetFormModal();
+              this.defaultEmail = "";
+              this._commonService.successToaster("Member updated successfully!");
               this.submitFlag = false;
+            },
+            (error: any) => {
+              if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+                this._commonService.errorToaster("Email is already registered, please try a different one");
+                this.submitFlag = false;
+              }
             }
-          }
-        );
+          );
+        } else {
+          this._memberService.updateUser(formData, this.currentUser._id).subscribe(
+            (response: any) => {
+              this.resetFormModal();
+              this.defaultEmail = "";
+              this._commonService.successToaster("Member updated successfully!");
+              this.submitFlag = false;
+            },
+            (error: any) => {
+              if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+                this._commonService.errorToaster("Email is already registered, please try a different one");
+                this.submitFlag = false;
+              }
+            }
+          );
+        }
       }
     }
   }
@@ -356,7 +407,7 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.blockSubscription({ userId: user._id }).subscribe(
+          this._memberService.deleteSubscription({ userId: user._id }).subscribe(
             (result) => {},
             (err) => console.log(err)
           );

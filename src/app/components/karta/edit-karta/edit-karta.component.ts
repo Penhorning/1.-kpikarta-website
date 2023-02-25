@@ -330,7 +330,7 @@ export class EditKartaComponent implements OnInit {
     this.updateNewPercentage("");
   }
   // Apply monitor by
-  applyMontiorBy() {
+  applyMonitorBy() {
     this.updateNewPercentage(this.filterKartaBy);
   }
 
@@ -1898,8 +1898,8 @@ export class EditKartaComponent implements OnInit {
                       this.getRemovableNodeId = "";
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
+                        this.undoRedoFlag = false;
                       }, 1000);
-                      this.undoRedoFlag = false;
                     });
                   }
                 }
@@ -1917,8 +1917,8 @@ export class EditKartaComponent implements OnInit {
                     this.getPhases("existing");
                     setTimeout(() => {
                       jqueryFunctions.removeKarta();
+                      this.undoRedoFlag = false;
                     }, 1000);
-                    this.undoRedoFlag = false;
                   },
                     (err) => {
                       console.log(err);
@@ -1937,8 +1937,8 @@ export class EditKartaComponent implements OnInit {
                     this.isRtNodDrgingFrmSide = false;
                     setTimeout(() => {
                       jqueryFunctions.removeKarta();
+                      this.undoRedoFlag = false;
                     }, 1000);
-                    this.undoRedoFlag = false;
                   },
                     (err) => {
                       console.log(err);
@@ -1951,7 +1951,9 @@ export class EditKartaComponent implements OnInit {
                   this.currentNode.phase = "";
                   this.showSVG = true;
                   this.isRtNodDrgingFrmSide = false;
-                  this.undoRedoFlag = false;
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                 }
                 break;
               case "phase_updated":
@@ -1960,7 +1962,9 @@ export class EditKartaComponent implements OnInit {
                   this.currentNode.phase = "";
                   this.showSVG = true;
                   this.isRtNodDrgingFrmSide = false;
-                  this.undoRedoFlag = false;
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                 }
                 break;
               case "phase_removed":
@@ -1969,7 +1973,9 @@ export class EditKartaComponent implements OnInit {
                   this.currentNode.phase = "";
                   this.showSVG = true;
                   this.isRtNodDrgingFrmSide = false;
-                  this.undoRedoFlag = false;
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                 }
                 break;
             }
@@ -2014,8 +2020,8 @@ export class EditKartaComponent implements OnInit {
                       this.isRtNodDrgingFrmSide = false;
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
+                        this.undoRedoFlag = false;
                       }, 1000);
-                      this.undoRedoFlag = false;
                     }
                   },
                     (err) => {
@@ -2037,8 +2043,8 @@ export class EditKartaComponent implements OnInit {
                       this.getPhases("existing");
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
+                        this.undoRedoFlag = false;
                       }, 1000);
-                      this.undoRedoFlag = false;
                     }
                   },
                     (err) => {
@@ -2054,7 +2060,9 @@ export class EditKartaComponent implements OnInit {
                   this.getPhases("existing");
                   this.getRemovableNode = null;
                   this.getRemovableNodeId = "";
-                  this.undoRedoFlag = false;
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                   // this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
                     // this.D3SVG.updateRemovedNode(this.getRemovableNode);
                     // this.currentNode.phase = "";
@@ -2070,7 +2078,9 @@ export class EditKartaComponent implements OnInit {
                   this.currentNode.phase = "";
                   this.showSVG = true;
                   this.isRtNodDrgingFrmSide = false;
-                  this.undoRedoFlag = false;
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                 }
                 break;
               case "phase_updated":
@@ -2079,7 +2089,9 @@ export class EditKartaComponent implements OnInit {
                   this.currentNode.phase = "";
                   this.showSVG = true;
                   this.isRtNodDrgingFrmSide = false;
-                  this.undoRedoFlag = false;
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                 }
                 break;
               case "phase_removed":
@@ -2088,7 +2100,9 @@ export class EditKartaComponent implements OnInit {
                   this.currentNode.phase = "";
                   this.showSVG = true;
                   this.isRtNodDrgingFrmSide = false;
-                  this.undoRedoFlag = false;
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                 }
                 break;
             }
@@ -2098,16 +2112,16 @@ export class EditKartaComponent implements OnInit {
             $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
             setTimeout(() => {
               $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
+              this.undoRedoFlag = false;
             }, 2000);
-            this.undoRedoFlag = false;
           }
         } else {
           this._commonService.warningToaster("Maximum Redo limit has reached..!!");
           $("#RedoAnchor").css("pointer-events", "none", "cursor", "not-allowed");
           setTimeout(() => {
             $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
+            this.undoRedoFlag = false;
           }, 2000);
-          this.undoRedoFlag = false;
         }
       }
     )
