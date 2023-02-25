@@ -380,7 +380,7 @@ export class EditKartaComponent implements OnInit {
   lastUpdatedKpiNode() {
     this._kartaService.getLastUpdatedKpiNode({kartaId: this.kartaId}).subscribe(
       (response: any) => {
-        this.lastUpdatedDate = response.kpi_node.updatedAt;
+        if (response.kpi_node) this.lastUpdatedDate = response.kpi_node.updatedAt;
       }
     );
   }

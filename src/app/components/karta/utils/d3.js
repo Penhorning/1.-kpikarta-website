@@ -431,7 +431,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .data(links, function (d) {
                 if (!d.source.yupdated || (d.source.oldy && (d.source.oldy == d.source.y))) {
                     d.source.oldy = d.source.y;
-                    d.source.y += 25;
+                    // d.source.y += 25;
                     d.source.yupdated = true;
                 }
                 return d.target.id;

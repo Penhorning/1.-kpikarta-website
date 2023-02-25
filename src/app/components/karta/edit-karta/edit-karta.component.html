@@ -90,7 +90,7 @@
                                            <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'branch'">
                                                <div class="card custom-card side-bar-card">
                                                    <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onRootDragStart(inventory, false)">
-                                                       <img [src]="inventory.thumbnail" class="img-fluid" />
+                                                       <img src="assets/img/catalog.png" class="img-fluid" />
                                                        <p>{{ inventory?.name }}</p>
                                                    </div>
                                                </div>
@@ -210,7 +210,7 @@
                            </div>
                        </div>
                        <div class="col-lg-2 text-center">
-                           <button type="button" class="btn bg-light border" (click)="checkKartaFilter()" [ngClass]="viewKartaFilterApplied ? 'viewFilterActive' : ''">View</button>
+                           <button type="button" class="btn bg-light border viewFilterBtn" (click)="checkKartaFilter()" [ngClass]="viewKartaFilterApplied ? 'viewFilterActive' : 'viewFilterNotActive'">View</button>
                        </div>
                        <div class="col-lg-3 p-0">
                            <div class="icon-karta">

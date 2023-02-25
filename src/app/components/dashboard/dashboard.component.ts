@@ -18,8 +18,7 @@ export class DashboardComponent implements OnInit {
   kartas: any = [];
   kartasTotal: number = 0;
   users: any = [];
-  findType: string = "";
-  pageLimit: number = 6;
+  pageLimit: number = 3;
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
   sharedKartas: any = [];
@@ -29,6 +28,7 @@ export class DashboardComponent implements OnInit {
   loadingKartas: boolean = false;
   loadingSharedKartas: boolean = false;
   loadingSubscribers: boolean = false;
+  loadingKPIs: boolean = false;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
 
@@ -52,15 +52,11 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
-      if (this._commonService.getUserLicense() !== 'Spectator') {
-        this.findType = "contributor";
-        this.pageLimit = 8;
-      }
       this.getAllKartas();
     }
     if (this._commonService.getUserRole() !== 'user') {
       this.getSubscribedUsers();
-    } else this.pageLimit = 8;
+    } else this.pageLimit = 4;
     this.getAllMembers();
     this.getAllSharedKartas();
     this.getRecentKPIs();
@@ -98,12 +94,11 @@ export class DashboardComponent implements OnInit {
     let data = {
       page: 1,
       limit: this.pageLimit,
-      findBy: this._commonService.getUserId(),
-      findType: this.findType
+      findBy: this._commonService.getUserId()
     };
     this.loadingKartas = true;
     this._kartaService.getAllKartas(data).subscribe((response: any) => {
-      if (response) {
+      if (response.kartas[0].data.length > 0) {
         this.kartas = response.kartas[0].data;
         this.kartasTotal = response.kartas[0].metadata[0].total;
       } else {
@@ -316,6 +311,8 @@ export class DashboardComponent implements OnInit {
       kpiType: "assigned",
       userId: this._commonService.getUserId()
     }
+
+    this.loadingKPIs = true;
     this._dashboardService.getMyKPIs(data).subscribe(
       (response: any) => {
         if (response.kpi_nodes[0].data.length > 0) {
@@ -326,7 +323,7 @@ export class DashboardComponent implements OnInit {
           this.recentKPIsTotal = 0;
         }
       }
-    );
+    ).add(() => this.loadingKPIs = false );
   }
    
 }

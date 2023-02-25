@@ -165,7 +165,7 @@ export class MyKpiComponent implements OnInit {
   fileUploader!: ElementRef;
   
   constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
-    this.maxDate = new Date();
+    // this.maxDate = new Date();
   }
 
   ngOnInit(): void {
@@ -402,11 +402,11 @@ export class MyKpiComponent implements OnInit {
   // On last edit date change
   onDateChange(e: any) {
     if (e[0] && e[1]) {
-      this.startDate = e[0];
-      this.endDate = e[1];
+      this.startDate = moment(e[0]).startOf("day");
+      this.endDate = moment(e[1]).endOf("day");
       this.startDueDate = "",
-        this.endDueDate = "",
-        this.pageIndex = 0;
+      this.endDueDate = "",
+      this.pageIndex = 0;
       this.getMyKPIsList();
     }
   }
@@ -414,8 +414,8 @@ export class MyKpiComponent implements OnInit {
   // On due date change
   onDueDateChange(e: any) {
     if (e[0] && e[1]) {
-      this.startDueDate = e[0];
-      this.endDueDate = e[1];
+      this.startDueDate = moment(e[0]).startOf("day");
+      this.endDueDate = moment(e[1]).endOf("day");
       this.startDate = "";
       this.endDate = "";
       this.pageIndex = 0;

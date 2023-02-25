@@ -19,10 +19,16 @@
     height: 250px;
 }
 
+button.bg-light.viewFilterBtn:focus {
+    background-color: #fff !important;
+}
 .viewFilterActive {
     color: #243864;
     border: 1px solid #243864 !important;
-    background: #fff !important;
+    background-color: #dae0e5 !important;
+}
+.viewFilterNotActive {
+    background-color: #fff !important;
 }
 
 .sidebar_collapsible_btn {
