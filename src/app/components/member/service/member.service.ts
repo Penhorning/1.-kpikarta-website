@@ -44,6 +44,12 @@ export class MemberService {
   blockSubscription(userId: any) {
     return this._httpService.POST('/subscriptions/block-subscription', userId);
   }
+  deleteSubscription(userId: any) {
+    return this._httpService.POST('/subscriptions/delete-subscription', userId);
+  }
+  updateSubscription(data: any) {
+    return this._httpService.POST('/subscriptions/update-subscription', data);
+  }
   createSubscription(data: any) {
     return this._httpService.POST('/subscriptions/create-subscription', data);
   }

@@ -67,7 +67,11 @@ export function calculateFormula(event, suggestionsLength, tempObj, formValidati
                 message: "Invalid Formula..!!"
             }
         } else {
-            total = eval(newValue).toFixed(2);
+            newValue = eval(newValue);
+            let newV = newValue.toString().split('.');
+            if (parseInt(newV[1]) > 0) newValue = Number(newValue).toFixed(2);
+            else newValue = newV[0];
+            total = newValue;
 
             if( total < 0 ) {
                 $('#formula-field').addClass('is-invalid');
