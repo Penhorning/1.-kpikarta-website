@@ -247,7 +247,11 @@ export class MyKpiComponent implements OnInit {
       this._commonService.errorToaster('Something went wrong!');
       this.metricsForm.patchValue({ calculatedValue: 0 }); return;
     } else {
-      total = eval(newValue);
+      newValue = eval(newValue);
+      let newV = newValue.toString().split('.');
+      if (parseInt(newV[1]) > 0) newValue = Number(newValue).toFixed(2);
+      else newValue = newV[0];
+      total = newValue;
       if (total >= 0) {
         this.metricsForm.patchValue({ calculatedValue: total });
 
@@ -869,46 +873,74 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
     let value = originalValues.node_formula.formula.trim().split(/[\s() */%+-]+/g);
     let total: any = 0;
     let formulaValues = values.__EMPTY_4.split("|");
+    let formulaFields = {};
+    for (let i=0; i<originalValues.node_formula.fields.length; i++) {
+      let field = originalValues.node_formula.fields[i];
+      formulaFields[field.fieldName] = formulaValues[i] || field.fieldValue;
+    }
+
     let modifiedFieldArray: any;
     value.filter((item: any) => item !== "").forEach((x: any, index: number) => {
       if (x && !parseInt(x)) {
         if (modifiedFieldArray) originalValues.node_formula.fields = modifiedFieldArray;
         modifiedFieldArray = originalValues.node_formula.fields.map((item: any) => {
-          if (item.fieldName === x) item.fieldValue = formulaValues[index];
+          if (item.fieldName === x) item.fieldValue = formulaFields[x];
           return item;
         });
         newValue = newValue
-          ? newValue.replace(x, formulaValues[index])
-          : originalValue.replace(x, formulaValues[index]); 
+          ? newValue.replace(x, formulaFields[x])
+          : originalValue.replace(x, formulaFields[x]);
       }
     });
-    if (originalValues.node_formula.fields.length !== formulaValues.length) {
-      this.tableData.map((item: any) => {
-        if (item["My KPI Export"] === originalValues.id) item.ac = true;
-        return item;
-      });
+    newValue = eval(newValue);
+    let newV = newValue.toString().split('.');
+    if (parseInt(newV[1]) > 0) newValue = Number(newValue).toFixed(2);
+    else newValue = newV[0];
+    total = newValue;
+    if (total > 0) {
+      let percentage = (total / +originalValues.target[0].value) * 100;
+      let nodeObj = {
+        "id": values['My KPI Export'],
+        "achieved_value": total,
+        "node_formula": {
+          "fields": modifiedFieldArray,
+          "formula": originalValues.node_formula.formula,
+          "metrics": true
+        },
+        "percentage": Math.round(percentage)
+      }
+      return nodeObj;
+    } else {
       this.isTableDataWrong = true;
       return false;
-    } else {
-      total = eval(newValue).toFixed(2);
-      if (total > 0) {
-        let percentage = (total / +originalValues.target[0].value) * 100;
-        let nodeObj = {
-          "id": values['My KPI Export'],
-          "achieved_value": total,
-          "node_formula": {
-            "fields": modifiedFieldArray,
-            "formula": originalValues.node_formula.formula,
-            "metrics": true
-          },
-          "percentage": Math.round(percentage)
-        }
-        return nodeObj;
-      } else {
-        this.isTableDataWrong = true;
-        return false;
-      }
     }
+    // if (originalValues.node_formula.fields.length !== formulaValues.length) {
+    //   this.tableData.map((item: any) => {
+    //     if (item["My KPI Export"] === originalValues.id) item.ac = true;
+    //     return item;
+    //   });
+    //   this.isTableDataWrong = true;
+    //   return false;
+    // } else {
+    //   total = eval(newValue).toFixed(2);
+    //   if (total > 0) {
+    //     let percentage = (total / +originalValues.target[0].value) * 100;
+    //     let nodeObj = {
+    //       "id": values['My KPI Export'],
+    //       "achieved_value": total,
+    //       "node_formula": {
+    //         "fields": modifiedFieldArray,
+    //         "formula": originalValues.node_formula.formula,
+    //         "metrics": true
+    //       },
+    //       "percentage": Math.round(percentage)
+    //     }
+    //     return nodeObj;
+    //   } else {
+    //     this.isTableDataWrong = true;
+    //     return false;
+    //   }
+    // }
   }
 
   calculateCSVData(csvData: any) {
