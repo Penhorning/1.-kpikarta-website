@@ -40,7 +40,7 @@
                <ul class="nav nav-tabs" role="tablist">
                   <li class="nav-item nav-item-cus inventory" id="tab_1" (click)="onTabSwitch()" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
                   <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tab-1"
-                     role="tab">Assigned to me</a> 
+                     role="tab">Owned by me</a> 
                   </li>
                   <li class="nav-item nav-item-cus inventory" id="tab_2" (click)="onTabSwitchShared()">
                      <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tab-2"
