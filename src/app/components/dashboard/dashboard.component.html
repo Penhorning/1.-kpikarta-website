@@ -9,7 +9,7 @@
          </div>
       </div>
       <div class="row">
-         <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-9': 'col-md-12'">
+         <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-9': 'col-md-12'">
             <!-- Latest Kartas -->
             <div class="white-karata-card" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
                <div class="row">
@@ -27,7 +27,7 @@
                <div class="row mt-4">
                   <!-- card-one -->
                   <ng-container *ngFor="let karta of kartas; let i = index">
-                     <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-4': 'col-md-3'">
+                     <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-4': 'col-md-3'">
                         <div class="karata-card">
                            <div class="row">
                               <div class="col-8">
@@ -36,7 +36,7 @@
                                     <p class="short_text">{{karta?.user?.fullName}}</p>
                                  </div>
                               </div>
-                              <div class="col-4 text-right" *ngIf="findType !== 'contributor'">
+                              <div class="col-4 text-right">
                                  <div class="dropdown show">
                                     <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
@@ -82,16 +82,9 @@
                            <div class="row">
                               <div class="col-lg-12 text-center">
                                  <div class="edit-btn-img">
-                                    <ng-container *ngIf="findType === 'contributor'; else edit">
-                                       <a [routerLink]="['/karta/view', karta._id]">
-                                          <img src="assets/img/View-blue.svg">
-                                       </a>
-                                    </ng-container>
-                                    <ng-template #edit>
-                                       <a [routerLink]="['/karta/edit', karta._id]">
-                                          <img src="assets/img/edit--icon-blue.svg">
-                                       </a>
-                                    </ng-template>
+                                    <a [routerLink]="['/karta/edit', karta._id]">
+                                       <img src="assets/img/edit--icon-blue.svg">
+                                    </a>
                                  </div>
                               </div>
                            </div>
@@ -113,18 +106,11 @@
                            <div class="row">
                               <div class="col-lg-6 text-left">
                                  <div class="dropdown show">
-                                    <ng-container *ngIf="findType === 'contributor'; else editAccess">
-                                       <a class=" dropdown-toggle three-dots change-acc text-body cursor_default" role="button">
-                                       Change access <img src="assets/img/down-arrow.svg" class="ml-2">
-                                       </a>
-                                    </ng-container>
-                                    <ng-template #editAccess>
-                                       <a class=" dropdown-toggle three-dots change-acc text-body cursor_pointer"
+                                    <a class=" dropdown-toggle three-dots change-acc text-body cursor_pointer"
                                        role="button" id="dropdownMenuLink" data-toggle="dropdown"
                                        aria-haspopup="true" aria-expanded="false">
                                        Change access <img src="assets/img/down-arrow.svg" class="ml-2">
-                                       </a>
-                                    </ng-template>
+                                    </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                        <a class="dropdown-item cursor_pointer"
                                           (click)="updateKarta('private', karta?._id, i)">Private</a>
@@ -188,7 +174,7 @@
                <div class="row mt-4">
                   <!-- card-one -->
                   <ng-container *ngFor="let karta of sharedKartas; let i = index">
-                     <div [ngClass]="_commonService.getUserLicense() !== 'Spectator' ? 'col-md-4': 'col-md-3'">
+                     <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-4': 'col-md-3'">
                         <div class="karata-card">
                            <div class="row">
                               <div class="col-8">
@@ -312,8 +298,8 @@
                </ng-container>
             </div>
          </div>
-         <div class="col-lg-3">
-            <div class="total-section" *ngIf="_commonService.getUserRole() !== 'user'">
+         <div class="col-lg-3" *ngIf="_commonService.getUserRole() !== 'user'">
+            <div class="total-section">
                <div *ngFor="let user of registeredUsers; let i = index;">
                   <div class="row">
                      <div class="col-lg-12">
@@ -380,6 +366,13 @@
                      </div>
                   </div>
                   <hr *ngIf="i <= recentKPIs.length-2">
+               </ng-container>
+
+               <ng-container *ngIf="loadingKPIs">
+                  <div class="pt-4" [innerHtml]="loader"></div>
+               </ng-container>
+               <ng-container *ngIf="!loadingKPIs && recentKPIs.length === 0">
+                  <div class="px-3 pt-3" [innerHtml]="noDataAvailable"></div>
                </ng-container>
             </div>
          </div>

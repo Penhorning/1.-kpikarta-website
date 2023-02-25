@@ -51,7 +51,7 @@ export class CalculatePercentage {
   // Calculate each node percentage
   calculatePercentage(params: any, percentage: number = 0) {
     let total_percentage: number[] = [];
-    const children = (params.children || []);
+    const children = (params.children || params._children || []);
     
     children.forEach(async (element: any) => {
       // Calculate percentage for KPI nodes only
