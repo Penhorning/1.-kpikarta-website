@@ -1886,22 +1886,12 @@ export class EditKartaComponent implements OnInit {
                 if (x.data.data) {
                   this.getRemovableNodeId = x.data.data.kartaNodeId;
                   this.returnChildNode(this.karta.node);
-                  if(this.getRemovableNode) {
-                    this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
-                      // this.D3SVG.updateRemovedNode(this.getRemovableNode);
-                      this.getPhases("existing");
-                      // this.currentNode.phase = "";
-                      // let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
-                      // kartaNode.phase = phase;
-                      // this.setKartaDimension();
-                      this.getRemovableNode = null;
-                      this.getRemovableNodeId = "";
-                      setTimeout(() => {
-                        jqueryFunctions.removeKarta();
-                        this.undoRedoFlag = false;
-                      }, 1000);
-                    });
-                  }
+                  this.getPhases("existing");
+                  this.getRemovableNode = null;
+                  this.getRemovableNodeId = "";
+                  setTimeout(() => {
+                    this.undoRedoFlag = false;
+                  }, 1000);
                 }
                 break;
               case "node_updated":
@@ -2063,13 +2053,6 @@ export class EditKartaComponent implements OnInit {
                   setTimeout(() => {
                     this.undoRedoFlag = false;
                   }, 1000);
-                  // this._kartaService.getNode(this.getRemovableNode.parentId).subscribe((kartaNode: any) => {
-                    // this.D3SVG.updateRemovedNode(this.getRemovableNode);
-                    // this.currentNode.phase = "";
-                    // let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
-                    // kartaNode.phase = phase;
-                    // this.setKartaDimension();
-                  // });
                 }
                 break;
               case "phase_created":
