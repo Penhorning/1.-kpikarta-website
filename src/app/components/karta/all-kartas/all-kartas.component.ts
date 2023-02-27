@@ -121,7 +121,9 @@ export class AllKartasComponent implements OnInit {
       (response: any) => {
         if (response.kartas[0].data.length > 0) {
           response.kartas[0].data = response.kartas[0].data.map((item: any) => {
-            item.accessType = item.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType;
+            let accessType = item.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType;
+            if (accessType === 'edit' && this._commonService.getUserLicense() === 'Spectator') item.accessType = 'view';
+            else item.accessType = accessType;
             return item;
           });
           this.sharedKartas = response.kartas[0].data;
