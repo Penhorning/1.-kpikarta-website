@@ -4,6 +4,7 @@ import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-
 import { CommonService } from '@app/shared/_services/common.service';
 import { MemberService } from './service/member.service';
 import { Router } from '@angular/router';
+import { BillingService } from '../billing/services/billing.service';
 
 declare const $: any;
 
@@ -31,6 +32,7 @@ export class MemberComponent implements OnInit {
   hide: boolean = true;
   currentSendingUserId: string = "";
   sendingCredentials: boolean = false;
+  overview: any;
 
   search_text: string = "";
   totalData: number = 0;
@@ -63,7 +65,8 @@ export class MemberComponent implements OnInit {
     private _memberService: MemberService,
     private fb: FormBuilder,
     public _commonService: CommonService,
-    private router: Router
+    private router: Router,
+    private _billingService: BillingService
   ) {
     
   }
@@ -79,6 +82,7 @@ export class MemberComponent implements OnInit {
           this.getRoles();
           this.getDepartments();
           this.getLicenses();
+          this.getSubscribedUsersDetail();
         }
       }
     );
@@ -238,16 +242,7 @@ export class MemberComponent implements OnInit {
         if (formData.email !== this.defaultEmail) {
           formData.defaultEmail = this.defaultEmail;
         }
-        
-        // if (formData.licenseId !== this.defaultLicense) {
-        //   let licenseName = this.licenses.filter((lsc: any) => {
-        //     return lsc.id == formData.licenseId ? lsc.name : null;
-        //   });
-        //   if(licenseName[0].name != "Spectator") {
-        //     flag = true;
-        //     newLicenseName = licenseName[0].name
-        //   }
-        // }
+
         if (!this.showDepartment) formData.departmentId = "";
 
         if(formData.licenseId !== this.defaultLicense) {
@@ -415,6 +410,17 @@ export class MemberComponent implements OnInit {
         }
       );
     }
+  }
+
+  getSubscribedUsersDetail() {
+    this._billingService.getSubscribedUsers(this._commonService.getCompanyId()).subscribe(
+      (response) => {
+        this.overview = response.data.data;
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
   }
 }
 
