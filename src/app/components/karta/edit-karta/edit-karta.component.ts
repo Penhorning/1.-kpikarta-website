@@ -198,12 +198,12 @@ export class EditKartaComponent implements OnInit {
   get catalog() { return this.catalogForm.controls; }
   // View karta variables
   viewKartaNumbers: any = [];
-  showViewKartaDuration: boolean = false;
   viewKartaSubmitted: boolean = false;
   viewKartaSubmitFlag: boolean = false;
   viewKartaFilterApplied: boolean = false;
   viewKartaForm = this.fb.group({
-    type: ['', [Validators.required]]
+    type: ['', [Validators.required]],
+    number: ['', [Validators.required]]
   });
   get viewKarta() { return this.viewKartaForm.controls; }
 
@@ -246,8 +246,6 @@ export class EditKartaComponent implements OnInit {
         { name: "4th Quarter", value: 4 }
       ]
     }
-    this.showViewKartaDuration = true;
-    this.viewKartaForm.addControl("number", this.fb.control('', [Validators.required]));
   }
 
   onViewKartaSubmit() {
@@ -286,8 +284,9 @@ export class EditKartaComponent implements OnInit {
       jqueryFunctions.setValue("#chartMode", "enable");
       jqueryFunctions.setAttribute("#chartMode", "disabled", false);
       this.viewKartaForm.reset();
+      this.viewKartaForm.patchValue({ type: "" });
+      this.viewKartaForm.patchValue({ number: "" });
       this.viewKartaFilterApplied = false;
-      this.showViewKartaDuration = false;
     } else jqueryFunctions.showModal('viewKartaModal');
   }
 
@@ -992,9 +991,9 @@ export class EditKartaComponent implements OnInit {
   // Change achieved value
   changeAchievedValue() {
     let node = this.currentNode;
-    if (this.currentNodeAchievedValue < 0 || this.currentNodeAchievedValue === null) this._commonService.errorToaster("Please enter positive value!");
+    if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
     else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greater than 9999!");
-    else {
+    else if (this.currentNodeAchievedValue >= 0 && this.currentNodeAchievedValue !== null) {
       // Calculate new percentage
       this.target.forEach((element: any) => {
         let percentage = (this.currentNodeAchievedValue / element.value) * 100;
@@ -1326,10 +1325,11 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this._kartaService.getKarta(this.kartaId).subscribe(
           (response: any) => {
-            this.karta = response;
-            this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
-            this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-            this.D3SVG.rerender(this.karta.node);
+            // this.karta = response;
+            // this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+            // this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+            // this.D3SVG.rerender(this.karta.node);
+            this.updateNewPercentage();
           }
         ).add(() => jqueryFunctions.enableChart());
       }
