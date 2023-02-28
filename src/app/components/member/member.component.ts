@@ -254,9 +254,37 @@ export class MemberComponent implements OnInit {
           newLicenseName = licenseName[0].name;
         }
         if(flag) {
-          this._memberService.updateUser(formData, this.currentUser._id).subscribe(
-            (response: any) => {
-              if (flag) {
+          if(newLicenseName == "Spectator") {
+            const result = confirm('Are you sure you want to change the Subscription to Spectator?');
+            if (result) {
+              this._memberService.updateUser(formData, this.currentUser._id).subscribe(
+                (response: any) => {
+                  this._memberService.updateSubscription({userId: this.currentUser._id, licenseName: newLicenseName }).subscribe(
+                    (res) => {},
+                    (err) => {
+                      console.log(err);
+                      this._commonService.errorToaster("Something went wrong.. Please try again..!!");
+                      this.submitFlag = false;
+                    }
+                  )
+                  this.resetFormModal();
+                  this.defaultEmail = "";
+                  this._commonService.successToaster("Member updated successfully!");
+                  this.submitFlag = false;
+                },
+                (error: any) => {
+                  if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+                    this._commonService.errorToaster("Email is already registered, please try a different one");
+                    this.submitFlag = false;
+                  }
+                }
+              );
+            } else {
+              this.submitFlag = false;
+            }
+          } else {
+            this._memberService.updateUser(formData, this.currentUser._id).subscribe(
+              (response: any) => {
                 this._memberService.updateSubscription({userId: this.currentUser._id, licenseName: newLicenseName }).subscribe(
                   (res) => {},
                   (err) => {
@@ -265,20 +293,19 @@ export class MemberComponent implements OnInit {
                     this.submitFlag = false;
                   }
                 )
-              }
-  
-              this.resetFormModal();
-              this.defaultEmail = "";
-              this._commonService.successToaster("Member updated successfully!");
-              this.submitFlag = false;
-            },
-            (error: any) => {
-              if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-                this._commonService.errorToaster("Email is already registered, please try a different one");
+                this.resetFormModal();
+                this.defaultEmail = "";
+                this._commonService.successToaster("Member updated successfully!");
                 this.submitFlag = false;
+              },
+              (error: any) => {
+                if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+                  this._commonService.errorToaster("Email is already registered, please try a different one");
+                  this.submitFlag = false;
+                }
               }
-            }
-          );
+            );
+          }
         } else {
           this._memberService.updateUser(formData, this.currentUser._id).subscribe(
             (response: any) => {
