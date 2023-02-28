@@ -877,6 +877,7 @@ export class EditKartaComponent implements OnInit {
     if (result) {
       const data = {
         phaseId: id,
+        nextPhaseId: this.phases[index+1].id,
         kartaId: this.kartaId
       }
       this._kartaService.deletePhase(data).subscribe(
@@ -1329,7 +1330,8 @@ export class EditKartaComponent implements OnInit {
             // this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
             // this.karta.node.border_color = this.setColors(this.karta.node.percentage);
             // this.D3SVG.rerender(this.karta.node);
-            this.updateNewPercentage();
+            // this.updateNewPercentage();
+            this.reRenderKarta();
           }
         ).add(() => jqueryFunctions.enableChart());
       }
