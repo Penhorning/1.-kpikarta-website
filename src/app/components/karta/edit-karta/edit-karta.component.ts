@@ -203,7 +203,7 @@ export class EditKartaComponent implements OnInit {
   viewKartaFilterApplied: boolean = false;
   viewKartaForm = this.fb.group({
     type: ['', [Validators.required]],
-    number: ['', [Validators.required]]
+    duration: ['', [Validators.required]]
   });
   get viewKarta() { return this.viewKartaForm.controls; }
 
@@ -249,32 +249,37 @@ export class EditKartaComponent implements OnInit {
   }
 
   onViewKartaSubmit() {
-    this.viewKartaForm.value.kartaId = this.kartaId;
-    this.viewKartaForm.value.number = parseInt(this.viewKartaForm.value.number);
-    this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
-      (response: any) => {
-        if (response.data.karta) {
-          this.karta = response.data.karta.kartaData;
-          this.versionId = response.data.karta.kartaData.versionId;
-          if (this.karta.node) {
-            this.viewKartaFilterApplied = true;
-            this.reArrangePhases(response.data.karta.phases);
-            this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
-            this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-            BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
-            // this.D3SVG.updateNode(this.karta.node, true);
-            // this.setKartaDimension();
-            jqueryFunctions.disableChart();
-            jqueryFunctions.disableElement("#phase_tabs");
-            jqueryFunctions.setValue("#chartMode", "disable");
-            jqueryFunctions.setAttribute("#chartMode", "disabled", true);
-            this.showSVG = true;
-            jqueryFunctions.hideModal('viewKartaModal');
-            jqueryFunctions.removeKarta();
-          }
-        } else this._commonService.errorToaster(response.data.message);
-      }
-    );
+    this.viewKartaSubmitted = true;
+    if (this.viewKartaForm.valid) {
+      this.viewKartaForm.value.kartaId = this.kartaId;
+      this.viewKartaForm.value.duration = parseInt(this.viewKartaForm.value.duration);
+      this.viewKartaSubmitFlag = true;
+      this._kartaService.getPreviousKarta(this.viewKartaForm.value).subscribe(
+        (response: any) => {
+          if (response.data.karta) {
+            this.karta = response.data.karta.kartaData;
+            this.versionId = response.data.karta.kartaData.versionId;
+            if (this.karta.node) {
+              this.viewKartaFilterApplied = true;
+              this.reArrangePhases(response.data.karta.phases);
+              this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+              this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+              BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+              // this.D3SVG.updateNode(this.karta.node, true);
+              // this.setKartaDimension();
+              jqueryFunctions.disableChart();
+              jqueryFunctions.disableElement("#phase_tabs");
+              jqueryFunctions.setValue("#chartMode", "disable");
+              jqueryFunctions.setAttribute("#chartMode", "disabled", true);
+              this.showSVG = true;
+              jqueryFunctions.hideModal('viewKartaModal');
+              jqueryFunctions.removeKarta();
+            }
+          } else this._commonService.errorToaster(response.data.message);
+        },
+        (error: any) => { }
+      ).add(() => this.viewKartaSubmitFlag = false);
+    }
   }
 
   checkKartaFilter() {
@@ -1267,6 +1272,7 @@ export class EditKartaComponent implements OnInit {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
+        jqueryFunctions.enableChart();
       }
     );
   }
@@ -1324,16 +1330,10 @@ export class EditKartaComponent implements OnInit {
     jqueryFunctions.disableChart();
     this._kartaService.updateNodeAndWeightage(data).subscribe(
       (response: any) => {
-        this._kartaService.getKarta(this.kartaId).subscribe(
-          (response: any) => {
-            // this.karta = response;
-            // this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
-            // this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-            // this.D3SVG.rerender(this.karta.node);
-            // this.updateNewPercentage();
-            this.reRenderKarta();
-          }
-        ).add(() => jqueryFunctions.enableChart());
+        this.updateNewPercentage();
+      },
+      (error: any) => {
+        jqueryFunctions.enableChart();
       }
     );
   }
