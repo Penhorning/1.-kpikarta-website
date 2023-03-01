@@ -89,18 +89,20 @@
           </a>
 
           <div class="dropdown sort-drop">
-            <div>
-              <form>
-                <select #id (change)="onSortBy(id.value)"
-                  class="form-select form-select-lg short-dropdown-custom sort_dropdown">
-                  <option hidden>Sort by</option>
-                  <option value="worst">Worst to Best Performing</option>
-                  <option value="best">Best to Worst Performing</option>
-                  <option value="oldest">Oldest to Newest</option>
-                  <option value="newest">Newest to Oldest</option>
-                </select>
-              </form>
-            </div>
+            <!-- <select #id (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom sort_dropdown mr-2">
+              <option hidden>Sort by</option>
+              <option value="worst">Worst to Best Performing</option>
+              <option value="best">Best to Worst Performing</option>
+              <option value="oldest">Oldest to Newest</option>
+              <option value="newest">Newest to Oldest</option>
+            </select> -->
+            <select #id (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom sort_dropdown">
+              <option hidden>Sort by</option>
+              <option value="worst">Worst to Best Performing</option>
+              <option value="best">Best to Worst Performing</option>
+              <option value="oldest">Oldest to Newest</option>
+              <option value="newest">Newest to Oldest</option>
+            </select>
           </div>
 
           <!-- KPI Tabs -->
