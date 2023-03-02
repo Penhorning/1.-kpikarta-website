@@ -1129,12 +1129,12 @@
                                    <div class="col-lg-6">
                                        <div class="form-group">
                                            <label>Duration <span class="text-danger">*</span></label>
-                                           <select class="form-control custom-select-option" formControlName="number" [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors }">
+                                           <select class="form-control custom-select-option" formControlName="duration" [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.duration.touched) && viewKarta.duration.errors }">
                                                <option value="" selected>Select</option>
                                                <option *ngFor="let number of viewKartaNumbers" [value]="number.value">{{ number?.name }} </option>
                                            </select>
-                                           <div *ngIf="(viewKartaSubmitted || viewKarta.number.touched) && viewKarta.number.errors" class="invalid-feedback">
-                                               <div *ngIf="viewKarta.number.errors.required">Duration is required!</div>
+                                           <div *ngIf="(viewKartaSubmitted || viewKarta.duration.touched) && viewKarta.duration.errors" class="invalid-feedback">
+                                               <div *ngIf="viewKarta.duration.errors.required">Duration is required!</div>
                                            </div>
                                        </div>
                                    </div>
