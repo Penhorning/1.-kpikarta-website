@@ -208,6 +208,7 @@ export class EditKartaComponent implements OnInit {
   get viewKarta() { return this.viewKartaForm.controls; }
 
   viewKartaType(e: any) {
+    this.viewKartaForm.patchValue({ duration: "" });
     if (e.target.value === "month") {
       this.viewKartaNumbers = [
         { name: "January", value: 0 },
@@ -290,7 +291,8 @@ export class EditKartaComponent implements OnInit {
       jqueryFunctions.setAttribute("#chartMode", "disabled", false);
       this.viewKartaForm.reset();
       this.viewKartaForm.patchValue({ type: "" });
-      this.viewKartaForm.patchValue({ number: "" });
+      this.viewKartaForm.patchValue({ duration: "" });
+      this.viewKartaSubmitted = false;
       this.viewKartaFilterApplied = false;
     } else jqueryFunctions.showModal('viewKartaModal');
   }
@@ -1365,7 +1367,6 @@ export class EditKartaComponent implements OnInit {
             this._commonService.successToaster(`${node_type} saved successfully!`);
             jqueryFunctions.hideModal('saveNodeModal');
             this.resetCatalogForm();
-            this.catalogSubmitted = false;
             this.getInventories();
           }
         ).add(() => this.catalogSubmitFlag = false);
@@ -1375,6 +1376,8 @@ export class EditKartaComponent implements OnInit {
   resetCatalogForm() {
     this.catalogForm.reset();
     this.catalogForm.markAsUntouched();
+    this.catalogSubmitted = false;
+    this.catalogForm.patchValue({ name: "" });
   }
 
   // Remove node from karta
