@@ -882,6 +882,7 @@ export class EditKartaComponent implements OnInit {
   deletePhase(id: string, index: number) {
     const result = confirm("Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.");
     if (result) {
+      jqueryFunctions.disableChart();
       const data = {
         phaseId: id,
         nextPhaseId: this.phases[index+1].id,
@@ -898,7 +899,10 @@ export class EditKartaComponent implements OnInit {
           this.updateNewPercentage();
           // this.setKartaDimension();
         }
-      ).add(() => jqueryFunctions.enableElement("#phase_tabs"));
+      ).add(() => {
+        jqueryFunctions.enableElement("#phase_tabs");
+        jqueryFunctions.enableChart();
+      });
     }
   }
 
@@ -1881,6 +1885,7 @@ export class EditKartaComponent implements OnInit {
 
   undoKarta() {
     this.undoRedoFlag = true;
+    jqueryFunctions.enableChart();
     $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
     this._kartaService.undoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
@@ -1896,6 +1901,7 @@ export class EditKartaComponent implements OnInit {
                   this.getRemovableNodeId = "";
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -1913,11 +1919,13 @@ export class EditKartaComponent implements OnInit {
                     setTimeout(() => {
                       jqueryFunctions.removeKarta();
                       this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
                     }, 1000);
                   },
                     (err) => {
                       console.log(err);
                       this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
                     });
                 }
                 break;
@@ -1933,6 +1941,7 @@ export class EditKartaComponent implements OnInit {
                     setTimeout(() => {
                       jqueryFunctions.removeKarta();
                       this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
                     }, 1000);
                   },
                     (err) => {
@@ -1948,6 +1957,7 @@ export class EditKartaComponent implements OnInit {
                   this.isRtNodDrgingFrmSide = false;
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -1959,6 +1969,7 @@ export class EditKartaComponent implements OnInit {
                   this.isRtNodDrgingFrmSide = false;
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -1970,6 +1981,7 @@ export class EditKartaComponent implements OnInit {
                   this.isRtNodDrgingFrmSide = false;
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -1982,6 +1994,7 @@ export class EditKartaComponent implements OnInit {
               $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
             }, 2000);
             this.undoRedoFlag = false;
+            jqueryFunctions.enableChart();
           }
         } else {
           this._commonService.warningToaster("Maximum Undo limit has reached..!!");
@@ -1990,6 +2003,7 @@ export class EditKartaComponent implements OnInit {
             $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
           }, 2000);
           this.undoRedoFlag = false;
+          jqueryFunctions.enableChart();
         }
       }
     )
@@ -1997,6 +2011,7 @@ export class EditKartaComponent implements OnInit {
 
   async redoKarta() {
     this.undoRedoFlag = true;
+    jqueryFunctions.enableChart();
     $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
     this._kartaService.redoFunctionality({ kartaId: this.kartaId, versionId: this.versionId }).subscribe(
       (x: any) => {
@@ -2016,12 +2031,14 @@ export class EditKartaComponent implements OnInit {
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
                         this.undoRedoFlag = false;
+                        jqueryFunctions.enableChart();
                       }, 1000);
                     }
                   },
                     (err) => {
                       console.log(err);
                       this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
                     });
                 }
                 break;
@@ -2039,12 +2056,14 @@ export class EditKartaComponent implements OnInit {
                       setTimeout(() => {
                         jqueryFunctions.removeKarta();
                         this.undoRedoFlag = false;
+                        jqueryFunctions.enableChart();
                       }, 1000);
                     }
                   },
                     (err) => {
                       console.log(err);
                       this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
                     });
                 }
                 break;
@@ -2057,6 +2076,7 @@ export class EditKartaComponent implements OnInit {
                   this.getRemovableNodeId = "";
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -2068,6 +2088,7 @@ export class EditKartaComponent implements OnInit {
                   this.isRtNodDrgingFrmSide = false;
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -2079,6 +2100,7 @@ export class EditKartaComponent implements OnInit {
                   this.isRtNodDrgingFrmSide = false;
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -2090,6 +2112,7 @@ export class EditKartaComponent implements OnInit {
                   this.isRtNodDrgingFrmSide = false;
                   setTimeout(() => {
                     this.undoRedoFlag = false;
+                    jqueryFunctions.enableChart();
                   }, 1000);
                 }
                 break;
@@ -2101,6 +2124,7 @@ export class EditKartaComponent implements OnInit {
             setTimeout(() => {
               $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
               this.undoRedoFlag = false;
+              jqueryFunctions.enableChart();
             }, 2000);
           }
         } else {
@@ -2109,6 +2133,7 @@ export class EditKartaComponent implements OnInit {
           setTimeout(() => {
             $("#RedoAnchor").css("pointer-events", "all", "cursor", "default");
             this.undoRedoFlag = false;
+            jqueryFunctions.enableChart();
           }, 2000);
         }
       }
