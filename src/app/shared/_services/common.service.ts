@@ -113,6 +113,29 @@ export class CommonService {
     return JSON.parse(this.decode(window.localStorage.getItem("kpi-karta-remember-me-session")));
   }
 
+  // Collapsed/Expand node session
+  setNodeSession(sessionData: any) {
+    sessionStorage.setItem("kpi-karta-node-session", this.encode(JSON.stringify(sessionData)));
+  }
+  getNodeSession() {
+    return JSON.parse(this.decode(sessionStorage.getItem("kpi-karta-node-session")));
+  }
+  addNodeSession(id: string) {
+    let session = this.getNodeSession();
+    if (session) {
+      session[id] = id;
+      this.setNodeSession(session);
+    } else this.setNodeSession({ [id]: id });
+  }
+  removeNodeSession(id: string) {
+    let session = this.getNodeSession();
+    delete session[id];
+    this.setNodeSession(session);
+  }
+  deleteNodeSession() {
+    sessionStorage.removeItem("kpi-karta-node-session");
+  }
+
 
 
 /*============================== API FUNCTIONS STARTS ==============================*/

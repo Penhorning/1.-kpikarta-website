@@ -89,6 +89,12 @@ export class EditKartaComponent implements OnInit {
       nodeItem: (d: any) => {
         this.updateNodeProperties(d);
       },
+      collapseNode: (d: any) => {
+        this._commonService.addNodeSession(d.id);
+      },
+      expandNode: (d: any) => {
+        this._commonService.removeNodeSession(d.id);
+      },
       removeNode: (d: any) => {
         this.removeNode(d);
       },
@@ -197,7 +203,8 @@ export class EditKartaComponent implements OnInit {
   });
   get catalog() { return this.catalogForm.controls; }
   // View karta variables
-  viewKartaNumbers: any = [];
+  viewKartaText: string = `${moment().format('MMMM')} ${moment().year()}`;
+  viewKartaDurations: any = [];
   viewKartaSubmitted: boolean = false;
   viewKartaSubmitFlag: boolean = false;
   viewKartaFilterApplied: boolean = false;
@@ -210,7 +217,7 @@ export class EditKartaComponent implements OnInit {
   viewKartaType(e: any) {
     this.viewKartaForm.patchValue({ duration: "" });
     if (e.target.value === "month") {
-      this.viewKartaNumbers = [
+      this.viewKartaDurations = [
         { name: "January", value: 0 },
         { name: "February", value: 1 },
         { name: "March", value: 2 },
@@ -229,18 +236,18 @@ export class EditKartaComponent implements OnInit {
       const startWeek = moment().startOf('month').isoWeek();
       const endWeek = moment().endOf('month').isoWeek();
       const no_of_weeks = endWeek - startWeek + 1;
-      this.viewKartaNumbers = [
+      this.viewKartaDurations = [
         { name: "1st Week", value: 1 },
         { name: "2nd Week", value: 2 },
         { name: "3rd Week", value: 3 },
         { name: "4th Week", value: 4 }
       ]
       if (no_of_weeks > 4) {
-        for (let i = 5; i <= no_of_weeks; i++) this.viewKartaNumbers.push({ name: `${i}th Week`, value: i });
+        for (let i = 5; i <= no_of_weeks; i++) this.viewKartaDurations.push({ name: `${i}th Week`, value: i });
       }
     }
     if (e.target.value === "quarter") {
-      this.viewKartaNumbers = [
+      this.viewKartaDurations = [
         { name: "1st Quarter", value: 1 },
         { name: "2nd Quarter", value: 2 },
         { name: "3rd Quarter", value: 3 },
@@ -265,6 +272,7 @@ export class EditKartaComponent implements OnInit {
               this.reArrangePhases(response.data.karta.phases);
               this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
               this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+              this._commonService.deleteNodeSession();
               BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
               // this.D3SVG.updateNode(this.karta.node, true);
               // this.setKartaDimension();
@@ -988,7 +996,7 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.getKPICalculation({ "nodeId": node.id, "type": el.target.value }).subscribe(
         (response: any) => {
           this.kpiPercentage = response.data ? response.data.percentage : 0;
-          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
+          this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
           this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
           this.D3SVG.update(this.karta.node, true);
         }
@@ -1058,6 +1066,7 @@ export class EditKartaComponent implements OnInit {
       if (this.karta.node) {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+        this._commonService.deleteNodeSession();
         BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
         // this.setKartaDimension();
         this.showSVG = true;
@@ -1133,7 +1142,7 @@ export class EditKartaComponent implements OnInit {
         if (this.kartaId !== response.color_settings.kartaId) this.colorSettings.is_global = false;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
         this.getPhases();
-        this.percentageObj = new CalculatePercentage(this.colorSettings, {
+        this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, {
           frequency: 'monthly',
           nodeId: ''
         }, 0);
@@ -1273,8 +1282,8 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.karta = response;
         if (filterTargetBy) {
-          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy);
-        } else this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
+          this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy);
+        } else this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);

@@ -2,6 +2,7 @@ import * as moment from 'moment';
 
 export class CalculatePercentage {
 
+  nodeSession: any;
   colorSettings: any = {};
   kpiCalculationPeriod: any = {
     frequency: "",
@@ -10,7 +11,8 @@ export class CalculatePercentage {
   kpiPercentage: number = 0;
   filterTargetBy: string = "";
 
-  constructor(color_settings: object, kpi_calculation_period: object, kpi_percentage: number, filterTargetBy: string = "") {
+  constructor(node_session: any, color_settings: object, kpi_calculation_period: object, kpi_percentage: number, filterTargetBy: string = "") {
+    this.nodeSession = node_session;
     this.colorSettings = color_settings;
     this.kpiCalculationPeriod = kpi_calculation_period;
     this.kpiPercentage = kpi_percentage;
@@ -54,6 +56,13 @@ export class CalculatePercentage {
     const children = (params.children || params._children || []);
     
     children.forEach(async (element: any) => {
+      console.log(this.nodeSession);
+      // console.log(this.nodeSession[element.id], "===", element.id);
+      // console.log(this.nodeSession[element.id] === element.id);
+      if (this.nodeSession[element.id] === element.id) {
+        element._children = element.children;
+        element.children = null;
+      }
       // Calculate percentage for KPI nodes only
       if (element.phase.global_name === "KPI") {
         let targetValue = 0;
