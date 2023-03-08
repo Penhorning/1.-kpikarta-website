@@ -62,7 +62,7 @@ export class TrialKartaComponent implements OnInit {
       steps: [
       {
          element: '#step1',
-         intro: 'You can add the first root node by clicking on the Node button',
+         intro: 'You begin by clicking the Node button and stating your Goal which is the top of the Karta',
          position: 'bottom'
       },
       {
