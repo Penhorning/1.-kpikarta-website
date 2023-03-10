@@ -95,6 +95,12 @@ export class MyKpiComponent implements OnInit {
     { name: 'Quarterly', value: 'quarterly', selected: false },
     { name: 'Annually', value: 'annually', selected: false }
   ];
+  // Sort by month
+  sortByMonths = this._commonService.monthsName;
+  sortMonth: string = "";
+  currentYear: any = moment().year();
+  // KPI Historical
+  selectedHistoryKpis: any = [];
   // Sort by
   sortBy: any;
   sortByList = [
@@ -114,7 +120,7 @@ export class MyKpiComponent implements OnInit {
   ];
   // Header list
   headerList = [
-    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'Karta', sortBy: 'name', sort: '', filter: true },
     { name: 'KPI', sortBy: 'name', sort: '' },
     { name: 'Target', sortBy: 'value', sort: '', filter: true },
     { name: 'Actual', sortBy: 'achieved_value', sort: '' },
@@ -124,11 +130,11 @@ export class MyKpiComponent implements OnInit {
     { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   headerList2 = [
-    { name: 'Karta', sortBy: 'fullName', sort: '', filter: true },
+    { name: 'Karta', sortBy: 'name', sort: '', filter: true },
     { name: 'KPI', sortBy: 'name', sort: '' },
     { name: 'Target', sortBy: 'value', sort: '', filter: true },
     { name: 'Actual', sortBy: 'achieved_value', sort: '' },
-    { name: 'Assigned To', sortBy: 'contributor.email', sort: '' },
+    { name: 'KPI Owner', sortBy: 'contributor.email', sort: '' },
     { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
     { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
     { name: 'Days Left', sortBy: 'due_date', sort: '' },
@@ -344,15 +350,29 @@ export class MyKpiComponent implements OnInit {
     }
     this.kpis = [];
     this.loading = true;
+    this.sortMonth = "";
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
-        this.kpis = Array.from(response.kpi_nodes[0].data)
-        this.exportKpis = Array.from(response.kpi_nodes[0].data)
+        this.kpis = Array.from(response.kpi_nodes[0].data);
+        this.exportKpis = Array.from(response.kpi_nodes[0].data);
+        this.kpis = this.kpis.map((item: any) => {
+          item.isSelected = false;
+          return item;
+        });
         if (response.kpi_nodes[0].metadata.length > 0) {
           this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
       }
     ).add(() => this.loading = false);
+  }
+
+  // Check/ uncheck all items
+  checkUncheckAll(e: any) {
+    for (let kpi of this.kpis) {
+      kpi.isSelected = e.target.checked;
+      if (e.target.checked) this.selectedHistoryKpis.push(kpi._id);
+      else this.selectedHistoryKpis = [];
+    }
   }
 
   // Get color for each node percentage
@@ -544,6 +564,35 @@ export class MyKpiComponent implements OnInit {
     this.addMetricsData();
   }
 
+  // Get kpis by month
+  getKPIsByMonth(month_number: string) {
+    let data = {
+      page: this.pageIndex + 1,
+      limit: this.pageSize,
+      contributorId: this._commonService.getUserId(),
+      type: "month",
+      duration: parseInt(month_number)
+    }
+    this.kpis = [];
+    this.loading = true;
+    this._myKpiService.getKPIsByMonth(data).subscribe(
+      (response: any) => {
+        this.kpis = Array.from(response.kpi_nodes[0].data);
+        if (response.kpi_nodes[0].metadata.length > 0) {
+          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
+        } else this.totalAssignedKPIs = 0;
+      }
+    ).add(() => this.loading = false);
+  }
+  // Sort by month
+  onSortByMonth() {
+    this.pageIndex = 0;
+    if (this.sortMonth) {
+      this.getKPIsByMonth(this.sortMonth);
+    }
+    else this.getMyKPIsList();
+  }
+
   // Sort by
   onSortBy(item: any) {
     this.sortBy = item;
@@ -619,22 +668,45 @@ export class MyKpiComponent implements OnInit {
   // View more button
   viewMore() {
     this.pageIndex++;
-    let data = {
-      page: this.pageIndex + 1,
-      limit: this.pageSize,
-      userId: this._commonService.getUserId(),
-      kpiType: this.kpiType,
-      statusType: this.statusType
+    // Fetch view more by previous month
+    if (this.sortMonth) {
+      let data = {
+        page: this.pageIndex + 1,
+        limit: this.pageSize,
+        contributorId: this._commonService.getUserId(),
+        type: "month",
+        duration: parseInt(this.sortMonth)
+      }
+      this.loading = true;
+      this._myKpiService.getKPIsByMonth(data).subscribe(
+        (response: any) => {
+          this.kpis.push(...response.kpi_nodes[0].data);
+          if (response.kpi_nodes[0].metadata.length > 0) {
+            this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
+          } else this.totalAssignedKPIs = 0;
+        }
+      ).add(() => this.loading = false);
     }
-    this.loading = true;
-    this._myKpiService.getMyKPIs(data).subscribe(
-      (response: any) => {
-        this.kpis.push(...response.kpi_nodes[0].data);
-        this.exportKpis.push(...response.kpi_nodes[0].data);
-        if (response.kpi_nodes[0].metadata.length > 0) {
-          this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
-        } else this.totalAssignedKPIs = 0;
-      }).add(() => this.loading = false);
+    // Fetch view more by latest
+    else {
+      let data = {
+        page: this.pageIndex + 1,
+        limit: this.pageSize,
+        userId: this._commonService.getUserId(),
+        kpiType: this.kpiType,
+        statusType: this.statusType
+      }
+      this.loading = true;
+      this._myKpiService.getMyKPIs(data).subscribe(
+        (response: any) => {
+          this.kpis.push(...response.kpi_nodes[0].data);
+          this.exportKpis.push(...response.kpi_nodes[0].data);
+          if (response.kpi_nodes[0].metadata.length > 0) {
+            this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
+          } else this.totalAssignedKPIs = 0;
+        }
+      ).add(() => this.loading = false);
+    }
   }
 
   // Sort function starts
@@ -659,9 +731,9 @@ export class MyKpiComponent implements OnInit {
         } else {
           return node_2 - node_1;
         }
-      } else if (colName == 'fullName') {
-        node_1 = node_1['karta']['user'][colName].toLowerCase();
-        node_2 = node_2['karta']['user'][colName].toLowerCase();
+      } else if (colName == 'name' && index === 0) {
+        node_1 = node_1['karta'][colName].toLowerCase();
+        node_2 = node_2['karta'][colName].toLowerCase();
         return node_1.localeCompare(node_2) * this.sortDir;
       } else if (colName == 'achieved_value') {
         node_1 = node_1[colName]

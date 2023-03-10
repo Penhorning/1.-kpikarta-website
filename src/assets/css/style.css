@@ -2108,7 +2108,7 @@ select.form-control.custom-select-karta-mode {
   border-bottom: 1px solid #E1E1E1;
   margin: 0;
   width: 100%;
-  padding: 18px 8px 0 118px;
+  padding: 15px 8px 0 118px;
   /* position: fixed; */
   z-index: 9999;
   /* overflow: hidden; */
@@ -3104,4 +3104,36 @@ button.btn.btn-link.see_all_btn {
 }
 .mobile-name {
   display: none;
+}
+
+
+/*09-Mar-23*/
+td.target {
+  background-color: #feac4a;
+  font-weight: bold;
+  text-align: center;
+}
+td.bg-green {
+  background-color: #53c9bc;
+  font-weight: bold;
+  text-align: center;
+}
+td.green-color{
+  color: #018E11
+}
+td.red-color{
+  color: #D30305
+}
+td.orange-color {
+  color: #E48F04
+}
+.cus-select {
+  padding: 6px 40px 6px 15px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  margin-right: 10px;
+  text-align: left;
+}
+.close-data{
+  margin-top: 5px;
 }

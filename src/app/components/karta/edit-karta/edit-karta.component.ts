@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
@@ -19,10 +19,11 @@ declare const $: any;
   templateUrl: './edit-karta.component.html',
   styleUrls: ['./edit-karta.component.scss'],
 })
-export class EditKartaComponent implements OnInit {
+export class EditKartaComponent implements OnInit, OnDestroy {
 
   unauthorizedUser: any;
   kartaId: string = '';
+  lastSavedDate: string = '';
   lastUpdatedDate: string = '';
   karta: any;
   currentNode: any = {};
@@ -90,10 +91,10 @@ export class EditKartaComponent implements OnInit {
         this.updateNodeProperties(d);
       },
       collapseNode: (d: any) => {
-        this._commonService.addNodeSession(d.id);
+        this._commonService.addNodeInSession(d.id);
       },
       expandNode: (d: any) => {
-        this._commonService.removeNodeSession(d.id);
+        this._commonService.removeNodeFromSession(d.id);
       },
       removeNode: (d: any) => {
         this.removeNode(d);
@@ -217,20 +218,7 @@ export class EditKartaComponent implements OnInit {
   viewKartaType(e: any) {
     this.viewKartaForm.patchValue({ duration: "" });
     if (e.target.value === "month") {
-      this.viewKartaDurations = [
-        { name: "January", value: 0 },
-        { name: "February", value: 1 },
-        { name: "March", value: 2 },
-        { name: "April", value: 3 },
-        { name: "May", value: 4 },
-        { name: "June", value: 5 },
-        { name: "July", value: 6 },
-        { name: "August", value: 7 },
-        { name: "September", value: 8 },
-        { name: "October", value: 9 },
-        { name: "November", value: 10 },
-        { name: "December", value: 11 }
-      ]
+      this.viewKartaDurations = this._commonService.monthsName;
     } else if (e.target.value === "week") {
       // Get number of weeks in a month
       const startWeek = moment().startOf('month').isoWeek();
@@ -272,7 +260,7 @@ export class EditKartaComponent implements OnInit {
               this.reArrangePhases(response.data.karta.phases);
               this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
               this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-              this._commonService.deleteNodeSession();
+              // this._commonService.deleteNodeSession();
               BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
               // this.D3SVG.updateNode(this.karta.node, true);
               // this.setKartaDimension();
@@ -281,6 +269,12 @@ export class EditKartaComponent implements OnInit {
               jqueryFunctions.setValue("#chartMode", "disable");
               jqueryFunctions.setAttribute("#chartMode", "disabled", true);
               this.showSVG = true;
+              // Set view karta text
+              if (this.viewKartaForm.value.type === "month" || this.viewKartaForm.value.type === "quarter") {
+                this.viewKartaText = `${this.viewKartaDurations.find((item: any) => item.value === this.viewKartaForm.value.duration).name} ${moment().year()}`;
+              } else if (this.viewKartaForm.value.type === "week") {
+                this.viewKartaText = `${this.viewKartaDurations.find((item: any) => item.value === this.viewKartaForm.value.duration).name} ${moment().format('MMMM')} ${moment().year()}`;
+              }
               jqueryFunctions.hideModal('viewKartaModal');
               jqueryFunctions.removeKarta();
             }
@@ -331,8 +325,10 @@ export class EditKartaComponent implements OnInit {
     this.getAllVersion();
     // Get all inventories
     this.getInventories();
-    // Get last updated kpi node
-    this.lastUpdatedKpiNode();
+    // Get last saved karta
+    this.lastSavedKarta();
+    // Get last updated karta
+    this.lastUpdatedKarta();
   }
 
   montiorBy(event: any) {
@@ -390,9 +386,17 @@ export class EditKartaComponent implements OnInit {
     this.getInventories();
   }
 
-  // Get last updated kpi node
-  lastUpdatedKpiNode() {
-    this._kartaService.getLastUpdatedKpiNode({kartaId: this.kartaId}).subscribe(
+  // Get last saved karta history
+  lastSavedKarta() {
+    this._kartaService.lastSavedKarta({kartaId: this.kartaId}).subscribe(
+      (response: any) => {
+        if (response.kpi_node) this.lastSavedDate = response.kpi_node.updatedAt;
+      }
+    );
+  }
+  // Get last updated karta history
+  lastUpdatedKarta() {
+    this._kartaService.lastUpdatedKarta({kartaId: this.kartaId}).subscribe(
       (response: any) => {
         if (response.kpi_node) this.lastUpdatedDate = response.kpi_node.updatedAt;
       }
@@ -996,7 +1000,7 @@ export class EditKartaComponent implements OnInit {
       this._kartaService.getKPICalculation({ "nodeId": node.id, "type": el.target.value }).subscribe(
         (response: any) => {
           this.kpiPercentage = response.data ? response.data.percentage : 0;
-          this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
+          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
           this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
           this.D3SVG.update(this.karta.node, true);
         }
@@ -1066,7 +1070,6 @@ export class EditKartaComponent implements OnInit {
       if (this.karta.node) {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-        this._commonService.deleteNodeSession();
         BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
         // this.setKartaDimension();
         this.showSVG = true;
@@ -1075,6 +1078,7 @@ export class EditKartaComponent implements OnInit {
     }
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
+        // this._commonService.deleteNodeSession();
         if (response.userId === this._commonService.getUserId()) {
           this.unauthorizedUser = false;
           setKartaDetails(response);
@@ -1142,7 +1146,7 @@ export class EditKartaComponent implements OnInit {
         if (this.kartaId !== response.color_settings.kartaId) this.colorSettings.is_global = false;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
         this.getPhases();
-        this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, {
+        this.percentageObj = new CalculatePercentage(this.colorSettings, {
           frequency: 'monthly',
           nodeId: ''
         }, 0);
@@ -1282,8 +1286,8 @@ export class EditKartaComponent implements OnInit {
       (response: any) => {
         this.karta = response;
         if (filterTargetBy) {
-          this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy);
-        } else this.percentageObj = new CalculatePercentage(this._commonService.getNodeSession(), this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
+          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy);
+        } else this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
@@ -2149,5 +2153,9 @@ export class EditKartaComponent implements OnInit {
     )
   }
   // Undo Redo Functionality ends
+
+  ngOnDestroy(): void {
+    this._commonService.deleteNodeSession();
+  }
 
 }

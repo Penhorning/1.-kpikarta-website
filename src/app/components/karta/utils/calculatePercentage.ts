@@ -11,12 +11,18 @@ export class CalculatePercentage {
   kpiPercentage: number = 0;
   filterTargetBy: string = "";
 
-  constructor(node_session: any, color_settings: object, kpi_calculation_period: object, kpi_percentage: number, filterTargetBy: string = "") {
-    this.nodeSession = node_session;
+  constructor(color_settings: object, kpi_calculation_period: object, kpi_percentage: number, filterTargetBy: string = "") {
+    this.nodeSession = JSON.parse(this.decode(sessionStorage.getItem("kpi-karta-node-session")));
     this.colorSettings = color_settings;
     this.kpiCalculationPeriod = kpi_calculation_period;
     this.kpiPercentage = kpi_percentage;
     this.filterTargetBy = filterTargetBy;
+  }
+
+  // Decode
+  decode(value: any) {
+    if (value) return window.atob(value);
+    return "{}";
   }
 
   // Get number of days
@@ -56,9 +62,6 @@ export class CalculatePercentage {
     const children = (params.children || params._children || []);
     
     children.forEach(async (element: any) => {
-      console.log(this.nodeSession);
-      // console.log(this.nodeSession[element.id], "===", element.id);
-      // console.log(this.nodeSession[element.id] === element.id);
       if (this.nodeSession[element.id] === element.id) {
         element._children = element.children;
         element.children = null;
