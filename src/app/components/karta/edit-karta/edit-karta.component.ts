@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
@@ -180,7 +180,8 @@ export class EditKartaComponent implements OnInit {
     private _kartaService: KartaService,
     private _commonService: CommonService,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
@@ -2140,5 +2141,21 @@ export class EditKartaComponent implements OnInit {
     )
   }
   // Undo Redo Functionality ends
+
+  // Show karta tutorial
+  showTutorial() {
+    this._commonService.updateSession('newkartaId', this.kartaId);
+    this._kartaService.getSampleKarta().subscribe(
+      (sample) => {
+        if(sample.length > 0) {
+          this.router.navigate(['/karta/trial', sample[0].id]);
+        }
+      },
+      (error: any) => {
+        console.log(error);
+        
+      }
+    )
+  }
 
 }
