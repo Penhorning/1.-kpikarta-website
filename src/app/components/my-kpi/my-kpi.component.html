@@ -1,6 +1,6 @@
 <app-header></app-header>
 <app-sidebar></app-sidebar>
-<div class="main-content">
+<div class="main-content" *ngIf="!isHistoricalView">
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-3">
@@ -89,6 +89,7 @@
           </a>
 
           <div class="dropdown sort-drop">
+            <button type="button" class="history_btn" (click)="showHistory()">History</button>
             <select  (change)="onSortByMonth()" [(ngModel)]="sortMonth" class="form-select form-select-lg short-dropdown-custom sort_dropdown mr-2">
               <option value="" selected>All</option>
               <option *ngFor="let month of sortByMonths" [value]="month.value">{{ month?.name }} ({{ currentYear }})</option>
@@ -128,7 +129,7 @@
                         <tr>
                           <th scope="col" *ngFor="let column of headerList; let i=index">
                             <div class="d-flex">
-                              <input type="checkbox" name="masterCheck" id="master_check" *ngIf="i === 0" (change)="checkUncheckAll($event)">
+                              <input type="checkbox" name="masterCheck" id="master_check" [(ngModel)]="masterCheck" *ngIf="i === 0" (change)="checkUncheckAll($event)">
                               <span class="cursor_pointer text-nowrap" (click)="onSortClick(column.sortBy, i)">
                                 <ng-container [ngSwitch]="column.sort">
                                   <!-- Ascending - Arrow down -->
@@ -269,7 +270,7 @@
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis; let i = index;">
                           <td>
-                            <input type="checkbox" [name]="i" [id]="i" [checked]="kpi.isSelected">
+                            <input type="checkbox" [name]="i" [id]="i" [checked]="kpi.isSelected" (change)="checkUncheckSingleItem($event, i, kpi._id)">
                             <a class="short_text_with_width view_karta_link"
                               [routerLink]="['/karta/view', kpi?.karta?._id]" target="_blank">
                               {{ kpi?.karta?.name }}
@@ -798,6 +799,8 @@
     </div>
   </div>
 </div>
+
+<app-historical-view *ngIf="isHistoricalView" [selectedKpis]="historyKpis" (hideHistoricalView)="hideHistory()"></app-historical-view>
 
 
 

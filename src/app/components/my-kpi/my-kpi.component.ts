@@ -3,7 +3,7 @@ import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
 import * as XLSX from 'xlsx'
 
@@ -100,7 +100,10 @@ export class MyKpiComponent implements OnInit {
   sortMonth: string = "";
   currentYear: any = moment().year();
   // KPI Historical
-  selectedHistoryKpis: any = [];
+  isHistoricalView: boolean = false;
+  masterCheck: boolean = false;
+  selectedHistoryKpis = new Set();
+  historyKpis: any = [];
   // Sort by
   sortBy: any;
   sortByList = [
@@ -170,7 +173,7 @@ export class MyKpiComponent implements OnInit {
   @ViewChild('fileUploader')
   fileUploader!: ElementRef;
   
-  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private route: ActivatedRoute) {
+  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private router: Router) {
     // this.maxDate = new Date();
   }
 
@@ -351,6 +354,7 @@ export class MyKpiComponent implements OnInit {
     this.kpis = [];
     this.loading = true;
     this.sortMonth = "";
+    this.isHistoricalView = false;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         this.kpis = Array.from(response.kpi_nodes[0].data);
@@ -366,13 +370,40 @@ export class MyKpiComponent implements OnInit {
     ).add(() => this.loading = false);
   }
 
-  // Check/ uncheck all items
+  // Check/Uncheck all items
   checkUncheckAll(e: any) {
     for (let kpi of this.kpis) {
       kpi.isSelected = e.target.checked;
-      if (e.target.checked) this.selectedHistoryKpis.push(kpi._id);
-      else this.selectedHistoryKpis = [];
+      if (e.target.checked) this.selectedHistoryKpis.add(kpi._id);
+      else this.selectedHistoryKpis.clear();
     }
+  }
+  // Check/Uncheck single item
+  checkUncheckSingleItem(e: any, index: number, id: string) {
+    if (e.target.checked) {
+      this.selectedHistoryKpis.add(id);
+      this.kpis[index].isSelected = true;
+      this.masterCheck = this.kpis.every((item: any) => item.isSelected == true);
+    }
+    else {
+      this.selectedHistoryKpis.delete(id);
+      this.kpis[index].isSelected = false;
+      this.masterCheck = false;
+    }
+  }
+  // Show history
+  showHistory() {
+    this.isHistoricalView = true;
+    if (this.selectedHistoryKpis.size > 0) this.historyKpis = Array.from(this.selectedHistoryKpis);
+    else for (let kpi of this.kpis) this.historyKpis.push(kpi._id);
+  }
+  // Hide history
+  hideHistory() {
+    this.isHistoricalView = false;
+    this.masterCheck = false;
+    this.historyKpis = [];
+    this.selectedHistoryKpis.clear();
+    this.getMyKPIsList();
   }
 
   // Get color for each node percentage
@@ -570,8 +601,7 @@ export class MyKpiComponent implements OnInit {
       page: this.pageIndex + 1,
       limit: this.pageSize,
       contributorId: this._commonService.getUserId(),
-      type: "month",
-      duration: parseInt(month_number)
+      month: parseInt(month_number)
     }
     this.kpis = [];
     this.loading = true;

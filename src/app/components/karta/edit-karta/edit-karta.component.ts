@@ -553,9 +553,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                   let scrollValue = this.getScrollPosition();
                   this.updateNodeProperties(x, scrollValue);
                   let node = this.currentNode;
-                  this.updateNode('node_formula', request, 'node_updated', node);
-                  this.updateNode('achieved_value', total, 'node_updated', node, "metrics");
-                  this.updateNode('target', newTarget, 'node_updated', node);
+                  let randomKey = new Date().getTime();
+                  let updatingParameters = [
+                    { key: 'node_formula', value: request, node_updated: 'node_updated', node },
+                    { key: 'achieved_value', value: total, node_updated: 'node_updated', node, metrics: "metrics"},
+                    { key: 'target', value: newTarget, node_updated: 'node_updated', node }
+                  ];
+                  for (let param of updatingParameters) {
+                    let metrics = param.metrics || null
+                    this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+                  }
 
                   this.formulaFlag = false;
                   jqueryFunctions.enableElement("#addIcon");
@@ -1024,8 +1031,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         return (element.percentage = Math.round(percentage));
       });
       // Submit updated achieved value
-      this.updateNode('achieved_value', this.currentNodeAchievedValue, 'node_updated', node, "measure");
-      this.updateNode('target', this.target, 'node_updated', node);
+      let randomKey = new Date().getTime();
+      let updatingParameters = [
+        { key: 'achieved_value', value: this.currentNodeAchievedValue, node_updated: 'node_updated', node, metrics: "measure"},
+        { key: 'target', value: this.target, node_updated: 'node_updated', node }
+      ];
+      for (let param of updatingParameters) {
+        let metrics = param.metrics || null
+        this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+      }
     }
   }
   // Change contributor
@@ -1297,7 +1311,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   // Update node
-  updateNode(key: string, value: any, event: string = "unknown", updatingNode: any = this.currentNode, type?: any) {
+  updateNode(key: string, value: any, event: string = "unknown", updatingNode: any = this.currentNode, type?: any, randomKey?: any) {
     // Set data
     let data = { [key]: value }
     if (key === "achieved_value") {
@@ -1329,7 +1343,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           versionId: this.versionId,
           kartaId: this.kartaId,
           parentNodeId: updatingNode.parentId,
-          historyType: 'main'
+          historyType: 'main',
+          randomKey: randomKey.toString()
         }
         await this._kartaService.addKartaHistoryObject(history_data).toPromise();
       }

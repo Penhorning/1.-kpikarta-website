@@ -12,72 +12,53 @@
       <div class="row">
          <div class="col-lg-12 col-md-12">
             <div class="d-flex justify-content-end">
-               <div class="mb-2">
-                  <select class="form-select cus-select" (change)="onSortByYear($event)">
-                     <option value="2023">2023</option>
-                     <option value="2024">2024</option>
-                     <option value="2025">2025</option>
-                     <option value="2026">2026</option>
-                  </select>
-               </div>
-               <div class="close-data"><a href=""><img src="assets/img/close.svg" alt=""/></a></div>
+                <div class="mb-2">
+                    <select class="form-select cus-select" (change)="onSortByYear($event)">
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+               <div class="close-data"><a class="cursor_pointer" (click)="hideHistory()"><img src="assets/img/close.svg" alt=""/></a></div>
             </div>
          </div>
-         <div class="col-lg-12 col-md-12">
+         <div class="col-lg-12 col-md-12 mb-2" *ngFor="let kpi of kpis">
             <div class="table-responsive bg-white">
-               <table class="table" width="100%%" border="1" cellpadding="1" align="center" style="border-color: #dee2e6">
+               <table class="table mb-0" width="100%%" border="1" cellpadding="1" align="center" style="border-color: #dee2e6">
                   <tbody>
-                     <tr>
-                        <th scope="col"><span><img src="assets/img/ads.svg" alt=""/></span> Google Ads</th>
+                    <tr>
+                        <th scope="col"><span><img src="assets/img/ads.svg" alt=""/></span> {{ kpi?.name }}</th>
                         <th scope="col">&nbsp;</th>
-                        <th scope="col">Jan</th>
-                        <th scope="col">Feb</th>
-                        <th scope="col">Mar</th>
-                        <th scope="col">Apr</th>
-                        <th scope="col">May</th>
-                        <th scope="col">Jun</th>
-                        <th scope="col">Jul</th>
-                        <th scope="col">Aug</th>
-                        <th scope="col">Sep</th>
-                        <th scope="col">Oct</th>
-                        <th scope="col">Nov</th>
-                        <th scope="col">Dec</th>
+                        <th scope="col" *ngFor="let node of kpi?.nodes; let i=index">
+                            {{ months[i].shortName }}
+                        </th>
                      </tr>
                      <tr>
-                        <td><span><img src="assets/img/team.svg" alt=""/></span> Sales Team Karta</td>
+                        <td><span><img src="assets/img/team.svg" alt=""/></span> {{ kpi?.karta?.name }}</td>
                         <td class="target">Target</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
-                        <td>100</td>
+                        <td *ngFor="let node of kpi?.nodes">
+                            {{ node?.target?.event_options?.updated?.target[0].value }}
+                        </td>
                      </tr>
                      <tr>
-                        <td><span><img src="assets/img/user.svg" alt=""/></span> Peder</td>
+                        <td><span><img src="assets/img/user.svg" alt=""/></span> {{ kpi.karta?.user?.fullName }}</td>
                         <td class="bg-green">Actual</td>
-                        <td class="green-color">95</td>
-                        <td class="red-color">40</td>
-                        <td class="orange-color">60</td>
-                        <td class="green-color">90</td>
-                        <td class="red-color">30</td>
-                        <td class="green-color">90</td>
-                        <td class="red-color">35</td>
-                        <td class="green-color">98</td>
-                        <td class="actual">90</td>
-                        <td class="orange-color">55</td>
-                        <td class="red-color">20</td>
-                        <td class="green-color">100</td>
+                        <td *ngFor="let node of kpi?.nodes">
+                            {{ node?.achieved?.event_options?.updated?.achieved_value }}
+                        </td>
                      </tr>
                   </tbody>
                </table>
             </div>
+         </div>
+         <div class="col-md-12">
+            <ng-container *ngIf="loading">
+                <div [innerHtml]="loader"></div>
+              </ng-container>
+              <ng-container *ngIf="!loading && kpis.length === 0">
+                <div [innerHtml]="noDataAvailable"></div>
+              </ng-container>
          </div>
       </div>
    </div>

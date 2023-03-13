@@ -13,7 +13,10 @@ export class MyKpiService {
     return this._httpService.POST('/karta_nodes/kpis', data);
   }
   getKPIsByMonth(data: any) {
-    return this._httpService.POST('/karta_nodes/view-previous-kpis', data);
+    return this._httpService.POST('/karta_nodes/view-previous-kpis-by-month', data);
+  }
+  getKPIsByYear(data: any) {
+    return this._httpService.POST('/karta_nodes/view-previous-kpis-by-year', data);
   }
   getColorSettings(data: any) {
     return this._httpService.POST('/color_settings/global', data);

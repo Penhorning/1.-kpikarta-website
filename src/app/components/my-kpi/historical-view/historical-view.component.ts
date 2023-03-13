@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonService } from '@app/shared/_services/common.service';
 import { MyKpiService } from '../service/my-kpi.service';
 
@@ -9,8 +9,15 @@ import { MyKpiService } from '../service/my-kpi.service';
 })
 export class HistoricalViewComponent implements OnInit {
 
+  @Input() selectedKpis = [];
+  @Output() hideHistoricalView: any= new EventEmitter();
+  hideHistory() {
+    this.hideHistoricalView.emit(false);
+  }
+
   kpis: any = [];
   totalKPIs: number = 0;
+  months: any = [];
   loading: boolean = true;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
@@ -19,7 +26,9 @@ export class HistoricalViewComponent implements OnInit {
   pageSize: number = 10;
   length: number = 0;
 
-  constructor(private _commonService: CommonService, private _myKpiService: MyKpiService) { }
+  constructor(private _commonService: CommonService, private _myKpiService: MyKpiService) {
+    this.months = this._commonService.monthsName;
+  }
 
   ngOnInit(): void {
     this.getKPIsByYear(2023);
@@ -31,12 +40,12 @@ export class HistoricalViewComponent implements OnInit {
       page: this.pageIndex + 1,
       limit: this.pageSize,
       contributorId: this._commonService.getUserId(),
-      type: "year",
-      duration: year_number
+      nodeIds: this.selectedKpis,
+      year: year_number
     }
     this.kpis = [];
     this.loading = true;
-    this._myKpiService.getKPIsByMonth(data).subscribe(
+    this._myKpiService.getKPIsByYear(data).subscribe(
       (response: any) => {
         this.kpis = Array.from(response.kpi_nodes[0].data);
         if (response.kpi_nodes[0].metadata.length > 0) {
@@ -49,7 +58,7 @@ export class HistoricalViewComponent implements OnInit {
   // Sort by year
   onSortByYear(e: any) {
     this.pageIndex = 0;
-    this.getKPIsByYear(e.target.value);
+    this.getKPIsByYear(parseInt(e.target.value));
   }
 
 }

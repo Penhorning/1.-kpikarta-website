@@ -61,18 +61,18 @@ export class CommonService {
 
   // Months list
   monthsName = [
-    { name: "January", value: 0 },
-    { name: "February", value: 1 },
-    { name: "March", value: 2 },
-    { name: "April", value: 3 },
-    { name: "May", value: 4 },
-    { name: "June", value: 5 },
-    { name: "July", value: 6 },
-    { name: "August", value: 7 },
-    { name: "September", value: 8 },
-    { name: "October", value: 9 },
-    { name: "November", value: 10 },
-    { name: "December", value: 11 }
+    { name: "January", shortName: "Jan", value: 0 },
+    { name: "February", shortName: "Feb", value: 1 },
+    { name: "March", shortName: "Mar", value: 2 },
+    { name: "April", shortName: "Apr", value: 3 },
+    { name: "May", shortName: "May", value: 4 },
+    { name: "June", shortName: "Jun", value: 5 },
+    { name: "July", shortName: "Jul", value: 6 },
+    { name: "August", shortName: "Aug", value: 7 },
+    { name: "September", shortName: "Sep", value: 8 },
+    { name: "October", shortName: "Oct", value: 9 },
+    { name: "November", shortName: "Nov", value: 10 },
+    { name: "December", shortName: "Dec", value: 11 }
   ]
 
   constructor(private _httpService: HttpService, private toastr: ToastrService, private router: Router) { }
@@ -151,6 +151,14 @@ export class CommonService {
   deleteNodeSession() {
     sessionStorage.removeItem("kpi-karta-node-session");
   }
+
+  // Historical view nodeIds session
+  // setNodeIdsSession(sessionData: any) {
+  //   sessionStorage.setItem("kpi-karta-nodeIds-session", this.encode(JSON.stringify(sessionData)));
+  // }
+  // getNodeIdsSession() {
+  //   return JSON.parse(this.decode(sessionStorage.getItem("kpi-karta-nodeIds-session")));
+  // }
 
 
 
