@@ -136,7 +136,7 @@ export class DashboardComponent implements OnInit {
       if (response.kartas[0].data.length > 0) {
         response.kartas[0].data = response.kartas[0].data.map((item: any) => {
           let accessType = item.sharedTo.find((item: any) => item.email === this._commonService.getSession().email).accessType;
-          if (accessType === 'edit' && this._commonService.getUserLicense() === 'Spectator') item.accessType = 'view';
+          if (accessType === 'edit' && (this._commonService.getUserLicense() === 'Spectator' || this._commonService.getUserLicense() === 'Champion')) item.accessType = 'view';
           else item.accessType = accessType;
           return item;
         });

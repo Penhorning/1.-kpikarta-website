@@ -12,6 +12,9 @@ export class MyKpiService {
   getMyKPIs(data: { "userId": string }) {
     return this._httpService.POST('/karta_nodes/kpis', data);
   }
+  getKPIsByMonth(data: any) {
+    return this._httpService.POST('/karta_nodes/view-previous-kpis', data);
+  }
   getColorSettings(data: any) {
     return this._httpService.POST('/color_settings/global', data);
   }

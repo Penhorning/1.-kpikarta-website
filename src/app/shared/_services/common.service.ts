@@ -59,6 +59,22 @@ export class CommonService {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
 
+  // Months list
+  monthsName = [
+    { name: "January", value: 0 },
+    { name: "February", value: 1 },
+    { name: "March", value: 2 },
+    { name: "April", value: 3 },
+    { name: "May", value: 4 },
+    { name: "June", value: 5 },
+    { name: "July", value: 6 },
+    { name: "August", value: 7 },
+    { name: "September", value: 8 },
+    { name: "October", value: 9 },
+    { name: "November", value: 10 },
+    { name: "December", value: 11 }
+  ]
+
   constructor(private _httpService: HttpService, private toastr: ToastrService, private router: Router) { }
 
 
@@ -111,6 +127,29 @@ export class CommonService {
   }
   getRememberMeSession() {
     return JSON.parse(this.decode(window.localStorage.getItem("kpi-karta-remember-me-session")));
+  }
+
+  // Collapsed/Expand node session
+  setNodeSession(sessionData: any) {
+    sessionStorage.setItem("kpi-karta-node-session", this.encode(JSON.stringify(sessionData)));
+  }
+  getNodeSession() {
+    return JSON.parse(this.decode(sessionStorage.getItem("kpi-karta-node-session")));
+  }
+  addNodeInSession(id: string) {
+    let session = this.getNodeSession();
+    if (session) {
+      session[id] = id;
+      this.setNodeSession(session);
+    } else this.setNodeSession({ [id]: id });
+  }
+  removeNodeFromSession(id: string) {
+    let session = this.getNodeSession();
+    delete session[id];
+    this.setNodeSession(session);
+  }
+  deleteNodeSession() {
+    sessionStorage.removeItem("kpi-karta-node-session");
   }
 
 

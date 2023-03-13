@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
@@ -19,10 +19,11 @@ declare const $: any;
   templateUrl: './edit-karta.component.html',
   styleUrls: ['./edit-karta.component.scss'],
 })
-export class EditKartaComponent implements OnInit {
+export class EditKartaComponent implements OnInit, OnDestroy {
 
   unauthorizedUser: any;
   kartaId: string = '';
+  lastSavedDate: string = '';
   lastUpdatedDate: string = '';
   karta: any;
   currentNode: any = {};
@@ -88,6 +89,12 @@ export class EditKartaComponent implements OnInit {
       },
       nodeItem: (d: any) => {
         this.updateNodeProperties(d);
+      },
+      collapseNode: (d: any) => {
+        this._commonService.addNodeInSession(d.id);
+      },
+      expandNode: (d: any) => {
+        this._commonService.removeNodeFromSession(d.id);
       },
       removeNode: (d: any) => {
         this.removeNode(d);
@@ -198,7 +205,8 @@ export class EditKartaComponent implements OnInit {
   });
   get catalog() { return this.catalogForm.controls; }
   // View karta variables
-  viewKartaNumbers: any = [];
+  viewKartaText: string = `${moment().format('MMMM')} ${moment().year()}`;
+  viewKartaDurations: any = [];
   viewKartaSubmitted: boolean = false;
   viewKartaSubmitFlag: boolean = false;
   viewKartaFilterApplied: boolean = false;
@@ -211,37 +219,24 @@ export class EditKartaComponent implements OnInit {
   viewKartaType(e: any) {
     this.viewKartaForm.patchValue({ duration: "" });
     if (e.target.value === "month") {
-      this.viewKartaNumbers = [
-        { name: "January", value: 0 },
-        { name: "February", value: 1 },
-        { name: "March", value: 2 },
-        { name: "April", value: 3 },
-        { name: "May", value: 4 },
-        { name: "June", value: 5 },
-        { name: "July", value: 6 },
-        { name: "August", value: 7 },
-        { name: "September", value: 8 },
-        { name: "October", value: 9 },
-        { name: "November", value: 10 },
-        { name: "December", value: 11 }
-      ]
+      this.viewKartaDurations = this._commonService.monthsName;
     } else if (e.target.value === "week") {
       // Get number of weeks in a month
       const startWeek = moment().startOf('month').isoWeek();
       const endWeek = moment().endOf('month').isoWeek();
       const no_of_weeks = endWeek - startWeek + 1;
-      this.viewKartaNumbers = [
+      this.viewKartaDurations = [
         { name: "1st Week", value: 1 },
         { name: "2nd Week", value: 2 },
         { name: "3rd Week", value: 3 },
         { name: "4th Week", value: 4 }
       ]
       if (no_of_weeks > 4) {
-        for (let i = 5; i <= no_of_weeks; i++) this.viewKartaNumbers.push({ name: `${i}th Week`, value: i });
+        for (let i = 5; i <= no_of_weeks; i++) this.viewKartaDurations.push({ name: `${i}th Week`, value: i });
       }
     }
     if (e.target.value === "quarter") {
-      this.viewKartaNumbers = [
+      this.viewKartaDurations = [
         { name: "1st Quarter", value: 1 },
         { name: "2nd Quarter", value: 2 },
         { name: "3rd Quarter", value: 3 },
@@ -266,6 +261,7 @@ export class EditKartaComponent implements OnInit {
               this.reArrangePhases(response.data.karta.phases);
               this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
               this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+              // this._commonService.deleteNodeSession();
               BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
               // this.D3SVG.updateNode(this.karta.node, true);
               // this.setKartaDimension();
@@ -274,6 +270,12 @@ export class EditKartaComponent implements OnInit {
               jqueryFunctions.setValue("#chartMode", "disable");
               jqueryFunctions.setAttribute("#chartMode", "disabled", true);
               this.showSVG = true;
+              // Set view karta text
+              if (this.viewKartaForm.value.type === "month" || this.viewKartaForm.value.type === "quarter") {
+                this.viewKartaText = `${this.viewKartaDurations.find((item: any) => item.value === this.viewKartaForm.value.duration).name} ${moment().year()}`;
+              } else if (this.viewKartaForm.value.type === "week") {
+                this.viewKartaText = `${this.viewKartaDurations.find((item: any) => item.value === this.viewKartaForm.value.duration).name} ${moment().format('MMMM')} ${moment().year()}`;
+              }
               jqueryFunctions.hideModal('viewKartaModal');
               jqueryFunctions.removeKarta();
             }
@@ -324,8 +326,10 @@ export class EditKartaComponent implements OnInit {
     this.getAllVersion();
     // Get all inventories
     this.getInventories();
-    // Get last updated kpi node
-    this.lastUpdatedKpiNode();
+    // Get last saved karta
+    this.lastSavedKarta();
+    // Get last updated karta
+    this.lastUpdatedKarta();
   }
 
   montiorBy(event: any) {
@@ -383,9 +387,17 @@ export class EditKartaComponent implements OnInit {
     this.getInventories();
   }
 
-  // Get last updated kpi node
-  lastUpdatedKpiNode() {
-    this._kartaService.getLastUpdatedKpiNode({kartaId: this.kartaId}).subscribe(
+  // Get last saved karta history
+  lastSavedKarta() {
+    this._kartaService.lastSavedKarta({kartaId: this.kartaId}).subscribe(
+      (response: any) => {
+        if (response.kpi_node) this.lastSavedDate = response.kpi_node.updatedAt;
+      }
+    );
+  }
+  // Get last updated karta history
+  lastUpdatedKarta() {
+    this._kartaService.lastUpdatedKarta({kartaId: this.kartaId}).subscribe(
       (response: any) => {
         if (response.kpi_node) this.lastUpdatedDate = response.kpi_node.updatedAt;
       }
@@ -1067,6 +1079,7 @@ export class EditKartaComponent implements OnInit {
     }
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
+        // this._commonService.deleteNodeSession();
         if (response.userId === this._commonService.getUserId()) {
           this.unauthorizedUser = false;
           setKartaDetails(response);
@@ -2156,6 +2169,10 @@ export class EditKartaComponent implements OnInit {
         
       }
     )
+  }
+
+  ngOnDestroy(): void {
+    this._commonService.deleteNodeSession();
   }
 
 }
