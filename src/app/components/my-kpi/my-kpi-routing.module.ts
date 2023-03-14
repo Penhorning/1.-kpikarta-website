@@ -10,13 +10,6 @@ const routes: Routes = [
       roles: ["company_admin", "department_admin", "user"],
       licenses: ["Creator", "Champion"]
     }
-  },
-  { path: 'history', component: HistoricalViewComponent,
-    data: {
-      title: "History - KPI Karta",
-      roles: ["company_admin", "department_admin", "user"],
-      licenses: ["Creator", "Champion"]
-    }
   }
 ];
 

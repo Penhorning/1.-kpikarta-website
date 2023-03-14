@@ -20,7 +20,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   forgotForm = this.fb.group({
-    email: ['', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]]
+    email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$')]]
   });
   get form() { return this.forgotForm.controls; }
 

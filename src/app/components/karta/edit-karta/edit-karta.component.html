@@ -81,7 +81,7 @@
                                        <div class="col-lg-6 mb-2" *ngIf="!showSVG">
                                            <div class="card custom-card side-bar-card">
                                                <div class="goal-img cursor_pointer" id="root" draggable="true" (dragstart)="onRootDragStart('root', true)">
-                                                   <img src="assets/img/root.png" class="img-fluid" />
+                                                   <img src="/assets/img/branch.png" class="img-fluid" />
                                                    <p>Root</p>
                                                </div>
                                            </div>
@@ -90,7 +90,7 @@
                                            <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'branch'">
                                                <div class="card custom-card side-bar-card">
                                                    <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onRootDragStart(inventory, false)">
-                                                       <img src="assets/img/catalog.png" class="img-fluid" />
+                                                       <img src="/assets/img/branch.png" class="img-fluid" />
                                                        <p>{{ inventory?.name }}</p>
                                                    </div>
                                                </div>
@@ -119,7 +119,7 @@
                                            <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'measure'">
                                                <div class="card custom-card side-bar-card">
                                                    <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
-                                                       <img [src]="inventory.thumbnail" class="img-fluid" />
+                                                       <img src="/assets/img/measure.png" class="img-fluid" />
                                                        <p>{{ inventory?.name }}</p>
                                                    </div>
                                                </div>
@@ -148,7 +148,7 @@
                                            <div class="col-lg-6 mb-2" *ngIf="inventory.node_type === 'metrics'">
                                                <div class="card custom-card side-bar-card">
                                                    <div class="goal-img cursor_pointer" draggable="true" (dragstart)="onInventoryDragStart(inventory)">
-                                                       <img [src]="inventory.thumbnail" class="img-fluid" />
+                                                       <img src="/assets/img/metric.png" class="img-fluid" />
                                                        <p class="pt-2">{{ inventory?.name }}</p>
                                                    </div>
                                                </div>

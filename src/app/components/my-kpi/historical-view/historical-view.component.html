@@ -24,13 +24,13 @@
             </div>
          </div>
          <div class="col-lg-12 col-md-12 mb-2" *ngFor="let kpi of kpis">
-            <div class="table-responsive bg-white">
-               <table class="table mb-0" width="100%%" border="1" cellpadding="1" align="center" style="border-color: #dee2e6">
+            <div class="table-responsive bg-white w-auto">
+               <table class="table mb-0" width="100%" border="1" cellpadding="1" align="center" style="border-color: #dee2e6">
                   <tbody>
                     <tr>
-                        <th scope="col"><span><img src="assets/img/ads.svg" alt=""/></span> {{ kpi?.name }}</th>
-                        <th scope="col">&nbsp;</th>
-                        <th scope="col" *ngFor="let node of kpi?.nodes; let i=index">
+                        <th><span><img src="assets/img/ads.svg" alt=""/></span> {{ kpi?.name }}</th>
+                        <th>&nbsp;</th>
+                        <th *ngFor="let node of kpi?.nodes; let i=index">
                             {{ months[i].shortName }}
                         </th>
                      </tr>
@@ -38,14 +38,14 @@
                         <td><span><img src="assets/img/team.svg" alt=""/></span> {{ kpi?.karta?.name }}</td>
                         <td class="target">Target</td>
                         <td *ngFor="let node of kpi?.nodes">
-                            {{ node?.target?.event_options?.updated?.target[0].value }}
+                            {{ node?.target?.event_options?.updated?.target[0].value || 'N/A'}}
                         </td>
                      </tr>
                      <tr>
-                        <td><span><img src="assets/img/user.svg" alt=""/></span> {{ kpi.karta?.user?.fullName }}</td>
+                        <td><span><img src="assets/img/User.svg" alt=""/></span> {{ kpi.karta?.user?.fullName }}</td>
                         <td class="bg-green">Actual</td>
                         <td *ngFor="let node of kpi?.nodes">
-                            {{ node?.achieved?.event_options?.updated?.achieved_value }}
+                            {{ node?.achieved?.event_options?.updated?.achieved_value || 'N/A'}}
                         </td>
                      </tr>
                   </tbody>

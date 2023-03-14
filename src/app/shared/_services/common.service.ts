@@ -38,7 +38,7 @@ export class CommonService {
   // Form validation variables
   formValidation: any  = {
     blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
-    email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+    email: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
     password: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()+=\?;,./{}|\":<>\[\]\\\' ~_-`]).{8,}/,
     only_string: '^[a-zA-Z ]*$',
   }
