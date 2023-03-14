@@ -44,8 +44,14 @@
                      <tr>
                         <td><span><img src="assets/img/user.svg" alt=""/></span> {{ kpi.karta?.user?.fullName }}</td>
                         <td class="bg-green">Actual</td>
-                        <td *ngFor="let node of kpi?.nodes">
-                            {{ node?.achieved?.event_options?.updated?.achieved_value }}
+                        <td *ngFor="let node of kpi?.nodes; let i = index;" >
+                           {{ node.achieved?.event_options?.updated?.achieved_value }}
+                             <svg xmlns="http://www.w3.org/2000/svg"  (click)="editHistoryActualValue(node, kpi, i)" width="16"
+                            height="12" fill="currentColor" class="bi bi-pencil cursor_pointer"
+                            viewBox="0 0 16 16" data-toggle="modal" data-target="#editHistoryActualValueModal">
+                            <path
+                              d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                          </svg>
                         </td>
                      </tr>
                   </tbody>
@@ -62,4 +68,106 @@
          </div>
       </div>
    </div>
+</div>
+
+<!-- Edit actual value modal -->
+<div class="modal fade" id="editHistoryActualValueModal" tabindex="-1" role="dialog" data-backdrop="static"
+  data-keyboard="false" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content p-4">
+      <div class="modal-header">
+        <h5 class="modal-title pt-0" id="editActualValueLabel">Update Actual Value</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <ng-container *ngIf="metricFlag; else measure">
+        <div class="modal-body">
+          <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()">
+            <div formArrayName="fields">
+               <h5 class="short_text max_width_500 line_height_1_3">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+               </h5>
+               <h6 class="short_text_metrics_formula max_width_500">{{metricsFormula}} =
+                 {{acheivedValueMetrics}}
+               </h6>
+              <div class="achieved_val">
+                <div class="mt-3" *ngFor="let field of fields.controls; let i = index" [formGroupName]="i">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="">
+                          <label class="font-weight-bold">{{field.value.fieldName}}</label>
+                          <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue"
+                            [maxlength]='4'
+                            [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }">
+                          <div
+                            *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors"
+                            class="invalid-feedback">
+                            <div *ngIf="field.get('fieldValue')?.hasError('required')">{{field.value.fieldName}} value
+                              is
+                              required!</div>
+                            <div *ngIf="field.get('fieldValue')?.hasError('pattern')">Value should be a positive number!
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- </ng-template> -->
+              <div style="border-color: unset;" data-dismiss="" aria-label="">
+                <span aria-hidden="true">
+                  <button type="submit" class="send-btn" [disabled]="metricsSubmitFlag">
+                    <div class="spinner-border text-light align-top" role="status" *ngIf="metricsSubmitFlag">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                    <ng-container *ngIf="!metricsSubmitFlag">Save</ng-container>
+                  </button>
+                </span>
+              </div>
+            </div>
+          </form>
+        </div>
+      </ng-container>
+      <ng-template #measure>
+        <div class="modal-body">
+          <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
+            <div class="mt-3">
+              <div class="form-group">
+                <!-- <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}} </h5> -->
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="">
+                      <label for="actualValue" class="font-weight-bold">Actual Value</label>
+                      <input type="text" id="actualValue" class="form-control" formControlName="actualValue"
+                        [maxlength]="4"
+                        [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
+                      <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors"
+                        class="invalid-feedback">
+                        <div *ngIf="form.actualValue.hasError('required')">Actual value is required!</div>
+                        <div *ngIf="form.actualValue.hasError('pattern')">Actual value should be a positive number!
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="border-color: unset;" data-dismiss="" aria-label="">
+              <span aria-hidden="true">
+                <button type="submit" class="send-btn" [disabled]="measureSubmitFlag">
+                  <div class="spinner-border text-light align-top" role="status" *ngIf="measureSubmitFlag">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                  <ng-container *ngIf="!measureSubmitFlag">Save</ng-container>
+                </button>
+              </span>
+            </div>
+          </form>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 </div>
