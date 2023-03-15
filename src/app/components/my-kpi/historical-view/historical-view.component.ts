@@ -209,7 +209,7 @@ export class HistoricalViewComponent implements OnInit {
     }
     let tempObj: any = {};
     let originalValue = this.metricsForm.value.formula.trim();
-    let newValue = '';
+    let newValue: any = '';
     let value = this.metricsForm.value.formula.trim().split(/[\s() */%+-]+/g);
 
     let total: any = 0;
@@ -236,6 +236,10 @@ export class HistoricalViewComponent implements OnInit {
       this.metricsForm.patchValue({ calculatedValue: 0 }); return;
     } else {
       newValue = eval(newValue);
+      if (!isFinite(newValue)) {
+        this._commonService.errorToaster(`Infinite value cannot be accepted..!!`);
+        return;
+      }
       let newV = newValue.toString().split('.');
       if (parseInt(newV[1]) > 0) newValue = Number(newValue).toFixed(2);
       else newValue = newV[0];

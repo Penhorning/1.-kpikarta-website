@@ -73,7 +73,7 @@ export function calculateFormula(event, suggestionsLength, tempObj, formValidati
                 $('#formula-field').removeClass('is-valid');
                 return {
                     data: null,
-                    message: "Infine value cannot be accepted..!!"
+                    message: "Infinite value cannot be accepted..!!"
                 }
             }
             let newV = newValue.toString().split('.');
