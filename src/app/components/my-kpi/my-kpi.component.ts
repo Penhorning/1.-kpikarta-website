@@ -258,7 +258,7 @@ export class MyKpiComponent implements OnInit {
     } else {
       newValue = eval(newValue);
       if(!isFinite(newValue)) {
-        this._commonService.errorToaster(`Infine value cannot be accepted..!!`);
+        this._commonService.errorToaster(`Infinite value cannot be accepted..!!`);
         return;
       }
       let newV = newValue.toString().split('.');
@@ -999,8 +999,8 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
       }
     });
     newValue = eval(newValue);
-    if(!isFinite(newValue)) {
-      this._commonService.errorToaster(`Infine value cannot be accepted..!!`);
+    if (!isFinite(newValue)) {
+      this._commonService.errorToaster(`Infinite value cannot be accepted..!!`);
       return false;
     }
     let newV = newValue.toString().split('.');
