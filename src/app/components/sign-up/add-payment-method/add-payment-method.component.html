@@ -38,7 +38,7 @@
 
                             <div class="form-group">
                                 <label for="expirationDate">Expiration Date <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control1" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
+                                <input type="text" class="form-control form-control1" (keyup)="addslash($event)" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
                                     [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }">
                                 <div *ngIf="(submitted || form.expirationDate.touched) && form.expirationDate.errors"
                                     class="invalid-feedback">

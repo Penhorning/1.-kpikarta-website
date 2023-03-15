@@ -1,6 +1,6 @@
 <app-header></app-header>
 <app-sidebar></app-sidebar>
-<div class="main-content">
+<div class="main-content" *ngIf="!isHistoricalView">
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-3">
@@ -71,7 +71,7 @@
                   d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
               </svg>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-search cursor_pointer" viewBox="0 0 16 16" >
+                class="bi bi-search cursor_pointer" viewBox="0 0 16 16" (click)="search()">
                 <path
                   d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
               </svg>
@@ -89,13 +89,11 @@
           </a>
 
           <div class="dropdown sort-drop">
-            <!-- <select (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom sort_dropdown mr-2">
-              <option hidden>Sort by</option>
-              <option value="worst">Worst to Best Performing</option>
-              <option value="best">Best to Worst Performing</option>
-              <option value="oldest">Oldest to Newest</option>
-              <option value="newest">Newest to Oldest</option>
-            </select> -->
+            <button type="button" class="history_btn" (click)="showHistory()">History</button>
+            <select  (change)="onSortByMonth()" [(ngModel)]="sortMonth" class="form-select form-select-lg short-dropdown-custom sort_dropdown mr-2">
+              <option value="" selected>All</option>
+              <option *ngFor="let month of sortByMonths" [value]="month.value">{{ month?.name }} ({{ currentYear }})</option>
+            </select>
             <select #id (change)="onSortBy(id.value)" class="form-select form-select-lg short-dropdown-custom sort_dropdown">
               <option hidden>Sort by</option>
               <option value="worst">Worst to Best Performing</option>
@@ -131,6 +129,7 @@
                         <tr>
                           <th scope="col" *ngFor="let column of headerList; let i=index">
                             <div class="d-flex">
+                              <input type="checkbox" name="masterCheck" id="master_check" [(ngModel)]="masterCheck" *ngIf="i === 0" (change)="checkUncheckAll($event)">
                               <span class="cursor_pointer text-nowrap" (click)="onSortClick(column.sortBy, i)">
                                 <ng-container [ngSwitch]="column.sort">
                                   <!-- Ascending - Arrow down -->
@@ -271,6 +270,7 @@
                       <tbody class="border-0">
                         <tr *ngFor="let kpi of kpis; let i = index;">
                           <td>
+                            <input type="checkbox" [name]="i" [id]="i" [checked]="kpi.isSelected" (change)="checkUncheckSingleItem($event, i, kpi._id)">
                             <a class="short_text_with_width view_karta_link"
                               [routerLink]="['/karta/view', kpi?.karta?._id]" target="_blank">
                               {{ kpi?.karta?.name }}
@@ -289,7 +289,7 @@
                             <div class="editacval">
                               {{ kpi?.achieved_value }}
                               <ng-container *ngIf="kpi.target[0].value > 0; else disableIcon">
-                                <svg xmlns="http://www.w3.org/2000/svg" (click)="editActualValue(kpis[i])" width="16"
+                                <svg xmlns="http://www.w3.org/2000/svg" *ngIf="!sortMonth" (click)="editActualValue(kpis[i])" width="16"
                                   height="12" fill="currentColor" class="bi bi-pencil cursor_pointer"
                                   viewBox="0 0 16 16" data-toggle="modal" data-target="#editActualValueModal">
                                   <path
@@ -799,6 +799,8 @@
     </div>
   </div>
 </div>
+
+<app-historical-view *ngIf="isHistoricalView" [selectedKpis]="historyKpis" (hideHistoricalView)="hideHistory()"></app-historical-view>
 
 
 

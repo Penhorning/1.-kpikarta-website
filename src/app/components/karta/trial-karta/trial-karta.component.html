@@ -214,14 +214,14 @@
                            <div class="p-5" [innerHtml]="loader"></div>
                        </ng-container>
                        <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
-                       <div *ngIf="!showSVG && !loadingKarta">
+                       <div [hidden]="showSVG || loadingKarta">
                            <ng-container *ngFor="let phase of phases; let i = index">
                                <div *ngIf="i == 0"
                                    class="karta_dummy_lines"
                                    [id]="'svg_line_' + phase?.id"
                                    [attr.name]="phase?.name"
                                >
-                                   <button class="btn btn-sm btn-light" id="step1"><i class="fa fa-plus-circle"></i> Node</button>
+                                   <button class="btn btn-sm btn-light" id="step1"><i class="fa fa-plus-circle"></i> Goal</button>
                                </div>
                                <div *ngIf="i > 0"
                                    class="karta_dummy_lines"

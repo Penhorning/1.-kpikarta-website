@@ -79,6 +79,7 @@ export class SignUpComponent implements OnInit {
         }
         else {
           this.submitFlag = true;
+          this.signupForm.value.email = this.signupForm.value.email.toLowerCase();
           this._signupService.signup(this.signupForm.value).subscribe(
             (response: any) => {
               let { token, email } = response;

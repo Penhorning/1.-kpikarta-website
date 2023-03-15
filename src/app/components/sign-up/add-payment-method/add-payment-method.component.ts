@@ -128,4 +128,20 @@ export class AddPaymentMethodComponent implements OnInit {
     }
   }
 
+  addslash(event: any) {
+    if( event.code == "Backspace" && event.target.value.length == 2 ) {
+      let value = event.target.value.split("")[0];
+      this.paymentMethodForm.patchValue({
+        expirationDate: value
+      });
+    }
+    
+    if(event.target.value.length == 2) {
+      let value = event.target.value + "/";
+      this.paymentMethodForm.patchValue({
+        expirationDate: value
+      });
+    }
+  }
+
 }

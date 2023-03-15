@@ -38,7 +38,7 @@
             <div class="KPI-dash-tab inventory">
                <!-- KPI Tabs -->
                <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item nav-item-cus inventory" id="tab_1" (click)="onTabSwitch()" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
+                  <li class="nav-item nav-item-cus inventory" id="tab_1" (click)="onTabSwitch()" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
                   <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tab-1"
                      role="tab">Owned by me</a> 
                   </li>
@@ -265,7 +265,7 @@
                                  <div class="row">
                                     <div class="col-lg-6 text-left">
                                        <div class="dropdown show">
-                                          <a class="dropdown-toggle three-dots change-acc text-body cursor_default" role="button">
+                                          <a class="dropdown-toggle three-dots change-acc text-body cursor_default" role="button" title="To Change Access requires a Creator license">
                                           Change access <img src="assets/img/down-arrow.svg" class="ml-2">
                                           </a>
                                           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
