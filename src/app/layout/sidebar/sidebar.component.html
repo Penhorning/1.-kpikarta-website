@@ -6,11 +6,6 @@
                 Home
             </a>
         </li>
-        <li *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
-            <a [routerLink]="['/inventory']" routerLinkActive="active">
-                <span><img src="assets/img/catalogs.png" alt="" /></span>
-                Inventory
-        </a>
         <li>
             <a [routerLink]="['/karta/all']" routerLinkActive="active">
                 <span><img src="assets/img/kartas.png" alt="" /></span>
@@ -21,6 +16,12 @@
             <a [routerLink]="['/my-kpi']" routerLinkActive="active">
                 <span><img src="assets/img/mykpi.png" alt="" /></span>
                 My KPIs
+            </a>
+        </li>
+        <li *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
+            <a [routerLink]="['/inventory']" routerLinkActive="active">
+                <span><img src="assets/img/catalogs.png" alt="" /></span>
+                Inventory
             </a>
         </li>
         <li>

@@ -610,12 +610,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 }
                 d._children = d.children;
                 d.children = null;
+                options.events.collapseNode(d);
             } else {
                 if (d._children.length) {
                     $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up');
                 }
                 d.children = d._children;
                 d._children = null;
+                options.events.expandNode(d);
             }
             update(d);
         }

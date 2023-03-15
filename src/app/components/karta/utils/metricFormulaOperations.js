@@ -68,6 +68,14 @@ export function calculateFormula(event, suggestionsLength, tempObj, formValidati
             }
         } else {
             newValue = eval(newValue);
+            if(!isFinite(newValue)) {
+                $('#formula-field').addClass('is-invalid');
+                $('#formula-field').removeClass('is-valid');
+                return {
+                    data: null,
+                    message: "Infine value cannot be accepted..!!"
+                }
+            }
             let newV = newValue.toString().split('.');
             if (parseInt(newV[1]) > 0) newValue = Number(newValue).toFixed(2);
             else newValue = newV[0];

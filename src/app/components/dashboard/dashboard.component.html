@@ -11,7 +11,7 @@
       <div class="row">
          <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-9': 'col-md-12'">
             <!-- Latest Kartas -->
-            <div class="white-karata-card" *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
+            <div class="white-karata-card" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
                <div class="row">
                   <div class="col-lg-6">
                      <div class="Shared-karata">
@@ -63,8 +63,8 @@
                                        <a class="dropdown-item" style="cursor: pointer;"
                                           (click)="changeEditStatus(i)"><img src="assets/img/rename.png"
                                           class="mr-3 karta-icon-rename">Rename</a>
-                                       <a class="dropdown-item" href="javascript:void(0);"><img src="assets/img/used.svg"
-                                          class="mr-2"> Used <span> (5)</span></a>
+                                       <!-- <a class="dropdown-item" href="javascript:void(0);"><img src="assets/img/used.svg"
+                                          class="mr-2"> Used <span> (5)</span></a> -->
                                        <a class="dropdown-item Delete" href="javascript:void(0);"
                                           (click)="deleteKarta(karta._id)">
                                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -158,7 +158,7 @@
                </ng-container>
             </div>
             <!-- Latest Shared Kartas -->
-            <div class="white-karata-card" [ngClass]="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff' ? 'mt-3': ''">
+            <div class="white-karata-card" [ngClass]="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff' ? 'mt-3': ''">
                <div class="row">
                   <div class="col-lg-6">
                      <div class="Shared-karata">
@@ -240,7 +240,7 @@
                            <div class="row">
                               <div class="col-lg-6 text-left">
                                  <div class="dropdown show">
-                                    <a class=" dropdown-toggle three-dots change-acc text-body cursor_default" role="button">
+                                    <a class=" dropdown-toggle three-dots change-acc text-body cursor_default" role="button" title="To Change Access requires a Creator license">
                                     Change access <img src="assets/img/down-arrow.svg" class="ml-2">
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">

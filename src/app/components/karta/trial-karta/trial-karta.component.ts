@@ -62,7 +62,7 @@ export class TrialKartaComponent implements OnInit {
       steps: [
       {
          element: '#step1',
-         intro: 'You can add the first root node by clicking on the Node button',
+         intro: 'You begin by clicking the Node button and stating your Goal which is the top of the Karta',
          position: 'bottom'
       },
       {
@@ -140,11 +140,14 @@ export class TrialKartaComponent implements OnInit {
     this.introJS.onafterchange((target) => {
       if ( target.id == "step1" ) {
         jqueryFunctions.hideLeftSidebar();
+        this.showSVG = false;
+        this.loadingKarta = false;
         setTimeout(() => {
           this.introJS.refresh();
         }, 500);
       } else if ( target.id == "step2" ) {
         this.showSVG = false;
+        this.loadingKarta = false;
         setTimeout(() => {
           this.introJS.refresh();
         }, 500);

@@ -14,10 +14,12 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 // Filter pipe
 import { FilterPipe } from '../../shared/_pipes/filter.pipe';
+import { HistoricalViewComponent } from './historical-view/historical-view.component';
 @NgModule({
   declarations: [
     MyKpiComponent,
-    FilterPipe
+    FilterPipe,
+    HistoricalViewComponent
   ],
   imports: [
     CommonModule,
