@@ -182,13 +182,13 @@
                     </div>
                 </div>
                 <div class="col-md-1 text-center">
-                    <a class="mr-1" title="Undo" id="UndoAnchor" (click)="undoRedoFlag ? null : undoKarta()">
+                    <a class="mr-1 cursor_pointer" title="Undo" id="UndoAnchor" (click)="undoRedoFlag ? null : undoKarta()">
                         <img src="assets/img/Undo.svg" style="height: 17px;" [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'" />
                     </a>
-                    <a class="mr-1" title="Redo" id="RedoAnchor" (click)="undoRedoFlag ? null : redoKarta()">
+                    <a class="mr-1 cursor_pointer" title="Redo" id="RedoAnchor" (click)="undoRedoFlag ? null : redoKarta()">
                         <img src="assets/img/Redo.svg" style="height: 17px;" [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'" />
                     </a>
-                    <img src="assets/img/reset-zoom.svg" style="height: 16px;" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn" />
+                    <img class="cursor_pointer" src="assets/img/reset-zoom.svg" style="height: 16px;" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn" />
                 </div>
                 <div class="col-md-2">
                     <div><span class="last-saved">Last Saved:</span><span> {{ lastSavedDate | date:'d/M/yyyy, H:mm' }}</span></div>
@@ -299,7 +299,12 @@
                 </div>
                <div class="col">
                 <div class="d-flex align-items-center">
-                    <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">Save</button>
+                    <button type="button" class="save-btn-karta mr-1" (click)="saveKarta()">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <ng-container *ngIf="!submitFlag">Save</ng-container>
+                    </button>
                     <div class="dropdown mr-1">
                         <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg" /></button>
                         <div class="dropdown-menu keep-open dropdown-content custom-drop" aria-labelledby="dropdownMenuButton">

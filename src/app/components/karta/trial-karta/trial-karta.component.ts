@@ -140,11 +140,14 @@ export class TrialKartaComponent implements OnInit {
     this.introJS.onafterchange((target) => {
       if ( target.id == "step1" ) {
         jqueryFunctions.hideLeftSidebar();
+        this.showSVG = false;
+        this.loadingKarta = false;
         setTimeout(() => {
           this.introJS.refresh();
         }, 500);
       } else if ( target.id == "step2" ) {
         this.showSVG = false;
+        this.loadingKarta = false;
         setTimeout(() => {
           this.introJS.refresh();
         }, 500);
