@@ -242,7 +242,7 @@ export class MyKpiComponent implements OnInit {
 
     value.forEach((y: any) => {
       if (y && !parseInt(y)) {
-        if (tempObj[y]) {
+        if (tempObj[y] || tempObj[y] == 0) {
           newValue = newValue
             ? newValue.replace(y, tempObj[y])
             : originalValue.replace(y, tempObj[y]);

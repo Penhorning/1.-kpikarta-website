@@ -554,6 +554,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                   let scrollValue = this.getScrollPosition();
                   this.updateNodeProperties(x, scrollValue);
                   let node = this.currentNode;
+                  // Update achieved_value, node_formula and target
                   let randomKey = new Date().getTime();
                   let updatingParameters = [
                     { key: 'node_formula', value: request, node_updated: 'node_updated', node },
@@ -723,7 +724,19 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           { frequency: 'monthly', value: parseInt(e.target.value), percentage: Math.round(percentage) }
         )
       }
-      this.updateNode('target', this.target, 'node_updated', node);
+      // Update achieved_value, node_formula and target
+      let randomKey = new Date().getTime();
+      let updatingParameters = [
+        { key: 'achieved_value', value: this.currentNodeAchievedValue, node_updated: 'node_updated', node, metrics: "measure"},
+        { key: 'target', value: this.target, node_updated: 'node_updated', node }
+      ];
+      if (node.node_formula && node.node_type === "metrics") {
+        updatingParameters.push({ key: 'node_formula', value: node.node_formula, node_updated: 'node_updated', node });
+      }
+      for (let param of updatingParameters) {
+        let metrics = param.metrics || null
+        this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+      }
     }
   }
   addMoreTarget() {
@@ -1031,7 +1044,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         let percentage = (this.currentNodeAchievedValue / element.value) * 100;
         return (element.percentage = Math.round(percentage));
       });
-      // Submit updated achieved value
+      // Update achieved_value and target
       let randomKey = new Date().getTime();
       let updatingParameters = [
         { key: 'achieved_value', value: this.currentNodeAchievedValue, node_updated: 'node_updated', node, metrics: "measure"},
@@ -1344,9 +1357,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           versionId: this.versionId,
           kartaId: this.kartaId,
           parentNodeId: updatingNode.parentId,
-          historyType: 'main',
-          randomKey: randomKey.toString()
+          historyType: 'main'
         }
+        if (randomKey) history_data["randomKey"] = randomKey.toString();
         await this._kartaService.addKartaHistoryObject(history_data).toPromise();
       }
     );

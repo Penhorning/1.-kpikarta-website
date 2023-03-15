@@ -29,29 +29,31 @@
                   <tbody>
                     <tr>
                         <th><span><img src="assets/img/ads.svg" alt=""/></span> {{ kpi?.name }}</th>
-                        <th>&nbsp;</th>
-                        <th *ngFor="let node of kpi?.nodes; let i=index">
-                            {{ months[i].shortName }}
+                        <th></th>
+                        <th *ngFor="let month of months">
+                            {{ month.shortName }}
                         </th>
                      </tr>
                      <tr>
                         <td><span><img src="assets/img/team.svg" alt=""/></span> {{ kpi?.karta?.name }}</td>
                         <td class="target">Target</td>
                         <td *ngFor="let node of kpi?.nodes">
-                            {{ node?.target?.event_options?.updated?.target[0].value || 'N/A' }}
+                            {{ node?.target === null ? '---' : node?.target?.event_options?.updated?.target[0]?.value }}
                         </td>
                      </tr>
                      <tr>
                         <td><span><img src="assets/img/User.svg" alt=""/></span> {{ kpi.karta?.user?.fullName }}</td>
                         <td class="bg-green">Actual</td>
                         <td *ngFor="let node of kpi?.nodes; let i = index;" >
-                           {{ node.achieved?.event_options?.updated?.achieved_value || 'N/A' }}
-                             <svg xmlns="http://www.w3.org/2000/svg"  (click)="editHistoryActualValue(node, kpi, i)" width="16"
-                            height="12" fill="currentColor" class="bi bi-pencil cursor_pointer"
-                            viewBox="0 0 16 16" data-toggle="modal" data-target="#editHistoryActualValueModal">
-                            <path
-                              d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
-                          </svg>
+                           {{ node?.achieved === null ? '---' : node.achieved?.event_options?.updated?.achieved_value }}
+                            <ng-container *ngIf="node.achieved !== null">
+                                <svg xmlns="http://www.w3.org/2000/svg"  (click)="editHistoryActualValue(node, kpi, i)" width="16"
+                                height="12" fill="currentColor" class="bi bi-pencil cursor_pointer"
+                                viewBox="0 0 16 16" data-toggle="modal" data-target="#editHistoryActualValueModal">
+                                <path
+                                d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+                                </svg>
+                            </ng-container>
                         </td>
                      </tr>
                   </tbody>
@@ -85,7 +87,7 @@
         <div class="modal-body">
           <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()">
             <div formArrayName="fields">
-               <h5 class="short_text max_width_500 line_height_1_3">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+               <h5 class="short_text max_width_500 line_height_1_3">{{editingKPI?.karta?.name}}: {{editingKPI?.name}}
                </h5>
                <h6 class="short_text_metrics_formula max_width_500">{{metricsFormula}} =
                  {{acheivedValueMetrics}}
@@ -136,7 +138,7 @@
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
             <div class="mt-3">
               <div class="form-group">
-                <!-- <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}} </h5> -->
+                <!-- <h5 class="short_text max_width_500">{{editingKPI?.karta?.name}}: {{editingKPI?.name}} </h5> -->
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="">
