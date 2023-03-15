@@ -99,7 +99,7 @@
                           </div>
                           <div class="col-lg-3 p-0">
                             <div class="add-card-bg p-4 d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#cardModal">
-                              <h4 class="card-label change-card-label">Add Card</h4>
+                              <h4 class="card-label change-card-label">+ Add Card</h4>
                             </div>
                           </div>
                           <!-- <div class="col-lg-3 p-0">
@@ -133,7 +133,7 @@
       <div class="modal-content p-4">
         <div class="modal-header">
           <h5 class="modal-title" id="staticBackdropLabel">
-            + Add Card
+            Add Card
           </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="resetFormModal()">
             <span aria-hidden="true">&times;</span>
@@ -174,8 +174,8 @@
                 <div class="col-lg-6">
                   <div class="form-group">
                     <label for="expirationDate">Expiration Date <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
-                        [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }">
+                    <input type="text" class="form-control" (keyup)="addslash($event)" autocomplete="off" id="expirationDate" formControlName="expirationDate" placeholder="MM/YYYY" [maxlength]="7"
+                        [ngClass]="{ 'is-invalid': (submitted || form.expirationDate.touched) && form.expirationDate.errors }" />
                     <div *ngIf="(submitted || form.expirationDate.touched) && form.expirationDate.errors"
                         class="invalid-feedback">
                         <div *ngIf="form.expirationDate.errors.required">Expiration date is required!</div>

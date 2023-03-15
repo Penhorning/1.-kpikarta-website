@@ -227,7 +227,7 @@ export class MyKpiComponent implements OnInit {
     }
     let tempObj: any = {};
     let originalValue = this.metricsForm.value.formula.trim();
-    let newValue = '';
+    let newValue: any = '';
     let value = this.metricsForm.value.formula.trim().split(/[\s() */%+-]+/g);
 
     let total: any = 0;
@@ -254,6 +254,10 @@ export class MyKpiComponent implements OnInit {
       this.metricsForm.patchValue({ calculatedValue: 0 }); return;
     } else {
       newValue = eval(newValue);
+      if(!isFinite(newValue)) {
+        this._commonService.errorToaster(`Infine value cannot be accepted..!!`);
+        return;
+      }
       let newV = newValue.toString().split('.');
       if (parseInt(newV[1]) > 0) newValue = Number(newValue).toFixed(2);
       else newValue = newV[0];
@@ -941,7 +945,7 @@ export class MyKpiComponent implements OnInit {
 calculateMetricFormulaForCSV(values: any, originalValues: any) {
     let tempObj: any = [];
     let originalValue = originalValues.node_formula.formula.trim();
-    let newValue = '';
+    let newValue: any = '';
     let value = originalValues.node_formula.formula.trim().split(/[\s() */%+-]+/g);
     let total: any = 0;
     let formulaValues = values.__EMPTY_4.split("|");
@@ -965,6 +969,10 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
       }
     });
     newValue = eval(newValue);
+    if(!isFinite(newValue)) {
+      this._commonService.errorToaster(`Infine value cannot be accepted..!!`);
+      return false;
+    }
     let newV = newValue.toString().split('.');
     if (parseInt(newV[1]) > 0) newValue = Number(newValue).toFixed(2);
     else newValue = newV[0];

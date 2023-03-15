@@ -38,6 +38,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   isRtNodDrgingFrmSide: boolean = false;
   isNodeDropable: boolean = false;
   formulaGroup: FormGroup | any = [];
+  submitFlag: boolean = false;
 
   // Color variables
   colorSubmitFlag: boolean = false;
@@ -901,6 +902,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         nextPhaseId: this.phases[index+1].id,
         kartaId: this.kartaId
       }
+      jqueryFunctions.disableElement("#phase_tabs");
       this._kartaService.deletePhase(data).subscribe(
         (response: any) => {
           this.phases.splice(index, 1);
@@ -1611,6 +1613,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Save karta
   saveKarta() {
+    this.submitFlag = true;
+    jqueryFunctions.disableChart();
+    jqueryFunctions.disableElement("#phase_tabs");
     // New Version Calculation
     let versionNumber = this.version.reduce((acc: any, curr: any) => {
       let num = curr.name;
@@ -1639,20 +1644,35 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           (kartaResponse: any) => {
             this.karta = kartaResponse;
             this._commonService.successToaster("New version created successfully..!!");
+            this._kartaService.getAllVersions(this.kartaId).subscribe(
+              (response: any) => {
+                this.version = response;
+                this.versionId = response[response.length - 1].id;
+                this.loadingKarta = false;
+                this.submitFlag = false;
+                jqueryFunctions.enableChart();
+                jqueryFunctions.enableElement("#phase_tabs");
+              },
+              (error: any) => {
+                this.loadingKarta = false;
+                this.submitFlag = false;
+                jqueryFunctions.enableChart();
+                jqueryFunctions.enableElement("#phase_tabs");
+              }
+            );
           },
-          (err: any) => console.log(err)
-        )
-        this._kartaService.getAllVersions(this.kartaId).subscribe(
-          (response: any) => {
-            this.version = response;
-            this.versionId = response[response.length - 1].id;
-          },
-          (error: any) => {
-            this.loadingKarta = false;
+          (err: any) => {
+            console.log(err)
           }
-        );
+        )
       },
-      (err: any) => console.log(err)
+      (err: any) => {
+        this.submitFlag = false;
+        this.loadingKarta = false;
+        jqueryFunctions.enableChart();
+        jqueryFunctions.enableElement("#phase_tabs");
+        console.log(err)
+      }
     );
   }
 
