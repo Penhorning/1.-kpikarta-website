@@ -38,7 +38,7 @@ export class CommonService {
   // Form validation variables
   formValidation: any  = {
     blank_space: /^(\s+\S+\s*)*(?!\s).*$/,
-    email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+    email: /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
     password: /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()+=\?;,./{}|\":<>\[\]\\\' ~_-`]).{8,}/,
     only_string: '^[a-zA-Z ]*$',
   }
@@ -58,6 +58,22 @@ export class CommonService {
   isInvalidDate = (m: moment.Moment) => {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
+
+  // Months list
+  monthsName = [
+    { name: "January", shortName: "Jan", value: 0 },
+    { name: "February", shortName: "Feb", value: 1 },
+    { name: "March", shortName: "Mar", value: 2 },
+    { name: "April", shortName: "Apr", value: 3 },
+    { name: "May", shortName: "May", value: 4 },
+    { name: "June", shortName: "Jun", value: 5 },
+    { name: "July", shortName: "Jul", value: 6 },
+    { name: "August", shortName: "Aug", value: 7 },
+    { name: "September", shortName: "Sep", value: 8 },
+    { name: "October", shortName: "Oct", value: 9 },
+    { name: "November", shortName: "Nov", value: 10 },
+    { name: "December", shortName: "Dec", value: 11 }
+  ]
 
   constructor(private _httpService: HttpService, private toastr: ToastrService, private router: Router) { }
 
@@ -112,6 +128,37 @@ export class CommonService {
   getRememberMeSession() {
     return JSON.parse(this.decode(window.localStorage.getItem("kpi-karta-remember-me-session")));
   }
+
+  // Collapsed/Expand node session
+  setNodeSession(sessionData: any) {
+    sessionStorage.setItem("kpi-karta-node-session", this.encode(JSON.stringify(sessionData)));
+  }
+  getNodeSession() {
+    return JSON.parse(this.decode(sessionStorage.getItem("kpi-karta-node-session")));
+  }
+  addNodeInSession(id: string) {
+    let session = this.getNodeSession();
+    if (session) {
+      session[id] = id;
+      this.setNodeSession(session);
+    } else this.setNodeSession({ [id]: id });
+  }
+  removeNodeFromSession(id: string) {
+    let session = this.getNodeSession();
+    delete session[id];
+    this.setNodeSession(session);
+  }
+  deleteNodeSession() {
+    sessionStorage.removeItem("kpi-karta-node-session");
+  }
+
+  // Historical view nodeIds session
+  // setNodeIdsSession(sessionData: any) {
+  //   sessionStorage.setItem("kpi-karta-nodeIds-session", this.encode(JSON.stringify(sessionData)));
+  // }
+  // getNodeIdsSession() {
+  //   return JSON.parse(this.decode(sessionStorage.getItem("kpi-karta-nodeIds-session")));
+  // }
 
 
 

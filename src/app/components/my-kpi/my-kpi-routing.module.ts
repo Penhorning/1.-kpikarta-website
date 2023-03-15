@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HistoricalViewComponent } from './historical-view/historical-view.component';
 import { MyKpiComponent } from './my-kpi.component';
 
 const routes: Routes = [

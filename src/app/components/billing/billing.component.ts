@@ -151,4 +151,20 @@ export class BillingComponent implements OnInit {
     $('#cardModal').modal('hide');
   }
 
+  addslash(event: any) {
+    if( event.code == "Backspace" && event.target.value.length == 2 ) {
+      let value = event.target.value.split("")[0];
+      this.cardForm.patchValue({
+        expirationDate: value
+      });
+    }
+    
+    if(event.target.value.length == 2) {
+      let value = event.target.value + "/";
+      this.cardForm.patchValue({
+        expirationDate: value
+      });
+    }
+  }
+
 }
