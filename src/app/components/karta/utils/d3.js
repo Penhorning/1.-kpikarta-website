@@ -37,7 +37,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     tree = d3.layout.tree()
         .nodeSize([93, 60])
         .separation(function (a, b) {
-            return a.parent == b.parent ? .7 : .7;
+            return a.parent == b.parent ? .8 : .8;
         });
 
     // Options

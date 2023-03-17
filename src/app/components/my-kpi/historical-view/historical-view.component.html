@@ -3,26 +3,44 @@
 <div class="main-content">
    <div class="container-fluid">
       <div class="row">
-         <div class="col-lg-10 col-md-10">
+         <div class="col-lg-6 col-md-6">
             <div class="page-heading">
                <h4 class="pt-3">History</h4>
             </div>
          </div>
+         <div class="col-md-6">
+          <div class="d-flex justify-content-end">
+            <div class="mr-2">
+                <select class="form-select cus-select form-control shadow" (change)="onSortByYear($event)">
+                    <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+                </select>
+              </div>
+            <div>
+              <button class="btn btn-outline-secondary" (click)="hideHistory()">
+                Back to KPI Dashboard
+              </button>
+            </div>
+          </div>
+         </div>
       </div>
       <div class="row">
-         <div class="col-lg-12 col-md-12">
+         <!-- <div class="col-lg-12 col-md-12">
             <div class="d-flex justify-content-end">
-                <div class="mb-2">
-                    <select class="form-select cus-select" (change)="onSortByYear($event)">
+                <div class="mr-2">
+                    <select class="form-select cus-select form-control shadow" (change)="onSortByYear($event)">
                         <option value="2023">2023</option>
                         <option value="2024">2024</option>
                         <option value="2025">2025</option>
                         <option value="2026">2026</option>
                     </select>
                 </div>
-               <div class="close-data"><a class="cursor_pointer" (click)="hideHistory()"><img src="assets/img/close.svg" alt=""/></a></div>
+               <div>
+                <button class="btn btn-outline-secondary" (click)="hideHistory()">
+                  Back to KPI Dashboard
+                </button>
+              </div>
             </div>
-         </div>
+         </div> -->
          <div class="col-lg-12 col-md-12 mb-2" *ngFor="let kpi of kpis">
             <div class="table-responsive bg-white w-auto">
                <table class="table mb-0" width="100%" border="1" cellpadding="1" align="center" style="border-color: #dee2e6">

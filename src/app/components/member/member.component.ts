@@ -355,12 +355,17 @@ export class MemberComponent implements OnInit {
     });
   }
 
+  // Search
+  timeout = null;
   search() {
-    if (this.search_text) {
+    if (this.timeout) {  
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
       this.pageIndex = 0;
       this.members = [];
       this.getAllMembers();
-    }
+    }, 1000);
   }
   clearSearch() {
     this.search_text = "";
