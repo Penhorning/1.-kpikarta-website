@@ -177,38 +177,10 @@
                      <div [ngClass]="_commonService.getUserRole() !== 'user' ? 'col-md-4': 'col-md-3'">
                         <div class="karata-card">
                            <div class="row">
-                              <div class="col-8">
+                              <div class="col-10">
                                  <div class="own d-flex">
                                     <img src="assets/img/own-icon.svg">
                                     <p class="short_text">{{karta?.user?.fullName}}</p>
-                                 </div>
-                              </div>
-                              <div class="col-4 text-right">
-                                 <div class="dropdown show">
-                                    <a class=" dropdown-toggle three-dots" href="javascript:void(0);" role="button"
-                                       id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <img src="assets/img/dots.svg" class="">
-                                    </a>
-                                    <div class="dropdown-menu three-dots-drop"
-                                       aria-labelledby="dropdownMenuLink">
-                                       <img src="assets/img/drop-arrow.svg" class="drop-arrow">
-                                       <!-- <a class="dropdown-item share" href="javascript:void(0);"
-                                          data-toggle="modal" data-target="#shareKartaModal"
-                                          (click)="onShare(karta)">
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                              fill="currentColor" class="bi bi-share-fill mr-2"
-                                              viewBox="0 0 16 16">
-                                              <path
-                                                  d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z" />
-                                          </svg>
-                                          Share
-                                          </a> -->
-                                       <!-- <a class="dropdown-item" style="cursor: pointer;" (click)="copyKarta(karta.id)"><img
-                                          src="assets/img/copy.svg" class="mr-3"> Copy</a> -->
-                                       <a class="dropdown-item" href="javascript:void(0);"><img
-                                          src="assets/img/used.svg" class="mr-2"> Used <span>
-                                       (5)</span></a>
-                                    </div>
                                  </div>
                               </div>
                            </div>

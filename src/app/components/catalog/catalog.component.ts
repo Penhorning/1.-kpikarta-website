@@ -236,9 +236,15 @@ export class CatalogComponent implements OnInit {
   }
 
   // Search
+  timeout = null;
   search() {
-    if (this.search_text && this.catalogType === "owned") this.getAllCatalogs();
-    else if (this.search_text && this.catalogType === "shared") this.getAllSharedCatalogs();
+    if (this.timeout) {  
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
+      if (this.catalogType === "owned") this.getAllCatalogs();
+      else if (this.catalogType === "shared") this.getAllSharedCatalogs();
+    }, 1000);
   }
   clearSearch() {
     this.search_text = "";
