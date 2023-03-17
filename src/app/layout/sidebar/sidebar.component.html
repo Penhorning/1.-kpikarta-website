@@ -12,7 +12,7 @@
                 Kartas
             </a>
         </li>
-        <li *ngIf="_commonService.getUserLicense() !== 'Spectator' && _commonService.getUserRole() !== 'billing_staff'">
+        <li>
             <a [routerLink]="['/my-kpi']" routerLinkActive="active">
                 <span><img src="assets/img/mykpi.png" alt="" /></span>
                 My KPIs

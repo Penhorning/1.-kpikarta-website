@@ -6,6 +6,7 @@ import { MySuggestionComponent } from './my-suggestion.component';
 
 // Shared module
 import { SharedModule } from '@app/shared/_modules/shared.module';
+import { CKEditorModule } from 'ngx-ckeditor';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { SharedModule } from '@app/shared/_modules/shared.module';
   imports: [
     CommonModule,
     MySuggestionRoutingModule,
-    SharedModule
+    SharedModule,
+    CKEditorModule
   ]
 })
 export class MySuggestionModule { }

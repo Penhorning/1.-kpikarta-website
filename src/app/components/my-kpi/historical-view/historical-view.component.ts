@@ -23,6 +23,7 @@ export class HistoricalViewComponent implements OnInit {
   totalKPIs: number = 0;
   selectedYear: number = new Date().getFullYear();
   months: any = [];
+  years: any = [];
   loading: boolean = true;
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
@@ -58,6 +59,7 @@ export class HistoricalViewComponent implements OnInit {
 
   constructor(private _commonService: CommonService, private _myKpiService: MyKpiService, private fb: FormBuilder) {
     this.months = this._commonService.monthsName;
+    for (let i=0; i<5; i++) this.years.push(this.selectedYear-i);
   }
 
   ngOnInit(): void {

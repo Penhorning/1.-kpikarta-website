@@ -27,6 +27,11 @@ export class MySuggestionComponent implements OnInit {
     return this.suggestionForm.controls["descriptions"] as FormArray;
   }
 
+  config = {
+    font_names: 'Arial;Times New Roman;Verdana',
+    removeButtons: 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,Find,Replace,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,CopyFormatting,RemoveFormat,Outdent,Indent,CreateDiv,Blockquote,BidiLtr,BidiRtl,Language,Unlink,Anchor,Image,Flash,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,TextColor,BGColor'
+  }
+
   constructor(private fb: FormBuilder, private _commonService: CommonService, private _suggestionService: SuggestionService) { }
 
   ngOnInit(): void {
