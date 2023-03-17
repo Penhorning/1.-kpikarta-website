@@ -314,9 +314,15 @@ export class AllKartasComponent implements OnInit {
   }
 
   // Search
+  timeout = null;
   search() {
-    if (this.search_text && this.kartaType === "owned") this.getAllKartas();
-    else if (this.search_text && this.kartaType === "shared") this.getAllSharedKartas();
+    if (this.timeout) {  
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
+      if (this.kartaType === "owned") this.getAllKartas();
+      else if (this.kartaType === "shared") this.getAllSharedKartas();
+    }, 1000);
   }
   clearSearch() {
     this.search_text = "";

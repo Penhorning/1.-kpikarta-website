@@ -18,11 +18,11 @@
             <div class="tab-pane active" id="tab-1" role="tabpanel">
               <form [formGroup]="suggestionForm" (ngSubmit)="onSubmit()">
                 <h5 class="mt-4 mb-3">Definition</h5>
-                <textarea class="my-sug-area" rows="4" cols="30" formControlName="definition"
-                  [ngClass]="{ 'border-danger': (submitted || suggestionForm.get('definition')?.touched) && suggestionForm.get('definition')?.errors }"></textarea>
-                <div
-                  *ngIf="(submitted || suggestionForm.get('definition')?.touched) && suggestionForm.get('definition')?.errors"
-                  class="invalid-feedback d-block">
+                <!-- <textarea class="my-sug-area" rows="4" cols="30" formControlName="definition"
+                  [ngClass]="{ 'border-danger': (submitted || suggestionForm.get('definition')?.touched) && suggestionForm.get('definition')?.errors }"></textarea> -->
+                  <ck-editor formControlName="definition" [config]="config" [spellcheck]="true" name="definition"></ck-editor>
+                <div class="invalid-feedback d-block"
+                  *ngIf="(submitted || suggestionForm.get('definition')?.touched) && suggestionForm.get('definition')?.errors">
                   <div *ngIf="suggestionForm.get('definition')?.hasError('required')">Definition is required!</div>
                   <div *ngIf="suggestionForm.get('definition')?.hasError('pattern')">Blank space is not allowed!</div>
                 </div>
