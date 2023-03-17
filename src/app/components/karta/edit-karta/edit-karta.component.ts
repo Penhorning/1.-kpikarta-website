@@ -1670,7 +1670,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
         this._kartaService.updateKarta(this.kartaId, data).subscribe(
           (kartaResponse: any) => {
-            this.karta = kartaResponse;
+            this.updateNewPercentage();
             this._commonService.successToaster("New version created successfully..!!");
             this._kartaService.getAllVersions(this.kartaId).subscribe(
               (response: any) => {

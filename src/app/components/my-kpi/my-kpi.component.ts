@@ -3,7 +3,7 @@ import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
 import * as XLSX from 'xlsx'
 
@@ -52,14 +52,6 @@ export class MyKpiComponent implements OnInit {
   searchText = "";
   kartaCreatorIds: any = [];
   rowClicked: any;
-  // Share KPI
-  sharingKarta: any;
-  sharingKartaCount: any = 0;
-  dropdownSettings: any = {};
-  selectedSharedUsers: any = [];
-  selectedUsers: any = [];
-  isDisabled: boolean = false;
-  sharedSubmitFlag: boolean = false;
   // import export
   tableData: any;
   isTableDataWrong: boolean = false;
@@ -173,32 +165,31 @@ export class MyKpiComponent implements OnInit {
   @ViewChild('fileUploader')
   fileUploader!: ElementRef;
   
-  constructor(private _myKpiService: MyKpiService, private _commonService: CommonService, private fb: FormBuilder, private router: Router) {
+  constructor(private _myKpiService: MyKpiService, public _commonService: CommonService, private fb: FormBuilder, private router: Router) {
     // this.maxDate = new Date();
   }
 
   ngOnInit(): void {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
-    })
-    this.getColorSettings();
-    this.getAllMembers();
-    this.getKpiStats();
-    this.getCreators();
-
-    // Ng Multi Select Dropdown properties
-    this.dropdownSettings = {
-      enableCheckAll: true,
-      singleSelection: false,
-      idField: '_id',
-      textField: 'nameAndEmail',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      allowSearchFilter: true,
-      disabled: this.isDisabled,
-      itemsShowLimit: 3
+    });
+    if (this._commonService.getUserLicense() !== "Spectator" && this._commonService.getUserRole() !== "billing_staff") {
+      this.getColorSettings();
+      this.getAllMembers();
+      this.getKpiStats();
+      this.getCreators();
+      this.addMetricsData();
+    } else {
+      setTimeout(() => {
+        this.clickTab2();
+      }, 100);
     }
-    this.addMetricsData();
+  }
+
+  // Tab 2 clicked
+  clickTab2() {
+    $("#kpi_tab_2").click();
+    $("#kpi_tab_2 a").addClass("active");
   }
 
   // Formula of metrics starts
@@ -446,11 +437,15 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Search
+  timeout = null;
   search() {
-    if (this.search_text) {
+    if (this.timeout) {  
+      clearTimeout(this.timeout);
+    }
+    this.timeout = setTimeout(() => {
       this.pageIndex = 0;
       this.getMyKPIsList();
-    }
+    }, 1000);
   }
   clearSearch() {
     this.search_text = "";
@@ -493,81 +488,6 @@ export class MyKpiComponent implements OnInit {
     this.endDueDate = "";
     this.pageIndex = 0;
     this.getMyKPIsList();
-  }
-
-  // Ng Multi Select Dropdown
-  onItemSelect(item: any) {
-    this.selectedUsers.push({ userId: item._id });
-
-  }
-
-  onSelectAll(items: any) {
-    items.forEach((item: any) => {this.selectedUsers.push({ userId: item._id })});
-  }
-
-  onDeSelectAll(items: any) {
-    this.selectedUsers = []
-  }
-
-  onItemDeSelect(item: any) {
-    this.selectedUsers = this.selectedUsers.filter((el: any) => el.userId !== item._id);
-  }
-
-  // Shared kpi
-  onShareClick(param: any) {
-    this.sharingKarta = param;
-    if (param.sharedTo) {
-      this.sharingKartaCount = param.sharedTo.length;
-      // this.selectedUsers = param.sharedTo;
-    } else {
-      // this.selectedUsers = new Array()
-      this.sharingKartaCount = 0;
-      this.members.forEach((user: any) => {
-        delete user.isDisabled;
-      });
-    }
-    this.selectedSharedUsers = [];
-    if (param.sharedTo && param.sharedTo.length > 0) {
-      this.members.forEach((user: any) => {
-        delete user.isDisabled;
-        param.sharedTo.forEach((item: any) => {
-          if (item.userId === user._id) {
-            user.isDisabled = !this.isDisabled;
-            this.selectedSharedUsers.push(user);
-          }
-        })
-      });
-    }
-  }
-
-  // Submit shared data
-  onSubmitSharedData() {
-      if(this.selectedUsers.length === 0){
-        this._commonService.errorToaster('Please select the users!')
-      }else {
-        let data = {
-          nodeId: this.sharingKarta._id,
-          userIds: this.selectedUsers
-        }
-        this.sharedSubmitFlag = true;
-        this._myKpiService.shareNode(data).subscribe(
-          (response: any) => {
-            if (response) this._commonService.successToaster("Your have shared the node successfully!");
-            $('#shareModal').modal('hide');
-            this.sharingKarta = null;
-            this.selectedUsers = []
-            this.pageIndex = 0;
-            this.getMyKPIsList();
-          },
-          (error: any) => { }
-        ).add(() => this.sharedSubmitFlag = false);
-      }
-  }
-
-  // Close model
-  closeModal() {
-    this.sharingKarta = undefined;
-    this.selectedUsers = []
   }
 
   // On click geting data of acheived value
@@ -709,7 +629,7 @@ export class MyKpiComponent implements OnInit {
         limit: this.pageSize,
         contributorId: this._commonService.getUserId(),
         type: "month",
-        duration: parseInt(this.sortMonth)
+        month: parseInt(this.sortMonth)
       }
       this.loading = true;
       this._myKpiService.getKPIsByMonth(data).subscribe(
