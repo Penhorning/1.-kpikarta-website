@@ -428,7 +428,7 @@
                      <div class="select-karta-name">
                         <select class="form-control custom-select-karta-mode" [(ngModel)]="changeModeType" (change)="changeMode($event)">
                         <option value="view">View Only</option>
-                        <option value="edit" [disabled]='changetype'>Edit Only</option>
+                        <option value="edit" [disabled]="changetype" title="To edit a Karta requires a Creator license">Edit Only</option>
                         </select>
                      </div>
                   </span>
