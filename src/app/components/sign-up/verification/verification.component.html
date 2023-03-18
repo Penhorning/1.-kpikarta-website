@@ -17,15 +17,17 @@
                                 <label for="code">Verification Code <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control form-control1 mb-2" id="code" formControlName="code"
                                     [maxlength]="6" [ngClass]="{ 'is-invalid': (submitted || form.code.touched) && form.code.errors }">
-                                <a href="javascript:void(0);" (click)="resendCode()" class="text-white send-otp" *ngIf="!verificationFlag">Resend Code</a>
+                                
+                                    <div *ngIf="(submitted || form.code.touched) && form.code.errors" class="invalid-feedback">
+                                    <div *ngIf="form.code.errors.required">Verification code is required!</div>
+                                    <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>
+                                </div>
+
+                                <a class="cursor_pointer" (click)="resendCode()" class="text-white send-otp" *ngIf="!verificationFlag">Resend Code</a>
                                 <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">
                                     <span class="sr-only">Loading...</span>
                                 </div>
                                 <span class="d-block text-white">(Don’t forget to check your Spam folder!)</span>
-                                <div *ngIf="(submitted || form.code.touched) && form.code.errors" class="invalid-feedback">
-                                    <div *ngIf="form.code.errors.required">Verification code is required!</div>
-                                    <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>
-                                </div>
                             </div>
                             <button type="submit" class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">
                                 <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">

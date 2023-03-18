@@ -24,7 +24,6 @@
                 <div class="invalid-feedback d-block"
                   *ngIf="(submitted || suggestionForm.get('definition')?.touched) && suggestionForm.get('definition')?.errors">
                   <div *ngIf="suggestionForm.get('definition')?.hasError('required')">Definition is required!</div>
-                  <div *ngIf="suggestionForm.get('definition')?.hasError('pattern')">Blank space is not allowed!</div>
                 </div>
   
                 <ng-container formArrayName="descriptions">
