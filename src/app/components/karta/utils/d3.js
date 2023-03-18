@@ -8,6 +8,7 @@ var totalPhases = 0, kartaColumnWidth = 0, width = 0, height = 0;
 var tree = null, root = null, nodes = null, parentLink = null, links = null, nodePaths = null, nodesExit = null;
 var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = null, domNode = null;
 var dragErrorMsg = "You cannot drag this node here";
+var haveKPIS = false;
 
 const getSVGSize = (tree) => {
     // let calculatedSVGWidth = calculateSVGWidth(tree);
@@ -69,11 +70,11 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         }
     ]
     // Get depth of nested child
-    let haveKPIS = false;
     function getDepth(node) {
         let depth = 0;
         if (node.children) {
             node.children.forEach(function (d) {
+                if (d.node_type && d.target[0].value >= 0) haveKPIS = true;
                 let tmpDepth = getDepth(d);
                 if (tmpDepth > depth) {
                     depth = tmpDepth
@@ -93,7 +94,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Check drop condition
     function isDroppable(selectedNode, draggingNode, isDraggingInventory = false) {
         // Getting depth
+        haveKPIS = false;
+        let reduceBy = 2;
         const draggingDepth = getDepth(draggingNode);
+        if (haveKPIS) reduceBy = 1;
         const selectedDepth = getPhaseIndex(selectedNode.phaseId);
         // Getting phase
         const selectedPhase = getPhase(selectedNode.phaseId);
@@ -114,8 +118,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 case selectedPhase.global_name !== lastActionPhase.global_name && (draggingNodeType === "measure" || draggingNodeType === "metrics"):
                     dragErrorMsg = "You cannot drop any Branch on Action Phase..!!";
                     return false;
-                case selectedPhase.global_name !== lastActionPhase.global_name && draggingNodeType === "branch" && (draggingDepth + selectedDepth) > totalPhases-2:
-                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-2);
+                case selectedPhase.global_name !== lastActionPhase.global_name && draggingNodeType === "branch" && (draggingDepth + selectedDepth) > totalPhases-reduceBy:
+                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-reduceBy);
                     dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
                     return false;
                 default: 
