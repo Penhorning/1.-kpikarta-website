@@ -134,7 +134,7 @@
                            <div class="card-header accordion_header_custom" id="headingThree">
                                <h5 class="mb-0">
                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                       Metric
+                                       Metrics
                                    </button>
                                    <button class="btn btn-link see_all_btn" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseOne">
                                        See All
@@ -188,7 +188,7 @@
                     <a class="mr-1 cursor_pointer" title="Redo" id="RedoAnchor" (click)="undoRedoFlag ? null : redoKarta()">
                         <img src="assets/img/Redo.svg" style="height: 17px;" [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'" />
                     </a>
-                    <img class="cursor_pointer" src="assets/img/reset-zoom.svg" style="height: 16px;" class="img-fluid" title="Reset Zoom" id="reset_zoom_btn" />
+                    <img class="img-fluid cursor_pointer" src="assets/img/reset-zoom.svg" style="height: 16px;" title="Reset Zoom" id="reset_zoom_btn" />
                 </div>
                 <div class="col-md-2">
                     <div><span class="last-saved">Last Saved:</span><span> {{ lastSavedDate | date:'d/M/yyyy, H:mm' }}</span></div>
@@ -574,7 +574,7 @@
                    <div class="col-lg-12">
                        <div class="right-side-bar-content">
                            <h5>Definition</h5>
-                           <p>{{suggestion?.definition}}</p>
+                           <div class="description_div" [innerHtml]="suggestion?.definition"></div>
                        </div>
                    </div>
                </div>
@@ -1032,7 +1032,7 @@
                            <div class="select-karta-name">
                                <select class="form-control custom-select-karta-mode" [(ngModel)]="changeModeType" (change)="changeSharingMode($event)">
                                    <option value="view">View Only</option>
-                                   <option value="edit" [disabled]="changetype">Edit Only</option>
+                                   <option value="edit" [disabled]="changetype" title="To edit a Karta requires a Creator license">Edit Only</option>
                                </select>
                            </div>
                        </span>

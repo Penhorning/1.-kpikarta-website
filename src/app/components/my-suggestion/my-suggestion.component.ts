@@ -19,7 +19,7 @@ export class MySuggestionComponent implements OnInit {
   suggestion: any;
 
   suggestionForm = this.fb.group({
-    definition: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+    definition: ['', Validators.required], // Validtion for blank space
     descriptions: this.fb.array([]) 
   });
 
@@ -28,8 +28,11 @@ export class MySuggestionComponent implements OnInit {
   }
 
   config = {
-    font_names: 'Arial;Times New Roman;Verdana',
-    removeButtons: 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,Find,Replace,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Strike,Subscript,Superscript,CopyFormatting,RemoveFormat,Outdent,Indent,CreateDiv,Blockquote,BidiLtr,BidiRtl,Language,Unlink,Anchor,Image,Flash,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,Maximize,ShowBlocks,About,TextColor,BGColor'
+    toolbarGroups: [
+      { name: 'basicstyles', groups: [ 'basicstyles' ] },
+      { name: 'paragraph', groups: [ 'list' ] }
+    ],
+    removeButtons: "Strike,Subscript,Superscript"
   }
 
   constructor(private fb: FormBuilder, private _commonService: CommonService, private _suggestionService: SuggestionService) { }
@@ -69,7 +72,9 @@ export class MySuggestionComponent implements OnInit {
         this.suggestionForm.reset();
         this.descriptions.clear();
         this.suggestion = response.suggestion;
-        this.patchForm();
+        setTimeout(() => {
+          this.patchForm();
+        }, 100);
       }
     ).add(() => this.isLoading = false);
   }

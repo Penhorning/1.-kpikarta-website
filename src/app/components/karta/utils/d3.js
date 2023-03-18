@@ -69,6 +69,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         }
     ]
     // Get depth of nested child
+    let haveKPIS = false;
     function getDepth(node) {
         let depth = 0;
         if (node.children) {
