@@ -22,7 +22,6 @@ export class MyKpiComponent implements OnInit {
   exportKpis: any = [];
   totalAssignedKPIs: number = 0;
   colorSettings: any = [];
-  members: any = [];
   creators: any = [];
   loading: boolean = true;
   loader: any = this._commonService.loader;
@@ -173,11 +172,10 @@ export class MyKpiComponent implements OnInit {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     });
+    this.getColorSettings();
+    this.getCreators();
     if (this._commonService.getUserLicense() !== "Spectator" && this._commonService.getUserRole() !== "billing_staff") {
-      this.getColorSettings();
-      this.getAllMembers();
       this.getKpiStats();
-      this.getCreators();
       this.addMetricsData();
     } else {
       setTimeout(() => {
@@ -415,25 +413,6 @@ export class MyKpiComponent implements OnInit {
   calculateDueDays(start_date: string, due_date: string) {
     if (start_date) return moment(due_date).diff(moment(), 'days') + 1;
     return 0;
-  }
-
-  // Get all members
-  getAllMembers() {
-    let data = {
-      limit: 1000,
-      userId: this._commonService.getUserId()
-    }
-    this._myKpiService.getAllMembers(data).subscribe(
-      (response: any) => {
-        this.members = response.members[0].data;
-        this.members?.map((element: any) => {
-          element.nameAndEmail = (element.fullName + ' ' + `(${element.email})`);
-        });
-      },
-      (error: any) => {
-        this.loading = false
-      }
-    );
   }
 
   // Search

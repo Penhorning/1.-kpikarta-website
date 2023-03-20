@@ -52,7 +52,7 @@ export class TwoStepVerificationComponent implements OnInit {
 
   resendCode() {
     this.verificationFlag = true;
-    this._signupService.sendMobileCode().subscribe(
+    this._signupService.sendMobileLoginCode().subscribe(
       (response: any) => {
         this._commonService.successToaster("Verification code resend successfully");
       },
