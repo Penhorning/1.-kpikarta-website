@@ -396,6 +396,7 @@ export class MyKpiComponent implements OnInit {
     this.masterCheck = false;
     this.historyKpis = [];
     this.selectedHistoryKpis.clear();
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 
