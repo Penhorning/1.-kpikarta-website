@@ -46,8 +46,8 @@ export class SignupService {
   resendVerification() {
     return this._httpService.POST(`/users/send-email-code?access_token=${this.getSignUpSession().token}`, "");
   }
-  sendMobileCode() {
-    return this._httpService.POST(`/users/send-mobile-code?access_token=${this.getSignUpSession().token}`, "");
+  sendMobileLoginCode() {
+    return this._httpService.POST(`/users/send-mobile-login-code?access_token=${this.getSignUpSession().token}`, "");
   }
   verifyMobile(data: any) {
     return this._httpService.POST(`/users/verify-mobile?access_token=${this.getSignUpSession().token}`, data);

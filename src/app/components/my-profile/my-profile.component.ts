@@ -138,6 +138,7 @@ export class MyProfileComponent implements OnInit {
         this.profileImage.oldImage = response.profilePic;
         if (response.profilePic) {
           this.profileImage.fileImageUrl = `${this._commonService.MEDIA_URL}/user/${response.profilePic}`;
+          this._commonService.updateSession('profilePic', response.profilePic);
         } else this.profileImage.fileImageUrl = "assets/img/avatar.png";
 
         this.profileForm.controls["email"].disable();
@@ -156,6 +157,7 @@ export class MyProfileComponent implements OnInit {
         this.companyLogo.oldImage = response.company.logo;
         if (response.company.logo) {
           this.companyLogo.fileImageUrl = `${this._commonService.MEDIA_URL}/company/${response.company.logo}`;
+          this._commonService.updateSession('companyLogo', response.company.logo);
         } else this.companyLogo.fileImageUrl = "assets/img/kpi-karta-logo.png";
       },
       (error: any) => {

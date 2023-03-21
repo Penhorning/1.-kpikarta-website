@@ -13,9 +13,17 @@
           <div class="KPI-billing-tab"> 
             <!-- KPI Tabs -->
             <ul class="nav nav-tabs" role="tablist">
-              <li class="nav-item "> <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1" role="tab">Overview</a> </li>
-              <li class="nav-item "> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2" role="tab">Transactions</a> </li>
-              <li class="nav-item "> <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3" role="tab">Card Details</a> </li>
+              <li class="nav-item ">
+                <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1" role="tab">Overview</a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2" role="tab">Transactions</a>
+              </li>
+              <li class="nav-item ">
+                <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3" role="tab">
+                  Card Details <span class="text-danger font-weight-bold" *ngIf="_commonService.getUserPaymentStatus()" title="Please check your card, your last payment failed!">!</span>
+                </a>
+              </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">

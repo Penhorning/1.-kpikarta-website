@@ -1035,6 +1035,31 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     let node = this.currentNode;
     this.updateNode('target_label', event.target.value, 'node_updated', node);
   }
+  // Change achieved value of type switch
+  typeSelectChange(el: any): any {
+    let node = this.currentNode;
+    let reverseObj = {
+      measure: "metrics",
+      metrics: "measure"
+    }
+    const result = confirm("Are you sure you want to change the target type? If you do so your achieved value will be changed to 0.");
+    if (result) {
+      // Update achieved_value and target
+      let randomKey = new Date().getTime();
+      let updatingParameters = [
+        { key: 'achieved_value', value: 0, node_updated: 'node_updated', node, metrics: el.target.value}
+      ];
+      for (let param of updatingParameters) {
+        let metrics = param.metrics || null
+        this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+      }
+      this.currentNodeAchievedValue = 0;
+      this.kpiType = el.target.value;
+    } else {
+      el.target.value = reverseObj[el.target.value];
+      return false;
+    }
+  }
   // Change achieved value
   changeAchievedValue() {
     let node = this.currentNode;
