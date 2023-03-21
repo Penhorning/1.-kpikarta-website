@@ -42,15 +42,17 @@ export class MySuggestionComponent implements OnInit {
   }
 
   patchForm() {
-    this.suggestionForm.patchValue({
-      definition: this.suggestion.definition,
-    });
-    this.suggestion.descriptions.forEach((item: any) => {
-      const descriptionForm = this.fb.group({
-        description: [{value: item.description, disabled: true}, [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+    setTimeout(() => {
+      this.suggestionForm.patchValue({
+        definition: this.suggestion.definition,
       });
-      this.descriptions.push(descriptionForm);
-    });
+      this.suggestion.descriptions.forEach((item: any) => {
+        const descriptionForm = this.fb.group({
+          description: [{value: item.description, disabled: true}, [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+        });
+        this.descriptions.push(descriptionForm);
+      });
+    }, 100);
   }
 
   getKartaPhases() {
@@ -72,9 +74,7 @@ export class MySuggestionComponent implements OnInit {
         this.suggestionForm.reset();
         this.descriptions.clear();
         this.suggestion = response.suggestion;
-        setTimeout(() => {
-          this.patchForm();
-        }, 100);
+        this.patchForm();
       }
     ).add(() => this.isLoading = false);
   }
