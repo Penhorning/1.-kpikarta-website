@@ -76,7 +76,7 @@ export class LoginComponent implements OnInit {
 
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, creatorId, _2faEnabled, paymentVerified } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, paymentVerified, paymentFalied } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -94,7 +94,6 @@ export class LoginComponent implements OnInit {
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/subscription-plan']);
-            // this.router.navigate(['/sign-up/payment-method']);
           }
           else {
             let sessionData = {
@@ -116,7 +115,9 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/two-step-verification']);
             } else {
               this._commonService.setSession(sessionData);
-              this.router.navigate(['/dashboard']);
+              if (paymentFalied && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
+                this.router.navigate(['/billing']);
+              } else this.router.navigate(['/dashboard']);
             }
           }
         },

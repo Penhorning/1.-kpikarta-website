@@ -18,28 +18,33 @@ export class AuthGuard implements CanActivateChild {
       if (state.url.indexOf('view') !== -1) return true;
       // Checking for other urls
       else if (this._commonService.getSession() && this._commonService.getSession().token) {
-        // Get role
-        const roles = childRoute.data.roles;
-        const currentRole = this._commonService.getUserRole();
-        // Compare role
-        if (roles) {
-          if (roles.indexOf(currentRole) > -1) {
-            // Get license
-            const licenses = childRoute.data.licenses;
-            const currentLicense = this._commonService.getUserLicense();
-            // Compare license
-            if (licenses) {
-              if (licenses.indexOf(currentLicense) > -1) {
-                return true;
-              } else {
-                this.router.navigate(['/']);
-                return false;
+        if (this._commonService.getUserPaymentStatus() && state.url !== '/billing') {
+          this.router.navigate(['/billing']);
+          return false;
+        } else {
+          // Get role
+          const roles = childRoute.data.roles;
+          const currentRole = this._commonService.getUserRole();
+          // Compare role
+          if (roles) {
+            if (roles.indexOf(currentRole) > -1) {
+              // Get license
+              const licenses = childRoute.data.licenses;
+              const currentLicense = this._commonService.getUserLicense();
+              // Compare license
+              if (licenses) {
+                if (licenses.indexOf(currentLicense) > -1) {
+                  return true;
+                } else {
+                  this.router.navigate(['/']);
+                  return false;
+                }
               }
+              return true;
+            } else {
+              this.router.navigate(['/']);
+              return false;
             }
-            return true;
-          } else {
-            this.router.navigate(['/']);
-            return false;
           }
         }
         return true;

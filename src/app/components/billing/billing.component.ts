@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { forkJoin } from 'rxjs';
 import { SignupService } from '../sign-up/service/signup.service';
 import { BillingService } from './services/billing.service';
 
@@ -28,7 +27,7 @@ export class BillingComponent implements OnInit {
   loadingOverview: boolean = false;
   loader: any = this._commonService.loader;
 
-  constructor(private _commonService: CommonService, private router: Router, private _billingService: BillingService, private fb: FormBuilder, private _signupService: SignupService,) { }
+  constructor(public _commonService: CommonService, private router: Router, private _billingService: BillingService, private fb: FormBuilder, private _signupService: SignupService,) { }
 
   ngOnInit(): void {
     this.cardForm = this.fb.group({
@@ -75,7 +74,7 @@ export class BillingComponent implements OnInit {
   getInvoicesDetails() {
     this._billingService.getInvoices(this.companyId).subscribe(
       (response) => {
-        if(response.data.data.length > 0) {
+        if (response.data.data.length > 0) {
           this.invoices = response.data.data;
         }
       },

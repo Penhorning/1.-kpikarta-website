@@ -111,6 +111,9 @@ export class CommonService {
   getUserLicense() {
     return this.getSession().license;
   }
+  getUserPaymentStatus() {
+    return this.getSession().py_failed;
+  }
   updateSession(key: string, value: string) {
     let session = this.getSession();
     session[key] = value;
