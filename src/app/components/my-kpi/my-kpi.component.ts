@@ -22,7 +22,6 @@ export class MyKpiComponent implements OnInit {
   exportKpis: any = [];
   totalAssignedKPIs: number = 0;
   colorSettings: any = [];
-  members: any = [];
   creators: any = [];
   loading: boolean = true;
   loader: any = this._commonService.loader;
@@ -173,11 +172,10 @@ export class MyKpiComponent implements OnInit {
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     });
+    this.getColorSettings();
+    this.getCreators();
     if (this._commonService.getUserLicense() !== "Spectator" && this._commonService.getUserRole() !== "billing_staff") {
-      this.getColorSettings();
-      this.getAllMembers();
       this.getKpiStats();
-      this.getCreators();
       this.addMetricsData();
     } else {
       setTimeout(() => {
@@ -398,6 +396,7 @@ export class MyKpiComponent implements OnInit {
     this.masterCheck = false;
     this.historyKpis = [];
     this.selectedHistoryKpis.clear();
+    this.pageIndex = 0;
     this.getMyKPIsList();
   }
 
@@ -415,25 +414,6 @@ export class MyKpiComponent implements OnInit {
   calculateDueDays(start_date: string, due_date: string) {
     if (start_date) return moment(due_date).diff(moment(), 'days') + 1;
     return 0;
-  }
-
-  // Get all members
-  getAllMembers() {
-    let data = {
-      limit: 1000,
-      userId: this._commonService.getUserId()
-    }
-    this._myKpiService.getAllMembers(data).subscribe(
-      (response: any) => {
-        this.members = response.members[0].data;
-        this.members?.map((element: any) => {
-          element.nameAndEmail = (element.fullName + ' ' + `(${element.email})`);
-        });
-      },
-      (error: any) => {
-        this.loading = false
-      }
-    );
   }
 
   // Search
@@ -987,20 +967,22 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
         if (response && response.nodes) {
           csvData.forEach((element: any, index: number) => {
             if (index > 0) {
-              let originalElement = response.nodes.find((item: any) => item.id === element['My KPI Export']);
-              if (originalElement.node_type == "measure") {
-                let percentage = (+element.__EMPTY_4 / +originalElement.target[0].value) * 100;
-                element.node = {
-                  "id": element['My KPI Export'],
-                  "achieved_value": +element.__EMPTY_4,
-                  "percentage": Math.round(percentage)
+              if(response.nodes.length > 0) {
+                let originalElement = response.nodes.find((item: any) => item.id === element['My KPI Export']);
+                if (originalElement.node_type == "measure") {
+                  let percentage = (+element.__EMPTY_4 / +originalElement.target[0].value) * 100;
+                  element.node = {
+                    "id": element['My KPI Export'],
+                    "achieved_value": +element.__EMPTY_4,
+                    "percentage": Math.round(percentage)
+                  }
+                } else {
+                  let data = this.calculateMetricFormulaForCSV(element, originalElement);
+                  if (data) {
+                    element.node = data;
+                  } else this._commonService.errorToaster("Invalid data found in CSV file!");
                 }
-              } else {
-                let data = this.calculateMetricFormulaForCSV(element, originalElement);
-                if (data) {
-                  element.node = data;
-                } else this._commonService.errorToaster("Invalid data found in CSV file!");
-              }
+              } else this._commonService.errorToaster("No similar data found for this account..!!");
             }
           });
           this.nodes = csvData.map((elm: any, index: number) => {

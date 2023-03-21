@@ -79,7 +79,7 @@
       <div class="col-lg-12">
         <div class="KPI-dash-tab">
           <a class="export_kpis_icon" role="button" aria-haspopup="true" aria-expanded="false" title="Export"
-            data-target="#importExportModal" data-toggle="modal" *ngIf="kpiType === 'assigned'">
+            data-target="#importExportModal" data-toggle="modal" *ngIf="kpiType === 'assigned'" [hidden]="sortMonth">
             <img src="assets/img/download-icon.svg">
           </a>
           <div class="dropdown sort-drop">
