@@ -520,6 +520,8 @@ export class MyKpiComponent implements OnInit {
   }
   // Sort by month
   onSortByMonth() {
+    console.log(this.sortMonth, 'month');
+    
     this.pageIndex = 0;
     if (this.sortMonth) {
       this.getKPIsByMonth(this.sortMonth);
@@ -967,20 +969,22 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
         if (response && response.nodes) {
           csvData.forEach((element: any, index: number) => {
             if (index > 0) {
-              let originalElement = response.nodes.find((item: any) => item.id === element['My KPI Export']);
-              if (originalElement.node_type == "measure") {
-                let percentage = (+element.__EMPTY_4 / +originalElement.target[0].value) * 100;
-                element.node = {
-                  "id": element['My KPI Export'],
-                  "achieved_value": +element.__EMPTY_4,
-                  "percentage": Math.round(percentage)
+              if(response.nodes.length > 0) {
+                let originalElement = response.nodes.find((item: any) => item.id === element['My KPI Export']);
+                if (originalElement.node_type == "measure") {
+                  let percentage = (+element.__EMPTY_4 / +originalElement.target[0].value) * 100;
+                  element.node = {
+                    "id": element['My KPI Export'],
+                    "achieved_value": +element.__EMPTY_4,
+                    "percentage": Math.round(percentage)
+                  }
+                } else {
+                  let data = this.calculateMetricFormulaForCSV(element, originalElement);
+                  if (data) {
+                    element.node = data;
+                  } else this._commonService.errorToaster("Invalid data found in CSV file!");
                 }
-              } else {
-                let data = this.calculateMetricFormulaForCSV(element, originalElement);
-                if (data) {
-                  element.node = data;
-                } else this._commonService.errorToaster("Invalid data found in CSV file!");
-              }
+              } else this._commonService.errorToaster("No similar data found for this account..!!");
             }
           });
           this.nodes = csvData.map((elm: any, index: number) => {
