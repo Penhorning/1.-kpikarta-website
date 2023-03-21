@@ -520,8 +520,6 @@ export class MyKpiComponent implements OnInit {
   }
   // Sort by month
   onSortByMonth() {
-    console.log(this.sortMonth, 'month');
-    
     this.pageIndex = 0;
     if (this.sortMonth) {
       this.getKPIsByMonth(this.sortMonth);

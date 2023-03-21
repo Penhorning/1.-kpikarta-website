@@ -51,14 +51,28 @@ export class LoginComponent implements OnInit {
         role: this.route.snapshot.queryParamMap.get("role") || "",
         license: this.route.snapshot.queryParamMap.get("license") || "",
         _2faEnabled: this.route.snapshot.queryParamMap.get("_2faEnabled") || "false",
-        mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false"
+        mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false",
+        paymentVerified: this.route.snapshot.queryParamMap.get("paymentVerified") || "false",
+        paymentFailed: this.route.snapshot.queryParamMap.get("paymentFailed") || "false"
       }
-      if (sessionData.mobileVerified == "true" && sessionData._2faEnabled == "true") {
-        this._signupService.setSignUpSession(sessionData);
-        this.router.navigate(['/two-step-verification']);
+      if (sessionData.paymentVerified === "false") {
+        let data = {
+          token: sessionData.token,
+          email: sessionData.email,
+          stage: 1
+        }
+        this._signupService.setSignUpSession(data);
+        this.router.navigate(['/subscription-plan']);
       } else {
-        this._commonService.setSession(sessionData);
-        this.router.navigate(['/dashboard']);
+        if (sessionData.mobileVerified == "true" && sessionData._2faEnabled == "true") {
+          this._signupService.setSignUpSession(sessionData);
+          this.router.navigate(['/two-step-verification']);
+        } else {
+          this._commonService.setSession(sessionData);
+          if (sessionData.paymentFailed === "true" && (sessionData.role === "company_admin" || sessionData.role === "billing_staff")) {
+            this.router.navigate(['/billing']);
+          } else this.router.navigate(['/dashboard']);
+        }
       }
     }
 
@@ -76,7 +90,7 @@ export class LoginComponent implements OnInit {
 
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, paymentVerified, paymentFalied } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, paymentVerified, paymentFailed } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -115,7 +129,7 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/two-step-verification']);
             } else {
               this._commonService.setSession(sessionData);
-              if (paymentFalied && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
+              if (paymentFailed && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
                 this.router.navigate(['/billing']);
               } else this.router.navigate(['/dashboard']);
             }
