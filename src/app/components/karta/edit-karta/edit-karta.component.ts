@@ -543,23 +543,26 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           } else {
             this.formulaError = "";
             let [total, newTarget, request] = response.data;
-            this.currentNode.achieved_value = total;
+            this.currentNode.achieved_value = Number(total);
             this.currentNode.target = newTarget;
-            this._kartaService
-              .updateNode(this.currentNode.id, { node_formula: request, achieved_value: total, target: newTarget })
-              .subscribe(
-                async (x) => {
-                  this.currentNode.node_formula = x.node_formula;
+            let updatedData = { 
+              node_formula: request, 
+              achieved_value: Number(total), 
+              target: newTarget 
+            };
+            this._kartaService.updateNode(this.currentNode.id, updatedData).subscribe(
+                async (response) => {
+                  this.currentNode.node_formula = response.node_formula;
                   $('#formula-field').addClass('is-valid');
                   this.formulaError = "";
                   let scrollValue = this.getScrollPosition();
-                  this.updateNodeProperties(x, scrollValue);
+                  this.updateNodeProperties(response, scrollValue);
                   let node = this.currentNode;
                   // Update achieved_value, node_formula and target
                   let randomKey = new Date().getTime();
                   let updatingParameters = [
                     { key: 'node_formula', value: request, node_updated: 'node_updated', node },
-                    { key: 'achieved_value', value: total, node_updated: 'node_updated', node, metrics: "metrics"},
+                    { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', node, metrics: "metrics"},
                     { key: 'target', value: newTarget, node_updated: 'node_updated', node }
                   ];
                   for (let param of updatingParameters) {
@@ -728,7 +731,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       // Update achieved_value, node_formula and target
       let randomKey = new Date().getTime();
       let updatingParameters = [
-        { key: 'achieved_value', value: this.currentNodeAchievedValue, node_updated: 'node_updated', node, metrics: "measure"},
+        { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: this.kpiType},
         { key: 'target', value: this.target, node_updated: 'node_updated', node }
       ];
       if (node.node_formula && node.node_type === "metrics") {
@@ -803,6 +806,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     // Show Measure and metrics when KPI's node selected
     if (this.currentNode.phase.global_name === 'KPI') {
       this.showKPICalculation = true;
+      $("#selectTypeValue").val(param.node_type).change();
       this.kpiCalculationPeriod.frequency = param.kpi_calc_period;
       this.kpiCalculationPeriod.nodeId = param.id;
       
@@ -1055,6 +1059,27 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       }
       this.currentNodeAchievedValue = 0;
       this.kpiType = el.target.value;
+
+      if ( this.currentNode.node_formula ) {
+        this.formulaGroup.patchValue({
+          calculatedValue: 0
+        });
+  
+        this.formulaGroup.controls['fields'] = new FormArray([]);
+        for (let i = 0; i < this.currentNode.node_formula.fields.length; i++) {
+          let fieldForm = this.fb.group({
+            fieldName: new FormControl(this.currentNode.node_formula.fields[i].fieldName),
+            fieldValue: new FormControl(0),
+          });
+          this.fields.push(fieldForm);
+        }
+
+        let newData = this.formulaGroup.value;
+        delete newData["calculatedValue"];
+        newData['metrics'] = true;
+
+        this.updateNode("node_formula", newData, "node_updated", node, el.target.value, randomKey);  
+      }
     } else {
       el.target.value = reverseObj[el.target.value];
       return false;
@@ -1074,7 +1099,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       // Update achieved_value and target
       let randomKey = new Date().getTime();
       let updatingParameters = [
-        { key: 'achieved_value', value: this.currentNodeAchievedValue, node_updated: 'node_updated', node, metrics: "measure"},
+        { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: "measure"},
         { key: 'target', value: this.target, node_updated: 'node_updated', node }
       ];
       for (let param of updatingParameters) {
