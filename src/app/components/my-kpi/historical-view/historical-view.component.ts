@@ -274,10 +274,18 @@ export class HistoricalViewComponent implements OnInit {
             updated: {}
           }
         }
+        this.metricsForm.value.fields.map((item: any) => {
+          item.fieldValue = Number(item.fieldValue);
+          return item;
+        });
         let value = [
           { "achieved_value": +this.metricsForm.value.calculatedValue },
           { "target": this.editingNode.target.event_options.updated.target },
-          { "node_formula": this.editingNode.formula },
+          { "node_formula": {
+              "fields": this.metricsForm.value.fields,
+              "formula": this.editingNode.formula.event_options.updated.node_formula.formula
+            }
+          }
         ]
         let ids  = [this.editingNode.achieved.id, this.editingNode.target.id, this.editingNode.formula.id]
     
@@ -297,7 +305,11 @@ export class HistoricalViewComponent implements OnInit {
                 if (kpi_created_month === current_month) {
                   let data2 = {
                     achieved_value: +this.metricsForm.value.calculatedValue,
-                    target: this.editingNode.target.event_options.updated.target
+                    target: this.editingNode.target.event_options.updated.target,
+                    node_formula: {
+                      "fields": this.metricsForm.value.fields,
+                      "formula": this.editingNode.formula.event_options.updated.node_formula.formula
+                    }
                   }
                   await this._myKpiService.updateNode(this.editingKPI._id, data2).toPromise();
                 }

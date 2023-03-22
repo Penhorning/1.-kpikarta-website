@@ -398,6 +398,7 @@ export class MyKpiComponent implements OnInit {
     this.selectedHistoryKpis.clear();
     this.pageIndex = 0;
     this.getMyKPIsList();
+    this.getKpiStats();
   }
 
   // Get color for each node percentage
@@ -607,7 +608,6 @@ export class MyKpiComponent implements OnInit {
       let data = {
         page: this.pageIndex + 1,
         limit: this.pageSize,
-        searchQuery: this.search_text,
         contributorId: this._commonService.getUserId(),
         type: "month",
         month: parseInt(this.sortMonth)
@@ -629,6 +629,7 @@ export class MyKpiComponent implements OnInit {
         limit: this.pageSize,
         userId: this._commonService.getUserId(),
         kpiType: this.kpiType,
+        searchQuery: this.search_text,
         statusType: this.statusType
       }
       this.loading = true;

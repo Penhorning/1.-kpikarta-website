@@ -338,7 +338,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Reset monitor by
   resetMontiorBy() {
-    this.filterKartaBy = "" 
+    this.filterKartaBy = "";
+    $("input:radio[name='targetFilter']").each(function() {
+      this.checked = false;
+    });
     this.updateNewPercentage("");
   }
   // Apply monitor by
