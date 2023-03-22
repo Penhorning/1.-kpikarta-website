@@ -607,6 +607,7 @@ export class MyKpiComponent implements OnInit {
       let data = {
         page: this.pageIndex + 1,
         limit: this.pageSize,
+        searchQuery: this.search_text,
         contributorId: this._commonService.getUserId(),
         type: "month",
         month: parseInt(this.sortMonth)
