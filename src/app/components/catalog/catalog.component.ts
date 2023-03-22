@@ -79,7 +79,8 @@ export class CatalogComponent implements OnInit {
     else this.nodeTypeFilter = this.nodeTypeFilter.filter((item: any) => item !== value);
   }
   applyFilter() {
-    this.getAllCatalogs();
+    if (this.catalogType === "owned") this.getAllCatalogs();
+    else this.getAllSharedCatalogs();
   }
 
   // Get all catalogs

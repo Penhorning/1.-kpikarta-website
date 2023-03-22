@@ -398,6 +398,7 @@ export class MyKpiComponent implements OnInit {
     this.selectedHistoryKpis.clear();
     this.pageIndex = 0;
     this.getMyKPIsList();
+    this.getKpiStats();
   }
 
   // Get color for each node percentage
@@ -628,6 +629,7 @@ export class MyKpiComponent implements OnInit {
         limit: this.pageSize,
         userId: this._commonService.getUserId(),
         kpiType: this.kpiType,
+        searchQuery: this.search_text,
         statusType: this.statusType
       }
       this.loading = true;
@@ -725,11 +727,12 @@ export class MyKpiComponent implements OnInit {
       let clacTarget = [element.target[0]];
       element.kartaId = element.karta._id;
       element.kartaName = element.karta.name;
-      element.formula = element?.node_formula?.formula ? element?.node_formula?.formula : 'N/A';
+      element.formula = 'N/A';
       element.targetdata = clacTarget.map((element: any) => { return element.value });
       element.targetPercentage = clacTarget.map((element: any) => { return element.percentage });
       element.targetFrequency = clacTarget.map((element: any) => { return element.frequency });
-      if (element.hasOwnProperty("node_formula")) {
+      if (element.hasOwnProperty("node_formula") && element.node_type === "metrics") {
+        element.formula = element?.node_formula?.formula;
         element.metricsData = element?.node_formula.fields.map((element: any) => { return element.fieldValue });
         element.achieved_value = element.metricsData ? element.metricsData.join("|") : "";
       }

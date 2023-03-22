@@ -1,4 +1,3 @@
-import { filter, map } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
@@ -262,6 +261,7 @@ export class AllKartasComponent implements OnInit {
       page: ++this.pageIndex,
       limit: this.pageSize,
       type: this.kartaType,
+      searchQuery: this.search_text,
       findBy: this._commonService.getUserId()
     }
 
