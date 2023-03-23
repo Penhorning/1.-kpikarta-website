@@ -1381,6 +1381,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
         jqueryFunctions.enableChart();
+      },
+      (error: any) => {
+        jqueryFunctions.enableChart();
       }
     );
   }
@@ -1689,7 +1692,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.updateNewPercentage();
         // this.getKartaInfo();
         // setTimeout(() => jqueryFunctions.removeKarta(), 2000);
-        jqueryFunctions.enableChart();
+        // jqueryFunctions.enableChart();
         jqueryFunctions.hideLeftSidebar();
       },
       (error: any) => {
