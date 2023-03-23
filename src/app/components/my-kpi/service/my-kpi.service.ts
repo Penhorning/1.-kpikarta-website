@@ -27,7 +27,10 @@ export class MyKpiService {
   updateNode(nodeId: string, data: any) {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
   }
-  updateHistoryNode(histroyId: string, data: any) {
+  createKartaHistory(data: any) {
+    return this._httpService.POST('/karta_histories/create-karta-history', data);
+  }
+  updateKartaHistory(histroyId: string, data: any) {
     return this._httpService.PATCH(`/karta_histories/${histroyId}`, data);
   }
   getKpiStats(nodeId: any) {

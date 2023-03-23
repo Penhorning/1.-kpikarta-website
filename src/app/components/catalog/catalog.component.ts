@@ -209,6 +209,8 @@ export class CatalogComponent implements OnInit {
       page: ++this.sharedPageIndex,
       limit: this.sharedPageSize,
       userId: this._commonService.getUserId(),
+      searchQuery: this.search_text,
+      nodeTypes: this.nodeTypeFilter,
       type: this.catalogType
     }
 

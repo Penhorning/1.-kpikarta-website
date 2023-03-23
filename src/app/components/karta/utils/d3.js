@@ -71,9 +71,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     ]
     // Get depth of nested child
     function getDepth(node) {
+        const children = node.children || node._children;
         let depth = 0;
-        if (node.children) {
-            node.children.forEach(function (d) {
+        if (children) {
+            children.forEach(function (d) {
                 if (d.node_type && d.target[0].value >= 0) haveKPIS = true;
                 let tmpDepth = getDepth(d);
                 if (tmpDepth > depth) {
