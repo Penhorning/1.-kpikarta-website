@@ -137,8 +137,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 case selectedPhase.global_name === lastActionPhase.global_name && draggingPhase.global_name !== "KPI":
                     dragErrorMsg = "You cannot drop Non-KPI node on Action Phase..!!";
                     return false;
-                case selectedPhase.global_name !== lastActionPhase.global_name && draggingPhase.global_name !== "KPI" && (draggingDepth + selectedDepth) > totalPhases-2:
-                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-2);
+                case selectedPhase.global_name !== lastActionPhase.global_name && draggingPhase.global_name !== "KPI" && (draggingDepth + selectedDepth) > totalPhases-reduceBy:
+                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-reduceBy);
                     dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
                     return false;
                 default: 
