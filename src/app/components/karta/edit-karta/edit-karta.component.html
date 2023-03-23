@@ -176,7 +176,7 @@
                 </div>
                 <div class="col-md-1">
                     <div class="select-karta-name">
-                        <select class="form-control custom-select-karta" (change)="versionRollback($event)" [(ngModel)]="versionId">
+                        <select class="form-control custom-select-karta" [disabled]="disableVersion" (change)="versionRollback($event)" [(ngModel)]="versionId">
                             <option *ngFor="let ver of version" [disabled]="ver.is_copied" [value]="ver.id">Version {{ver.name}}</option>
                         </select>
                     </div>
