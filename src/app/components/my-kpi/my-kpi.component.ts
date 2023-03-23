@@ -949,7 +949,6 @@ export class MyKpiComponent implements OnInit {
 
   // Metrics formula calculation
 calculateMetricFormulaForCSV(values: any, originalValues: any) {
-    let tempObj: any = [];
     let originalValue = originalValues.node_formula.formula.trim();
     let newValue: any = '';
     let value = originalValues.node_formula.formula.trim().split(/[\s() */%+-]+/g);
@@ -985,9 +984,13 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
     total = newValue;
     if (total > 0) {
       let percentage = (total / +originalValues.target[0].value) * 100;
+      modifiedFieldArray.map((item: any) => {
+        item.fieldValue = Number(item.fieldValue);
+        return item;
+      });
       let nodeObj = {
         "id": values['My KPI Export'],
-        "achieved_value": total,
+        "achieved_value": Number(total),
         "node_formula": {
           "fields": modifiedFieldArray,
           "formula": originalValues.node_formula.formula,
@@ -1000,33 +1003,6 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
       this.isTableDataWrong = true;
       return false;
     }
-    // if (originalValues.node_formula.fields.length !== formulaValues.length) {
-    //   this.tableData.map((item: any) => {
-    //     if (item["My KPI Export"] === originalValues.id) item.ac = true;
-    //     return item;
-    //   });
-    //   this.isTableDataWrong = true;
-    //   return false;
-    // } else {
-    //   total = eval(newValue).toFixed(2);
-    //   if (total > 0) {
-    //     let percentage = (total / +originalValues.target[0].value) * 100;
-    //     let nodeObj = {
-    //       "id": values['My KPI Export'],
-    //       "achieved_value": total,
-    //       "node_formula": {
-    //         "fields": modifiedFieldArray,
-    //         "formula": originalValues.node_formula.formula,
-    //         "metrics": true
-    //       },
-    //       "percentage": Math.round(percentage)
-    //     }
-    //     return nodeObj;
-    //   } else {
-    //     this.isTableDataWrong = true;
-    //     return false;
-    //   }
-    // }
   }
 
   calculateCSVData(csvData: any) {
