@@ -1,9 +1,13 @@
 <app-header></app-header>
 <app-sidebar></app-sidebar>
-
 <div class="main-content">
     <div class="container-fluid">
       <div class="row">
+        <div class="col-lg-12">
+          <div class="alert alert-danger font-weight-bold" *ngIf="_commonService.getUserPaymentStatus()">
+            Please check your card, your last payment failed!
+          </div>
+        </div>
           <div class="col-lg-12">
               <h4 class="mt-2 mb-4">Billing</h4>
           </div>

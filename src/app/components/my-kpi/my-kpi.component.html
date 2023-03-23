@@ -596,7 +596,7 @@
         <div class="modal-body">
           <form [formGroup]="metricsForm" (ngSubmit)="onMetricsSubmit()">
             <div formArrayName="fields">
-              <h5 class="short_text max_width_500 line_height_1_3">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+              <h5 class="short_text max_width_500 line_height_1_3">{{editingNode?.karta?.name}}: {{editingNode?.name}}
               </h5>
               <h6 class="short_text_metrics_formula max_width_500">{{metricsFormula}} =
                 {{acheivedValueMetrics}}
@@ -647,7 +647,7 @@
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
             <div class="mt-3">
               <div class="form-group">
-                <h5 class="short_text max_width_500">{{editingKarta?.karta?.name}}: {{editingKarta?.name}}
+                <h5 class="short_text max_width_500">{{editingNode?.karta?.name}}: {{editingNode?.name}}
                 </h5>
                 <div class="row">
                   <div class="col-lg-12">

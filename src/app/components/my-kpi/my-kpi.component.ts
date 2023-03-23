@@ -147,7 +147,7 @@ export class MyKpiComponent implements OnInit {
   metricsSubmitFlag: boolean = false;
   metricFlag = false;
   kartaName: any;
-  editingKarta: any;
+  editingNode: any;
   index: any;
   metricsFormula: any;
   acheivedValueMetrics: any;
@@ -267,13 +267,53 @@ export class MyKpiComponent implements OnInit {
           return element.percentage = Math.round(percentage);
         });
         this.metricsSubmitFlag = true;
-        this._myKpiService.updateNode(this.currentNode, { node_formula: request, achieved_value: +this.metricsForm.value.calculatedValue, target: this.target }).subscribe(
+
+        this.metricsForm.value.fields.map((item: any) => {
+          item.fieldValue = Number(item.fieldValue);
+          return item;
+        });
+
+        let data = {
+          node_formula: request,
+          achieved_value: +this.metricsForm.value.calculatedValue,
+          target: this.target
+        }
+        
+        this._myKpiService.updateNode(this.currentNode, data).subscribe(
           (response) => {
-            if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
+            if (response) this._commonService.successToaster('Actual value updated successfully!');
             $('#editActualValueModal').modal('hide');
             this.pageIndex = 0;
             this.getMyKPIsList();
             this.getKpiStats();
+
+            // Create history
+            // Update achieved_value, node_formula and target
+            let randomKey = new Date().getTime();
+            let updatingParameters = [
+              { key: 'node_formula', value: request, node_updated: 'node_updated', old_value: this.editingNode.node_formula },
+              { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', old_value: this.editingNode.achieved_value },
+              { key: 'target', value: this.target, node_updated: 'node_updated', old_value: this.editingNode.target }
+            ];
+            for (let param of updatingParameters) {
+              let history_data = {
+                event: param.node_updated,
+                eventValue: {
+                  [param.key]: param.value
+                },
+                oldValue: {
+                  [param.key]: param.old_value
+                },
+                kartaNodeId: this.editingNode._id,
+                userId: this._commonService.getUserId(),
+                versionId: this.editingNode.karta.versionId,
+                kartaId: this.editingNode.karta._id,
+                parentNodeId: this.editingNode.parentId || "None",
+                historyType: 'main',
+                randomKey: randomKey.toString()
+              }
+              this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
+            }
           },
           (err) => {
             console.log(err); this._commonService.errorToaster('Something went wrong!');
@@ -296,13 +336,46 @@ export class MyKpiComponent implements OnInit {
     });
 
     this.measureSubmitFlag = true;
-    this._myKpiService.updateNode(this.currentNode, { achieved_value: +this.measureForm.value.actualValue, target: this.target, is_achieved_modified: true }).subscribe(
+
+    let data = {
+      achieved_value: +this.measureForm.value.actualValue,
+      target: this.target,
+      is_achieved_modified: true
+    }
+    this._myKpiService.updateNode(this.currentNode, data).subscribe(
       (response) => {
         if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
         $('#editActualValueModal').modal('hide');
         this.pageIndex = 0;
         this.getMyKPIsList();
         this.getKpiStats();
+
+        // Create history
+        // Update achieved_value and target
+        let randomKey = new Date().getTime();
+        let updatingParameters = [
+          { key: 'achieved_value', value: data.achieved_value, node_updated: 'node_updated', old_value: this.editingNode.achieved_value },
+          { key: 'target', value: this.target, node_updated: 'node_updated', old_value: this.editingNode.target }
+        ];
+        for (let param of updatingParameters) {
+          let history_data = {
+            event: param.node_updated,
+            eventValue: {
+              [param.key]: param.value
+            },
+            oldValue: {
+              [param.key]: param.old_value
+            },
+            kartaNodeId: this.editingNode._id,
+            userId: this._commonService.getUserId(),
+            versionId: this.editingNode.karta.versionId,
+            kartaId: this.editingNode.karta._id,
+            parentNodeId: this.editingNode.parentId || "None",
+            historyType: 'main',
+            randomKey: randomKey.toString()
+          }
+          this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
+        }
       },
       (err) => {
         console.log(err); this._commonService.errorToaster('Something went wrong!');
@@ -473,7 +546,7 @@ export class MyKpiComponent implements OnInit {
 
   // On click geting data of acheived value
   editActualValue(node: any) {
-    this.editingKarta = node;
+    this.editingNode = node;
     this.metricFlag = false;
     this.metricsData = node.node_formula;
     this.currentNode = node._id;
