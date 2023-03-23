@@ -101,7 +101,7 @@ export class KartaService {
   getAllUsers() {
     return this._httpService.POST('/users/get-all');
   }
-  addKartaHistoryObject(data: any) {
+  createKartaHistory(data: any) {
     return this._httpService.POST('/karta_histories/create-karta-history', data);
   }
   updateNode(nodeId: string, data: any) {

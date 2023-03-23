@@ -175,6 +175,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   version: any = [];
   versionId: any = "";
   formulaError: string = "";
+  disableVersion: boolean = false;
 
   // Declare calculate percentage class variable
   percentageObj: any;
@@ -915,7 +916,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           parentNodeId: "None",
           historyType: 'main'
         }
-        this._kartaService.addKartaHistoryObject(history_data).subscribe(() => {});
+        this._kartaService.createKartaHistory(history_data).subscribe(() => {});
       }
     );
   }
@@ -1177,6 +1178,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   versionRollback(event: any) {
     this.loadingKarta = true;
+    this.disableVersion = true;
     this._kartaService.versionControlHistory({ versionId: event.target.value, kartaId: this.kartaId }).subscribe(
       (data) => {
         $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
@@ -1185,9 +1187,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.getPhases();
         // this.getKartaInfo();
         MetricOperations.recheckFormula();
+        this.disableVersion = false;
       },
       (err) => console.log(err)
-    ).add(() => this.loadingKarta = false);
+    ).add(() => {
+      this.loadingKarta = false;
+      this.disableVersion = false;
+    });
   }
   
   // Get all phases
@@ -1415,7 +1421,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           historyType: 'main'
         }
         if (randomKey) history_data["randomKey"] = randomKey.toString();
-        await this._kartaService.addKartaHistoryObject(history_data).toPromise();
+        await this._kartaService.createKartaHistory(history_data).toPromise();
       }
     );
   }
@@ -1519,7 +1525,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       //   parentNodeId: param.parentId,
       //   historyType: 'main'
       // }
-      // this._kartaService.addKartaHistoryObject(history_data).subscribe(
+      // this._kartaService.createKartaHistory(history_data).subscribe(
       //   (response: any) => { }
       // );
     });
@@ -1650,7 +1656,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           kartaId: this.kartaId,
           historyType: 'main'
         };
-        this._kartaService.addKartaHistoryObject(history_data).subscribe(
+        this._kartaService.createKartaHistory(history_data).subscribe(
           (result: any) => { }
         );
       });
@@ -1695,6 +1701,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   // Save karta
   saveKarta() {
     this.submitFlag = true;
+    this.disableVersion = true;
     jqueryFunctions.disableChart();
     jqueryFunctions.disableElement("#phase_tabs");
     // New Version Calculation
@@ -1733,12 +1740,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 this.submitFlag = false;
                 jqueryFunctions.enableChart();
                 jqueryFunctions.enableElement("#phase_tabs");
+                this.disableVersion = false;
               },
               (error: any) => {
                 this.loadingKarta = false;
                 this.submitFlag = false;
                 jqueryFunctions.enableChart();
                 jqueryFunctions.enableElement("#phase_tabs");
+                this.disableVersion = false;
               }
             );
           },
@@ -1752,6 +1761,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.loadingKarta = false;
         jqueryFunctions.enableChart();
         jqueryFunctions.enableElement("#phase_tabs");
+        this.disableVersion = false;
         console.log(err)
       }
     );
