@@ -175,7 +175,7 @@ export class HistoricalViewComponent implements OnInit {
 
     for (let i=0; i<value.length; i++) {
       data["event_options"]["updated"] = value[i];
-      this._myKpiService.updateHistoryNode(ids[i], data).subscribe(
+      this._myKpiService.updateKartaHistory(ids[i], data).subscribe(
         async (response: any) => {
           if (i === value.length-1) {
             if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
@@ -291,7 +291,7 @@ export class HistoricalViewComponent implements OnInit {
     
         for (let i=0; i<value.length; i++) {
           data["event_options"]["updated"] = value[i];
-          this._myKpiService.updateHistoryNode(ids[i], data).subscribe(
+          this._myKpiService.updateKartaHistory(ids[i], data).subscribe(
             async (response) => {
               if (i === value.length-1) {
                 if (response) { this._commonService.successToaster('Actual value updated successfully!'); }

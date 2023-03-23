@@ -23,11 +23,11 @@
                                     <div *ngIf="form.code.errors.pattern">Verification code is not valid!</div>
                                 </div>
 
-                                <a class="cursor_pointer" (click)="resendCode()" class="text-white send-otp" *ngIf="!verificationFlag">Resend Code</a>
+                                <a class="text-white send-otp cursor_pointer" (click)="resendCode()" *ngIf="!verificationFlag">Resend Code</a>
                                 <div class="spinner-border spinner-grow-sm text-light" role="status" *ngIf="verificationFlag">
                                     <span class="sr-only">Loading...</span>
                                 </div>
-                                <span class="d-block text-white">(Don’t forget to check your Spam folder!)</span>
+                                <span class="d-block text-white">(Don't forget to check your Spam folder!)</span>
                             </div>
                             <button type="submit" class="btn btn-light btn_default mb-3 mt-2" [disabled]="submitFlag">
                                 <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">

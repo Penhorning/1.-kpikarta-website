@@ -916,7 +916,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           parentNodeId: "None",
           historyType: 'main'
         }
-        this._kartaService.addKartaHistoryObject(history_data).subscribe(() => {});
+        this._kartaService.createKartaHistory(history_data).subscribe(() => {});
       }
     );
   }
@@ -1421,7 +1421,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           historyType: 'main'
         }
         if (randomKey) history_data["randomKey"] = randomKey.toString();
-        await this._kartaService.addKartaHistoryObject(history_data).toPromise();
+        await this._kartaService.createKartaHistory(history_data).toPromise();
       }
     );
   }
@@ -1525,7 +1525,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       //   parentNodeId: param.parentId,
       //   historyType: 'main'
       // }
-      // this._kartaService.addKartaHistoryObject(history_data).subscribe(
+      // this._kartaService.createKartaHistory(history_data).subscribe(
       //   (response: any) => { }
       // );
     });
@@ -1656,7 +1656,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           kartaId: this.kartaId,
           historyType: 'main'
         };
-        this._kartaService.addKartaHistoryObject(history_data).subscribe(
+        this._kartaService.createKartaHistory(history_data).subscribe(
           (result: any) => { }
         );
       });
