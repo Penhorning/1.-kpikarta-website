@@ -1266,38 +1266,45 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     return { param, weightage };
   }
   // Add node
+  timeout = null;
   addNode(param: any, name = "Child") {
-    let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
-    const node = this.divideWeightage(param, phase, 1);
-    param = node.param;
-    let data: any = {
-      name,
-      kartaDetailId: this.kartaId,
-      phaseId: phase.id,
-      parentId: param.id,
-      weightage: node.weightage
-    }
-    if (phase.global_name === "KPI") {
-      data.node_type = "measure";
-      data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
-      data.achieved_value = 0;
-      data.is_achieved_modified = false;
-      data.days_to_calculate = "all";
-      data.alert_type = "";
-      data.alert_frequency = "";
-      data.kpi_calc_period = 'monthly';
-    } else {
-      let nextPhase = this.phases[this.phaseIndex(param.phaseId) + 2];
-      data.nextPhaseId = nextPhase.id;
-    }
-    jqueryFunctions.disableChart();
-    this._kartaService.addNode(data).subscribe(
-      (response: any) => {
-        response.phase = phase;
-        this.D3SVG.updateNewNode(param, response);
-        this.updateNewPercentage();
+    if (this.timeout) clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
+      const node = this.divideWeightage(param, phase, 1);
+      param = node.param;
+      let data: any = {
+        name,
+        kartaDetailId: this.kartaId,
+        phaseId: phase.id,
+        parentId: param.id,
+        weightage: node.weightage
       }
-    ).add(() => setTimeout(() => jqueryFunctions.enableChart(), 1000));
+      if (phase.global_name === "KPI") {
+        data.node_type = "measure";
+        data.target = [{ frequency: 'monthly', value: 0, percentage: 0 }];
+        data.achieved_value = 0;
+        data.is_achieved_modified = false;
+        data.days_to_calculate = "all";
+        data.alert_type = "";
+        data.alert_frequency = "";
+        data.kpi_calc_period = 'monthly';
+      } else {
+        let nextPhase = this.phases[this.phaseIndex(param.phaseId) + 2];
+        data.nextPhaseId = nextPhase.id;
+      }
+      jqueryFunctions.disableChart();
+      this._kartaService.addNode(data).subscribe(
+        (response: any) => {
+          response.phase = phase;
+          this.D3SVG.updateNewNode(param, response);
+          this.updateNewPercentage();
+        },
+        (error: any) => {
+          jqueryFunctions.enableChart();
+        }
+      );
+    }, 1000);
   }
 
   reArrangePhases(phases: any) {
