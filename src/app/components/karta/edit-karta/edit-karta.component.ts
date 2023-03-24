@@ -1304,7 +1304,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           jqueryFunctions.enableChart();
         }
       );
-    }, 300);
+    }, 500);
   }
 
   reArrangePhases(phases: any) {
