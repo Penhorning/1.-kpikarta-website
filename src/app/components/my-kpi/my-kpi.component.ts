@@ -285,7 +285,6 @@ export class MyKpiComponent implements OnInit {
             $('#editActualValueModal').modal('hide');
             this.pageIndex = 0;
             this.getMyKPIsList();
-            this.getKpiStats();
 
             // Create history
             // Update achieved_value, node_formula and target
@@ -348,7 +347,6 @@ export class MyKpiComponent implements OnInit {
         $('#editActualValueModal').modal('hide');
         this.pageIndex = 0;
         this.getMyKPIsList();
-        this.getKpiStats();
 
         // Create history
         // Update achieved_value and target
@@ -423,6 +421,7 @@ export class MyKpiComponent implements OnInit {
     this.isHistoricalView = false;
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
+        this.getKpiStats();
         this.kpis = Array.from(response.kpi_nodes[0].data);
         this.exportKpis = Array.from(response.kpi_nodes[0].data);
         this.kpis = this.kpis.map((item: any) => {
@@ -471,7 +470,6 @@ export class MyKpiComponent implements OnInit {
     this.selectedHistoryKpis.clear();
     this.pageIndex = 0;
     this.getMyKPIsList();
-    this.getKpiStats();
   }
 
   // Get color for each node percentage
