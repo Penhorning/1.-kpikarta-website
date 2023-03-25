@@ -288,7 +288,7 @@ export class MyKpiComponent implements OnInit {
 
             // Create history
             // Update achieved_value, node_formula and target
-            let randomKey = new Date().getTime();
+            let randomKey = new Date().getTime().toString();
             let updatingParameters = [
               { key: 'node_formula', value: request, node_updated: 'node_updated', old_value: this.editingNode.node_formula },
               { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', old_value: this.editingNode.achieved_value },
@@ -309,7 +309,7 @@ export class MyKpiComponent implements OnInit {
                 kartaId: this.editingNode.karta._id,
                 parentNodeId: this.editingNode.parentId || "None",
                 historyType: 'main',
-                randomKey: randomKey.toString()
+                randomKey
               }
               this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
             }
