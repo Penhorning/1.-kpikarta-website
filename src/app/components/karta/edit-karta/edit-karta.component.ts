@@ -1503,42 +1503,23 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     let phase = this.phases[this.phaseIndex(param.phaseId)];
     const node = this.divideWeightage(param.parent, phase);
     param.parent = node.param;
-    // Divide weightage of remaining nodes ends
+    // Prepare deleting data
     let data = {
       kartaId: this.kartaId,
       nodeId: param.id,
       phaseId: phase.id,
       parentId: param.parent.id
     }
-    this._kartaService.removeNode(data).subscribe((response: any) => {
-      this.D3SVG.update(param.parent);
-      this.updateNewPercentage();
-      // this.setKartaDimension();
-      // this.D3SVG.removeOneKartaDivider();
-      let kpi_check_obj = {
-        target: "target",
-        achieved_value: 'achieved_value',
-        threshold_value: 'threshold_value',
-        is_achieved_modified: 'is_achieved_modified',
-        alert_type: 'alert_type',
-        alert_frequency: 'alert_frequency',
-        kpi_calc_period: 'kpi_calc_period'
-      };
-
-      // let history_data = {
-      //   event: 'node_removed',
-      //   eventValue: { "is_deleted": true },
-      //   kartaNodeId: param.id,
-      //   userId: this._commonService.getUserId(),
-      //   versionId: this.versionId,
-      //   kartaId: this.kartaId,
-      //   parentNodeId: param.parentId,
-      //   historyType: 'main'
-      // }
-      // this._kartaService.createKartaHistory(history_data).subscribe(
-      //   (response: any) => { }
-      // );
-    });
+    jqueryFunctions.disableChart();
+    this._kartaService.removeNode(data).subscribe(
+      (response: any) => {
+        this.D3SVG.update(param.parent);
+        this.updateNewPercentage();
+      },
+      (error: any) => {
+        jqueryFunctions.enableChart();
+      }
+    );
   }
 
   // Get depth of nested child
