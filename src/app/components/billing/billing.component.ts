@@ -48,7 +48,7 @@ export class BillingComponent implements OnInit {
     this._billingService.getCards(this.companyId).subscribe(
       (response) => {
         if (response.data) {
-          this.cards.push(response.data);
+          this.cards = [response.data];
         }
       },
       (err) => {
