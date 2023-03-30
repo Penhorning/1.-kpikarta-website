@@ -11,4 +11,12 @@ export class NotificationService {
   getNotifications(data: any) {
     return this._httpService.POST('/notifications/get-notifications', data);
   }
+
+  updateNotificationStatus(userId: any) {
+    return this._httpService.POST('/notifications/update-notifications-status', { userId });
+  }
+
+  getUnreadNotifications(userId: string) {
+    return this._httpService.GET(`/notifications?filter[where][userId]=${userId}&filter[where][is_read]=false`);
+  }
 }

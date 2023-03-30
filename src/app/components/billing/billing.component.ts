@@ -47,8 +47,8 @@ export class BillingComponent implements OnInit {
   getCardDetails() {
     this._billingService.getCards(this.companyId).subscribe(
       (response) => {
-        if (response.data && response.data.data.length > 0) {
-          this.cards = response.data.data;
+        if (response.data) {
+          this.cards = [response.data];
         }
       },
       (err) => {
@@ -74,7 +74,8 @@ export class BillingComponent implements OnInit {
   getInvoicesDetails() {
     this._billingService.getInvoices(this.companyId).subscribe(
       (response) => {
-        if (response.data.data.length > 0) {
+        if (response.data.data && response.data.data.length > 0) {
+          console.log(response.data.data, 'response.data.data');
           this.invoices = response.data.data;
         }
       },
@@ -118,15 +119,15 @@ export class BillingComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     if (this.cardForm.valid) {
-      this.submitFlag = true;
       let userId = this._commonService.getUserId();
       let requestObj = {
         userId,
         ...this.cardForm.value
       };
 
-      const result = confirm(" Are you sure you want to replace your previous card?");
+      const result = confirm("Are you sure you want to replace your previous card?");
       if(result) {
+        this.submitFlag = true;
         this._signupService.saveCard(requestObj).subscribe(
           (response: any) => {
             this._commonService.successToaster("Card saved successfully..!!");
