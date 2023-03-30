@@ -178,7 +178,8 @@
                   <!--<label class="mobile-name mr-0 mr-1">AB</label>-->
                   <label class="mr-2 desktop-name short_text user_label_name">{{_commonService.getSession().name}}</label>
                 </div>
-                <div class="notification mr-2">
+                <div class="notification mr-2 notification-holder">
+                  <div *ngIf="newNotifications" class="notifier"></div>
                   <a [routerLink]="['/notifications']">
                     <img src="assets/img/notification.svg">
                   </a>
