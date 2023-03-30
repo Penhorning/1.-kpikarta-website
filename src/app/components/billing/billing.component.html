@@ -71,6 +71,7 @@
                             <th scope="col">Amount</th>
                             <th scope="col">Status</th>
                             <th scope="col">Invoice Date</th>
+                            <th scope="col">Action</th>
                           </tr>
                         </thead>
                         <tbody *ngFor="let invoice of invoices"> 
@@ -80,6 +81,7 @@
                             <td>${{invoice.amount_paid / 100}}</td>
                             <td class="paid">{{invoice.status | titlecase}}</td>
                             <td>{{invoice.created * 1000 | date}}</td>
+                            <td><a class="text-primary link-light" [href]="invoice.invoice_pdf" target="_blank">Download</a></td>
                           </tr>
                         </tbody>
                       </table>

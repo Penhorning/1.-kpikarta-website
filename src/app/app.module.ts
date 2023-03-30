@@ -12,6 +12,9 @@ import { RequestInterceptor } from './shared/_interceptor/request.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
+// Idle service module
+import { BnNgIdleService } from 'bn-ng-idle';
+
 // Shared module
 import { SharedModule } from './shared/_modules/shared.module';
 
@@ -28,6 +31,7 @@ import { SharedModule } from './shared/_modules/shared.module';
     SharedModule
   ],
   providers: [
+    BnNgIdleService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RequestInterceptor,

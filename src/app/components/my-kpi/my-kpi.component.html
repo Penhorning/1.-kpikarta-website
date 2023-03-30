@@ -301,11 +301,16 @@
                           <td>{{ kpi?.updatedAt | date }}</td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
-                            <img src="assets/img/Refresh.svg">
-                            <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
-                              {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
-                              -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
-                            </span>
+                            <ng-container *ngIf="(kpi?.target[0]?.value > kpi?.achieved_value) && kpi?.start_date; else na">
+                              <img src="assets/img/Refresh.svg">
+                              <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                                {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
+                                -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
+                              </span>
+                            </ng-container>
+                            <ng-template #na>
+                              N/A
+                            </ng-template>
                           </td>
                           <td>
                             <ng-container *ngIf="kpi?.target[0]?.percentage >= 101 ;else second">

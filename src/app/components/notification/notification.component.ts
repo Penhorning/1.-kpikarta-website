@@ -17,6 +17,11 @@ export class NotificationComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllNotifications();
+
+    this._notificationService.updateNotificationStatus(this._commonService.getUserId()).subscribe(
+      (response) => {},
+      (error) => console.log(error)
+    )
   }
 
   // Get all notifications
