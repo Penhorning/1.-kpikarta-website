@@ -26,6 +26,7 @@
     "@ng-select/ng-option-highlight": "^0.0.7",
     "@ng-select/ng-select": "^7.4.0",
     "angular-intro.js": "^3.4.0",
+    "bn-ng-idle": "^2.0.5",
     "bootstrap": "^4.5.3",
     "export-to-csv": "^0.2.1",
     "google-libphonenumber": "^3.2.29",
