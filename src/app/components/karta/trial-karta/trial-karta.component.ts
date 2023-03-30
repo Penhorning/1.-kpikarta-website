@@ -92,12 +92,12 @@ export class TrialKartaComponent implements OnInit {
       },
       {
         element: '#step7',
-        intro: 'You can save karta for different versioning',
+        intro: 'You can save Karta for different versioning',
         position: 'bottom'
       },
       {
         element: '#step8',
-        intro: 'You can Undo, Redo and Resize a karta',
+        intro: 'You can Undo, Redo and Resize a Karta',
         position: 'bottom'
       },
       {

@@ -382,10 +382,12 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     });
   }
   // Search
+  searchTimeout = null;
   inventorySearch() {
-    if (this.inventory_search_text) {
+    if (this.searchTimeout) clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
       this.getInventories();
-    }
+    }, 1000);
   }
   clearInventorySearch() {
     this.inventory_search_text = "";
