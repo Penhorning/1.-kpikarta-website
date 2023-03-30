@@ -1,7 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID , HostListener} from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { BnNgIdleService } from 'bn-ng-idle';
 import { filter, map, mergeMap } from 'rxjs/operators';
 import { CommonService } from './shared/_services/common.service';
 
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
     private _commonService: CommonService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private bnIdle: BnNgIdleService,
     private title: Title
   ) {
     this.hideModal();
@@ -26,17 +28,19 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Check for user inactivity (1hr)
+    this.bnIdle.startWatching(3600).subscribe((isTimedOut: boolean) => {
+      if (isTimedOut && this._commonService.getSession().token) {
+        this._commonService.deleteSession();
+        this._commonService.errorToaster('Your session has been expired!');
+      }
+    });
+
     if (isPlatformBrowser(this.platformId)) {
       // Update title for every page
       this.setTitle();
     }
   }
-
-  // @HostListener('window:popstate', ['$event'])
-  // onBrowserBackBtnClose(event: Event) {
-  //     event.preventDefault(); 
-  //     this.title.setTitle('KPI Karta');
-  // }
   
   // Set page title
   setTitle() {
