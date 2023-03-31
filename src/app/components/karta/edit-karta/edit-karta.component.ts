@@ -885,7 +885,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       due_date = moment(start_date).add(1, 'months');
     } else if (node.target[0].frequency === "quarterly") {
       due_date = moment(start_date).add(3, 'months');
-    } else if (node.target[0].frequency === "annually") {
+    } else if (node.target[0].frequency === "yearly") {
       due_date = moment(start_date).add(1, 'years');
     }
     this.updateNode('due_date', due_date, 'node_updated', node);
