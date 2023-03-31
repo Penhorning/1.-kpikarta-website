@@ -1,7 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { NotificationService } from '@app/components/notification/service/notification.service';
 import { CommonService } from '@app/shared/_services/common.service';
-import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -21,20 +20,18 @@ export class HeaderComponent implements OnInit {
   constructor(public _commonService: CommonService, public _notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    interval(10000).subscribe(() => {
-      this._notificationService.getUnreadNotifications(this._commonService.getUserId()).subscribe(
-        (response: any) => {
-          if( response.length > 0 ) {
-            this.newNotifications = true;
-          } else {
-            this.newNotifications = false;
-          }
-        },
-        (err) => {
-          console.error(err);
+    this._notificationService.getUnreadNotifications(this._commonService.getUserId()).subscribe(
+      (response: any) => {
+        if( response.length > 0 ) {
+          this.newNotifications = true;
+        } else {
+          this.newNotifications = false;
         }
-      );
-    });
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
   }
 
   logout() {
