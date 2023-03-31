@@ -32,7 +32,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     totalPhases = options.phases().length;
     getSVGSize(treeData);
 
-    var i = 0, duration = 750;
+    var i = 0, duration = 0;
     // tree = d3.layout.tree().nodeSize([90, 60]);
 
     tree = d3.layout.tree()
@@ -456,9 +456,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         // Transition links to their new position.
         link.transition()
             .duration(duration)
-            .attr("d", (d) => {
-                return diagonal(d)
-            });
+            .attr("d", (d) => { return diagonal(d) });
 
         // Transition exiting nodes to the parent's new position.
         link.exit().transition()
