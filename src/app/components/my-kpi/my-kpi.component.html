@@ -274,8 +274,7 @@
                           </td>
                           <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
-                            <span>{{ kpi?.target[0]?.value }}</span>
-                            <span class="">{{ ' '+ kpi?.target[0].frequency | slice:0:3 }}.</span>
+                            <span>{{ kpi?.target[0]?.value }}/{{kpi?.target[0].frequency}}</span>
                           </td>
                           <td>
                             <div class="editacval">
