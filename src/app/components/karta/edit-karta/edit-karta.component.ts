@@ -2047,29 +2047,46 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 break;
               case "node_updated":
                 if (x.data.data) {
-                  this.showSVG = true;
-                  this.isRtNodDrgingFrmSide = false;
-                  this.currentNode.phase = "";
-                  this.D3SVG.updateNode(this.currentNode);
-                  this.getPhases("existing");
-                  setTimeout(() => {
-                    jqueryFunctions.removeKarta();
-                    this.undoRedoFlag = false;
-                    jqueryFunctions.enableChart();
-                  }, 1000);
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.showSVG = true;
+                    this.isRtNodDrgingFrmSide = false;
+                    this.updateNodeProperties(kartaNode);
+                    this.currentNode.phase = "";
+                    this.D3SVG.updateNode(this.currentNode);
+                    this.getPhases("existing");
+                    setTimeout(() => {
+                      jqueryFunctions.removeKarta();
+                      this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
+                    }, 1000);
+                  },
+                    (err) => {
+                      console.log(err);
+                      this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
+                    });
                 }
                 break;
               case "node_removed":
                 if (x.data.data) {
-                  this.getPhases("existing");
-                  this.currentNode.phase = "";
-                  this.showSVG = true;
-                  this.isRtNodDrgingFrmSide = false;
-                  setTimeout(() => {
-                    jqueryFunctions.removeKarta();
-                    this.undoRedoFlag = false;
-                    jqueryFunctions.enableChart();
-                  }, 1000);
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    this.getPhases("existing");
+                    let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                    kartaNode.phase = phase;
+                    this.currentNode.phase = "";
+                    this.showSVG = true;
+                    this.isRtNodDrgingFrmSide = false;
+                    setTimeout(() => {
+                      jqueryFunctions.removeKarta();
+                      this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
+                    }, 1000);
+                  },
+                    (err) => {
+                      console.log(err);
+                    });
                 }
                 break;
               case "phase_created":
@@ -2143,28 +2160,51 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             switch (x.data.data.event) {
               case "node_created":
                 if (x.data.data) {
-                  this.getPhases("existing");
-                  this.currentNode.phase = "";
-                  this.showSVG = true;
-                  this.isRtNodDrgingFrmSide = false;
-                  setTimeout(() => {
-                    jqueryFunctions.removeKarta();
-                    this.undoRedoFlag = false;
-                    jqueryFunctions.enableChart();
-                  }, 1000);
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    if (kartaNode) {
+                      this.getPhases("existing");
+                      this.currentNode.phase = "";
+                      let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                      kartaNode.phase = phase;
+                      this.showSVG = true;
+                      this.isRtNodDrgingFrmSide = false;
+                      setTimeout(() => {
+                        jqueryFunctions.removeKarta();
+                        this.undoRedoFlag = false;
+                        jqueryFunctions.enableChart();
+                      }, 1000);
+                    }
+                  },
+                    (err) => {
+                      console.log(err);
+                      this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
+                    });
                 }
                 break;
               case "node_updated":
                 if (x.data.data) {
-                  this.showSVG = true;
-                  this.isRtNodDrgingFrmSide = false;
-                  this.D3SVG.updateNode(this.currentNode);
-                  this.getPhases("existing");
-                  setTimeout(() => {
-                    jqueryFunctions.removeKarta();
-                    this.undoRedoFlag = false;
-                    jqueryFunctions.enableChart();
-                  }, 1000);
+                  this._kartaService.getNode(x.data.data.kartaNodeId).subscribe((kartaNode: any) => {
+                    if (kartaNode) {
+                      let phase = this.phases[this.phaseIndex(kartaNode.phaseId)];
+                      kartaNode.phase = phase;
+                      this.showSVG = true;
+                      this.isRtNodDrgingFrmSide = false;
+                      this.updateNodeProperties(kartaNode);
+                      this.D3SVG.updateNode(this.currentNode);
+                      this.getPhases("existing");
+                      setTimeout(() => {
+                        jqueryFunctions.removeKarta();
+                        this.undoRedoFlag = false;
+                        jqueryFunctions.enableChart();
+                      }, 1000);
+                    }
+                  },
+                    (err) => {
+                      console.log(err);
+                      this.undoRedoFlag = false;
+                      jqueryFunctions.enableChart();
+                    });
                 }
                 break;
               case "node_removed":
