@@ -276,7 +276,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             if (selectedNode && draggingNode) {
                 // Check whether the node is droppable or not
                 if (!isDroppable(selectedNode, draggingNode)) {
-                    alert(dragErrorMsg);
+                    options.events.nodeWarning(dragErrorMsg);
                     endDrag(false);
                 } else {
                     // now remove the element from the parent, and insert it into the new elements children
@@ -394,7 +394,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 outCircle(node);
             })
             .on("drop", function(dropped_node) {
-                if (!isDroppable(dropped_node, draggingNode, true)) alert(dragErrorMsg);
+                if (!isDroppable(dropped_node, draggingNode, true)) options.events.nodeWarning(dragErrorMsg);
                 else options.events.onInventoryDrop(draggingNode, dropped_node);
 
                 outCircle(dropped_node);
