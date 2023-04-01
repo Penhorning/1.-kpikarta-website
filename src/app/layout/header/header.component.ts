@@ -20,18 +20,17 @@ export class HeaderComponent implements OnInit {
   constructor(public _commonService: CommonService, public _notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    this._notificationService.getUnreadNotifications(this._commonService.getUserId()).subscribe(
-      (response: any) => {
-        if( response.length > 0 ) {
-          this.newNotifications = true;
-        } else {
-          this.newNotifications = false;
+    if (this._commonService.getUserId()) {
+      this._notificationService.getUnreadNotifications(this._commonService.getUserId()).subscribe(
+        (response: any) => {
+          if( response.length > 0 ) this.newNotifications = true;
+          else this.newNotifications = false;
+        },
+        (err) => {
+          console.error(err);
         }
-      },
-      (err) => {
-        console.error(err);
-      }
-    );
+      );
+    }
   }
 
   logout() {
