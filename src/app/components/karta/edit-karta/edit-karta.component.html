@@ -149,7 +149,7 @@
                 </div>
                 <div class="col-md-1">
                     <div class="select-karta-name">
-                        <select class="form-control custom-select-karta" [disabled]="disableVersion" (change)="versionRollback($event)" [(ngModel)]="versionId">
+                        <select class="form-control custom-select-karta" [disabled]="disableVersionFlag" (change)="versionRollback($event)" [(ngModel)]="versionId">
                             <option *ngFor="let ver of version" [disabled]="ver.is_copied" [value]="ver.id">Version {{ver.name}}</option>
                         </select>
                     </div>
@@ -262,11 +262,11 @@
                 </div>
                <div class="col">
                 <div class="d-flex align-items-center">
-                    <button type="button" class="save-btn-karta mr-1" [disabled]="submitFlag" (click)="saveKarta()">
-                        <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">
+                    <button type="button" class="save-btn-karta mr-1" [disabled]="saveSubmitFlag" (click)="saveKarta()">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag">
                             <span class="sr-only">Loading...</span>
                         </div>
-                        <ng-container *ngIf="!submitFlag">Save</ng-container>
+                        <ng-container *ngIf="!saveSubmitFlag">Save</ng-container>
                     </button>
                     <div class="dropdown mr-1">
                         <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg" /></button>
@@ -409,7 +409,7 @@
                                             <i class="fa fa-pencil" *ngIf="phase.global_name !== 'KPI' && phase.global_name !== 'Goal'" (click)="makePhaseEditable(phase.id)"></i>
                                             <i class="fa fa-trash" *ngIf="phase.is_child" (click)="deletePhase(phase.id, i)"></i>
                                        </div>
-                                       <div (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name)">{{phase?.name}}</div>
+                                       <div (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name, i)">{{phase?.name}}</div>
                                    </a>
                                </li>
                            </ul>
@@ -457,7 +457,7 @@
                <div class="row">
                    <div class="col-lg-12">
                        <div class="goal-name mt-3">
-                           <h6>{{currentNode?.phase?.name}}</h6>
+                           <h6>{{phaseName}}</h6>
                        </div>
                    </div>
                </div>
