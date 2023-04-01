@@ -81,7 +81,7 @@
                             <td>${{invoice.amount_paid / 100}}</td>
                             <td class="paid">{{invoice.status | titlecase}}</td>
                             <td>{{invoice.created * 1000 | date}}</td>
-                            <td><a class="text-primary link-light" [href]="invoice.invoice_pdf" target="_blank">Download</a></td>
+                            <td><a class="text-primary link-light" [href]="invoice.receipt_url" target="_blank">Download</a></td>
                           </tr>
                         </tbody>
                       </table>

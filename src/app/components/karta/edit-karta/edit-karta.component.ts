@@ -29,6 +29,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   currentNode: any = {};
   // currentPhase: any;
   phaseId: string = '';
+  phaseName: string = '';
   phases: any = [];
   colorSettings: any = [];
   suggestion: any;
@@ -38,7 +39,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   isRtNodDrgingFrmSide: boolean = false;
   isNodeDropable: boolean = false;
   formulaGroup: FormGroup | any = [];
-  submitFlag: boolean = false;
+  saveSubmitFlag: boolean = false;
 
   // Color variables
   colorSubmitFlag: boolean = false;
@@ -66,6 +67,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     events: {
       addNode: (d: any) => {
         this.addNode(d);
+      },
+      nodeWarning: (message: string) => {
+        this._commonService.warningToaster(message);
       },
       updateDraggedNode: (draggingNode: any) => {
         this.currentNode = draggingNode;
@@ -175,7 +179,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   version: any = [];
   versionId: any = "";
   formulaError: string = "";
-  disableVersion: boolean = false;
+  disableVersionFlag: boolean = false;
 
   // Declare calculate percentage class variable
   percentageObj: any;
@@ -789,6 +793,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.currentNode = param;
     this.kpiType = param.node_type;
     this.phaseId = param.phaseId;
+    this.phaseName = this.phases.find((item: any) => item.id === param.phaseId).name;
     this.selectedFont = param.font_style;
     this.selectedColor = param.text_color;
     this.selectedAlignment = param.alignment;
@@ -896,7 +901,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     jqueryFunctions.setAttribute(`#${id} div`, "contenteditable", true);
     $(`#${id} div`).focus();
   }
-  changePhaseName(e: any, id: string, oldName: string) {
+  changePhaseName(e: any, id: string, oldName: string, index: number) {
     const name = e.target.textContent.trim();
     if (name.length === 0) {
       e.target.textContent = oldName;
@@ -905,6 +910,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this._kartaService.updatePhase(id, { name }).subscribe(
       (response: any) => {
         e.target.textContent = name;
+        this.phases[index].name = name;
         jqueryFunctions.setAttribute(`#${id} div`,"contenteditable", false);
 
         let history_data = {
@@ -926,13 +932,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   deletePhase(id: string, index: number) {
     const result = confirm("Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.");
     if (result) {
+
+      jqueryFunctions.disableElement("#phase_tabs");
       jqueryFunctions.disableChart();
+      this.setChartConfiguration(true);
+
       const data = {
         phaseId: id,
         nextPhaseId: this.phases[index+1].id,
         kartaId: this.kartaId
       }
-      jqueryFunctions.disableElement("#phase_tabs");
       this._kartaService.deletePhase(data).subscribe(
         (response: any) => {
           this.phases.splice(index, 1);
@@ -947,6 +956,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       ).add(() => {
         jqueryFunctions.enableElement("#phase_tabs");
         jqueryFunctions.enableChart();
+        this.setChartConfiguration(false);
       });
     }
   }
@@ -1180,7 +1190,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   versionRollback(event: any) {
     this.loadingKarta = true;
-    this.disableVersion = true;
+    this.disableVersionFlag = true;
     this._kartaService.versionControlHistory({ versionId: event.target.value, kartaId: this.kartaId }).subscribe(
       (data) => {
         $("#UndoAnchor").css("pointer-events", "all", "cursor", "default");
@@ -1189,12 +1199,12 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.getPhases();
         // this.getKartaInfo();
         MetricOperations.recheckFormula();
-        this.disableVersion = false;
+        this.disableVersionFlag = false;
       },
       (err) => console.log(err)
     ).add(() => {
       this.loadingKarta = false;
-      this.disableVersion = false;
+      this.disableVersionFlag = false;
     });
   }
   
@@ -1331,15 +1341,24 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.phases = phaseResult;
   }
 
+  setChartConfiguration(type: boolean) {
+    this.disableVersionFlag = this.undoRedoFlag = this.saveSubmitFlag = type;
+  }
+
   // Add additional phase
   addChildPhase(phase: any, index: number) {
     const result = confirm("Are you sure you want to create a new Layer?");
     if (result) {
+
+      jqueryFunctions.disableElement("#phase_tabs");
+      jqueryFunctions.disableChart();
+      this.setChartConfiguration(true);
+
       let mainPhaseId: string = "";
       if (this.phases[index].hasOwnProperty("phaseId")) mainPhaseId = this.phases[index].phaseId;
       else mainPhaseId = this.phases[index].id;
       // Set new phase name
-      let nameString, lastString, num, joinedName, newName;
+      let nameString: any, lastString: any, num: any, joinedName: any, newName: any;
       nameString = this.phases[index].name.split(" ");
       lastString = parseInt(nameString[nameString.length - 1]);
       num = lastString ? lastString + 1 : 1;
@@ -1357,7 +1376,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         "nextPhaseId": this.phases[index + 1].id,
         "addEmptyNodes": true
       }
-      jqueryFunctions.disableElement("#phase_tabs");
       this._kartaService.addPhase(data).subscribe(
         (response: any) => {
           let resopnse_data = {
@@ -1374,7 +1392,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.D3SVG.buildOneKartaDivider();
           this.updateNewPercentage();
         }
-      ).add(() => jqueryFunctions.enableElement("#phase_tabs"));
+      ).add(() => {
+        jqueryFunctions.enableElement("#phase_tabs");
+        jqueryFunctions.enableChart();
+        this.setChartConfiguration(false);
+      });
     }
   }
 
@@ -1654,7 +1676,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         );
       });
     } else {
-      alert("You cannot drag this node here");
+      this._commonService.warningToaster("You cannot drag this node here!");
       this.isRtNodDrgingFrmSide = false;
       let element = document.getElementById(ev.target.id);
       if (element) {
@@ -1693,8 +1715,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Save karta
   saveKarta() {
-    this.submitFlag = true;
-    this.disableVersion = true;
+    this.saveSubmitFlag = true;
+    this.disableVersionFlag = true;
     jqueryFunctions.disableChart();
     jqueryFunctions.disableElement("#phase_tabs");
     // New Version Calculation
@@ -1730,17 +1752,17 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 this.version = response;
                 this.versionId = response[response.length - 1].id;
                 this.loadingKarta = false;
-                this.submitFlag = false;
+                this.saveSubmitFlag = false;
                 jqueryFunctions.enableChart();
                 jqueryFunctions.enableElement("#phase_tabs");
-                this.disableVersion = false;
+                this.disableVersionFlag = false;
               },
               (error: any) => {
                 this.loadingKarta = false;
-                this.submitFlag = false;
+                this.saveSubmitFlag = false;
                 jqueryFunctions.enableChart();
                 jqueryFunctions.enableElement("#phase_tabs");
-                this.disableVersion = false;
+                this.disableVersionFlag = false;
               }
             );
           },
@@ -1750,11 +1772,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         )
       },
       (err: any) => {
-        this.submitFlag = false;
+        this.saveSubmitFlag = false;
         this.loadingKarta = false;
         jqueryFunctions.enableChart();
         jqueryFunctions.enableElement("#phase_tabs");
-        this.disableVersion = false;
+        this.disableVersionFlag = false;
         console.log(err)
       }
     );
