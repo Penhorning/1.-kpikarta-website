@@ -128,7 +128,7 @@ export class MyKpiComponent implements OnInit {
     { name: 'KPI', sortBy: 'name', sort: '' },
     { name: 'Target', sortBy: 'value', sort: '', filter: true },
     { name: 'Actual', sortBy: 'achieved_value', sort: '' },
-    { name: 'KPI Owner', sortBy: 'contributor.email', sort: '' },
+    { name: 'KPI Owner', sortBy: 'fullName', sort: '' },
     { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
     { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
     { name: 'Days Left', sortBy: 'due_date', sort: '' },
@@ -351,6 +351,7 @@ export class MyKpiComponent implements OnInit {
     this._myKpiService.getMyKPIs(data).subscribe(
       (response: any) => {
         this.kpis = Array.from(response.kpi_nodes[0].data);
+       
         this.exportKpis = Array.from(response.kpi_nodes[0].data);
         this.kpis = this.kpis.map((item: any) => {
           item.isSelected = false;
@@ -657,7 +658,11 @@ export class MyKpiComponent implements OnInit {
 
   sortHeader(colName: any, index: number) {
     this.arrow_icon = !this.arrow_icon;
-    this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
+    if(colName == 'percentage'){
+      this.headerList[7].sort = this.headerList[7].sort == 'ascending' ? 'descending' : 'ascending';
+    }else{
+      this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
+    } 
     this.kpis.sort((node_1: any, node_2: any) => {
       if (colName == 'percentage') {
         node_1 = node_1['target'][0][colName]
@@ -687,10 +692,14 @@ export class MyKpiComponent implements OnInit {
         } else {
           return node_2 - node_1;
         }
-      } else {
-        node_1 = node_1[colName].toLowerCase();
-        node_2 = node_2[colName].toLowerCase();
+      }else if (colName == 'fullName') {
+        node_1 = node_1?.['contributor']?.[colName] ? node_1?.['contributor']?.[colName] : "";
+        node_2 = node_2?.['contributor']?.[colName] ? node_2?.['contributor']?.[colName] : "";
         return node_1.localeCompare(node_2) * this.sortDir;
+      } else {
+        node_1 = node_1[colName]?.toLowerCase();
+        node_2 = node_2[colName]?.toLowerCase();
+        return node_1?.localeCompare(node_2) * this.sortDir;
       }
     });
     if (colName == 'percentage' || 'achieved_value' || 'value') this.sortOrder == 'asc' ? this.sortOrder = 'dsc' : this.sortOrder = 'asc';
