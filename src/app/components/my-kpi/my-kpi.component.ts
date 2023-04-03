@@ -702,6 +702,9 @@ export class MyKpiComponent implements OnInit {
         userId: this._commonService.getUserId(),
         kpiType: this.kpiType,
         searchQuery: this.search_text,
+        startUpdatedDate: this.startDate,
+        endUpdatedDate: this.endDate,
+        targetTypes: this.selectedTargetTypes,
         statusType: this.statusType
       }
       this.loading = true;
