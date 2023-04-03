@@ -22,7 +22,6 @@ declare const $: any;
 export class EditKartaComponent implements OnInit, OnDestroy {
 
   unauthorizedUser: any;
-  CONFIRM_MESSAGE: string = "";
   kartaId: string = '';
   lastSavedDate: string = '';
   lastUpdatedDate: string = '';
@@ -200,6 +199,22 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   ) {
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
+  }
+
+  // Confirm box
+  confirmBox(message: string, yesCallback: any, noCallback: any) {
+    $("#confirm_message").text(message);
+    jqueryFunctions.showModal("confirmModal");
+    $('#btnYes').unbind('click');
+    $('#btnYes').click(function() {
+      jqueryFunctions.hideModal("confirmModal");
+      yesCallback();
+    });
+    $('#btnNo').unbind('click');
+    $('#btnNo').click(function() {
+      jqueryFunctions.hideModal("confirmModal");
+      noCallback();
+    });
   }
 
   // Catalog variables
@@ -931,18 +946,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Confirm box
-  confirmBox(message: string, yesCallback: any) {
-    this.CONFIRM_MESSAGE = message;
-    jqueryFunctions.showModal("confirmModal");
-    $('#btnYes').click(function() {
-      jqueryFunctions.hideModal("confirmModal");
-      yesCallback();
-    });
-  }
   // Delete only child phase
   deletePhase(id: string, index: number) {
-    let message = "Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.";
+    const message = "Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.";
     this.confirmBox(message, () => {
       jqueryFunctions.disableElement("#phase_tabs");
       jqueryFunctions.disableChart();
@@ -969,7 +975,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         jqueryFunctions.enableChart();
         this.setChartConfiguration(false);
       });
-    });
+    },
+    () => { });
   }
 
   // Change node name
@@ -1073,8 +1080,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       measure: "metrics",
       metrics: "measure"
     }
-    const result = confirm("Are you sure you want to change the target type? If you do so your achieved value will be changed to 0.");
-    if (result) {
+    const message = "Are you sure you want to change the target type? If you do so your achieved value will be changed to 0.";
+    this.confirmBox(message, () => {
       // Update achieved_value and target
       let randomKey = new Date().getTime();
       let updatingParameters = [
@@ -1087,11 +1094,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.currentNodeAchievedValue = 0;
       this.kpiType = el.target.value;
 
-      if ( this.currentNode.node_formula ) {
+      if (this.currentNode.node_formula) {
         this.formulaGroup.patchValue({
           calculatedValue: 0
         });
-  
+
         this.formulaGroup.controls['fields'] = new FormArray([]);
         for (let i = 0; i < this.currentNode.node_formula.fields.length; i++) {
           let fieldForm = this.fb.group({
@@ -1107,10 +1114,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
         this.updateNode("node_formula", newData, "node_updated", node, el.target.value, randomKey);  
       }
-    } else {
+    },
+    () => {
       el.target.value = reverseObj[el.target.value];
       return false;
-    }
+    });
   }
   // Change achieved value
   changeAchievedValue() {
@@ -1360,9 +1368,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Add additional phase
   addChildPhase(phase: any, index: number) {
-    const result = confirm("Are you sure you want to create a new Layer?");
-    if (result) {
-
+    const message = "Are you sure you want to create a new Layer?";
+    this.confirmBox(message, () => {
       jqueryFunctions.disableElement("#phase_tabs");
       jqueryFunctions.disableChart();
       this.setChartConfiguration(true);
@@ -1410,7 +1417,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         jqueryFunctions.enableChart();
         this.setChartConfiguration(false);
       });
-    }
+    },
+    () => { });
   }
 
   // Update new percentage
