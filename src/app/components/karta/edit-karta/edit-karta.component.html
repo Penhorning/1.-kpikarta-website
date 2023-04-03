@@ -1023,7 +1023,7 @@
        </div>
    </div>
 </div>
-<!-- Vew karta modal -->
+<!-- View karta modal -->
 <div class="modal fade" id="viewKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered">
        <div class="modal-content p-4">
@@ -1085,3 +1085,19 @@
        </div>
    </div>
 </div>
+
+
+<!-- Confirm modal -->
+<div class="modal fade" id="confirmModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>{{ CONFIRM_MESSAGE }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" id="btnYes" class="btn btn-primary">Yes</button>
+            </div>
+        </div>
+    </div>
+ </div>

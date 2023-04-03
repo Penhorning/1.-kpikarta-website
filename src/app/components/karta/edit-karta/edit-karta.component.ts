@@ -22,6 +22,7 @@ declare const $: any;
 export class EditKartaComponent implements OnInit, OnDestroy {
 
   unauthorizedUser: any;
+  CONFIRM_MESSAGE: string = "";
   kartaId: string = '';
   lastSavedDate: string = '';
   lastUpdatedDate: string = '';
@@ -928,11 +929,20 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  // Confirm box
+  confirmBox(message: string, yesCallback: any) {
+    this.CONFIRM_MESSAGE = message;
+    jqueryFunctions.showModal("confirmModal");
+    $('#btnYes').click(function() {
+      jqueryFunctions.hideModal("confirmModal");
+      yesCallback();
+    });
+  }
   // Delete only child phase
   deletePhase(id: string, index: number) {
-    const result = confirm("Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.");
-    if (result) {
-
+    let message = "Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.";
+    this.confirmBox(message, () => {
       jqueryFunctions.disableElement("#phase_tabs");
       jqueryFunctions.disableChart();
       this.setChartConfiguration(true);
@@ -958,7 +968,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         jqueryFunctions.enableChart();
         this.setChartConfiguration(false);
       });
-    }
+    });
   }
 
   // Change node name
