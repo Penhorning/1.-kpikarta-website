@@ -100,6 +100,10 @@ input[type=number]::-webkit-outer-spin-button {
 	text-align: center;
 }
 
+#launcher-frame {
+	left: 0 !important;
+}
+
 
 // D3 Styles
 .node {

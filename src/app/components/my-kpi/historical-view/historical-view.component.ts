@@ -28,7 +28,7 @@ export class HistoricalViewComponent implements OnInit {
   loader: any = this._commonService.loader;
   noDataAvailable: any = this._commonService.noDataAvailable;
   // Pagination
-  pageIndex: number = 0;
+  pageIndex: number = 1;
   pageSize: number = 10;
   length: number = 0;
 
@@ -89,14 +89,17 @@ export class HistoricalViewComponent implements OnInit {
   // Get kpis by year
   getKPIsByYear(year_number: number) {
     let data = {
-      page: this.pageIndex + 1,
+      page: 1,
       limit: this.pageSize,
       contributorId: this._commonService.getUserId(),
       nodeIds: this.selectedKpis,
       year: year_number
     }
+    
     this.kpis = [];
     this.loading = true;
+    this.pageIndex = 1;
+
     this._myKpiService.getKPIsByYear(data).subscribe(
       (response: any) => {
         this.kpis = Array.from(response.kpi_nodes[0].data);
@@ -107,9 +110,28 @@ export class HistoricalViewComponent implements OnInit {
     ).add(() => this.loading = false);
   }
 
+  // View more button
+  viewMore() {
+    let data = {
+      page: ++this.pageIndex,
+      limit: this.pageSize,
+      contributorId: this._commonService.getUserId(),
+      nodeIds: this.selectedKpis,
+      year: this.selectedYear
+    }
+    this.loading = true;
+    this._myKpiService.getKPIsByYear(data).subscribe(
+      (response: any) => {
+        this.kpis.push(...response.kpi_nodes[0].data);
+        if (response.kpi_nodes[0].metadata.length > 0) {
+          this.totalKPIs = response.kpi_nodes[0].metadata[0].total;
+        } else this.totalKPIs = 0;
+      }
+    ).add(() => this.loading = false);
+  }
+
   // Sort by year
   onSortByYear(e: any) {
-    this.pageIndex = 0;
     this.selectedYear = parseInt(e.target.value);
     this.getKPIsByYear(this.selectedYear);
   }
@@ -180,7 +202,6 @@ export class HistoricalViewComponent implements OnInit {
           if (i === value.length-1) {
             if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
             $('#editHistoryActualValueModal').modal('hide');
-            this.pageIndex = 0;
             this.getKPIsByYear(this.selectedYear);
             // Update data in real node
             let kpi_created_month = new Date(this.editingNode.achieved.createdAt).getMonth();
@@ -296,7 +317,6 @@ export class HistoricalViewComponent implements OnInit {
               if (i === value.length-1) {
                 if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
                 $('#editHistoryActualValueModal').modal('hide');
-                this.pageIndex = 0;
                 this.getKPIsByYear(this.selectedYear);
                 
                 // Update data in real node
