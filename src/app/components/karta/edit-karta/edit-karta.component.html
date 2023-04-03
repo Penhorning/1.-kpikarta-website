@@ -262,11 +262,12 @@
                 </div>
                <div class="col">
                 <div class="d-flex align-items-center">
-                    <button type="button" class="save-btn-karta mr-1" [disabled]="saveSubmitFlag" (click)="saveKarta()">
-                        <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag">
+                    <button type="button" class="save-btn-karta mr-1" [disabled]="(saveSubmitFlag && showLoader) || (saveSubmitFlag && !showLoader)" (click)="saveKarta()">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag && showLoader">
                             <span class="sr-only">Loading...</span>
-                        </div>
-                        <ng-container *ngIf="!saveSubmitFlag">Save</ng-container>
+                        </div>                                                
+                        <ng-container *ngIf="!saveSubmitFlag && !showLoader">Save</ng-container>
+                        <ng-container *ngIf="saveSubmitFlag && !showLoader">Save</ng-container>
                     </button>
                     <div class="dropdown mr-1">
                         <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg" /></button>
