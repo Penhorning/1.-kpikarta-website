@@ -262,11 +262,12 @@
                 </div>
                <div class="col">
                 <div class="d-flex align-items-center">
-                    <button type="button" class="save-btn-karta mr-1" [disabled]="saveSubmitFlag" (click)="saveKarta()">
-                        <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag">
+                    <button type="button" class="save-btn-karta mr-1" [disabled]="(saveSubmitFlag && showLoader) || (saveSubmitFlag && !showLoader)" (click)="saveKarta()">
+                        <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag && showLoader">
                             <span class="sr-only">Loading...</span>
-                        </div>
-                        <ng-container *ngIf="!saveSubmitFlag">Save</ng-container>
+                        </div>                                                
+                        <ng-container *ngIf="!saveSubmitFlag && !showLoader">Save</ng-container>
+                        <ng-container *ngIf="saveSubmitFlag && !showLoader">Save</ng-container>
                     </button>
                     <div class="dropdown mr-1">
                         <button class="dropbtn dropdown-toggle px-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false" title="Settings"><img src="assets/img/settings.svg" /></button>
@@ -1023,7 +1024,7 @@
        </div>
    </div>
 </div>
-<!-- Vew karta modal -->
+<!-- View karta modal -->
 <div class="modal fade" id="viewKartaModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
    <div class="modal-dialog modal-dialog-centered">
        <div class="modal-content p-4">
@@ -1085,3 +1086,19 @@
        </div>
    </div>
 </div>
+
+
+<!-- Confirm modal -->
+<div class="modal fade" id="confirmModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p id="confirm_message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnNo" class="btn btn-secondary">No</button>
+                <button type="button" id="btnYes" class="btn btn-primary">Yes</button>
+            </div>
+        </div>
+    </div>
+ </div>

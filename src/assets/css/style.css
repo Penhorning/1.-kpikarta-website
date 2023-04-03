@@ -1160,6 +1160,7 @@ a.for_pass {
 /* new-sidebar */
 .head_logo img {
   width: 185px;
+  height: 47px;
 }
 a.closebtn {
   display: none !important;
@@ -2467,10 +2468,6 @@ section.Tutorial-sec {
   border-radius: 100px;
   color: #fff;
   font-size: 16px;
-}
-
-.head_logo img {
-  padding-top: 10px;
 }
 
 button.next-btn {
