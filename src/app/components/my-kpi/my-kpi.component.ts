@@ -84,7 +84,7 @@ export class MyKpiComponent implements OnInit {
     { name: 'Weekly', value: 'weekly', selected: false },
     { name: 'Monthly', value: 'monthly', selected: false },
     { name: 'Quarterly', value: 'quarterly', selected: false },
-    { name: 'Annually', value: 'annually', selected: false }
+    { name: 'Yearly', value: 'yearly', selected: false }
   ];
   // Sort by month
   sortByMonths = this._commonService.monthsName;
