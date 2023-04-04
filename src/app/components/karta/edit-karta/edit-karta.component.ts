@@ -1084,16 +1084,19 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.confirmBox(message, () => {
       // Update achieved_value and target
       let randomKey = new Date().getTime();
+      node.target[0].percentage = 0;
       let updatingParameters = [
-        { key: 'achieved_value', value: 0, node_updated: 'node_updated', node, metrics: el.target.value}
+        { key: 'achieved_value', value: 0, node_updated: 'node_updated', node, metrics: el.target.value },
+        { key: 'target', value: node.target, node_updated: 'node_updated', node, metrics: el.target.value }
       ];
       for (let param of updatingParameters) {
-        let metrics = param.metrics || null
+        let metrics = param.metrics || null;
         this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
       }
       this.currentNodeAchievedValue = 0;
       this.kpiType = el.target.value;
 
+      // Update for metric
       if (this.currentNode.node_formula) {
         this.formulaGroup.patchValue({
           calculatedValue: 0
@@ -1103,7 +1106,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         for (let i = 0; i < this.currentNode.node_formula.fields.length; i++) {
           let fieldForm = this.fb.group({
             fieldName: new FormControl(this.currentNode.node_formula.fields[i].fieldName),
-            fieldValue: new FormControl(0),
+            fieldValue: new FormControl(0)
           });
           this.fields.push(fieldForm);
         }
@@ -1112,7 +1115,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         delete newData["calculatedValue"];
         newData['metrics'] = true;
 
-        this.updateNode("node_formula", newData, "node_updated", node, el.target.value, randomKey);  
+        this.updateNode("node_formula", newData, "node_updated", node, el.target.value, randomKey);
+        this.updateNode("target", node.target, "node_updated", node, el.target.value, randomKey);
       }
     },
     () => {

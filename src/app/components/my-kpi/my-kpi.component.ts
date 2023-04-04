@@ -485,7 +485,7 @@ export class MyKpiComponent implements OnInit {
 
   // Calculate days based on due date
   calculateDueDays(start_date: string, due_date: string) {
-    if (start_date) return moment(due_date).diff(moment(), 'days') + 1;
+    if (start_date) return moment(due_date).diff(moment(), 'days');
     return 0;
   }
 
@@ -634,6 +634,11 @@ export class MyKpiComponent implements OnInit {
     type === "assigned" ? this.showStats = true : this.showStats = false;
     this.statusType = '';
     this.kpiType = type;
+    this.selectedTargetTypes = [];
+    this.targetTypesList.map((item: any) => {
+      item.selected = false;
+      return item;
+    });
     this.pageIndex = 0;
     this.getMyKPIsList();
   }
