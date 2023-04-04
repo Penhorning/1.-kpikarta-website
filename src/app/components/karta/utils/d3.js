@@ -32,7 +32,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     totalPhases = options.phases().length;
     getSVGSize(treeData);
 
-    var i = 0, duration = 0;
+    var i = 0, duration = 750;
     // tree = d3.layout.tree().nodeSize([90, 60]);
 
     tree = d3.layout.tree()
