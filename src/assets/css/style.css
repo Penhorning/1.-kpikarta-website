@@ -442,7 +442,7 @@ input:focus {
 
 .btn_sty_2 {
   background: #fff;
-  color: #296BB5;
+  color: #243864;
   font-size: 14px;
   border-radius: 5px;
   cursor: pointer;
@@ -451,12 +451,13 @@ input:focus {
   display: inline-block;
   font-weight: 400;
   text-align: center;
-  border: 1px solid #296BB5;
+  border: 1px solid #243864;
+  transition: .4s;
 }
 
 .btn_sty_2:hover {
-  background: #fff;
-  color: #296BB5;
+  background: #243864;
+  color: #FFF;
   text-decoration: none;
 }
 
@@ -691,6 +692,10 @@ a.for_pass {
   justify-content: center;
 }
 
+.item_middle h4 {
+  font-size: 24px;
+}
+
 .btn_style1 {
   background-color: #033D75;
   padding: 15px 45px;
@@ -699,10 +704,11 @@ a.for_pass {
 }
 
 .basic_plan {
-  background-color: #F8FBFF;
-  padding: 35px;
-  border: 1px solid #DEEDFC;
-  margin-top: 25px;
+  /* background-color: #F8FBFF; */
+  background-color: #FFF;
+  padding: 5px 35px;
+  /* border: 1px solid #DEEDFC; */
+  margin-top: 0;
 }
 
 .basic_plan h6 {
@@ -711,10 +717,11 @@ a.for_pass {
 
 .basic_plan h1 {
   text-align: center;
-  padding: 15px;
+  padding: 12px;
   color: #243864;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
+  margin-bottom: 0;
 }
 
 .basic_plan h1 sub {
@@ -726,6 +733,7 @@ a.for_pass {
   text-align: center;
   margin: 0 auto;
   display: block;
+  width: 24px;
 }
 
 .business_plan {
