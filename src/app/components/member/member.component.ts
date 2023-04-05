@@ -67,8 +67,22 @@ export class MemberComponent implements OnInit {
     public _commonService: CommonService,
     private router: Router,
     private _billingService: BillingService
-  ) {
-    
+  ) {}
+
+  // Confirm box
+  confirmBox(message: string, yesCallback: any, noCallback: any) {
+    $("#confirm_message").text(message);
+    $("#confirmModal").modal('show');
+    $('#btnYes').unbind('click');
+    $('#btnYes').click(function() {
+      $("#confirmModal").modal('hide');
+      yesCallback();
+    });
+    $('#btnNo').unbind('click');
+    $('#btnNo').click(function() {
+      $("#confirmModal").modal('hide');
+      noCallback();
+    });
   }
 
   ngOnInit(): void {
@@ -253,60 +267,35 @@ export class MemberComponent implements OnInit {
 
           newLicenseName = licenseName[0].name;
         }
-        if(flag) {
-          // if(newLicenseName == "Spectator") {
-            const result = confirm('Are you sure you want to change the License? This will affect your current subscription.');
-            if (result) {
-              this._memberService.updateUser(formData, this.currentUser._id).subscribe(
-                (response: any) => {
-                  this._memberService.updateSubscription({userId: this.currentUser._id, licenseName: newLicenseName }).subscribe(
-                    (res) => {},
-                    (err) => {
-                      console.log(err);
-                      this._commonService.errorToaster("Something went wrong.. Please try again..!!");
-                      this.submitFlag = false;
-                    }
-                  )
-                  this.resetFormModal();
-                  this.defaultEmail = "";
-                  this._commonService.successToaster("Member updated successfully!");
-                  this.submitFlag = false;
-                },
-                (error: any) => {
-                  if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-                    this._commonService.errorToaster("Email is already registered, please try a different one");
+        if (flag) {
+          const message = "Are you sure you want to change the License? This will affect your current subscription.";
+          this.confirmBox(message, () => {
+            this._memberService.updateUser(formData, this.currentUser._id).subscribe(
+              (response: any) => {
+                this._memberService.updateSubscription({userId: this.currentUser._id, licenseName: newLicenseName }).subscribe(
+                  (res) => {},
+                  (err) => {
+                    console.log(err);
+                    this._commonService.errorToaster("Something went wrong.. Please try again..!!");
                     this.submitFlag = false;
                   }
+                )
+                this.resetFormModal();
+                this.defaultEmail = "";
+                this._commonService.successToaster("Member updated successfully!");
+                this.submitFlag = false;
+              },
+              (error: any) => {
+                if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
+                  this._commonService.errorToaster("Email is already registered, please try a different one");
+                  this.submitFlag = false;
                 }
-              );
-            } else {
-              this.submitFlag = false;
-            }
-          // } 
-          // else {
-          //   this._memberService.updateUser(formData, this.currentUser._id).subscribe(
-          //     (response: any) => {
-          //       this._memberService.updateSubscription({userId: this.currentUser._id, licenseName: newLicenseName }).subscribe(
-          //         (res) => {},
-          //         (err) => {
-          //           console.log(err);
-          //           this._commonService.errorToaster("Something went wrong.. Please try again..!!");
-          //           this.submitFlag = false;
-          //         }
-          //       )
-          //       this.resetFormModal();
-          //       this.defaultEmail = "";
-          //       this._commonService.successToaster("Member updated successfully!");
-          //       this.submitFlag = false;
-          //     },
-          //     (error: any) => {
-          //       if (error.status === 422 && error.error.error.details.codes.email[0] === "uniqueness") {
-          //         this._commonService.errorToaster("Email is already registered, please try a different one");
-          //         this.submitFlag = false;
-          //       }
-          //     }
-          //   );
-          // }
+              }
+            );
+          },
+          () => {
+            this.submitFlag = false;
+          });
         } else {
           this._memberService.updateUser(formData, this.currentUser._id).subscribe(
             (response: any) => {
@@ -395,8 +384,8 @@ export class MemberComponent implements OnInit {
 
   // Activate user
   activateUser(user: any) {
-    const result = confirm("Are you sure, you want to Activate this user?");
-    if (result) {
+    const message = "Are you sure, you want to Activate this user?";
+    this.confirmBox(message, () => {
       this._memberService.activateUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
@@ -408,12 +397,13 @@ export class MemberComponent implements OnInit {
           this._commonService.successToaster("User activated successfully!");
         }
       );
-    }
+    },
+    () => { });
   }
   // Deactivate user
   deactivateUser(user: any) {
-    const result = confirm("Are you sure, you want to Deactivate this user?");
-    if (result) {
+    const message = "Are you sure, you want to Deactivate this user?";
+    this.confirmBox(message, () => {
       this._memberService.deactivateUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
@@ -425,12 +415,13 @@ export class MemberComponent implements OnInit {
           this._commonService.successToaster("User deactivated successfully!");
         }
       );
-    }
+    },
+    () => { });
   }
   // Delete user
   deleteUser(user: any) {
-    const result = confirm("Are you sure, you want to Delete this user?");
-    if (result) {
+    const message = "Are you sure, you want to Delete this user?";
+    this.confirmBox(message, () => {
       this._memberService.deleteUser({ userId: user._id }).subscribe(
         (response: any) => {
           this.pageIndex = 0;
@@ -442,7 +433,8 @@ export class MemberComponent implements OnInit {
           this._commonService.successToaster("User deleted successfully!");
         }
       );
-    }
+    },
+    () => { });
   }
 
   getSubscribedUsersDetail() {

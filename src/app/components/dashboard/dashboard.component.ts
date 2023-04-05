@@ -50,6 +50,22 @@ export class DashboardComponent implements OnInit {
     private router: Router
   ) {}
 
+  // Confirm box
+  confirmBox(message: string, yesCallback: any, noCallback: any) {
+    $("#confirm_message").text(message);
+    $("#confirmModal").modal('show');
+    $('#btnYes').unbind('click');
+    $('#btnYes').click(function() {
+      $("#confirmModal").modal('hide');
+      yesCallback();
+    });
+    $('#btnNo').unbind('click');
+    $('#btnNo').click(function() {
+      $("#confirmModal").modal('hide');
+      noCallback();
+    });
+  }
+
   ngOnInit(): void {
     if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
       this.getAllKartas();
@@ -168,19 +184,6 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  // Delete shared karta
-  // deleteSharedKarta(_id: any) {
-  //   const result = confirm("Are you sure you want to delete this shared karta?");
-  //   if (result) {
-  //     this._kartaService.deleteSharedKarta({kartaId:_id}).subscribe(
-  //       (response: any) => {
-  //         this._commonService.successToaster("Karta deleted successfully");
-  //         this.getAllSharedKartas();
-  //       }
-  //     );
-  //   }
-  // }
-
   // Sharing karta
   onShare(param: any) {    
     this.selectedUsers = [];
@@ -254,14 +257,15 @@ export class DashboardComponent implements OnInit {
 
   // Copy karta
   copyKarta(id: string) {
-    const result = confirm("Are you sure you want to create a copy of this karta?");
-    if (result) {
+    const message = "Are you sure you want to create a copy of this karta?";
+    this.confirmBox(message, () => {
       this._kartaService.copyKarta({ kartaId: id, userId: this._commonService.getUserId() }).subscribe(
         (response: any) => {
           this._commonService.successToaster('Karta copy created successfully!');
           this.getAllKartas();
-        });
-    }
+      });
+    },
+    () => { });
   }
 
   // Rename karta
