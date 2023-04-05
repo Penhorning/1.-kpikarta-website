@@ -29,6 +29,22 @@ export class BillingComponent implements OnInit {
 
   constructor(public _commonService: CommonService, private router: Router, private _billingService: BillingService, private fb: FormBuilder, private _signupService: SignupService,) { }
 
+  // Confirm box
+  confirmBox(message: string, yesCallback: any, noCallback: any) {
+    $("#confirm_message").text(message);
+    $("#confirmModal").modal('show');
+    $('#btnYes').unbind('click');
+    $('#btnYes').click(function() {
+      $("#confirmModal").modal('hide');
+      yesCallback();
+    });
+    $('#btnNo').unbind('click');
+    $('#btnNo').click(function() {
+      $("#confirmModal").modal('hide');
+      noCallback();
+    });
+  }
+
   ngOnInit(): void {
     this.cardForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
@@ -124,8 +140,8 @@ export class BillingComponent implements OnInit {
         ...this.cardForm.value
       };
 
-      const result = confirm("Are you sure you want to replace your previous card?");
-      if(result) {
+      const message = "Are you sure you want to replace your previous card?";
+      this.confirmBox(message, () => {
         this.submitFlag = true;
         this._signupService.saveCard(requestObj).subscribe(
           (response: any) => {
@@ -138,8 +154,9 @@ export class BillingComponent implements OnInit {
             console.log(err);
             this.submitFlag = false;
           }
-        )
-      }
+        );
+      },
+      () => { });
     }
   }
 
