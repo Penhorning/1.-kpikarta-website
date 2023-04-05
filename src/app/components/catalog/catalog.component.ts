@@ -52,6 +52,22 @@ export class CatalogComponent implements OnInit {
 
   constructor(private _catalogService: CatalogService, private _commonService: CommonService) { }
 
+  // Confirm box
+  confirmBox(message: string, yesCallback: any, noCallback: any) {
+    $("#confirm_message").text(message);
+    $("#confirmModal").modal('show');
+    $('#btnYes').unbind('click');
+    $('#btnYes').click(function() {
+      $("#confirmModal").modal('hide');
+      yesCallback();
+    });
+    $('#btnNo').unbind('click');
+    $('#btnNo').click(function() {
+      $("#confirmModal").modal('hide');
+      noCallback();
+    });
+  }
+
   ngOnInit(): void {
     this.getAllCatalogs();
     this.getAllMembers();
@@ -170,15 +186,16 @@ export class CatalogComponent implements OnInit {
 
   // Delete catalog
   deleteCatalog(id: string) {
-    const result = confirm("Are you sure you want to delete this Inventory?");
-    if (result) {
+    const message = "Are you sure you want to delete this Inventory?";
+    this.confirmBox(message, () => {
       this._catalogService.deleteCatalog({ catalogId: id }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Inventory deleted successfully!");
           this.getAllCatalogs();
         }
       );
-    }
+    },
+    () => { });
   }
 
   // View more
