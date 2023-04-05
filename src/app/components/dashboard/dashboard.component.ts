@@ -174,14 +174,16 @@ export class DashboardComponent implements OnInit {
 
   // Delete karta
   deleteKarta(id: string) {
-    const result = confirm('Are you sure you want to delete this karta?');
-    if (result) {
+    const message = "Are you sure you want to delete this karta?";
+    this.confirmBox(message, () => {
       this._kartaService.deleteKarta({ kartaId: id, userId: this._commonService.getUserId() }).subscribe(
         (response: any) => {
           this._commonService.successToaster("Karta deleted successfully!");
           this.getAllKartas();
-        });
-    }
+        }
+      );
+    },
+    () => { });
   }
 
   // Sharing karta
