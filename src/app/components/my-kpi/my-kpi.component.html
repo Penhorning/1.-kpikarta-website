@@ -274,7 +274,7 @@
                           </td>
                           <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
-                            <span>{{ kpi?.target[0]?.value }}/{{kpi?.target[0].frequency}}</span>
+                            <span>{{ kpi?.target[0]?.value }}/{{ kpi?.target[0].frequency.slice(0, -2) }}</span>
                           </td>
                           <td>
                             <div class="editacval">
@@ -300,16 +300,23 @@
                           <td>{{ kpi?.updatedAt | date }}</td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
-                            <ng-container *ngIf="(kpi?.target[0]?.value > kpi?.achieved_value) && kpi?.start_date; else na">
+                            <ng-container *ngIf="(kpi?.target[0]?.value > kpi?.achieved_value) && kpi?.start_date">
                               <img src="assets/img/Refresh.svg">
-                              <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              <!-- <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'"> -->
+                              <span>
                                 {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
                                 -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
                               </span>
                             </ng-container>
-                            <ng-template #na>
+                            <ng-container *ngIf="(kpi?.target[0]?.value <= kpi?.achieved_value) && kpi?.start_date">
+                              <img src="assets/img/Refresh.svg">
+                              <span>
+                                {{ calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') >= 0 ? calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') + ' Days Early' : ' Completed' }}
+                              </span>
+                            </ng-container>
+                            <ng-container *ngIf="!kpi?.start_date">
                               N/A
-                            </ng-template>
+                            </ng-container>
                           </td>
                           <td>
                             <ng-container *ngIf="kpi?.target[0]?.percentage >= 101 ;else second">
@@ -503,23 +510,30 @@
                           </td>
                           <td class="max_width_200 short_text">{{ kpi?.name }}</td>
                           <td>
-                            <span>{{ kpi?.target[0]?.value }}/{{kpi?.target[0].frequency}}</span>
+                            <span>{{ kpi?.target[0]?.value }}/{{ kpi?.target[0].frequency.slice(0, -2) }}</span>
                           </td>
                           <td>{{ kpi?.achieved_value }}</td>
                           <td class="max_width_200 short_text">{{ kpi?.contributor?.fullName || 'N/A' }}</td>
                           <td>{{ kpi?.updatedAt | date }}</td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
-                            <ng-container *ngIf="(kpi?.target[0]?.value > kpi?.achieved_value) && kpi?.start_date; else na2">
+                            <ng-container *ngIf="(kpi?.target[0]?.value > kpi?.achieved_value) && kpi?.start_date">
                               <img src="assets/img/Refresh.svg">
-                              <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'">
+                              <!-- <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'"> -->
+                              <span>
                                 {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
                                 -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
                               </span>
                             </ng-container>
-                            <ng-template #na2>
+                            <ng-container *ngIf="(kpi?.target[0]?.value <= kpi?.achieved_value) && kpi?.start_date">
+                              <img src="assets/img/Refresh.svg">
+                              <span>
+                                {{ calculateDueDays(kpi?.completed_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.completed_date, kpi?.due_date) + ' Days Early' : ' Completed' }}
+                              </span>
+                            </ng-container>
+                            <ng-container *ngIf="!kpi?.start_date">
                               N/A
-                            </ng-template>
+                            </ng-container>
                           </td>
                           <td>
                             <ng-container *ngIf="kpi?.target[0]?.percentage >= 101 ;else second">
