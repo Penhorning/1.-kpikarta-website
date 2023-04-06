@@ -1918,8 +1918,9 @@ select.form-control.type-select {
 
 .right-side-bar-content p {
   font-size: 13px;
-  font-weight: 300;
+  /* font-weight: 300; */
   line-height: 18px;
+  margin-bottom: 0;
 }
 
 .select-karta-name-right-side select {
