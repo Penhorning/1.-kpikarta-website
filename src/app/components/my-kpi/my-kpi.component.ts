@@ -278,6 +278,8 @@ export class MyKpiComponent implements OnInit {
           achieved_value: +this.metricsForm.value.calculatedValue,
           target: this.target
         }
+
+        if (this.target[0].percentage >= 100) data["completed_date"] = new Date();
         
         this._myKpiService.updateNode(this.currentNode, data).subscribe(
           (response) => {
@@ -341,6 +343,8 @@ export class MyKpiComponent implements OnInit {
       target: this.target,
       is_achieved_modified: true
     }
+
+    if (this.target[0].percentage >= 100) data["completed_date"] = new Date();
     this._myKpiService.updateNode(this.currentNode, data).subscribe(
       (response) => {
         if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
@@ -484,8 +488,9 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Calculate days based on due date
-  calculateDueDays(start_date: string, due_date: string) {
-    if (start_date) return moment(due_date).diff(moment(), 'days');
+  calculateDueDays(start_date: string, due_date: string, type?: string) {
+    if (start_date && !type) return moment(due_date).diff(moment(), 'days');
+    else if (start_date && type === "completed") return moment(due_date).diff(moment(start_date), 'days');
     return 0;
   }
 
@@ -1013,6 +1018,7 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
         },
         "percentage": Math.round(percentage)
       }
+      if (percentage >= 100) nodeObj["completed_date"] = new Date();
       return nodeObj;
     } else {
       this.isTableDataWrong = true;
@@ -1043,6 +1049,7 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
                     "achieved_value": +element.__EMPTY_4,
                     "percentage": Math.round(percentage)
                   }
+                  if (percentage >= 100) element.node["completed_date"] = new Date();
                 } else {
                   let data = this.calculateMetricFormulaForCSV(element, originalElement);
                   if (data) {
