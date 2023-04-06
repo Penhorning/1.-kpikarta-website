@@ -592,6 +592,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                     { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', node, metrics: "metrics"},
                     { key: 'target', value: newTarget, node_updated: 'node_updated', node }
                   ];
+                  if (this.target[0].percentage >= 100) updatingParameters.push({
+                    key: "completed_date", value: new Date(), node_updated: "node_updated", node
+                  });
                   for (let param of updatingParameters) {
                     let metrics = param.metrics || null
                     this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
@@ -1141,6 +1144,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: "measure"},
         { key: 'target', value: this.target, node_updated: 'node_updated', node }
       ];
+      if (this.target[0].percentage >= 100) updatingParameters.push({
+        key: "completed_date", value: new Date(), node_updated: "node_updated", node
+      });
       for (let param of updatingParameters) {
         let metrics = param.metrics || null
         this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
