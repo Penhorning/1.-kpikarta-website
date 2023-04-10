@@ -120,7 +120,7 @@ export class MyKpiComponent implements OnInit {
     { name: 'Actual', sortBy: 'achieved_value', sort: '' },
     { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
     { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
-    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Status', sortBy: 'due_date', sort: '' },
     { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   headerList2 = [
@@ -131,7 +131,7 @@ export class MyKpiComponent implements OnInit {
     { name: 'KPI Owner', sortBy: 'fullName', sort: '' },
     { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
     { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
-    { name: 'Days Left', sortBy: 'due_date', sort: '' },
+    { name: 'Status', sortBy: 'due_date', sort: '' },
     { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   // Sort var
@@ -710,11 +710,16 @@ export class MyKpiComponent implements OnInit {
         page: this.pageIndex + 1,
         limit: this.pageSize,
         userId: this._commonService.getUserId(),
-        kpiType: this.kpiType,
         searchQuery: this.search_text,
         startUpdatedDate: this.startDate,
         endUpdatedDate: this.endDate,
         targetTypes: this.selectedTargetTypes,
+        kpiType: this.kpiType,
+        sortBy: this.sortBy,
+        percentage: this.selectedPercentage,
+        startDueDate: this.startDueDate,
+        endDueDate: this.endDueDate,
+        kartaCreatorIds: this.kartaCreatorIds,
         statusType: this.statusType
       }
       this.loading = true;
