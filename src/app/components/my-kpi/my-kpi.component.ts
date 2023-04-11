@@ -187,7 +187,7 @@ export class MyKpiComponent implements OnInit {
   // Tab 2 clicked
   clickTab2() {
     $("#kpi_tab_2").click();
-    $("#kpi_tab_2 a").addClass("active");
+    $("#kpi_tab_2 a").click();
   }
 
   // Formula of metrics starts
