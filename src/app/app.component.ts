@@ -28,8 +28,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Check for user inactivity (1hr)
-    this.bnIdle.startWatching(3600).subscribe((isTimedOut: boolean) => {
+    // Check for user inactivity (2hr)
+    this.bnIdle.startWatching(7200).subscribe((isTimedOut: boolean) => {
       if (isTimedOut && this._commonService.getSession().token) {
         this._commonService.deleteSession();
         this._commonService.errorToaster('Your session has been expired!');

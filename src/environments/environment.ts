@@ -7,7 +7,6 @@ export const environment = {
   // API_URL: 'https://prod-api.kpikarta.com'
   // API_URL: 'http://159.89.234.66:3340'
   API_URL: 'http://localhost:3000'
-
 };
 
 /*
