@@ -26,6 +26,7 @@ export class BillingComponent implements OnInit {
   cardForm: FormGroup | any;
   loadingOverview: boolean = false;
   loader: any = this._commonService.loader;
+  disableCancelBtn: boolean = false;
 
   constructor(public _commonService: CommonService, private router: Router, private _billingService: BillingService, private fb: FormBuilder, private _signupService: SignupService,) { }
 
@@ -181,6 +182,24 @@ export class BillingComponent implements OnInit {
         expirationDate: value
       });
     }
+  }
+
+  cancelTrial() {
+    const message = "Are you sure you want to cancel your trial period?";
+      this.confirmBox(message, () => {
+        this.disableCancelBtn = true;
+        this._billingService.cancelTrial(this._commonService.getUserId()).subscribe(response => {
+          if(response) {
+            this._commonService.logout().subscribe(
+              (response: any) => {
+                this._commonService.successToaster("Trial cancelled successfully..!!");
+              },
+              (error: any) => { }
+            ).add(() => this._commonService.deleteSession() );
+          }
+        })
+      },
+      () => { });
   }
 
 }

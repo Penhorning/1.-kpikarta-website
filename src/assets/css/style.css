@@ -689,7 +689,8 @@ a.for_pass {
 .item_middle {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; 
+  flex-direction: column;
 }
 
 .item_middle h4 {
