@@ -12,8 +12,14 @@ export class SignupService {
   setSignUpSession(sessionData: any) {
     window.sessionStorage.setItem("kpi-karta-signup-session", JSON.stringify(sessionData));
   }
+  setLoginSession(sessionData: any) {
+    window.sessionStorage.setItem("kpi-karta-login-session", JSON.stringify(sessionData));
+  }
   getSignUpSession() {
     return JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
+  }
+  getLoginSession() {
+    return JSON.parse(window.sessionStorage.getItem("kpi-karta-login-session") || "{}");
   }
   updateSignUpSession(stageNumber: number, userId?: string) {
     let session = this.getSignUpSession();
