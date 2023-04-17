@@ -16,6 +16,9 @@ export class SubscriptionPlanService {
   getCreatorPrices() {
     return this._httpService.GET(`/subscriptions/get-prices`);
   }
+  startSubscription(data: any) {
+    return this._httpService.POST(`/subscriptions/start-subscription`, data);
+  }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
 }

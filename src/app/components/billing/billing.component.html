@@ -37,7 +37,10 @@
                           <div *ngIf="overview" class="overview mt-4">
                               <div class="heading">
                                   <h5 class="m-0">Member Information</h5>
-                                  <button *ngIf="overview.interval" type="button" class="btn overview-btn">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
+                                  <div>
+                                    <button *ngIf="overview.interval && overview.interval == 'Trial'" (click)="cancelTrial()" [disabled]="disableCancelBtn" type="button" class="btn cancel-btn btn-danger mr-2">Cancel Trial</button>
+                                    <button *ngIf="overview.interval" type="button" class="btn overview-btn">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
+                                  </div>
                               </div>
                               <div class="creators" *ngFor="let user of overview.userDetails">
                                   <div class="creaters-header">
