@@ -90,7 +90,7 @@ export class LoginComponent implements OnInit {
 
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
-          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, paymentVerified, paymentFailed } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, paymentVerified, trialCancelled, paymentFailed } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -108,6 +108,30 @@ export class LoginComponent implements OnInit {
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/subscription-plan']);
+          }
+          else if (trialCancelled) {
+            let sessionDataUser = {
+              token: response.id,
+              userId: id,
+              name: fullName,
+              email,
+              profilePic,
+              companyLogo: response.user.company.logo,
+              role: response.user.role.name,
+              license: response.user.license.name,
+              companyId: response.user.companyId
+            };
+            let sessionData = {
+              token: response.id,
+              email,
+              stage: 1
+            }
+            if (this.loginForm.value.rememberMe) {
+              this._commonService.setRememberMeSession({ email: this.loginForm.value.email });
+            }
+            this._signupService.setSignUpSession(sessionData);
+            this._signupService.setLoginSession(sessionDataUser);
+            this.router.navigate(['/billing-trial']);
           }
           else {
             let sessionData = {

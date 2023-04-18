@@ -21,4 +21,8 @@ export class BillingService {
     companyId ? query['companyId'] = companyId : {};
     return this._httpService.POST(`/subscriptions/get-invoices`, query );
   }
+
+  cancelTrial(userId: string) {
+    return this._httpService.POST(`/subscriptions/cancel-trial`, { userId });
+  }
 }
