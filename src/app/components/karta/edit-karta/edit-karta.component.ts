@@ -1686,7 +1686,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       }
       let phase = this.phases[this.phaseIndex(phaseId.substring(9))];
       let data = {
-        name: "Root",
+        name: "Goal",
         phaseId: phaseId.substring(9),
         kartaId: this.kartaId
       };
