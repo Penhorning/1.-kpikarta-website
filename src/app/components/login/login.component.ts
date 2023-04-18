@@ -53,7 +53,8 @@ export class LoginComponent implements OnInit {
         _2faEnabled: this.route.snapshot.queryParamMap.get("_2faEnabled") || "false",
         mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false",
         paymentVerified: this.route.snapshot.queryParamMap.get("paymentVerified") || "false",
-        paymentFailed: this.route.snapshot.queryParamMap.get("paymentFailed") || "false"
+        paymentFailed: this.route.snapshot.queryParamMap.get("paymentFailed") || "false",
+        trialCancelled: this.route.snapshot.queryParamMap.get("trialCancelled") || "false"
       }
       if (sessionData.paymentVerified === "false") {
         let data = {
@@ -63,7 +64,17 @@ export class LoginComponent implements OnInit {
         }
         this._signupService.setSignUpSession(data);
         this.router.navigate(['/subscription-plan']);
-      } else {
+      } else if (sessionData.trialCancelled === "true") {
+        let sessionData2 = {
+          token: sessionData.token,
+          email: sessionData.email,
+          stage: 1
+        }
+        this._signupService.setSignUpSession(sessionData2);
+        this._signupService.setLoginSession(sessionData);
+        this.router.navigate(['/billing-trial']);
+      }
+      else {
         if (sessionData.mobileVerified == "true" && sessionData._2faEnabled == "true") {
           this._signupService.setSignUpSession(sessionData);
           this.router.navigate(['/two-step-verification']);
@@ -90,6 +101,7 @@ export class LoginComponent implements OnInit {
 
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
+          this._commonService.deleteRememberMeSession();
           let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, paymentVerified, trialCancelled, paymentFailed } = response.user;
           if (!emailVerified) {
             let sessionData = {

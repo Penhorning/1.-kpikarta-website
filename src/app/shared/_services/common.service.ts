@@ -131,6 +131,9 @@ export class CommonService {
   getRememberMeSession() {
     return JSON.parse(this.decode(window.localStorage.getItem("kpi-karta-remember-me-session")));
   }
+  deleteRememberMeSession() {
+    localStorage.removeItem("kpi-karta-remember-me-session");
+  }
 
   // Collapsed/Expand node session
   setNodeSession(sessionData: any) {
