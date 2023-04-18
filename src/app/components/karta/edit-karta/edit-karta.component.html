@@ -613,7 +613,7 @@
                            <div class="col-lg-6">
                                <div class="selct-option-side-r">
                                    <label>Start Date</label>
-                                   <input type="date" class="form-control" [value]="currentNode.start_date | date:'yyyy-MM-dd'" (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }" />
+                                   <input type="date" class="form-control" [min]="minStartDate" [value]="currentNode.start_date | date:'yyyy-MM-dd'" (change)="changeStartDate($event)" [ngClass]="{ 'is-invalid': !currentNode.start_date }" />
                                    <div class="invalid-feedback d-block" *ngIf="!currentNode.start_date">Start date is required!</div>
                                </div>
                            </div>
@@ -635,7 +635,7 @@
                                    <div class="col-lg-6">
                                        <div class="selct-option-side-r">
                                            <label>Start Date</label>
-                                           <input type="date" class="form-control" [min]="maxFiscalStartDate" [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'" (change)="changeFiscalStartDate($event)" />
+                                           <input type="date" class="form-control" [min]="minFiscalStartDate" [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'" (change)="changeFiscalStartDate($event)" />
                                        </div>
                                    </div>
                                    <div class="col-lg-6">
