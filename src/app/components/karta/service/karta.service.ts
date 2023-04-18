@@ -43,6 +43,9 @@ export class KartaService {
   getPreviousKarta(data: any) {
     return this._httpService.POST("/karta/view-karta-details", data);
   }
+  getKpisData(data: any) {
+    return this._httpService.POST("/karta_nodes/get-kpis-data", data);
+  }
   getAllKartas(data: any) {
     return this._httpService.POST('/karta/get-all', data);
   }

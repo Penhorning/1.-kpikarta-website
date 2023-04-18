@@ -117,7 +117,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   /* Node properties */
-  maxFiscalStartDate: any = `${new Date().getFullYear()}-01-01`;
+  minStartDate: any = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}-01`;
+  minFiscalStartDate: any = `${new Date().getFullYear()}-01-01`;
   currentNodeName: string = '';
   currentNodeDescription: string = '';
   currentNodeWeight: number = 0;
@@ -369,6 +370,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   // Apply monitor by
   applyMonitorBy() {
     this.updateNewPercentage(this.filterKartaBy);
+    // if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
+    //   this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
+    //     (response: any) => {
+    //       this.updateNewPercentage(this.filterKartaBy, response.nodes[0].data);
+    //     }
+    //   );
+    // }
   }
 
   // Set colors
@@ -951,7 +959,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Delete only child phase
   deletePhase(id: string, index: number) {
-    const message = "Are you sure you want to delete this layer? If yes, then all the associated nodes to this layer will also delete.";
+    const message = "Are you sure you want to delete this layer? If yes, then all nodes on this layer will be deleted.";
     this.confirmBox(message, () => {
       jqueryFunctions.disableElement("#phase_tabs");
       jqueryFunctions.disableChart();
@@ -1432,7 +1440,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   // Update new percentage
-  updateNewPercentage(filterTargetBy?: string) {
+  updateNewPercentage(filterTargetBy?: string, pastNodedata?: any) {
     this._kartaService.getKarta(this.kartaId).subscribe(
       (response: any) => {
         this.karta = response;
@@ -1678,7 +1686,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       }
       let phase = this.phases[this.phaseIndex(phaseId.substring(9))];
       let data = {
-        name: "Root",
+        name: "Goal",
         phaseId: phaseId.substring(9),
         kartaId: this.kartaId
       };
