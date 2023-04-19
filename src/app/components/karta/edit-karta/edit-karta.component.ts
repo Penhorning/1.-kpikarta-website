@@ -369,14 +369,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Apply monitor by
   applyMonitorBy() {
-    this.updateNewPercentage(this.filterKartaBy);
+    // this.updateNewPercentage(this.filterKartaBy);
     // if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
     //   this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
     //     (response: any) => {
-    //       this.updateNewPercentage(this.filterKartaBy, response.nodes[0].data);
+    //       if (response.nodes[0].data.length > 0) {
+    //         this.updateNewPercentage(this.filterKartaBy, response.nodes[0].data);
+    //       } else this.updateNewPercentage(this.filterKartaBy);
     //     }
     //   );
-    // }
+    // } else this.updateNewPercentage(this.filterKartaBy);
   }
 
   // Set colors
@@ -1445,7 +1447,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       (response: any) => {
         this.karta = response;
         if (filterTargetBy) {
-          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy);
+          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy, pastNodedata);
         } else this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);

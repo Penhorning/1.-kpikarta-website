@@ -10,13 +10,15 @@ export class CalculatePercentage {
   }
   kpiPercentage: number = 0;
   filterTargetBy: string = "";
+  pastNodedata: any = [];
 
-  constructor(color_settings: object, kpi_calculation_period: object, kpi_percentage: number, filterTargetBy: string = "") {
+  constructor(color_settings: object, kpi_calculation_period: object, kpi_percentage: number, filterTargetBy: string = "", pastNodedata: any = []) {
     this.nodeSession = JSON.parse(this.decode(sessionStorage.getItem("kpi-karta-node-session")));
     this.colorSettings = color_settings;
     this.kpiCalculationPeriod = kpi_calculation_period;
     this.kpiPercentage = kpi_percentage;
     this.filterTargetBy = filterTargetBy;
+    this.pastNodedata = pastNodedata;
   }
 
   // Decode
@@ -193,6 +195,11 @@ export class CalculatePercentage {
         }
         // Set percentage for other kpi calculation periods
         if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {
+          // let achieved_value = element.achieved_value;
+          // if (this.filterTargetBy === "yearly" || this.filterTargetBy === "quarterly" && (this.pastNodedata.length > 0)) {
+          //   achieved_value = this.pastNodedata.find((item: any) => item._id === element._id).aggregateAchievedValue;
+          // }
+          // let current_percentage= (achieved_value/targetValue) * 100;
           let current_percentage= (element.achieved_value/targetValue) * 100;
           element.percentage = Math.round(current_percentage || 0);
           element.percentage = element.percentage === Infinity ? 0 : element.percentage;
