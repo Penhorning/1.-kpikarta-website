@@ -311,7 +311,10 @@
                             <ng-container *ngIf="(kpi?.target[0]?.value <= kpi?.achieved_value) && kpi?.start_date">
                               <img src="assets/img/Refresh.svg">
                               <span>
-                                {{ (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') && (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') >= 0)) ? (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') + ' Days Early') : 'Completed' }}
+                                {{
+                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') && 
+                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') > 0)) ? 
+                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') + ' Days Early') : 'Completed' }}
                               </span>
                             </ng-container>
                             <ng-container *ngIf="!kpi?.start_date">
@@ -528,7 +531,10 @@
                             <ng-container *ngIf="(kpi?.target[0]?.value <= kpi?.achieved_value) && kpi?.start_date">
                               <img src="assets/img/Refresh.svg">
                               <span>
-                                {{ calculateDueDays(kpi?.completed_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.completed_date, kpi?.due_date) + ' Days Early' : ' Completed' }}
+                                {{
+                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') && 
+                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') > 0)) ? 
+                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') + ' Days Early') : 'Completed' }}
                               </span>
                             </ng-container>
                             <ng-container *ngIf="!kpi?.start_date">
