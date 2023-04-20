@@ -28,13 +28,8 @@
                             <h1>${{prices ? prices.month : ""}}/month</h1>
                             <div class="row">
                                 <div class="col-sm-12 mt-2 text-center">
-                                    <button class="btn_sty_2" (click)="selectPlan('monthly')">
-                                        <div class="spinner-border align-top" role="status" *ngIf="submitFlag">
-                                          <span class="sr-only">Loading...</span>
-                                        </div>
-                                        <ng-container *ngIf="!submitFlag">
-                                            Select Plan
-                                        </ng-container>
+                                    <button class="btn_sty_2" (click)="selectPlan('monthly')" [disabled]="submitFlag">
+                                        Select Plan
                                     </button>
                                 </div>
                             </div>
@@ -45,13 +40,8 @@
                             <h1>${{prices ? prices.year : ""}}/year</h1>
                             <div class="row">
                                 <div class="col-sm-12 mt-2 text-center">
-                                    <button class="btn_sty_2" (click)="selectPlan('yearly')">
-                                        <div class="spinner-border align-top" role="status" *ngIf="submitFlag">
-                                          <span class="sr-only">Loading...</span>
-                                        </div>
-                                        <ng-container *ngIf="!submitFlag">
-                                            Select Plan
-                                        </ng-container>
+                                    <button class="btn_sty_2" (click)="selectPlan('yearly')" [disabled]="submitFlag">
+                                        Select Plan
                                     </button>
                                 </div>
                             </div>
