@@ -30,16 +30,18 @@ export class BillingTrialComponent implements OnInit {
 
   selectPlan(type: string) {
     let userData = this._signUpService.getLoginSession();
-    this._subscriptionPlanService.startSubscription({ userId: userData.userId, plan: type }).subscribe(response => {
-      if(response) {
+    this.submitFlag = true;
+    this._subscriptionPlanService.startSubscription({ userId: userData.userId, plan: type }).subscribe(
+      (response: any) => {
         let data = this._signUpService.getLoginSession();
         this._commonService.setSession(data);
         this.router.navigate(['/dashboard']);
+      },
+      (err) => {
+        this._commonService.errorToaster("Please try again after sometime!");
+        // Logic for payment failure
       }
-    },
-    (err) => {
-      // Logic for payment failure
-    });
+    ).add(() => this.submitFlag = false );
   }
 
 }

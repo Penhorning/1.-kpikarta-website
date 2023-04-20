@@ -211,6 +211,7 @@ export class HistoricalViewComponent implements OnInit {
                 achieved_value: +this.measureForm.value.actualValue,
                 target: this.editingNode.target.event_options.updated.target
               }
+              if (this.editingNode.target.event_options.updated.target[0].percentage >= 100) data2["completed_date"] = new Date();
               await this._myKpiService.updateNode(this.editingKPI._id, data2).toPromise();
             }
           }
@@ -331,6 +332,7 @@ export class HistoricalViewComponent implements OnInit {
                       "formula": this.editingNode.formula.event_options.updated.node_formula.formula
                     }
                   }
+                  if (this.editingNode.target.event_options.updated.target[0].percentage >= 100) data2["completed_date"] = new Date();
                   await this._myKpiService.updateNode(this.editingKPI._id, data2).toPromise();
                 }
               }

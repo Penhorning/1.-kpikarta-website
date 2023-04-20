@@ -304,17 +304,13 @@
                               <img src="assets/img/Refresh.svg">
                               <!-- <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'"> -->
                               <span>
-                                {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
-                                -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
+                                {{ kpi?.dueDays >= 0 ? kpi?.dueDays + ' Days left' : -kpi?.dueDays + ' Days overdue' }}
                               </span>
                             </ng-container>
                             <ng-container *ngIf="(kpi?.target[0]?.value <= kpi?.achieved_value) && kpi?.start_date">
                               <img src="assets/img/Refresh.svg">
                               <span>
-                                {{
-                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') && 
-                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') > 0)) ? 
-                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') + ' Days Early') : 'Completed' }}
+                                {{ (kpi?.dueDays && kpi?.dueDays > 0) ? (kpi?.dueDays  + ' Days Early') : 'Completed' }}
                               </span>
                             </ng-container>
                             <ng-container *ngIf="!kpi?.start_date">
@@ -524,17 +520,13 @@
                               <img src="assets/img/Refresh.svg">
                               <!-- <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'"> -->
                               <span>
-                                {{ calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days left' :
-                                -calculateDueDays(kpi?.start_date, kpi?.due_date) + ' Days overdue' }}
+                                {{ kpi?.dueDays >= 0 ? kpi?.dueDays + ' Days left' : -kpi?.dueDays + ' Days overdue' }}
                               </span>
                             </ng-container>
                             <ng-container *ngIf="(kpi?.target[0]?.value <= kpi?.achieved_value) && kpi?.start_date">
                               <img src="assets/img/Refresh.svg">
                               <span>
-                                {{
-                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') && 
-                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') > 0)) ? 
-                                  (calculateDueDays(kpi?.completed_date, kpi?.due_date, 'completed') + ' Days Early') : 'Completed' }}
+                                {{ (kpi?.dueDays && kpi?.dueDays > 0) ? (kpi?.dueDays  + ' Days Early') : 'Completed' }}
                               </span>
                             </ng-container>
                             <ng-container *ngIf="!kpi?.start_date">
@@ -603,7 +595,6 @@
 
 
 <!-- Edit actual value modal -->
-
 <div class="modal fade" id="editActualValueModal" tabindex="-1" role="dialog" data-backdrop="static"
   data-keyboard="false" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
