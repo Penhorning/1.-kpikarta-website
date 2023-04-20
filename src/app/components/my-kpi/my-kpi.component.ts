@@ -120,7 +120,7 @@ export class MyKpiComponent implements OnInit {
     { name: 'Actual', sortBy: 'achieved_value', sort: '' },
     { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
     { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
-    { name: 'Status', sortBy: 'due_date', sort: '' },
+    { name: 'Status', sortBy: 'dueDays', sort: '' },
     { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   headerList2 = [
@@ -131,7 +131,7 @@ export class MyKpiComponent implements OnInit {
     { name: 'KPI Owner', sortBy: 'fullName', sort: '' },
     { name: 'Last Edited', sortBy: 'updatedAt', sort: '', filter: true },
     { name: 'Due Date', sortBy: 'due_date', sort: '', filter: true },
-    { name: 'Status', sortBy: 'due_date', sort: '' },
+    { name: 'Status', sortBy: 'dueDays', sort: '' },
     { name: 'Completion', sortBy: 'percentage', sort: '', filter: true }
   ];
   // Sort var
@@ -431,6 +431,11 @@ export class MyKpiComponent implements OnInit {
         this.exportKpis = Array.from(response.kpi_nodes[0].data);
         this.kpis = this.kpis.map((item: any) => {
           item.isSelected = false;
+          if ((item.target[0].value <= item.achieved_value) && item.start_date) {
+            item.dueDays = this.calculateDueDays(item.completed_date, item.due_date, 'completed');
+          } else if ((item.target[0].value > item.achieved_value) && item.start_date) {
+            item.dueDays = this.calculateDueDays(item.start_date, item.due_date);
+          } else item.dueDays = 0;
           return item;
         });
         if (response.kpi_nodes[0].metadata.length > 0) {
@@ -697,7 +702,17 @@ export class MyKpiComponent implements OnInit {
       this.loading = true;
       this._myKpiService.getKPIsByMonth(data).subscribe(
         (response: any) => {
+          // response.kpi_nodes[0].data = response.kpi_nodes[0].data.map((item: any) => {
+          //   item.isSelected = false;
+          //   if ((item.target[0].value <= item.achieved_value) && item.start_date) {
+          //     item.dueDays = this.calculateDueDays(item.completed_date, item.due_date, 'completed');
+          //   } else if ((item.target[0].value > item.achieved_value) && item.start_date) {
+          //     item.dueDays = this.calculateDueDays(item.start_date, item.due_date);
+          //   } else item.dueDays = 0;
+          //   return item;
+          // });
           this.kpis.push(...response.kpi_nodes[0].data);
+          // this.kpis.forEach((item: any) => console.log(item.dueDays))
           if (response.kpi_nodes[0].metadata.length > 0) {
             this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
           } else this.totalAssignedKPIs = 0;
@@ -725,7 +740,17 @@ export class MyKpiComponent implements OnInit {
       this.loading = true;
       this._myKpiService.getMyKPIs(data).subscribe(
         (response: any) => {
+          response.kpi_nodes[0].data = response.kpi_nodes[0].data.map((item: any) => {
+            item.isSelected = false;
+            if ((item.target[0].value <= item.achieved_value) && item.start_date) {
+              item.dueDays = this.calculateDueDays(item.completed_date, item.due_date, 'completed');
+            } else if ((item.target[0].value > item.achieved_value) && item.start_date) {
+              item.dueDays = this.calculateDueDays(item.start_date, item.due_date);
+            } else item.dueDays = 0;
+            return item;
+          });
           this.kpis.push(...response.kpi_nodes[0].data);
+          // this.kpis.push(...response.kpi_nodes[0].data);
           this.exportKpis.push(...response.kpi_nodes[0].data);
           if (response.kpi_nodes[0].metadata.length > 0) {
             this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
@@ -753,7 +778,7 @@ export class MyKpiComponent implements OnInit {
       this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
     } 
     this.kpis.sort((node_1: any, node_2: any) => {
-      if (colName == 'percentage') {
+      if (colName == 'percentage' || colName == 'value') {
         node_1 = node_1['target'][0][colName]
         node_2 = node_2['target'][0][colName]
         if (this.sortOrder == 'asc') {
@@ -765,7 +790,7 @@ export class MyKpiComponent implements OnInit {
         node_1 = node_1['karta'][colName].toLowerCase();
         node_2 = node_2['karta'][colName].toLowerCase();
         return node_1.localeCompare(node_2) * this.sortDir;
-      } else if (colName == 'achieved_value') {
+      } else if (colName == 'achieved_value' || colName == 'dueDays') {
         node_1 = node_1[colName]
         node_2 = node_2[colName]
         if (this.sortOrder == 'asc') {
@@ -773,15 +798,7 @@ export class MyKpiComponent implements OnInit {
         } else {
           return node_2 - node_1;
         }
-      } else if (colName == 'value') {
-        node_1 = node_1['target'][0][colName]
-        node_2 = node_2['target'][0][colName]
-        if (this.sortOrder == 'asc') {
-          return node_1 - node_2;
-        } else {
-          return node_2 - node_1;
-        }
-      }else if (colName == 'fullName') {
+      } else if (colName == 'fullName') {
         node_1 = node_1?.['contributor']?.[colName] ? node_1?.['contributor']?.[colName] : "";
         node_2 = node_2?.['contributor']?.[colName] ? node_2?.['contributor']?.[colName] : "";
         return node_1.localeCompare(node_2) * this.sortDir;
