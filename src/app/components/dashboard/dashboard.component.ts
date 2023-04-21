@@ -233,7 +233,7 @@ export class DashboardComponent implements OnInit {
     if(this.selectedUsers.length === 0){
       this._commonService.errorToaster('Please select the users!');
     }else if(this.selectedUsers.length === 1 && this.selectedUsers[0].email == this._commonService.getEmailId()){
-      this._commonService.warningToaster("You can not share karta to yourself!");
+      this._commonService.warningToaster("You can not share Karta to yourself!");
    } else {
      this.emails = this.selectedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
       if (this.emails.length > 0) {
