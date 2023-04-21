@@ -1927,7 +1927,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (this.selectedSharedUsers.length === 0) {
       this._commonService.errorToaster('Please select the users!');
     } else if (this.selectedSharedUsers.length === 1 && this.selectedSharedUsers[0].email == this._commonService.getEmailId()) {
-      this._commonService.warningToaster("You can not share karta to yourself!");
+      this._commonService.warningToaster("You can not share Karta to yourself!");
     } else {
       this.emails = this.selectedSharedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
       if (this.emails.length > 0) {
@@ -1940,7 +1940,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
         this._kartaService.shareKarta(data).subscribe(
           (response: any) => {
-            this._commonService.successToaster("Your have shared karta successfully!");
+            this._commonService.successToaster("You have shared Karta successfully!");
             jqueryFunctions.hideModal('shareKartaModal');
             this.emails.forEach((element: any) => {
               this.karta.sharedTo.push({ email: element });
