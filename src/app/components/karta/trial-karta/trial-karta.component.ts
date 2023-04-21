@@ -87,7 +87,7 @@ export class TrialKartaComponent implements OnInit {
       },
       {
         element: '#step6',
-        intro: 'You can switch the type between Measure/Metrics',
+        intro: 'You can switch the KPI type between Measure/Metrics',
         position: 'bottom'
       },
       {
