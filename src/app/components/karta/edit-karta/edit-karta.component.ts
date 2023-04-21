@@ -369,16 +369,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Apply monitor by
   applyMonitorBy() {
-    this.updateNewPercentage(this.filterKartaBy);
-    // if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
-    //   this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
-    //     (response: any) => {
-    //       if (response.nodes[0].data.length > 0) {
-    //         this.updateNewPercentage(this.filterKartaBy, response.nodes[0].data);
-    //       } else this.updateNewPercentage(this.filterKartaBy);
-    //     }
-    //   );
-    // } else this.updateNewPercentage(this.filterKartaBy);
+    // this.updateNewPercentage(this.filterKartaBy);
+    if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
+      this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
+        (response: any) => {
+          if (response.nodes[0].data.length > 0) {
+            this.updateNewPercentage(this.filterKartaBy, response.nodes[0].data);
+          } else this.updateNewPercentage(this.filterKartaBy);
+        }
+      );
+    } else this.updateNewPercentage(this.filterKartaBy);
   }
 
   // Set colors
