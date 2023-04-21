@@ -369,7 +369,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Apply monitor by
   applyMonitorBy() {
-    // this.updateNewPercentage(this.filterKartaBy);
+    this.updateNewPercentage(this.filterKartaBy);
     // if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
     //   this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
     //     (response: any) => {
