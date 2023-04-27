@@ -3,9 +3,13 @@
 <div class="main-content">
    <div class="container-fluid">
       <div class="row" *ngIf="_commonService.getUserLicense() === 'Creator' && _commonService.getUserRole() !== 'billing_staff'">
-         <div class="col-lg-12">
+         <div class="col-lg-8">
             <button class="karta-btn" (click)="navigateToKarta()"><img src="assets/img/add-karata.svg" class="mr-2">
             Create a Karta</button>
+         </div>
+         <div class="col-lg-4">
+            <button class="karta-btn float-right" (click)="navigateToSampleKarta()"><img src="assets/img/View-blue.svg" class="mr-2">
+            View Sample Karta</button>
          </div>
       </div>
       <div class="row">

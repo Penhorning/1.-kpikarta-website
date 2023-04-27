@@ -79,6 +79,7 @@ export class AppComponent implements OnInit {
               this._commonService.updateSession('role', response.roles[0].name);
               this._commonService.updateSession('license', response.license.name);
               this._commonService.updateSession('py_failed', response.paymentFailed);
+              this._commonService.updateSession('is_master', response.isMaster);
             }
           );
         }

@@ -5,16 +5,16 @@ import * as BuildKPIKarta from '../utils/d3.js';
 import * as introJs from 'intro.js/intro.js';
 import { KartaService } from '../service/karta.service';
 import { CommonService } from '@app/shared/_services/common.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 declare const $: any;
 
 @Component({
-  selector: 'app-trial-karta',
-  templateUrl: './trial-karta.component.html',
-  styleUrls: ['./trial-karta.component.scss']
+  selector: 'app-intro-karta',
+  templateUrl: './intro-karta.component.html',
+  styleUrls: ['./intro-karta.component.scss']
 })
-export class TrialKartaComponent implements OnInit {
+export class IntroKartaComponent implements OnInit {
 
   kartaId: string = '';
   newkartaId: string = '';
@@ -52,8 +52,7 @@ export class TrialKartaComponent implements OnInit {
   constructor(
     private _kartaService: KartaService,
     public _commonService: CommonService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) {
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
@@ -166,10 +165,6 @@ export class TrialKartaComponent implements OnInit {
       } else if ( target.id == "step7" ) {
         jqueryFunctions.closeRightSidebar();
       }
-      //   jqueryFunctions.togggleLeftSidebar();
-      //   jqueryFunctions.hideLeftSidebar();
-      //   jqueryFunctions.closeRightSidebar();
-      //   jqueryFunctions.openRightSidebar();
     });
     this.introJS.oncomplete(() => {
       location.replace(`/karta/edit/${this.newkartaId}`);
@@ -241,10 +236,6 @@ export class TrialKartaComponent implements OnInit {
         this.colorSettings = response.color_settings;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any,b: any) => a.min - b.min);
         this.getPhases();
-        this.percentageObj = new CalculatePercentage(this.colorSettings, {
-          frequency: 'monthly',
-          nodeId: ''
-        }, 0);
       }
     );
   }

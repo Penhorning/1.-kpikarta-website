@@ -16,6 +16,7 @@ declare const $: any;
 export class DashboardComponent implements OnInit {
 
   kartas: any = [];
+  sampleKarta: any;
   kartasTotal: number = 0;
   users: any = [];
   pageLimit: number = 3;
@@ -68,6 +69,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     if (this._commonService.getUserLicense() !== 'Spectator' && this._commonService.getUserRole() !== 'billing_staff') {
+      this.getSampleKarta();
       this.getAllKartas();
     }
     if (this._commonService.getUserRole() !== 'user') {
@@ -81,6 +83,10 @@ export class DashboardComponent implements OnInit {
   // Navigate to create karta
   navigateToKarta() {
     this.router.navigate(['/karta/create']);
+  }
+  // Navigate to sample karta
+  navigateToSampleKarta() {
+    this.router.navigate(['/karta/view', this.sampleKarta[0].id]);
   }
 
   // Get Subscribed Users
@@ -113,15 +119,37 @@ export class DashboardComponent implements OnInit {
       findBy: this._commonService.getUserId()
     };
     this.loadingKartas = true;
-    this._kartaService.getAllKartas(data).subscribe((response: any) => {
-      if (response.kartas[0].data.length > 0) {
-        this.kartas = response.kartas[0].data;
-        this.kartasTotal = response.kartas[0].metadata[0].total;
-      } else {
-        this.kartas = [];
-        this.kartasTotal = 0;
+    this._kartaService.getAllKartas(data).subscribe(
+      (response: any) => {
+        // this._kartaService.getSampleKarta2().subscribe(
+        //   (response2: any) => {
+        //     this.kartas = response2;
+        //     if (response.kartas[0].data.length > 0) {
+        //       this.kartas.push(...response.kartas[0].data);
+        //       this.kartasTotal = response.kartas[0].metadata[0].total;
+        //     } else {
+        //       this.kartas = [];
+        //       this.kartasTotal = 0;
+        //     }
+        //   }
+        // );
+        if (response.kartas[0].data.length > 0) {
+          this.kartas = response.kartas[0].data;
+          this.kartasTotal = response.kartas[0].metadata[0].total;
+        } else {
+          this.kartas = [];
+          this.kartasTotal = 0;
+        }
       }
-    }).add(() => this.loadingKartas = false );
+    ).add(() => this.loadingKartas = false );
+  }
+
+  getSampleKarta() {
+    this._kartaService.getSampleKarta().subscribe(
+      (response: any) => {
+        this.sampleKarta = response;
+      }
+    );
   }
 
   // Get all members

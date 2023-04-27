@@ -53,9 +53,9 @@ export class KartaService {
     return this._httpService.POST('/users/get-all-members', data);
   }
   getAllVersions(kartaId: string) {
-    return this._httpService.GET(`/karta_versions?filter[where][kartaId]=${kartaId}&filter[order]=createdAt ASC`);
+    return this._httpService.GET(`/karta_versions?filter[where][kartaId]=${kartaId}&filter[order]=createdAt ASC`);    
   }
-  getKartaHistory(){
+  getKartaHistory() {
     return this._httpService.GET(`/karta_histories`);
   }
 
@@ -73,8 +73,11 @@ export class KartaService {
     return this._httpService.GET(`/karta?filter[where][userId]=${userId}`);
   }
 
+  getIntroKarta() {
+    return this._httpService.GET('/karta?filter[where][name]=INTRO_KARTA&filter[where][sample]=true');
+  }
   getSampleKarta() {
-    return this._httpService.GET('/karta?filter[where][name]=SAMPLE_KARTA');
+    return this._httpService.GET('/karta?filter[where][name]=Sample Karta&filter[where][sample]=true');
   }
 
   // deleteSharedKarta(id: any) {

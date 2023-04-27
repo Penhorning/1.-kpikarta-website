@@ -16,6 +16,11 @@ export class AuthGuard implements CanActivateChild {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
       // Checking for marketplace url
       if (state.url.indexOf('view') !== -1) return true;
+      // Check for billing url
+      if ((state.url === '/billing' || state.url === '/members') && this._commonService.getUserMasterStatus()) {
+        this.router.navigate(['/dashboard']);
+        return false;
+      }
       // Checking for other urls
       else if (this._commonService.getSession() && this._commonService.getSession().token) {
         if (this._commonService.getUserPaymentStatus() && state.url !== '/billing') {
