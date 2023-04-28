@@ -4,18 +4,13 @@
     <div id="content" class="karta-edit-contnet">
         <div class="karta-edit-header">
             <div class="row no-gutters align-items-center">
-                 <div class="col-md-1">
-                     <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
+                <div class="col-lg-9">
+                    <div class="karta-name">
+                       <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
+                    </div>
                  </div>
-                 <div class="col-md-1">
-                     <div class="select-karta-name">
-                         <select class="form-control custom-select-karta" [disabled]="disableVersionFlag" [(ngModel)]="versionId">
-                             <option *ngFor="let ver of version" [disabled]="ver.is_copied" [value]="ver.id">Version {{ver.name}}</option>
-                         </select>
-                     </div>
-                 </div>
-                 <div class="col-md-1 text-center">
-                     <img class="img-fluid cursor_pointer" src="assets/img/reset-zoom.svg" style="height: 16px;" title="Reset Zoom" id="reset_zoom_btn" />
+                 <div class="col-lg-3 align-self-center pr-1">
+                    <img src="assets/img/reset-zoom.svg" class="img-fluid float-right cursor_pointer" title="Reset Zoom" id="reset_zoom_btn">
                  </div>
             </div>
         </div>
