@@ -6,7 +6,6 @@ import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as jqueryFunctions from '../utils/jqueryOperations.js';
-import * as moment from 'moment';
 import * as MetricOperations from '../utils/metricFormulaOperations';
 import { CalculatePercentage } from '../utils/calculatePercentage';
 
@@ -379,72 +378,6 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
     }
     // Assign phaseResult to phases
     this.phases = phaseResult;
-  }
-
-  // Update new percentage
-  updateNewPercentage(filterTargetBy?: string, pastNodedata?: any) {
-    this._kartaService.getKarta(this.kartaId).subscribe(
-      (response: any) => {
-        this.karta = response;
-        if (filterTargetBy) {
-          this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage, filterTargetBy, pastNodedata);
-        } else this.percentageObj = new CalculatePercentage(this.colorSettings, this.kpiCalculationPeriod, this.kpiPercentage);
-        this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
-        this.karta.node.border_color = this.setColors(this.karta.node.percentage);
-        this.D3SVG.update(this.karta.node, true);
-        jqueryFunctions.enableChart();
-      },
-      (error: any) => {
-        jqueryFunctions.enableChart();
-      }
-    );
-  }
-
-  // Export karta to CSV
-  csvKartaData: any = [
-    {
-      name: "",
-      weightage: "",
-      font_style: "",
-      alignment: "",
-      text_color: "",
-      kartaName: "",
-      createdAt: "",
-      phaseId: "",
-      phaseName: "",
-      percentage: ""
-    }
-  ];
-  pushCSVData(data: any) {
-    if (!data.hasOwnProperty("parentId")) {
-      data.kartaName = this.karta.name;
-      data.phaseName = this.phases[this.phaseIndex(data.phaseId)].name;
-      this.csvKartaData.push(data);
-    }
-    if (data.hasOwnProperty("children") && data.children.length > 0) {
-      data.children.forEach((element: any) => {
-        element.kartaName = this.karta.name;
-        element.phaseName = this.phases[this.phaseIndex(element.phaseId)].name;
-        this.csvKartaData.push(element);
-        this.pushCSVData(element);
-      });
-    }
-  }
-  exportAsCSV(param: any) {
-    this.pushCSVData(param.node);
-    const options = {
-      fieldSeparator: ',',
-      quoteStrings: '"',
-      decimalSeparator: '.',
-      showLabels: true,
-      useTextFile: false,
-      filename: this.karta.name,
-      useBom: true,
-      headers: ['Name', 'Weightage', 'Font_style', 'Alignment', 'Text_color',
-        'Karta Name', 'CreatedAt', 'Phase Id', 'Phase Name', 'Percentage']
-    };
-    const csvExporter = new ExportToCsv(options);
-    csvExporter.generateCsv(this.csvKartaData);
   }
 
   ngOnDestroy(): void {
