@@ -1,0 +1,347 @@
+.right_sidebar_overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 994;
+    display: none;
+}
+.right_sidebar_overlay.open {
+    display: block;
+}
+
+.description_div p {
+    margin-bottom: 0;
+}
+
+.inventory_sidebar_accordion .card-body {
+    overflow-y: auto;
+    height: 250px;
+}
+
+button.bg-light.viewFilterBtn:focus {
+    background-color: #fff !important;
+}
+.viewFilterActive {
+    color: #243864;
+    border: 1px solid #243864 !important;
+    background-color: #dae0e5 !important;
+}
+.viewFilterNotActive {
+    background-color: #fff !important;
+}
+
+.sidebar_collapsible_btn {
+    z-index: 999;
+    top: 44%;
+    position: fixed;
+    left: 100px;
+    transition: left 0.2s ease-in-out;
+}
+
+.sidebar_collapsible_btn.show {
+    left: 358px;
+}
+
+.right-side-bar.open {
+    right: 0;
+}
+
+.clear_search_icon {
+    cursor: pointer;
+    margin-right: 25px;
+}
+
+.side-bar-card .goal-img img {
+    border-radius: 2px;
+}
+
+.phase_column ul {
+    width: 100%;
+}
+
+.karta_column {
+    width: 77%;
+    flex: 1 1 auto;
+}
+
+.phase_column ul li a {
+    position: relative;
+    max-width: 200px;
+}
+.phase_column ul li a:hover .phase_action {
+    display: block;
+}
+.phase_action {
+    position: absolute;
+    right: 15px;
+    top: 2px;
+    display: none;
+    i {
+        cursor: pointer;
+        margin-left: 5px;
+    }
+}
+
+.karta_dummy_lines {
+    height: 65px;
+    padding-right: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    border: 1px solid #dee2e6;
+    display: flex;
+}
+.mode-btn{
+    margin-inline-start: auto;
+}
+
+.description_div {
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.selectedPhase {
+    background-color: #4c659e80;
+}
+.selectedPhaseError {
+    background-color: rgb(221, 144, 144);
+}
+
+.karta_dummy_lines button {
+    display: none;
+}
+
+.selectedPhase:hover button {
+    display: block;
+}
+
+.selected_alignment,
+.font_alignment_img:hover {
+    background: #ccc;
+    border-radius: 2px;
+    padding: 3px;
+}
+
+.target_select label {
+    margin-bottom: 6px;
+}
+.target_select select option:disabled {
+    background-color: #80808030;
+}
+.target_action_btn {
+    margin-top: 27px;
+}
+
+.cursor-not-allowed {
+    cursor: not-allowed !important;
+}
+
+.formula-value {
+    border: none;
+    background-color: transparent;
+    font-weight: 600;
+}
+
+.add-icon:hover {
+    cursor: pointer;
+}
+
+.remove-icon:hover {
+    cursor: pointer;
+}
+
+::ng-deep .dropdown-list ul {
+    width: auto !important;
+}
+
+::ng-deep .dropdown-btn .selected-item:hover {
+    box-shadow: none !important;
+}
+
+::ng-deep .multiselect-dropdown .dropdown-btn{
+    height: 100px !important;
+    overflow: auto;
+}
+
+::ng-deep .multiselect-dropdown .dropdown-btn .selected-item{
+    margin-top: 4px!important;
+}
+
+.undo_redo_btn img {
+    height: 15px;
+    cursor: pointer;
+}
+.undo_redo_btn a {
+    margin-right: 10px;
+}
+
+.field-options:hover {
+    cursor: pointer;
+    background-color: #F5FAFF;
+}
+
+.color-range-box {
+    cursor: pointer;
+}
+
+#colorPicker {
+    border: 0;
+    background-color: transparent;
+    height: 32px;
+    width: 30px;
+}
+
+#colorPicker2 {
+    z-index: -1;
+    width: 0;
+    display: block;
+    margin-top: -37px;
+    visibility: hidden;
+}
+
+.above100 label {
+    cursor: pointer;
+}
+.above100 label img {
+    height: 30px;
+}
+
+::ng-deep {
+    .ngx-slider .ngx-slider-pointer, .ngx-slider .ngx-slider-selection {
+        background-color: #345DBB !important;
+    }
+    .ngx-slider .ngx-slider-pointer {
+        width: 13px !important;
+        height: 13px !important;
+    }
+    .ngx-slider .ngx-slider-pointer:after {
+        display: none;
+    }
+    .ngx-slider .ngx-slider-bar-wrapper {
+        padding-top: 7px !important;
+    }
+}
+
+  .panel-default>.panel-heading {
+    color: #333;
+    background-color: #eee;
+    border-color: #e4e5e7;
+    padding: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    a {
+        display: block;
+        padding: 10px 15px;
+    }
+
+    a:after {
+        content: "";
+        position: relative;
+        top: 1px;
+        display: inline-block;
+        font-family: 'Glyphicons Halflings';
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transition: transform .25s linear;
+        -webkit-transition: -webkit-transform .25s linear;
+    }
+
+    a[aria-expanded="false"]:after {
+        content: "\002b";
+        -webkit-transform: rotate(180deg);
+        transform: rotate(180deg);
+        background-color: #4c659e;
+        padding: 6px 0px 3px 8px;
+        color: #fff;
+        border-radius: 50px;
+        height: 25px;
+        width: 25px;
+        float: right;
+    }
+    a[aria-expanded="true"]:after {
+        content: "\2212";
+        -webkit-transform: rotate(90deg);
+        transform: rotate(180deg);
+        background-color: #4c659e;
+        padding: 6px 0px 3px 8px;
+        color: #fff;
+        border-radius: 50px;
+        height: 25px;
+        width: 25px;
+        float: right;
+    }    
+  }
+
+  button.btn.btn-default.dropdown-toggle.arrow-hide-setting::after {
+    display: none;
+  }
+
+.dropdown-content.custom-drop.show {
+    margin-left: -11.5rem;
+}
+.dropbtn {
+    background-color: transparent;
+    color: white;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+  
+.dropbtn:hover, .dropbtn:focus {
+    background-color: transparent;
+}
+  
+.dropbtn.dropdown-toggle::after {
+    display: none;
+}
+
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+  
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 230px;
+    border: 1px solid #ddd;
+    z-index: 1;
+}
+  
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+  
+.show {display: block;}
+
+::ng-deep #karta-svg .mindmap-node .center-options .add-item i,
+::ng-deep #karta-svg .mindmap-node .center-options .remove-item i,
+::ng-deep #karta-svg .mindmap-node .center-options .toggle-item i{
+    visibility: hidden !important;
+}
+
+  
+/* Works for Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Works for Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+    

@@ -22,7 +22,7 @@ export class KartaService {
     return this._httpService.GET(`/karta_phases?filter[where][kartaId]=${kartaId}&filter[where][is_deleted]=false`);
   }
   getGlobalPhases() {
-    const query = {where: {kartaId: {exists: false }}};
+    const query = { where: { kartaId: { exists: false } } };
     return this._httpService.GET(`/karta_phases?filter=${JSON.stringify(query)}`);
   }
   addPhase(data: any) {

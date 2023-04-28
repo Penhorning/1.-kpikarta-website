@@ -86,7 +86,7 @@ export class DashboardComponent implements OnInit {
   }
   // Navigate to sample karta
   navigateToSampleKarta() {
-    this.router.navigate(['/karta/view', this.sampleKarta[0].id]);
+    this.router.navigate(['/karta/sample', this.sampleKarta[0].id]);
   }
 
   // Get Subscribed Users
