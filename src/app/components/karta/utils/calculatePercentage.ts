@@ -68,8 +68,9 @@ export class CalculatePercentage {
         element._children = element.children;
         element.children = null;
       }
+      const phaseName = element.phase.global_name || element.phase.name;
       // Calculate percentage for KPI nodes only
-      if (element.phase.global_name === "KPI") {
+      if (phaseName === "KPI") {
         let targetValue = 0;
         const dayOfMonth = moment().date();
         const businessDayOfMonth = this.getNumberOfDays(true, 'month', { type: "end", end: moment() });
