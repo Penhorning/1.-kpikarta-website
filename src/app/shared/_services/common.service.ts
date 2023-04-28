@@ -114,6 +114,9 @@ export class CommonService {
   getUserPaymentStatus() {
     return this.getSession().py_failed;
   }
+  getUserMasterStatus() {
+    return this.getSession().is_master;
+  }
   updateSession(key: string, value: string) {
     let session = this.getSession();
     session[key] = value;

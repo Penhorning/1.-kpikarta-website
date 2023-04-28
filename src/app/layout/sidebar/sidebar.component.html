@@ -30,7 +30,7 @@
                 Market Place
             </a>
         </li>
-        <li *ngIf="_commonService.getUserRole() !== 'user'">
+        <li *ngIf="_commonService.getUserRole() !== 'user' && !_commonService.getUserMasterStatus()">
             <a [routerLink]="['/members']" routerLinkActive="active">
                 <span><img src="assets/img/members.png" alt="" /></span>
                 Members

@@ -2353,16 +2353,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   showTutorial() {
     this._commonService.updateSession('newkartaId', this.kartaId);
     this._kartaService.getSampleKarta().subscribe(
-      (sample) => {
-        if(sample.length > 0) {
-          this.router.navigate(['/karta/trial', sample[0].id]);
+      (response: any) => {
+        if (response.length > 0) {
+          this.router.navigate(['/karta/intro', response[0].id]);
         }
       },
       (error: any) => {
         console.log(error);
-        
       }
-    )
+    );
   }
 
   ngOnDestroy(): void {
