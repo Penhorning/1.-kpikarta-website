@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { CalculatePercentage } from '../utils/calculatePercentage';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as jqueryFunctions from '../utils/jqueryOperations.js';
 import * as BuildKPIKarta from '../utils/d3.js';
 import * as introJs from 'intro.js/intro.js';
@@ -14,7 +13,7 @@ declare const $: any;
   templateUrl: './intro-karta.component.html',
   styleUrls: ['./intro-karta.component.scss']
 })
-export class IntroKartaComponent implements OnInit {
+export class IntroKartaComponent implements OnInit, OnDestroy {
 
   kartaId: string = '';
   newkartaId: string = '';
@@ -238,6 +237,10 @@ export class IntroKartaComponent implements OnInit {
         this.getPhases();
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.introJS.exit();
   }
 
 }
