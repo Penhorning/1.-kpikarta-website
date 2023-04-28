@@ -150,7 +150,7 @@
                                 </a>
                               </li>
                             </ng-container>
-                            <ng-container *ngIf="_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'billing_staff'">
+                            <ng-container *ngIf="(_commonService.getUserRole() === 'company_admin' || _commonService.getUserRole() === 'billing_staff') && !_commonService.getUserMasterStatus()">
                               <li>
                                 <a class="dropdown-item" [routerLink]="['/billing']">
                                   <img src="assets/img/plan.svg" class="mr-2">
