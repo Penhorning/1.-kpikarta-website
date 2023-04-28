@@ -2352,7 +2352,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   // Show karta tutorial
   showTutorial() {
     this._commonService.updateSession('newkartaId', this.kartaId);
-    this._kartaService.getSampleKarta().subscribe(
+    this._kartaService.getIntroKarta().subscribe(
       (response: any) => {
         if (response.length > 0) {
           this.router.navigate(['/karta/intro', response[0].id]);
