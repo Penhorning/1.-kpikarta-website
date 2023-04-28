@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { KartaComponent } from './karta.component';
+
 import { AllKartasComponent } from './all-kartas/all-kartas.component';
 import { CreateKartaComponent } from './create-karta/create-karta.component';
 import { EditKartaComponent } from './edit-karta/edit-karta.component';
-import { KartaComponent } from './karta.component';
-import { TrialKartaComponent } from './trial-karta/trial-karta.component';
 import { ViewKartaComponent } from './view-karta/view-karta.component';
+import { IntroKartaComponent } from './intro-karta/intro-karta.component';
+import { SampleKartaComponent } from './sample-karta/sample-karta.component';
 
 const routes: Routes = [
   { path: '', redirectTo:'/dashboard', pathMatch: 'full' },
@@ -27,7 +29,8 @@ const routes: Routes = [
         }
       },
       { path: 'view/:id', component: ViewKartaComponent, data: { title: 'View Karta - KPI Karta'} },
-      { path: 'trial/:id', component: TrialKartaComponent, data: { title: 'Sample Karta - KPI Karta'} },
+      { path: 'intro/:id', component: IntroKartaComponent, data: { title: 'Intro Karta - KPI Karta'} },
+      { path: 'sample/:id', component: SampleKartaComponent, data: { title: 'Sample Karta - KPI Karta'} },
     ]
   }
 ];

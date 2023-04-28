@@ -1,0 +1,405 @@
+<!-- main-section -->
+ <div class="wrapper main_wrapper">
+    <!-- Page Content  -->
+    <div id="content" class="karta-edit-contnet">
+        <div class="karta-edit-header">
+            <div class="row no-gutters align-items-center">
+                 <div class="col-md-1">
+                     <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
+                 </div>
+                 <div class="col-md-1">
+                     <div class="select-karta-name">
+                         <select class="form-control custom-select-karta" [disabled]="disableVersionFlag" [(ngModel)]="versionId">
+                             <option *ngFor="let ver of version" [disabled]="ver.is_copied" [value]="ver.id">Version {{ver.name}}</option>
+                         </select>
+                     </div>
+                 </div>
+                 <div class="col-md-1 text-center">
+                     <img class="img-fluid cursor_pointer" src="assets/img/reset-zoom.svg" style="height: 16px;" title="Reset Zoom" id="reset_zoom_btn" />
+                 </div>
+            </div>
+        </div>
+        <!-- Main content -->
+        <div class="main-center-content d-flex mb-3" style="margin-left: 100px;">
+            <div class="center-content mt-4 w-100">
+                <div class="row tab-content-center">
+                    <div class="phase_column">
+                        <div class="vertical-tabs">
+                            <ul class="nav nav-tabs" role="tablist" id="phase_tabs">
+                                <li class="nav-item" *ngFor="let phase of phases; let i = index">
+                                    <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
+                                        <div>{{phase?.name}}</div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="karta_column">
+                        <div class="tab-pane active">
+                            <ng-container *ngIf="loadingKarta">
+                                <div class="p-5" [innerHtml]="loader"></div>
+                            </ng-container>
+                            <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right_sidebar_overlay"></div>
+            <div class="right-side-bar" id="rightSidebar">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="goal-name mt-3">
+                            <h6>{{phaseName}}</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="search-sugg mt-3">
+                            <input type="text" class="form-control" [(ngModel)]="currentNodeName" />
+                        </div>
+                    </div>
+                </div>
+                <!-- Weightage -->
+                <ng-container *ngIf="currentNode?.phase?.global_name !== 'Goal'">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="goal-name mt-3">
+                                <h6>Weighting</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="search-sugg mt-3">
+                                <input
+                                    type="number"
+                                    class="form-control"
+                                    [(ngModel)]="currentNodeWeight"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <div class="row">
+                     <div class="col-lg-12">
+                         <div class="goal-name mt-3">
+                             <h6>Description</h6>
+                         </div>
+                     </div>
+                 </div>
+                <div class="row">
+                 <div class="col-lg-12">
+                     <div class="search-sugg mt-3">
+                         <textarea rows="2" class="form-control" [(ngModel)]="currentNodeDescription"></textarea>
+                     </div>
+                 </div>
+             </div>
+                <div class="row mt-4">
+                    <div class="col-lg-12">
+                        <div class="right-side-bar-content">
+                            <h5>Definition</h5>
+                            <div class="description_div" [innerHtml]="suggestion?.definition"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-12">
+                        <div class="right-side-bar-content">
+                            <h5>Suggestions</h5>
+                            <div class="description_div">
+                                <ng-container *ngFor="let x of suggestion?.descriptions">
+                                    <p>{{x?.description}}</p>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Typography</h5>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-5">
+                        <h6 class="pt-2">Font Style</h6>
+                    </div>
+                    <div class="col-lg-7">
+                        <select class="form-control font-style" [(ngModel)]="selectedFont">
+                            <option value="system-ui">System-UI</option>
+                            <option value="sans-serif">Sans-Serif</option>
+                            <option value="monospace">Monospace</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-5">
+                        <h6 class="pt-2">Alignment</h6>
+                    </div>
+                    <div class="col-lg-7">
+                        <div>
+                            <span>
+                                <a>
+                                    <img src="assets/img/left-align.svg" class="img-fluid mr-2 font_alignment_img" [ngClass]="{'selected_alignment': selectedAlignment === 'left'}" />
+                                </a>
+                            </span>
+                            <span>
+                                <a>
+                                    <img src="assets/img/center-align.svg" class="img-fluid font_alignment_img" [ngClass]="{'selected_alignment': selectedAlignment === 'center'}" />
+                                </a>
+                            </span>
+                            <span>
+                                <a>
+                                    <img src="assets/img/right-align.svg" class="img-fluid ml-2 font_alignment_img" [ngClass]="{'selected_alignment': selectedAlignment === 'right'}" />
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-lg-5">
+                        <h6 class="pt-2">Text Color</h6>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="color-picker">
+                            <input type="color" id="colorpicker" value="#000000" [(ngModel)]="selectedColor" />
+                        </div>
+                    </div>
+                </div>
+                <div [hidden]="!showKPICalculation">
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h5>Type</h5>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-12">
+                            <select class="form-control type-select" id="selectTypeValue">
+                                <option value="measure">Measure</option>
+                                <option value="metrics">Metrics</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Common Values -->
+                    <div class="common">
+                        <!-- Start Date -->
+                        <div class="row mt-3">
+                            <div class="col-lg-6">
+                                <div class="selct-option-side-r">
+                                    <label>Start Date</label>
+                                    <input type="date" class="form-control" [min]="minStartDate" [value]="currentNode.start_date | date:'yyyy-MM-dd'"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="selct-option-side-r">
+                                    <label>Days to Calculate</label>
+                                    <select class="form-control" [value]="currentNode.days_to_calculate">
+                                        <option value="all">All Days</option>
+                                        <option value="business">Business Days</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fiscal Year -->
+                        <div class="row mt-3">
+                            <div class="col-lg-12">
+                                <h5>Fiscal Year</h5>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="selct-option-side-r">
+                                            <label>Start Date</label>
+                                            <input type="date" class="form-control" [min]="minFiscalStartDate" [value]="currentNode.fiscal_year_start_date | date:'yyyy-MM-dd'" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="selct-option-side-r">
+                                            <label>End Date</label>
+                                            <input type="date" class="form-control" [value]="currentNode.fiscal_year_end_date | date:'yyyy-MM-dd'" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- Target Value -->
+                        <label class="text-nowrap font_weight_500">Target Value</label>
+                        <ng-container *ngFor="let t of target; let i = index">
+                            <div class="row mt-2 mb-4">
+                                <div class="col-lg-5 pr-0">
+                                    <div class="target_select selct-option-side-r">
+                                        <select class="form-control" [value]="t.frequency">
+                                            <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
+                                            <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
+                                            <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
+                                            <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 px-2">
+                                    <div class="custom-input-side-r-flow">
+                                        <input type="number" class="form-control" [value]="t.value" />
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Target Label -->
+                        <input type="text" class="form-control" placeholder="Notes" [(ngModel)]="currentNode.target_label" />
+                        <!-- Achieved Value -->
+                        <div class="row mt-3" *ngIf="kpiType === 'measure'">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label class="font_weight_500">Achieved Value</label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        [(ngModel)]="currentNodeAchievedValue"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- KPI Calculation Periods -->
+                        <div class="row mt-3">
+                            <div class="col-lg-12">
+                                <div class="selct-option-side-r">
+                                    <label>KPI Calculation Periods</label>
+                                    <select class="form-control" [(ngModel)]="currentNode.kpi_calc_period">
+                                        <option value="monthly">One-time monthly target</option>
+                                        <option value="month-to-date">Month to date</option>
+                                        <option value="year-to-date">Year to date</option>
+                                        <option value="month-over-month">Month over month</option>
+                                        <option value="year-over-year">Year over year</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <!-- Metrics div -->
+                        <ng-container *ngIf="kpiType === 'metrics' ">
+                            <!-- Formula div -->
+                            <form [formGroup]="formulaGroup">
+                                <div class="row my-3">
+                                    <div class="col-lg-8">
+                                        <h5>Formula</h5>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="text-right">
+                                            <!-- <a href=""><img src="assets/img/q-mark.svg" class="img-fluid"></a> -->
+                                            <img src="assets/img/q-mark.svg" class="img-fluid" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div formArrayName="fields">
+                                    <div class="mb-2" *ngFor="let fieldForm of fields.controls; let i = index">
+                                        <div class="row" [formGroupName]="i">
+                                            <div class="col-lg-8">
+                                                <div class="form-group">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <label
+                                                            contenteditable="false"
+                                                            [id]="'fd'+i"
+                                                            [class]="checkFieldStatus('fd'+i) ? 'mb-2 border rename_label_width' : 'mb-2 rename_label_width'"
+                                                        >
+                                                            {{formulaGroup.controls['fields'].controls[i].controls['fieldName'].value}}
+                                                        </label>
+                                                        <a class="mb-2" role="button" *ngIf="!checkFieldStatus('fd'+i)"><img src="assets/img/edit-icon-side-r.svg" class="img-fluid edit-btn-r" /></a>
+                                                    </div>
+                                                    <input
+                                                        type="number"
+                                                        class="form-control"
+                                                        placeholder=""
+                                                        min="0"
+                                                        formControlName="fieldValue"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-lg-12 row">
+                                        <div class="col-lg-10">
+                                            <input
+                                                type="text"
+                                                class="form-control font-weight-bold"
+                                                id="formula-field"
+                                                autocomplete="off"
+                                                formControlName="formula"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-lg-12 h5">
+                                        <span class="h5">= {{formulaGroup.get('calculatedValue').value}}</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </ng-container>
+                        <hr *ngIf="kpiType === 'metrics' " />
+                        <!-- Contributor -->
+                        <div class="row mt-3">
+                            <div class="col-lg-6">
+                                <h5>KPI Owner</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <select class="form-control">
+                                    <option value="" selected>Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <!-- Person to Notify -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="selct-option-side-r">
+                                <label>Person to Notify</label>
+                                <select class="form-control">
+                                    <option value="" selected>Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <!-- Alerts div -->
+                    <div class="row mt-3">
+                        <div class="col-lg-12">
+                            <h5>Alerts</h5>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="selct-option-side-r">
+                                <label>Period</label>
+                                <select class="form-control">
+                                    <option value="" selected>Select period</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="quarterly">Quarterly</option>
+                                    <option value="yearly">Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="selct-option-side-r">
+                                <label>Type</label>
+                                <select class="form-control">
+                                    <option value="" selected>Select type</option>
+                                    <option value="notification">Notify at login</option>
+                                    <option value="email">On email</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Main content -->
+    </div>
+    <!-- Page content -->
+ </div>
+ <!-- Wrapper -->
+ 
