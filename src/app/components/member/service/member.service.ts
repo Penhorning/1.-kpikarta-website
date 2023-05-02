@@ -36,7 +36,7 @@ export class MemberService {
     return this._httpService.PUT('/users/block', data);
   }
   deleteUser(data: any) {
-    return this._httpService.PUT('/users/delete', data);
+    return this._httpService.POST('/users/delete-user', data);
   }
   unblockSubscription(userId: any) {
     return this._httpService.POST('/subscriptions/unblock-subscription', userId);
