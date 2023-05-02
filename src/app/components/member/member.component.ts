@@ -426,10 +426,6 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.deleteSubscription({ userId: user._id }).subscribe(
-            (result) => {},
-            (err) => console.log(err)
-          );
           this._commonService.successToaster("User deleted successfully!");
         }
       );
