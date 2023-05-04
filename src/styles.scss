@@ -44,12 +44,18 @@ input[type=number]::-webkit-outer-spin-button {
 	font-weight: 500;
 }
 
+.trial-font {
+	font-weight: bold;
+	color: #243864;
+	font-size: 14px;
+}
+
 .cursor_default {
-	cursor: default;
+	cursor: default !important;
 }
 
 .cursor_pointer {
-	cursor: pointer;
+	cursor: pointer !important;
 }
 
 .line_height_1_3 {
