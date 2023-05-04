@@ -644,6 +644,11 @@ export class MyKpiComponent implements OnInit {
     type === "assigned" ? this.showStats = true : this.showStats = false;
     this.statusType = '';
     this.kpiType = type;
+
+    // Reset creators
+    this.kartaCreatorIds = [];
+    $(".kpi_creator_checkbox").prop('checked', false);
+
     this.selectedTargetTypes = [];
     this.targetTypesList.map((item: any) => {
       item.selected = false;
@@ -665,10 +670,10 @@ export class MyKpiComponent implements OnInit {
   }
 
   // On click kpi filter
-  onKpiSelect(event: any, kartaCreatorIds: string) {
-    if (event.target.checked) this.kartaCreatorIds.push(kartaCreatorIds)
+  onKpiSelect(event: any, creatorId: string) {
+    if (event.target.checked) this.kartaCreatorIds.push(creatorId)
     else {
-      const index = this.kartaCreatorIds.indexOf(kartaCreatorIds)
+      const index = this.kartaCreatorIds.indexOf(creatorId)
       this.kartaCreatorIds.splice(index, 1);
     }
     this.pageIndex = 0;
@@ -682,7 +687,7 @@ export class MyKpiComponent implements OnInit {
         this.creators = response.creators;
       },
       (error: any) => {
-        this.loading = false
+        this.loading = false;
       }
     );
   }
