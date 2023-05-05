@@ -177,7 +177,7 @@
                 </div>
                 <div class="col d-flex align-items-center">
                     <div class="text-nowrap mr-1 font-weight-bold">Karta as of:</div>
-                    <button type="button" class="btn bg-light border text-nowrap viewFilterBtn" [disabled]="disableKartaAsOf" [title]="disableKartaAsOf ? 'This functionality works on latest version only.' : ''" (click)="checkKartaFilter()" [ngClass]="(viewKartaFilterApplied || disableKartaAsOf) ? 'viewFilterActive' : 'viewFilterNotActive'">{{ disableKartaAsOf ? 'Disabled' : viewKartaText }}</button>
+                    <button type="button" class="btn bg-light border text-nowrap viewFilterBtn" [disabled]="disableKartaAsOf" [title]="disableKartaAsOf ? 'This functionality is applicable on latest version only.' : ''" (click)="checkKartaFilter()" [ngClass]="disableKartaAsOf ? 'disableKartaAsOf' : (viewKartaFilterApplied ? 'viewFilterActive' : 'viewFilterNotActive')">{{ disableKartaAsOf ? 'N/A' : viewKartaText }}</button>
                 </div>
                 <div class="col-md-2 ml-3">
                     <div class="icon-karta">
