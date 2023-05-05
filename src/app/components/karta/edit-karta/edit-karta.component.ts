@@ -905,7 +905,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         if (this.currentNode.notify_type === "owner") this.notifyType = "owner";
         else this.notifyType = "specific";
         let isMemberExists = this.members.find((item: any) => item._id === this.currentNode.notifyUserId);
-        if (!isMemberExists) this.currentNode.notifyUserId = "User (Deactivated)";
+        if (!isMemberExists && (this.currentNode.notifyUserId !== this._commonService.getUserId())) this.currentNode.notifyUserId = "User (Deactivated)";
       } else this.notifyType = "";
     }
   }
