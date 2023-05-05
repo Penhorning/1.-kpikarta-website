@@ -182,6 +182,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   formulaError: string = "";
   disableVersionFlag: boolean = false;
   showLoader: boolean = false;
+  disableKartaAsOf: boolean = false;
 
   // Declare calculate percentage class variable
   percentageObj: any;
@@ -905,7 +906,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         if (this.currentNode.notify_type === "owner") this.notifyType = "owner";
         else this.notifyType = "specific";
         let isMemberExists = this.members.find((item: any) => item._id === this.currentNode.notifyUserId);
-        if (!isMemberExists) this.currentNode.notifyUserId = "User (Deactivated)";
+        if (!isMemberExists && (this.currentNode.notifyUserId !== this._commonService.getUserId())) this.currentNode.notifyUserId = "User (Deactivated)";
       } else this.notifyType = "";
     }
   }
@@ -1202,6 +1203,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     const setKartaDetails = (response: any) => {
       this.karta = response;
       this.versionId = response.versionId;
+      if (response.versionId == this.version[this.version.length - 1].id ) this.disableKartaAsOf = false;
+      else this.disableKartaAsOf = true;
       if (this.karta.node) {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
