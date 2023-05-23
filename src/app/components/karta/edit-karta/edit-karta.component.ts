@@ -165,7 +165,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Share karta
   members: any = [];
-  notifyMembers: any = [];
   kartas: any = [];
   sharingKarta: any;
   sharedSubmitFlag: boolean = false;
@@ -701,13 +700,12 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this._kartaService.getAllMembers(data).subscribe(
       (response: any) => {
         if (response.members[0].data.length > 0) {
-          this.notifyMembers = response.members[0].data;
           this.members = response.members[0].data.filter((x: any) => {
             return x.email != this._commonService.getEmailId();
           });
           this.members.forEach((element: any) => {
             element['selectedAllGroup'] = 'selectedAllGroup';
-          });
+          })
           this.contributors = response.members[0].data.filter((x: any) => {
             if (x.Role.name !== "billing_staff" && x.license.name !== "Spectator") return x;
           });
@@ -906,7 +904,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       if (this.currentNode.notifyUserId) {
         if (this.currentNode.notify_type === "owner") this.notifyType = "owner";
         else this.notifyType = "specific";
-        let isMemberExists = this.notifyMembers.find((item: any) => item._id === this.currentNode.notifyUserId);
+        let isMemberExists = this.members.find((item: any) => item._id === this.currentNode.notifyUserId);
         if (!isMemberExists) this.currentNode.notifyUserId = "User (Deactivated)";
       } else this.notifyType = "";
     }

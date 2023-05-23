@@ -840,7 +840,7 @@
                                </select>
                                <ng-container *ngIf="notifyType === 'specific'">
                                    <ng-select class="mt-2" [(ngModel)]="currentNode.notifyUserId" placeholder="Select user" (change)="selectNotifyUser($event)">
-                                       <ng-option *ngFor="let user of notifyMembers" [value]="user._id">
+                                       <ng-option *ngFor="let user of members" [value]="user._id">
                                            {{ user?.fullName }} ({{ user?.email }})
                                        </ng-option>
                                    </ng-select>
