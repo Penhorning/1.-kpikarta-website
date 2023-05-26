@@ -45,7 +45,6 @@ export class VerificationComponent implements OnInit {
           this._commonService.successToaster("Email is verified successfully");
           this._signupService.updateSignUpSession(2, response.id);
           this.router.navigate(['/subscription-plan']);
-          // this.router.navigate(['/sign-up/payment-method']);
         },
         (error: any) => { }
       ).add(() => this.submitFlag = false);

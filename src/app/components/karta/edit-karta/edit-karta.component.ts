@@ -312,6 +312,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   checkKartaFilter() {
     if (this.viewKartaFilterApplied) {
+      this.updateNewPercentage();
+      this.viewKartaText = `${moment().format('MMMM')} ${moment().year()}`;
       jqueryFunctions.enableChart();
       jqueryFunctions.enableElement("#phase_tabs");
       jqueryFunctions.setValue("#chartMode", "enable");

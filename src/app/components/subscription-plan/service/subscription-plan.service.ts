@@ -10,8 +10,11 @@ export class SubscriptionPlanService {
   constructor(private _httpService: HttpService, private _signupService: SignupService) { }
 
 /*============================== API FUNCTIONS STARTS ==============================*/
+  getCreatorPalns() {
+    return this._httpService.GET('/subscriptions/get-plans');
+  }  
   assignPlan(data: any) {
-    return this._httpService.POST(`/users/assign-plan?access_token=${this._signupService.getSignUpSession().token}`, data);
+    return this._httpService.POST(`/subscriptions/assign-plan?access_token=${this._signupService.getSignUpSession().token}`, data);
   }
   getCreatorPrices() {
     return this._httpService.GET(`/subscriptions/get-prices`);

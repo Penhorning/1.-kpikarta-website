@@ -13,9 +13,9 @@ declare const $: any;
 })
 export class SubscriptionPlanComponent implements OnInit {
 
-  submitFlag: boolean = false;
-  prices: any = {};
+  plans: any = {};
   loader: any = false;
+  submitFlag: boolean = false;
   loadingComponent: any = this._commonService.loader;
 
   constructor(private _signupService: SignupService, private _subscriptionPlanService: SubscriptionPlanService, private router: Router, private _commonService: CommonService) {
@@ -24,31 +24,30 @@ export class SubscriptionPlanComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._subscriptionPlanService.getCreatorPrices().subscribe(
-      (response) => {
-        this.prices = response.data;
+    this.getPlans();
+  }
+
+  getPlans() {
+    this._subscriptionPlanService.getCreatorPalns().subscribe(
+      (response: any) => {
+        this.plans.month = response.plans.find((item: any) => item.item_price.period_unit === "month").item_price;
+        this.plans.year = response.plans.find((item: any) => item.item_price.period_unit === "year").item_price;
         this.loader = true;
       },
-      (err) => console.log(err)
+      (error: any) => { }
     );
   }
 
-  selectPlan(type: string) {
-    // this.submitFlag = true;
-    // const plantype = $('#buytype').attr('aria-pressed') ? "yearly" : "monthly";
-    // this._subscriptionPlanService.assignPlan({ plan: plantype }).subscribe(
-    //   (response: any) => {
-    //     this._signupService.updateSignUpSession(3);
-    //     this.router.navigate(['/sign-up/payment-method']);
-    //   },
-    //   (error: any) => {
-    //     console.log(error);
-    //     this.submitFlag = false
-    //   }
-    // ).add(() => this.submitFlag = false);
-    // const plantype = $('#buytype').attr('aria-pressed') == 'true' ? "yearly" : "monthly";
-
-    this._signupService.updateSignUpSession(3);
-    this.router.navigate(['/sign-up/payment-method', { data: type } ]);
+  selectPlan(planId: string) {
+    this.submitFlag = true;
+    this._subscriptionPlanService.assignPlan({ planId }).subscribe(
+      (response: any) => {
+        this._signupService.updateSignUpSession(3);
+        this.router.navigate(['/thank-you']);
+      },
+      (error: any) => {
+        this.submitFlag = false;
+      }
+    ).add(() => this.submitFlag = false);
   }
 }
