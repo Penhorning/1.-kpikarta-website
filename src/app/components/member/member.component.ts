@@ -32,7 +32,6 @@ export class MemberComponent implements OnInit {
   hide: boolean = true;
   currentSendingUserId: string = "";
   sendingCredentials: boolean = false;
-  overview: any;
 
   search_text: string = "";
   totalData: number = 0;
@@ -65,8 +64,7 @@ export class MemberComponent implements OnInit {
     private _memberService: MemberService,
     private fb: FormBuilder,
     public _commonService: CommonService,
-    private router: Router,
-    private _billingService: BillingService
+    private router: Router
   ) {}
 
   // Confirm box
@@ -96,7 +94,6 @@ export class MemberComponent implements OnInit {
           this.getRoles();
           this.getDepartments();
           this.getLicenses();
-          this.getSubscribedUsersDetail();
         }
       }
     );
@@ -218,23 +215,14 @@ export class MemberComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
     if (this.inviteForm.valid) {
-      this.submitFlag = true;
       let formData = this.inviteForm.getRawValue();
       formData.creatorId = this._commonService.getUserId();
 
       // When new user create
       if (this.checkFormType === "CREATE") {
+        this.submitFlag = true;
         this._memberService.inviteMember({ data: formData }).subscribe(
           (response: any) => {
-            let licenseName = this.licenses.filter((lsc: any) => {
-              return lsc.id == this.inviteForm.value.licenseId ? lsc.name : null;
-            });
-            if(licenseName[0].name != "Spectator") {
-              this._memberService.createSubscription({userId: response.message.data.id}).subscribe(
-              (result) => {},
-              (err) => console.log(err)
-              );
-            }
             this.resetFormModal();
             this._commonService.successToaster("Member invited successfully!");
             this.submitFlag = false;
@@ -253,13 +241,14 @@ export class MemberComponent implements OnInit {
         let newLicenseName = "";
         formData.type = "invited_user";
         formData.userId = this.currentUser._id;
+        formData.oldLicense = this.defaultLicense;
         if (formData.email !== this.defaultEmail) {
           formData.defaultEmail = this.defaultEmail;
         }
 
         if (!this.showDepartment) formData.departmentId = "";
 
-        if(formData.licenseId !== this.defaultLicense) {
+        if (formData.licenseId !== this.defaultLicense) {
           flag = true;
           let licenseName = this.licenses.filter((lsc: any) => {
             return lsc.id == formData.licenseId ? lsc.name : null;
@@ -270,16 +259,9 @@ export class MemberComponent implements OnInit {
         if (flag) {
           const message = "Are you sure you want to change the License? This will affect your current subscription.";
           this.confirmBox(message, () => {
+            this.submitFlag = true;
             this._memberService.updateUser(formData, this.currentUser._id).subscribe(
               (response: any) => {
-                this._memberService.updateSubscription({userId: this.currentUser._id, licenseName: newLicenseName }).subscribe(
-                  (res) => {},
-                  (err) => {
-                    console.log(err);
-                    this._commonService.errorToaster("Something went wrong.. Please try again..!!");
-                    this.submitFlag = false;
-                  }
-                )
                 this.resetFormModal();
                 this.defaultEmail = "";
                 this._commonService.successToaster("Member updated successfully!");
@@ -297,6 +279,7 @@ export class MemberComponent implements OnInit {
             this.submitFlag = false;
           });
         } else {
+          this.submitFlag = true;
           this._memberService.updateUser(formData, this.currentUser._id).subscribe(
             (response: any) => {
               this.resetFormModal();
@@ -390,10 +373,6 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.unblockSubscription({ userId: user._id }).subscribe(
-            (result) => {},
-            (err) => console.log(err)
-          );
           this._commonService.successToaster("User activated successfully!");
         }
       );
@@ -408,10 +387,6 @@ export class MemberComponent implements OnInit {
         (response: any) => {
           this.pageIndex = 0;
           this.getAllMembers();
-          this._memberService.blockSubscription({ userId: user._id }).subscribe(
-            (result) => {},
-            (err) => console.log(err)
-          );
           this._commonService.successToaster("User deactivated successfully!");
         }
       );
@@ -431,17 +406,6 @@ export class MemberComponent implements OnInit {
       );
     },
     () => { });
-  }
-
-  getSubscribedUsersDetail() {
-    this._billingService.getSubscribedUsers(this._commonService.getCompanyId()).subscribe(
-      (response) => {
-        this.overview = response.data.data;
-      },
-      (err) => {
-        console.log(err);
-      }
-    )
   }
 }
 

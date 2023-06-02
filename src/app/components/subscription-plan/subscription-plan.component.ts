@@ -14,7 +14,7 @@ declare const $: any;
 export class SubscriptionPlanComponent implements OnInit {
 
   plans: any = {};
-  loader: any = false;
+  loader: any = true;
   submitFlag: boolean = false;
   loadingComponent: any = this._commonService.loader;
 
@@ -32,9 +32,8 @@ export class SubscriptionPlanComponent implements OnInit {
       (response: any) => {
         this.plans.month = response.plans.find((item: any) => item.item_price.period_unit === "month").item_price;
         this.plans.year = response.plans.find((item: any) => item.item_price.period_unit === "year").item_price;
-        this.loader = true;
-      },
-      (error: any) => { }
+        this.loader = false;
+      }
     );
   }
 
@@ -44,9 +43,6 @@ export class SubscriptionPlanComponent implements OnInit {
       (response: any) => {
         this._signupService.updateSignUpSession(3);
         this.router.navigate(['/thank-you']);
-      },
-      (error: any) => {
-        this.submitFlag = false;
       }
     ).add(() => this.submitFlag = false);
   }

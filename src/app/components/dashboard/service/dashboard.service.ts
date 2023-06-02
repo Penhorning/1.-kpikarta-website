@@ -9,7 +9,7 @@ export class DashboardService {
   constructor(private _httpService: HttpService) { }
 
   getSubscribedUsers(userId: string) {
-    return this._httpService.POST(`/subscriptions/get-dashboard-users`, { userId });
+    return this._httpService.POST(`/users/get-count-stats`, { userId });
   }
   getMyKPIs(data: { "userId": string }) {
     return this._httpService.POST('/karta_nodes/kpis', data);

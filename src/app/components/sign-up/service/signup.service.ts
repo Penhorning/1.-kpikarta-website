@@ -60,11 +60,4 @@ export class SignupService {
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
 
-
-/*============================== SUBSCRIPTION FUNCTIONS STARTS ==============================*/
-  // saveCard(data: any) {
-  //   return this._httpService.POST(`/subscriptions/save-card`, data);
-  // }
-/*============================== SUBSCRIPTION FUNCTIONS ENDS ==============================*/
-
 }

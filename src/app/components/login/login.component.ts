@@ -52,11 +52,12 @@ export class LoginComponent implements OnInit {
         license: this.route.snapshot.queryParamMap.get("license") || "",
         _2faEnabled: this.route.snapshot.queryParamMap.get("_2faEnabled") || "false",
         mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false",
-        paymentVerified: this.route.snapshot.queryParamMap.get("paymentVerified") || "false",
-        paymentFailed: this.route.snapshot.queryParamMap.get("paymentFailed") || "false",
-        trialCancelled: this.route.snapshot.queryParamMap.get("trialCancelled") || "false"
+        subscriptionStatus: this.route.snapshot.queryParamMap.get("subscriptionStatus") || "none",
+        // paymentVerified: this.route.snapshot.queryParamMap.get("paymentVerified") || "false",
+        // paymentFailed: this.route.snapshot.queryParamMap.get("paymentFailed") || "false",
+        // trialCancelled: this.route.snapshot.queryParamMap.get("trialCancelled") || "false"
       }
-      if (sessionData.paymentVerified === "false") {
+      if (sessionData.subscriptionStatus === "none") {
         let data = {
           token: sessionData.token,
           email: sessionData.email,
@@ -64,24 +65,26 @@ export class LoginComponent implements OnInit {
         }
         this._signupService.setSignUpSession(data);
         this.router.navigate(['/subscription-plan']);
-      } else if (sessionData.trialCancelled === "true") {
-        let sessionData2 = {
-          token: sessionData.token,
-          email: sessionData.email,
-          stage: 1
-        }
-        this._signupService.setSignUpSession(sessionData2);
-        this._signupService.setLoginSession(sessionData);
-        this.router.navigate(['/billing-trial']);
       }
+      // else if (sessionData.trialCancelled === "true") {
+      //   let sessionData2 = {
+      //     token: sessionData.token,
+      //     email: sessionData.email,
+      //     stage: 1
+      //   }
+      //   this._signupService.setSignUpSession(sessionData2);
+      //   this._signupService.setLoginSession(sessionData);
+      //   this.router.navigate(['/billing-trial']);
+      // }
       else {
         if (sessionData.mobileVerified == "true" && sessionData._2faEnabled == "true") {
           this._signupService.setSignUpSession(sessionData);
           this.router.navigate(['/two-step-verification']);
         } else {
           this._commonService.setSession(sessionData);
-          if (sessionData.paymentFailed === "true" && (sessionData.role === "company_admin" || sessionData.role === "billing_staff")) {
-            this.router.navigate(['/billing']);
+          if (sessionData.subscriptionStatus === "cancelled" && (sessionData.role === "company_admin" || sessionData.role === "billing_staff")) {
+            // this.router.navigate(['/billing']);
+            // navigate to reactive again page.
           } else this.router.navigate(['/dashboard']);
         }
       }
@@ -102,7 +105,7 @@ export class LoginComponent implements OnInit {
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
           this._commonService.deleteRememberMeSession();
-          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, paymentVerified, trialCancelled, paymentFailed } = response.user;
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, subscriptionStatus } = response.user;
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -112,7 +115,7 @@ export class LoginComponent implements OnInit {
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
           }
-          else if (!paymentVerified) {
+          else if (subscriptionStatus === "none") {
             let sessionData = {
               token: response.id,
               email,
@@ -121,30 +124,30 @@ export class LoginComponent implements OnInit {
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/subscription-plan']);
           }
-          else if (trialCancelled) {
-            let sessionDataUser = {
-              token: response.id,
-              userId: id,
-              name: fullName,
-              email,
-              profilePic,
-              companyLogo: response.user.company.logo,
-              role: response.user.role.name,
-              license: response.user.license.name,
-              companyId: response.user.companyId
-            };
-            let sessionData = {
-              token: response.id,
-              email,
-              stage: 1
-            }
-            if (this.loginForm.value.rememberMe) {
-              this._commonService.setRememberMeSession({ email: this.loginForm.value.email });
-            }
-            this._signupService.setSignUpSession(sessionData);
-            this._signupService.setLoginSession(sessionDataUser);
-            this.router.navigate(['/billing-trial']);
-          }
+          // else if (trialCancelled) {
+          //   let sessionDataUser = {
+          //     token: response.id,
+          //     userId: id,
+          //     name: fullName,
+          //     email,
+          //     profilePic,
+          //     companyLogo: response.user.company.logo,
+          //     role: response.user.role.name,
+          //     license: response.user.license.name,
+          //     companyId: response.user.companyId
+          //   };
+          //   let sessionData = {
+          //     token: response.id,
+          //     email,
+          //     stage: 1
+          //   }
+          //   if (this.loginForm.value.rememberMe) {
+          //     this._commonService.setRememberMeSession({ email: this.loginForm.value.email });
+          //   }
+          //   this._signupService.setSignUpSession(sessionData);
+          //   this._signupService.setLoginSession(sessionDataUser);
+          //   this.router.navigate(['/billing-trial']);
+          // }
           else {
             let sessionData = {
               token: response.id,
@@ -165,8 +168,9 @@ export class LoginComponent implements OnInit {
               this.router.navigate(['/two-step-verification']);
             } else {
               this._commonService.setSession(sessionData);
-              if (paymentFailed && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
-                this.router.navigate(['/billing']);
+              if (subscriptionStatus === "cancelled" && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
+                // this.router.navigate(['/billing']);
+                // navigate to reactive again page.
               } else this.router.navigate(['/dashboard']);
             }
           }

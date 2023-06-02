@@ -111,8 +111,8 @@ export class CommonService {
   getUserLicense() {
     return this.getSession().license;
   }
-  getUserPaymentStatus() {
-    return this.getSession().py_failed;
+  getUserSubscriptionStatus() {
+    return this.getSession().subs_status;
   }
   getUserMasterStatus() {
     return this.getSession().is_master;

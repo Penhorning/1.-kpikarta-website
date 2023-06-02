@@ -100,7 +100,7 @@ export class DashboardComponent implements OnInit {
           "assets/img/total-champion.svg",
           "assets/img/total-spectators.svg",
         ];
-        let mappedData = response.data.userDetails.map((user: any, index: number) => {
+        let mappedData = response.user.map((user: any, index: number) => {
           return {
             ...user,
             icon: iconMapping[index]
