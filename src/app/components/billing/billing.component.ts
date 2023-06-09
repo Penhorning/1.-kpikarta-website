@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '../sign-up/service/signup.service';
 import { BillingService } from './services/billing.service';
+import { environment } from '@environments/environment';
 
 declare const $: any;
 
@@ -14,16 +15,10 @@ declare const $: any;
 })
 export class BillingComponent implements OnInit {
 
-  user: any;
   userId: string = this._commonService.getUserId();
-  companyId: string = this._commonService.getCompanyId();
   noDataAvailable: any = this._commonService.noDataAvailable;
-  cards: any = [];
+  chargebeePortalUrl: string = `${environment.API_URL}/api/subscriptions/get-portal`;
   overview: any;
-  invoices: any = [];
-  submitted: boolean = false;
-  submitFlag: boolean = false;
-  cardForm: FormGroup | any;
   loadingOverview: boolean = false;
   loader: any = this._commonService.loader;
   disableCancelBtn: boolean = false;
@@ -47,67 +42,38 @@ export class BillingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.getCardDetails();
     this.getSubscribedUsersDetail();
-    this.getInvoicesDetails();
   }
 
-  get form() { return this.cardForm.controls; }
 
-  getCardDetails() {
-    this._billingService.getCards(this.companyId).subscribe(
-      (response) => {
-        if (response.data) {
-          this.cards = [response.data];
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-
+  // Get all subscribed users detail
   getSubscribedUsersDetail() {
     this.loadingOverview = true;
-    this._billingService.getSubscribedUsers(this.companyId).subscribe(
-      (response) => {
-        this.overview = response.data.data;
+    this._billingService.getSubscribedUsers().subscribe(
+      (response: any) => {
+        this.overview = response.users;
         this.loadingOverview = false;
       },
-      (err) => {
-        console.log(err);
+      (error: any) => {
+        console.log(error);
         this.loadingOverview = false;
       }
     )
   }
 
-  getInvoicesDetails() {
-    this._billingService.getInvoices(this.companyId).subscribe(
-      (response) => {
-        if (response.data.data && response.data.data.length > 0) {
-          this.invoices = response.data.data;
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    )
-  }
-
-  cancelTrial() {
-    const message = "Are you sure you want to cancel your trial period?";
+  // Cancel subscription
+  cancelSubscription() {
+    const message = "Are you sure you want to cancel your subscription?";
       this.confirmBox(message, () => {
         this.disableCancelBtn = true;
-        this._billingService.cancelTrial(this._commonService.getUserId()).subscribe(response => {
-          if(response) {
+        this._billingService.cancelSubscription(this._commonService.getUserId()).subscribe(
+          (response: any) => {
             this._commonService.logout().subscribe(
               (response: any) => {
-                this._commonService.successToaster("Trial cancelled successfully..!!");
+                this._commonService.successToaster("Subscription cancelled successfully!");
               },
               (error: any) => { }
             ).add(() => this._commonService.deleteSession() );
-          }
         })
       },
       () => { });

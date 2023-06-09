@@ -12,8 +12,12 @@ export class BillingService {
     return this._httpService.POST(`/subscriptions/get-cards`, { companyId });
   }
 
-  getSubscribedUsers(companyId: string) {
-    return this._httpService.POST(`/subscriptions/get-subscription-users`, { companyId });
+  getSubscribedUsers() {
+    return this._httpService.POST('/subscriptions/get-subscribed-users');
+  }
+
+  cancelSubscription(userId: string) {
+    return this._httpService.POST(`/subscriptions/cancel`, { userId });
   }
 
   getInvoices(companyId?: string) {

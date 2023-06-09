@@ -3,11 +3,6 @@
 <div class="main-content">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-12">
-          <div class="alert alert-danger font-weight-bold" *ngIf="_commonService.getUserSubscriptionStatus() === 'cancelled'">
-            Please check your card, your last payment failed!
-          </div>
-        </div>
           <div class="col-lg-12">
               <h4 class="mt-2 mb-4">Billing</h4>
           </div>
@@ -15,134 +10,42 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="KPI-billing-tab"> 
-            <!-- KPI Tabs -->
-            <ul class="nav nav-tabs" role="tablist">
-              <li class="nav-item ">
-                <a class="nav-link nav-link-cus pl-0 active" data-toggle="tab" href="#tabs-1" role="tab">Overview</a>
-              </li>
-              <li class="nav-item ">
-                <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-2" role="tab">Transactions</a>
-              </li>
-              <li class="nav-item ">
-                <a class="nav-link nav-link-cus pl-0" data-toggle="tab" href="#tabs-3" role="tab">
-                  Card Details <span class="text-danger font-weight-bold" *ngIf="_commonService.getUserSubscriptionStatus() === 'cancelled'" title="Please check your card, your last payment failed!">!</span>
-                </a>
-              </li>
-            </ul>
-            <!-- Tab panes -->
-            <div class="tab-content">
-              <div class="tab-pane p-3 active" id="tabs-1" role="tabpanel">
-                  <div class="row">
-                      <div class="col-lg-12">
-                          <div *ngIf="overview" class="overview mt-4">
-                              <div class="heading">
-                                  <h5 class="m-0">Member Information</h5>
-                                  <div>
-                                    <!-- <button *ngIf="overview.interval" type="button" [class]="overview.interval && overview.interval == 'Trial' ? 'btn overview-btn mr-2' : 'btn overview-btn'">{{ overview ? (overview.interval && overview.interval == 'Trial' ? ((overview.interval | titlecase) + " ends on: " + overview.trialEnds) : (overview.interval | titlecase)) : "N/A" }}</button> -->
-                                    <button *ngIf="overview.interval" type="button" [class]="overview.interval && overview.interval == 'Trial' ? 'btn cursor_default overview-btn mr-2' : 'btn cursor_default overview-btn'">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
-                                    <button *ngIf="overview.interval && overview.interval == 'Trial'" (click)="cancelTrial()" [disabled]="disableCancelBtn" type="button" class="btn cancel-btn btn-danger">Cancel Trial</button>
-                                  </div>
-                              </div>
-                              <div *ngIf="overview.interval && overview.interval == 'Trial'" class="d-flex justify-content-between">
-                                <p class="mt-2 mb-0 trial-font">Trial started at: {{overview.trialStarts}}</p>
-                                <p class="mt-2 mb-0 trial-font">Trial ends on: {{overview.trialEnds}}</p>
-                              </div>
-                              <div class="creators" *ngFor="let user of overview.userDetails">
-                                  <div class="creaters-header">
-                                      <h6>{{ user.user ? (user.user | titlecase) : "N/A" }}</h6>
-                                      <p>{{ user.quantity ? (user.quantity) : "0" }} {{ user.quantity == 1 ? 'member' : 'members'}}</p>
-                                  </div>
-                                  <div *ngIf="overview.interval" class="creaters-info text-right">
-                                      <h6>{{user.total_amount == "Free" ? null : "$"}}{{ (user.total_amount || user.total_amount == 0) ? (user.total_amount) : "0.00" }}</h6>
-                                      <p>${{ (user.unit_amount || user.unit_amount == 0) ? (user.unit_amount) : "0.00" }} per Member</p>
-                                  </div>
-                              </div>
+            <div class="row">
+              <div class="col-lg-12">
+                  <div *ngIf="overview" class="overview mt-4">
+                      <div class="heading">
+                          <h5 class="m-0">Member Information</h5>
+                          <div>
+                            <!-- <button *ngIf="overview.interval" type="button" [class]="overview.interval && overview.interval == 'Trial' ? 'btn overview-btn mr-2' : 'btn overview-btn'">{{ overview ? (overview.interval && overview.interval == 'Trial' ? ((overview.interval | titlecase) + " ends on: " + overview.trialEnds) : (overview.interval | titlecase)) : "N/A" }}</button> -->
+                            <a class="btn btn-dark cancel-btn mr-2" href="{{chargebeePortalUrl}}">Manage Payment</a>
+                            <button class="btn btn-danger cancel-btn mr-2" (click)="cancelSubscription()" [disabled]="disableCancelBtn">Cancel Subscription</button>
+                            <button *ngIf="overview.interval" type="button" [class]="overview.interval && overview.interval == 'Trial' ? 'btn cursor_default overview-btn mr-2' : 'btn cursor_default overview-btn'">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
+                            <!-- <button *ngIf="overview.interval && overview.interval == 'Trial'" (click)="cancelTrial()" [disabled]="disableCancelBtn" type="button" class="btn cancel-btn btn-danger">Cancel Trial</button> -->
                           </div>
-                          <div *ngIf="!overview && !loadingOverview" class="py-5">
-                            <div [innerHtml]="noDataAvailable"></div>
+                      </div>
+                      <!-- <div *ngIf="overview.interval && overview.interval == 'Trial'" class="d-flex justify-content-between">
+                        <p class="mt-2 mb-0 trial-font">Trial started at: {{overview.trialStarts}}</p>
+                        <p class="mt-2 mb-0 trial-font">Trial ends on: {{overview.trialEnds}}</p>
+                      </div> -->
+                      <div class="creators" *ngFor="let user of overview.userDetails">
+                          <div class="creaters-header">
+                              <h6>{{ user.license ? (user.license | titlecase) : "N/A" }}</h6>
+                              <p>{{ user.count ? (user.count) : "0" }} {{ user.count == 1 ? 'member' : 'members'}}</p>
                           </div>
-                          <ng-container *ngIf="loadingOverview">
-                            <div [innerHtml]="loader" class="mt-4"></div>
-                          </ng-container>
+                          <div *ngIf="overview.interval" class="creaters-info text-right">
+                              <h6>{{user.amount == "Free" ? null : "$"}}{{ (user.amount || user.amount == 0) ? (user.amount) : "0.00" }}</h6>
+                              <p>${{ (user.unit_price || user.unit_price == 0) ? (user.unit_price) : "0.00" }} per Member</p>
+                          </div>
                       </div>
                   </div>
-              </div>
-              <!--overview end-->
-              <div class="tab-pane tab-content-cus mt-3" *ngIf="invoices" id="tabs-2" role="tabpanel">
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="KPI-custom-table">
-                      <table class="table" *ngIf="invoices && invoices.length > 0">
-                        <thead class="thead">
-                          <tr>
-                            <th scope="col">Plan Name</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Invoice Date</th>
-                            <th scope="col">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody *ngFor="let invoice of invoices"> 
-                          <tr>
-                            <!-- <td>{{invoice.period_start * 1000 | date}} - {{invoice.period_end * 1000 | date}}</td> -->
-                            <td>{{invoice.lines.data[0].price.nickname}}</td>
-                            <td>${{invoice.amount_paid / 100}}</td>
-                            <td class="paid">{{invoice.status | titlecase}}</td>
-                            <td>{{invoice.created * 1000 | date}}</td>
-                            <td><a class="text-primary link-light" [href]="invoice.receipt_url" target="_blank">Download</a></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <div *ngIf="!invoices || invoices.length == 0" class="py-5">
-                        <div [innerHtml]="noDataAvailable"></div>
-                      </div>
-                    </div>
+                  <div *ngIf="!overview && !loadingOverview" class="py-5">
+                    <div [innerHtml]="noDataAvailable"></div>
                   </div>
-                </div>
+                  <ng-container *ngIf="loadingOverview">
+                    <div [innerHtml]="loader" class="mt-4"></div>
+                  </ng-container>
               </div>
-              <!--Transaction tab end-->
-              <div class="tab-pane mt-4" id="tabs-3" role="tabpanel">
-                  <div class="row pt-3">
-                      <div class="col-lg-12">
-                        <div class="row">
-                          <div class="col-lg-3 p-0" *ngFor="let card of cards">
-                            <div class="card-bg p-4 d-flex flex-column justify-content-between">
-                              <div>
-                                <h4 class="card-label">{{card.brand}}</h4>
-                                <h5 class="text-white card-num-size">**** **** **** {{card.last4}}</h5>
-                              </div>
-                              <div class="d-flex justify-content-end">
-                                <div class="d-flex flex-column justify-content-end">
-                                  <p class="text-white p-0 m-0">Expiry date</p>
-                                  <p class="text-white p-0 m-0">{{card.exp_month}}/{{card.exp_year}}</p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-lg-3 p-0">
-                            <div class="add-card-bg p-4 d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#cardModal">
-                              <h4 class="card-label change-card-label">+ Add Card</h4>
-                            </div>
-                          </div>
-                          <!-- <div class="col-lg-3 p-0">
-                            <img class="img-responsive" src="assets/img/Card.png" alt="card">
-                            <div class="overlay">
-                                <div class="icon-container">
-                                    <a href="javascript:void(0);" class="icon" title="User Profile">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                    <a href="javascript:void(0);" class="icon" title="User Profile">
-                                    <i class="fa fa-trash"></i>
-                                    </a>
-                                </div>
-                            </div>
-                          </div> -->
-                        </div>
-                      </div>
-                  </div>
-              </div>
-               <!--card details tab end-->
-            </div>
+          </div>
           </div>
         </div>
       </div>  

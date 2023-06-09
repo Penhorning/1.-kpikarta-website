@@ -6,6 +6,8 @@ import { environment } from '@environments/environment';
 import { CommonService } from '@app/shared/_services/common.service';
 import { SignupService } from '@app/components/sign-up/service/signup.service';
 
+declare const $: any;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -16,6 +18,8 @@ export class LoginComponent implements OnInit {
   facebookUrl: string = `${environment.API_URL}/auth/facebook`;
   googleUrl: string = `${environment.API_URL}/auth/google`;
   linkedInUrl: string = `${environment.API_URL}/auth/linkedin`;
+
+  chargebeePortalUrl: string = `${environment.API_URL}/api/subscriptions/get-portal`;
 
   submitted: boolean = false;
   submitFlag: boolean = false; 
@@ -36,6 +40,22 @@ export class LoginComponent implements OnInit {
   ) {
     let email = this._commonService.getRememberMeSession().email;
     if (email) this.loginForm.patchValue({ email, rememberMe: true });
+  }
+
+  // Confirm box
+  confirmBox(message: string, yesCallback: any, noCallback: any) {
+    $("#confirm_message").text(message);
+    $("#confirmModal").modal('show');
+    $('#btnYes').unbind('click');
+    $('#btnYes').click(function() {
+      $("#confirmModal").modal('hide');
+      yesCallback();
+    });
+    $('#btnNo').unbind('click');
+    $('#btnNo').click(function() {
+      $("#confirmModal").modal('hide');
+      noCallback();
+    });
   }
 
   ngOnInit(): void {
@@ -169,8 +189,9 @@ export class LoginComponent implements OnInit {
             } else {
               this._commonService.setSession(sessionData);
               if (subscriptionStatus === "cancelled" && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
-                // this.router.navigate(['/billing']);
-                // navigate to reactive again page.
+                const message = `Hi ${fullName}, Your subscription has been cancelled. You need to reactivate this in order to access your account.`;
+                this.confirmBox(message, () => {},
+                () => { });
               } else this.router.navigate(['/dashboard']);
             }
           }
