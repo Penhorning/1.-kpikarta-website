@@ -27,7 +27,6 @@ const routes: Routes = [
   { path: 'my-kpi', canActivateChild: [AuthGuard], loadChildren: () => import('./components/my-kpi/my-kpi.module').then(m => m.MyKpiModule) },
   { path: 'notifications', canActivateChild: [AuthGuard], loadChildren: () => import('./components/notification/notification.module').then(m => m.NotificationModule) },
   { path: 'billing', canActivateChild: [AuthGuard], loadChildren: () => import('./components/billing/billing.module').then(m => m.BillingModule) },
-  { path: 'billing-trial', canActivateChild: [LoginGuard], loadChildren: () => import('./components/billing-trial/billing-trial.module').then(m => m.BillingTrialModule) },
   { path: 'inventory', canActivateChild: [AuthGuard], loadChildren: () => import('./components/catalog/catalog.module').then(m => m.CatalogModule) },
   // public routes
   { path: 'marketplace', loadChildren: () => import('./components/marketplace/marketplace.module').then(m => m.MarketplaceModule) },
