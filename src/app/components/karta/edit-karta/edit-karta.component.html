@@ -623,9 +623,9 @@
                                <div class="col-lg-5 pr-0">
                                    <div class="target_select selct-option-side-r">
                                        <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
-                                           <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
-                                           <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
-                                           <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
+                                           <option value="monthly" [disabled]="targetOptions[0].disabled">Monthly</option>
+                                           <option value="quarterly" [disabled]="targetOptions[1].disabled">Quarterly</option>
+                                           <option value="yearly" [disabled]="targetOptions[2].disabled">Yearly</option>
                                        </select>
                                    </div>
                                </div>
