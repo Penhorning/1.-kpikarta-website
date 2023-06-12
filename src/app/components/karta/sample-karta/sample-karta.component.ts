@@ -77,7 +77,6 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
     nodeId: ''
   };
   targetOptions: any = [
-    { name: "Weekly", value: "weekly", disabled: false },
     { name: "Monthly", value: "monthly", disabled: false },
     { name: "Quarterly", value: "quarterly", disabled: false },
     { name: "Yearly", value: "yearly", disabled: false }
@@ -281,7 +280,6 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
       // Set target
       this.target = param.target;
       this.targetOptions = [
-        { name: "Weekly", value: "weekly", disabled: false },
         { name: "Monthly", value: "monthly", disabled: false },
         { name: "Quarterly", value: "quarterly", disabled: false },
         { name: "Yearly", value: "yearly", disabled: false }

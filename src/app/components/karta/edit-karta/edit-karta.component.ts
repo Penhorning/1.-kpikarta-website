@@ -137,7 +137,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   };
   previousTargetFrequency: string = "";
   targetOptions: any = [
-    { name: "Weekly", value: "weekly", disabled: false },
     { name: "Monthly", value: "monthly", disabled: false },
     { name: "Quarterly", value: "quarterly", disabled: false },
     { name: "Yearly", value: "yearly", disabled: false }
@@ -245,22 +244,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.viewKartaForm.patchValue({ duration: "" });
     if (e.target.value === "month") {
       this.viewKartaDurations = this._commonService.monthsName;
-    } else if (e.target.value === "week") {
-      // Get number of weeks in a month
-      const startWeek = moment().startOf('month').isoWeek();
-      const endWeek = moment().endOf('month').isoWeek();
-      const no_of_weeks = endWeek - startWeek + 1;
-      this.viewKartaDurations = [
-        { name: "1st Week", value: 1 },
-        { name: "2nd Week", value: 2 },
-        { name: "3rd Week", value: 3 },
-        { name: "4th Week", value: 4 }
-      ]
-      if (no_of_weeks > 4) {
-        for (let i = 5; i <= no_of_weeks; i++) this.viewKartaDurations.push({ name: `${i}th Week`, value: i });
-      }
-    }
-    if (e.target.value === "quarter") {
+    } else if (e.target.value === "quarter") {
       this.viewKartaDurations = [
         { name: "1st Quarter", value: 1 },
         { name: "2nd Quarter", value: 2 },
@@ -298,8 +282,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               // Set view karta text
               if (this.viewKartaForm.value.type === "month" || this.viewKartaForm.value.type === "quarter") {
                 this.viewKartaText = `${this.viewKartaDurations.find((item: any) => item.value === this.viewKartaForm.value.duration).name} ${moment().year()}`;
-              } else if (this.viewKartaForm.value.type === "week") {
-                this.viewKartaText = `${this.viewKartaDurations.find((item: any) => item.value === this.viewKartaForm.value.duration).name} ${moment().format('MMMM')} ${moment().year()}`;
               }
               jqueryFunctions.hideModal('viewKartaModal');
               jqueryFunctions.removeKarta();
@@ -891,7 +873,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       // Set target
       this.target = param.target;
       this.targetOptions = [
-        { name: "Weekly", value: "weekly", disabled: false },
         { name: "Monthly", value: "monthly", disabled: false },
         { name: "Quarterly", value: "quarterly", disabled: false },
         { name: "Yearly", value: "yearly", disabled: false }
@@ -917,9 +898,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   setDueDate(start_date: any) {
     let due_date: any;
     let node = this.currentNode;
-    if (node.target[0].frequency === "weekly") {
-      due_date = moment(start_date).add(1, 'weeks');
-    } else if (node.target[0].frequency === "monthly") {
+    if (node.target[0].frequency === "monthly") {
       due_date = moment(start_date).add(1, 'months');
     } else if (node.target[0].frequency === "quarterly") {
       due_date = moment(start_date).add(3, 'months');

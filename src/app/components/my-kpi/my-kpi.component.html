@@ -272,7 +272,7 @@
                               {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
-                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
+                          <td class="max_width_200 short_text" [id]="kpi?._id">{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0]?.value }}/{{ kpi?.target[0].frequency.slice(0, -2) }}</span>
                           </td>
@@ -507,7 +507,7 @@
                               {{ kpi?.karta?.user?.fullName }}
                             </p>
                           </td>
-                          <td class="max_width_200 short_text">{{ kpi?.name }}</td>
+                          <td class="max_width_200 short_text" [id]="kpi?._id">{{ kpi?.name }}</td>
                           <td>
                             <span>{{ kpi?.target[0]?.value }}/{{ kpi?.target[0].frequency.slice(0, -2) }}</span>
                           </td>

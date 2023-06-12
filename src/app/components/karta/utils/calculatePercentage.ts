@@ -124,15 +124,8 @@ export class CalculatePercentage {
         }
         const findAppropirateTarget = (targetType: string) => {
           switch (targetType) {
-            case "weekly":
-              if (findTarget('weekly')) targetValue = findTarget('weekly').value;
-              else if (findTarget('monthly')) targetValue = findTarget('monthly').value / 4;
-              else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 12;
-              else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 52;
-              break;
             case "quarterly":
               if (findTarget('quarterly')) targetValue = findTarget('quarterly').value;
-              else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 12;
               else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 3;
               else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 4;
               break;
@@ -140,13 +133,11 @@ export class CalculatePercentage {
               if (findTarget('monthly')) targetValue = findTarget('monthly').value;
               else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
               else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
-              else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
               break;
             case "yearly":
               if (findTarget('yearly')) targetValue = findTarget('yearly').value;
               else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
               else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
-              else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
               break;
           }
           return targetValue;
@@ -161,7 +152,6 @@ export class CalculatePercentage {
             if (findTarget('monthly')) targetValue = findTarget('monthly').value;
             else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
             else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
-            else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
           }
         }
         // Set target value according to month to date
@@ -172,7 +162,6 @@ export class CalculatePercentage {
             if (findTarget('monthly')) targetValue = findTarget('monthly').value;
             else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
             else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
-            else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 4;
             // Set target value
             targetValue = calculateTargetValue(targetValue, 'month', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate)!; 
           }
@@ -185,7 +174,6 @@ export class CalculatePercentage {
             if (findTarget('yearly')) targetValue = findTarget('yearly').value;
             else if (findTarget('monthly')) targetValue = findTarget('monthly').value * 12;
             else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value * 4;
-            else if (findTarget('weekly')) targetValue = findTarget('weekly').value * 52;
             // Set target value
             targetValue = calculateTargetValue(targetValue, 'year', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate)!;
           }

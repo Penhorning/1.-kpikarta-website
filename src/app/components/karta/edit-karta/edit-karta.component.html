@@ -199,16 +199,6 @@
                                 <div class="fillter-inner-white-box">
                                     <div class="row pb-3">
                                         <div class="col-6">
-                                            <h6 class="pl-2 m-0 pt-1">Weekly</h6>
-                                        </div>
-                                        <div class="col-6 text-right">
-                                            <div class="form-check custom-box mr-2">
-                                                <input type="radio" class="form-check-input" id="targetFilter1" name="targetFilter" value="weekly" (change)="montiorBy($event)" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row pb-3">
-                                        <div class="col-6">
                                             <h6 class="pl-2 m-0 pt-1">Monthly</h6>
                                         </div>
                                         <div class="col-6 text-right">
@@ -633,7 +623,6 @@
                                <div class="col-lg-5 pr-0">
                                    <div class="target_select selct-option-side-r">
                                        <select class="form-control" [value]="t.frequency" (focus)="previousTarget($event)" (change)="setTarget('frequency', $event, i)">
-                                           <option value="weekly" [disabled]="targetOptions[0].disabled">Weekly</option>
                                            <option value="monthly" [disabled]="targetOptions[1].disabled">Monthly</option>
                                            <option value="quarterly" [disabled]="targetOptions[2].disabled">Quarterly</option>
                                            <option value="yearly" [disabled]="targetOptions[3].disabled">Yearly</option>
@@ -833,7 +822,6 @@
                                <label>Period</label>
                                <select class="form-control" [(ngModel)]="currentNode.alert_frequency" (change)="changeAlertFrequency($event)">
                                    <option value="" selected>Select period</option>
-                                   <option value="weekly">Weekly</option>
                                    <option value="monthly">Monthly</option>
                                    <option value="quarterly">Quarterly</option>
                                    <option value="yearly">Yearly</option>
@@ -1017,7 +1005,6 @@
                                            >
                                                <option value="" selected>Select</option>
                                                <option value="month">Month</option>
-                                               <option value="week">Week</option>
                                                <option value="quarter">Quarter</option>
                                            </select>
                                            <div *ngIf="(viewKartaSubmitted || viewKarta.type.touched) && viewKarta.type.errors" class="invalid-feedback">

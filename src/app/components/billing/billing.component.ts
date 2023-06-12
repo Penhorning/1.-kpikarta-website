@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
-import { SignupService } from '../sign-up/service/signup.service';
 import { BillingService } from './services/billing.service';
 import { environment } from '@environments/environment';
 
@@ -17,13 +14,13 @@ export class BillingComponent implements OnInit {
 
   userId: string = this._commonService.getUserId();
   noDataAvailable: any = this._commonService.noDataAvailable;
-  chargebeePortalUrl: string = `${environment.API_URL}/api/subscriptions/get-portal`;
+  chargebeePortalUrl: string = `${environment.API_URL}/api/subscriptions/get-portal?access_token=${this._commonService.getSession().token}`;
   overview: any;
   loadingOverview: boolean = false;
   loader: any = this._commonService.loader;
   disableCancelBtn: boolean = false;
 
-  constructor(public _commonService: CommonService, private router: Router, private _billingService: BillingService, private fb: FormBuilder, private _signupService: SignupService,) { }
+  constructor(public _commonService: CommonService, private _billingService: BillingService) { }
 
   // Confirm box
   confirmBox(message: string, yesCallback: any, noCallback: any) {
