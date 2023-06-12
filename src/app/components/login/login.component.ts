@@ -101,11 +101,16 @@ export class LoginComponent implements OnInit {
           this._signupService.setSignUpSession(sessionData);
           this.router.navigate(['/two-step-verification']);
         } else {
-          this._commonService.setSession(sessionData);
+          this._signupService.setSignUpSession(sessionData);
           if (sessionData.subscriptionStatus === "cancelled" && (sessionData.role === "company_admin" || sessionData.role === "billing_staff")) {
-            // this.router.navigate(['/billing']);
-            // navigate to reactive again page.
-          } else this.router.navigate(['/dashboard']);
+            this.chargebeePortalUrl += `?access_token=${this._signupService.getSignUpSession().token}`;
+            const message = `Hi ${sessionData.name}, Your subscription has been cancelled. You need to reactivate this in order to access your account.`;
+            this.confirmBox(message, () => {},
+            () => { });
+          } else {
+            this._commonService.setSession(sessionData);
+            this.router.navigate(['/dashboard']);
+          }
         }
       }
     }
@@ -187,12 +192,16 @@ export class LoginComponent implements OnInit {
               this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/two-step-verification']);
             } else {
-              this._commonService.setSession(sessionData);
+              this._signupService.setSignUpSession(sessionData);
               if (subscriptionStatus === "cancelled" && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
+                this.chargebeePortalUrl += `?access_token=${this._signupService.getSignUpSession().token}`;
                 const message = `Hi ${fullName}, Your subscription has been cancelled. You need to reactivate this in order to access your account.`;
                 this.confirmBox(message, () => {},
                 () => { });
-              } else this.router.navigate(['/dashboard']);
+              } else {
+                this._commonService.setSession(sessionData);
+                this.router.navigate(['/dashboard']);
+              }
             }
           }
         },

@@ -1028,9 +1028,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Change start date
   changeStartDate(el: any) {
-    this.setDueDate(el.target.value);
-    let node = this.currentNode;
-    this.updateNode('start_date', el.target.value, 'node_updated', node);
+    let dateNumber = new Date(el.target.value).getDate();
+    if (dateNumber !== 1) {
+      this._commonService.errorToaster("Please select 1st date. You cannot select other dates!");
+    }
+    else {
+      this.setDueDate(el.target.value);
+      let node = this.currentNode;
+      this.updateNode('start_date', el.target.value, 'node_updated', node);
+    }
   }
   // Change days to calculate
   changeDaysToCalculate(el: any) {
