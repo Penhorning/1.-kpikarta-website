@@ -181,11 +181,6 @@ export class MyKpiComponent implements OnInit {
         this.clickTab2();
       }, 100);
     }
-
-    this._myKpiService.test({ userId: this._commonService.getUserId()}).subscribe(
-      (response: any) => {console.log(response);},
-      (error: any) => {console.log(error);}
-    );
   }
 
   // Tab 2 clicked
