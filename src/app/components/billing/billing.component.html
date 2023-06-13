@@ -19,14 +19,14 @@
                             <!-- <button *ngIf="overview.interval" type="button" [class]="overview.interval && overview.interval == 'Trial' ? 'btn overview-btn mr-2' : 'btn overview-btn'">{{ overview ? (overview.interval && overview.interval == 'Trial' ? ((overview.interval | titlecase) + " ends on: " + overview.trialEnds) : (overview.interval | titlecase)) : "N/A" }}</button> -->
                             <a class="btn btn-dark cancel-btn mr-2" href="{{chargebeePortalUrl}}">Manage Payment</a>
                             <button class="btn btn-danger cancel-btn mr-2" (click)="cancelSubscription()" [disabled]="disableCancelBtn">Cancel Subscription</button>
-                            <button *ngIf="overview.interval" type="button" [class]="overview.interval && overview.interval == 'Trial' ? 'btn cursor_default overview-btn mr-2' : 'btn cursor_default overview-btn'">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
+                            <button *ngIf="overview.interval" type="button" class="btn cursor_default overview-btn">{{ overview ? (overview.interval | titlecase) : "N/A" }}</button>
                             <!-- <button *ngIf="overview.interval && overview.interval == 'Trial'" (click)="cancelTrial()" [disabled]="disableCancelBtn" type="button" class="btn cancel-btn btn-danger">Cancel Trial</button> -->
                           </div>
                       </div>
-                      <!-- <div *ngIf="overview.interval && overview.interval == 'Trial'" class="d-flex justify-content-between">
-                        <p class="mt-2 mb-0 trial-font">Trial started at: {{overview.trialStarts}}</p>
-                        <p class="mt-2 mb-0 trial-font">Trial ends on: {{overview.trialEnds}}</p>
-                      </div> -->
+                      <div *ngIf="overview?.status == 'in_trial'" class="d-flex justify-content-between">
+                        <p class="mt-2 mb-0 trial-font">Trial started at: <span>{{ overview?.trialStart | date: 'mediumDate'}}</span></p>
+                        <p class="mt-2 mb-0 trial-font">Trial ends on: <span>{{ overview?.trialEnd | date: 'mediumDate'}}</span></p>
+                      </div>
                       <div class="creators" *ngFor="let user of overview.userDetails">
                           <div class="creaters-header">
                               <h6>{{ user.license ? (user.license | titlecase) : "N/A" }}</h6>

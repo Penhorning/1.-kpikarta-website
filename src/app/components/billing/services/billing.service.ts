@@ -12,8 +12,8 @@ export class BillingService {
     return this._httpService.POST(`/subscriptions/get-cards`, { companyId });
   }
 
-  getSubscribedUsers() {
-    return this._httpService.POST('/subscriptions/get-subscribed-users');
+  getSubscribedUsers(data: any) {
+    return this._httpService.POST('/subscriptions/get-subscribed-users', data);
   }
 
   cancelSubscription(userId: string) {

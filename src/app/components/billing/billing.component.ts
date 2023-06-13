@@ -46,7 +46,7 @@ export class BillingComponent implements OnInit {
   // Get all subscribed users detail
   getSubscribedUsersDetail() {
     this.loadingOverview = true;
-    this._billingService.getSubscribedUsers().subscribe(
+    this._billingService.getSubscribedUsers({companyId: this._commonService.getCompanyId()}).subscribe(
       (response: any) => {
         this.overview = response.users;
         this.loadingOverview = false;

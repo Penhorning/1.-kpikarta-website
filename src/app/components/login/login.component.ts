@@ -60,6 +60,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.route.snapshot.queryParamMap.get("access_token") && this.route.snapshot.queryParamMap.get("userId")) {
+      // Get user data from query params
       let sessionData = {
         token: this.route.snapshot.queryParamMap.get("access_token") || "",
         userId: this.route.snapshot.queryParamMap.get("userId") || "",
@@ -72,11 +73,9 @@ export class LoginComponent implements OnInit {
         license: this.route.snapshot.queryParamMap.get("license") || "",
         _2faEnabled: this.route.snapshot.queryParamMap.get("_2faEnabled") || "false",
         mobileVerified: this.route.snapshot.queryParamMap.get("mobileVerified") || "false",
-        subscriptionStatus: this.route.snapshot.queryParamMap.get("subscriptionStatus") || "none",
-        // paymentVerified: this.route.snapshot.queryParamMap.get("paymentVerified") || "false",
-        // paymentFailed: this.route.snapshot.queryParamMap.get("paymentFailed") || "false",
-        // trialCancelled: this.route.snapshot.queryParamMap.get("trialCancelled") || "false"
+        subscriptionStatus: this.route.snapshot.queryParamMap.get("subscriptionStatus") || "none"
       }
+      // If user does not have subscription
       if (sessionData.subscriptionStatus === "none") {
         let data = {
           token: sessionData.token,
@@ -86,28 +85,23 @@ export class LoginComponent implements OnInit {
         this._signupService.setSignUpSession(data);
         this.router.navigate(['/subscription-plan']);
       }
-      // else if (sessionData.trialCancelled === "true") {
-      //   let sessionData2 = {
-      //     token: sessionData.token,
-      //     email: sessionData.email,
-      //     stage: 1
-      //   }
-      //   this._signupService.setSignUpSession(sessionData2);
-      //   this._signupService.setLoginSession(sessionData);
-      //   this.router.navigate(['/billing-trial']);
-      // }
+      // If user have subscription 
       else {
+        // Set remember session
         if (sessionData.mobileVerified == "true" && sessionData._2faEnabled == "true") {
           this._signupService.setSignUpSession(sessionData);
           this.router.navigate(['/two-step-verification']);
         } else {
+          // If subscription has cancelled, then reactivate it
           this._signupService.setSignUpSession(sessionData);
           if (sessionData.subscriptionStatus === "cancelled" && (sessionData.role === "company_admin" || sessionData.role === "billing_staff")) {
             this.chargebeePortalUrl += `?access_token=${this._signupService.getSignUpSession().token}`;
             const message = `Hi ${sessionData.name}, Your subscription has been cancelled. You need to reactivate this in order to access your account.`;
             this.confirmBox(message, () => {},
             () => { });
-          } else {
+          }
+          // If all the conditions have met, then redirect to dashboard
+          else {
             this._commonService.setSession(sessionData);
             this.router.navigate(['/dashboard']);
           }
@@ -131,6 +125,7 @@ export class LoginComponent implements OnInit {
         (response: any) => {
           this._commonService.deleteRememberMeSession();
           let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, subscriptionStatus } = response.user;
+          // If email is not verified
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
@@ -140,6 +135,7 @@ export class LoginComponent implements OnInit {
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
           }
+          // If user does not have subscription
           else if (subscriptionStatus === "none") {
             let sessionData = {
               token: response.id,
@@ -149,30 +145,7 @@ export class LoginComponent implements OnInit {
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/subscription-plan']);
           }
-          // else if (trialCancelled) {
-          //   let sessionDataUser = {
-          //     token: response.id,
-          //     userId: id,
-          //     name: fullName,
-          //     email,
-          //     profilePic,
-          //     companyLogo: response.user.company.logo,
-          //     role: response.user.role.name,
-          //     license: response.user.license.name,
-          //     companyId: response.user.companyId
-          //   };
-          //   let sessionData = {
-          //     token: response.id,
-          //     email,
-          //     stage: 1
-          //   }
-          //   if (this.loginForm.value.rememberMe) {
-          //     this._commonService.setRememberMeSession({ email: this.loginForm.value.email });
-          //   }
-          //   this._signupService.setSignUpSession(sessionData);
-          //   this._signupService.setLoginSession(sessionDataUser);
-          //   this.router.navigate(['/billing-trial']);
-          // }
+          // If user have subscription
           else {
             let sessionData = {
               token: response.id,
@@ -185,20 +158,25 @@ export class LoginComponent implements OnInit {
               license: response.user.license.name,
               companyId: response.user.companyId
             }
+            // Set remember session
             if (this.loginForm.value.rememberMe) {
               this._commonService.setRememberMeSession({ email: this.loginForm.value.email });
             }
+            // Check if user have two factor enabled
             if (mobile && _2faEnabled && mobileVerified) {
               this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/two-step-verification']);
             } else {
+              // If subscription has cancelled, then reactivate it
               this._signupService.setSignUpSession(sessionData);
               if (subscriptionStatus === "cancelled" && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
                 this.chargebeePortalUrl += `?access_token=${this._signupService.getSignUpSession().token}`;
                 const message = `Hi ${fullName}, Your subscription has been cancelled. You need to reactivate this in order to access your account.`;
                 this.confirmBox(message, () => {},
                 () => { });
-              } else {
+              }
+              // If all the conditions have met, then redirect to dashboard
+              else {
                 this._commonService.setSession(sessionData);
                 this.router.navigate(['/dashboard']);
               }
