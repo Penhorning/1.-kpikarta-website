@@ -51,5 +51,8 @@ export class MyKpiService {
   getNodesDetails(data: any) {
     return this._httpService.POST('/karta_nodes/get-nodes-details', data);
   }
+  test(data: any) {
+    return this._httpService.POST('/users/test', data);
+  }
 }
 

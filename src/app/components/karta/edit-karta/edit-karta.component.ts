@@ -1922,7 +1922,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.emails = this.selectedSharedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
       if (this.emails.length > 0) {
         let data = {
-          karta: this.sharingKarta,
+          kartaId: this.sharingKarta._id,
           emails: this.emails,
           accessType: this.changeModeType
         }
