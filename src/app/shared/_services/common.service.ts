@@ -74,6 +74,13 @@ export class CommonService {
     { name: "November", shortName: "Nov", value: 10 },
     { name: "December", shortName: "Dec", value: 11 }
   ]
+  // Quarters list
+  quartersName = [
+    { name: "1st Quarter", value: 1 },
+    { name: "2nd Quarter", value: 2 },
+    { name: "3rd Quarter", value: 3 },
+    { name: "4th Quarter", value: 4 }
+  ]
 
   constructor(private _httpService: HttpService, private toastr: ToastrService, private router: Router) { }
 

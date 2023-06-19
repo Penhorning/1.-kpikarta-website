@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   googleUrl: string = `${environment.API_URL}/auth/google`;
   linkedInUrl: string = `${environment.API_URL}/auth/linkedin`;
 
-  chargebeePortalUrl: string = `${environment.API_URL}/api/subscriptions/get-portal`;
+  chargebeePortalUrl: string = "";
 
   submitted: boolean = false;
   submitFlag: boolean = false; 
@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
           // If subscription has cancelled, then reactivate it
           this._signupService.setSignUpSession(sessionData);
           if (sessionData.subscriptionStatus === "cancelled" && (sessionData.role === "company_admin" || sessionData.role === "billing_staff")) {
-            this.chargebeePortalUrl += `?access_token=${this._signupService.getSignUpSession().token}`;
+            this.chargebeePortalUrl = `${environment.API_URL}/api/subscriptions/get-portal?access_token=${this._signupService.getSignUpSession().token}`;
             const message = `Hi ${sessionData.name}, Your subscription has been cancelled. You need to reactivate this in order to access your account.`;
             this.confirmBox(message, () => {},
             () => { });
@@ -170,7 +170,7 @@ export class LoginComponent implements OnInit {
               // If subscription has cancelled, then reactivate it
               this._signupService.setSignUpSession(sessionData);
               if (subscriptionStatus === "cancelled" && (response.user.role.name === "company_admin" || response.user.role.name === "billing_staff")) {
-                this.chargebeePortalUrl += `?access_token=${this._signupService.getSignUpSession().token}`;
+                this.chargebeePortalUrl = `${environment.API_URL}/api/subscriptions/get-portal?access_token=${this._signupService.getSignUpSession().token}`;
                 const message = `Hi ${fullName}, Your subscription has been cancelled. You need to reactivate this in order to access your account.`;
                 this.confirmBox(message, () => {},
                 () => { });

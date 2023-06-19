@@ -243,14 +243,21 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   viewKartaType(e: any) {
     this.viewKartaForm.patchValue({ duration: "" });
     if (e.target.value === "month") {
-      this.viewKartaDurations = this._commonService.monthsName;
+      // Show months till current month only
+      let months = [];
+      let currentMonth = moment().month() + 1;
+      for (let i=0; i<currentMonth; i++) {
+        months.push(this._commonService.monthsName[i]);
+      }
+      this.viewKartaDurations = months;
     } else if (e.target.value === "quarter") {
-      this.viewKartaDurations = [
-        { name: "1st Quarter", value: 1 },
-        { name: "2nd Quarter", value: 2 },
-        { name: "3rd Quarter", value: 3 },
-        { name: "4th Quarter", value: 4 }
-      ]
+      // Show quarters till current quarter only
+      let quarters = [];
+      let currentQuarter = moment().quarter();
+      for (let i=0; i<currentQuarter; i++) {
+        quarters.push(this._commonService.quartersName[i]);
+      }
+      this.viewKartaDurations = quarters;
     }
   }
 
@@ -354,16 +361,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Apply monitor by
   applyMonitorBy() {
-    this.updateNewPercentage(this.filterKartaBy);
-    // if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
-    //   this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
-    //     (response: any) => {
-    //       if (response.nodes[0].data.length > 0) {
-    //         this.updateNewPercentage(this.filterKartaBy, response.nodes[0].data);
-    //       } else this.updateNewPercentage(this.filterKartaBy);
-    //     }
-    //   );
-    // } else this.updateNewPercentage(this.filterKartaBy);
+    // this.updateNewPercentage(this.filterKartaBy);
+    if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
+      this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
+        (response: any) => {
+          if (response.nodes.length > 0) {
+            this.updateNewPercentage(this.filterKartaBy, response.nodes);
+          } else this.updateNewPercentage(this.filterKartaBy);
+        }
+      );
+    } else this.updateNewPercentage(this.filterKartaBy);
   }
 
   // Set colors

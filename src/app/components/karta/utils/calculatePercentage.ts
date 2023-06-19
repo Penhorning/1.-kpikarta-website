@@ -184,12 +184,13 @@ export class CalculatePercentage {
         }
         // Set percentage for other kpi calculation periods
         if ((element.kpi_calc_period === "monthly" || element.kpi_calc_period === "month-to-date" || element.kpi_calc_period === "year-to-date") && !checkOtherPeriods()) {
-          // let achieved_value = element.achieved_value;
-          // if (this.filterTargetBy === "yearly" || this.filterTargetBy === "quarterly" && (this.pastNodedata.length > 0)) {
-          //   achieved_value = this.pastNodedata.find((item: any) => item._id === element._id).aggregateAchievedValue;
-          // }
-          // let current_percentage= (achieved_value/targetValue) * 100;
-          let current_percentage= (element.achieved_value/targetValue) * 100;
+          let achieved_value = element.achieved_value;
+          if (this.filterTargetBy === "yearly" || this.filterTargetBy === "quarterly" && (this.pastNodedata.length > 0)) {
+            achieved_value = this.pastNodedata.find((item: any) => item._id === element.id).aggregateAchievedValue;
+            targetValue = this.pastNodedata.find((item: any) => item._id === element.id).aggregateTargetValue;
+          }
+          let current_percentage = (achieved_value/targetValue) * 100;
+          // let current_percentage= (element.achieved_value/targetValue) * 100;
           element.percentage = Math.round(current_percentage || 0);
           element.percentage = element.percentage === Infinity ? 0 : element.percentage;
         }
