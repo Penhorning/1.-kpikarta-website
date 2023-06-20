@@ -363,6 +363,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   applyMonitorBy() {
     // this.updateNewPercentage(this.filterKartaBy);
     if (this.filterKartaBy === "quarterly" || this.filterKartaBy === "yearly") {
+      this.loadingKarta = true;
       this._kartaService.getKpisData({ kartaId: this.kartaId, type: this.filterKartaBy }).subscribe(
         (response: any) => {
           if (response.nodes.length > 0) {
@@ -1450,9 +1451,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
         this.D3SVG.update(this.karta.node, true);
         jqueryFunctions.enableChart();
+        this.loadingKarta = false;
       },
       (error: any) => {
         jqueryFunctions.enableChart();
+        this.loadingKarta = false;
       }
     );
   }
