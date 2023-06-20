@@ -369,6 +369,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           if (response.nodes.length > 0) {
             this.updateNewPercentage(this.filterKartaBy, response.nodes);
           } else this.updateNewPercentage(this.filterKartaBy);
+        },
+        (error: any) => {
+          this.loadingKarta = false;
         }
       );
     } else this.updateNewPercentage(this.filterKartaBy);
