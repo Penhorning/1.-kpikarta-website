@@ -1035,9 +1035,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Change start date
   changeStartDate(el: any) {
-    let dateNumber = new Date(el.target.value).getDate();
-    if (dateNumber !== 1) {
-      this._commonService.errorToaster("Please select 1st date. You cannot select other dates!");
+    let dateNumber = el.target.value.split('-')[2];
+    if (dateNumber !== "01") {
+      this._commonService.errorToaster("Start date must be 1st day of the month!");
     }
     else {
       this.setDueDate(el.target.value);
