@@ -1709,9 +1709,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           kartaId: this.kartaId,
           historyType: 'main'
         };
+        let element = document.getElementById("header_operation_row");
+        element.classList.add('disableDiv');
         this._kartaService.createKartaHistory(history_data).subscribe(
-          (result: any) => { }
-        );
+          (result: any) => { },
+          (error: any) => { }
+        ).add(() => {
+          let element = document.getElementById("header_operation_row");
+          element.classList.remove('disableDiv');
+        });
       });
     } else {
       this._commonService.warningToaster("You cannot drag this node here!");
@@ -1737,6 +1743,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     data.parent = JSON.parse(this.removeCircularData(parent));
 
     jqueryFunctions.disableChart();
+    let element = document.getElementById("header_operation_row");
+    element.classList.add('disableDiv');
     this._kartaService.addNodeByInventory(data).subscribe(
       (response: any) => {
         this.updateNewPercentage();
@@ -1748,7 +1756,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       (error: any) => {
         jqueryFunctions.enableChart();
       }
-    );
+    ).add(() => {
+      let element = document.getElementById("header_operation_row");
+      element.classList.remove('disableDiv');
+    });
   }
 
   // Save karta
