@@ -30,11 +30,12 @@ export class SubscriptionPlanComponent implements OnInit {
   getPlans() {
     this._subscriptionPlanService.getCreatorPalns().subscribe(
       (response: any) => {
-        this.plans.month = response.plans.find((item: any) => item.item_price.period_unit === "month").item_price;
-        this.plans.year = response.plans.find((item: any) => item.item_price.period_unit === "year").item_price;
-        this.loader = false;
+        if (response.plans.length > 0) {
+          this.plans.month = response.plans.find((item: any) => item.item_price.period_unit === "month").item_price;
+          this.plans.year = response.plans.find((item: any) => item.item_price.period_unit === "year").item_price;
+        } else this._commonService.errorToaster("Error, Something went wrong");
       }
-    );
+    ).add(() => this.loader = false );
   }
 
   selectPlan(planId: string) {
@@ -44,6 +45,7 @@ export class SubscriptionPlanComponent implements OnInit {
         this._signupService.updateSignUpSession(3);
         this.router.navigate(['/thank-you']);
       }
+      
     ).add(() => this.submitFlag = false);
   }
 }

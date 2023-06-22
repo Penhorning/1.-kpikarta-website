@@ -10,19 +10,19 @@
                     <div class="d-flex justify-content-between">
                         <div class="item_middle mx-auto">
                             <h4>Purchase Creator License </h4>
-                            <p>(First {{ plans.year.trial_period }} days free. Cancel any time.)</p>
+                            <p>(First {{ plans?.year?.trial_period }} days free. Cancel any time.)</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6" *ngIf="!submitFlag">
+            <div class="col-md-6" *ngIf="!submitFlag && plans?.month">
                 <div class="row">
                     <div class="col-sm-6 pr-0">
                         <div class="basic_plan">
-                            <h1>${{ plans ? plans.month.price/100 : "" }}/month</h1>
+                            <h1>${{ plans ? plans?.month?.price/100 : "" }}/month</h1>
                             <div class="row">
                                 <div class="col-sm-12 mt-2 text-center">
-                                    <button class="btn_sty_2" (click)="selectPlan(plans.month.id)" [disabled]="submitFlag">
+                                    <button class="btn_sty_2" (click)="selectPlan(plans?.month?.id)" [disabled]="submitFlag">
                                         Select Plan
                                     </button>
                                 </div>
@@ -31,10 +31,10 @@
                     </div>
                     <div class="col-sm-6 pl-0">
                         <div class="basic_plan">
-                            <h1>${{ plans ? plans.year.price/100 : "" }}/year</h1>
+                            <h1>${{ plans ? plans?.year?.price/100 : "" }}/year</h1>
                             <div class="row">
                                 <div class="col-sm-12 mt-2 text-center">
-                                    <button class="btn_sty_2" (click)="selectPlan(plans.year.id)" [disabled]="submitFlag">
+                                    <button class="btn_sty_2" (click)="selectPlan(plans?.year?.id)" [disabled]="submitFlag">
                                         Select Plan
                                     </button>
                                 </div>
