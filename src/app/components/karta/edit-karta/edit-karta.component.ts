@@ -1946,7 +1946,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.emails = this.selectedSharedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
       if (this.emails.length > 0) {
         let data = {
-          kartaId: this.sharingKarta._id,
+          kartaId: this.sharingKarta.id,
           emails: this.emails,
           accessType: this.changeModeType
         }
@@ -1956,9 +1956,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           (response: any) => {
             this._commonService.successToaster("You have shared Karta successfully!");
             jqueryFunctions.hideModal('shareKartaModal');
-            this.emails.forEach((element: any) => {
-              this.karta.sharedTo.push({ email: element });
-            });
+            this.karta.sharedTo = this.emails;
           },
           (error: any) => { console.log(error) }
         ).add(() => this.sharedSubmitFlag = false);
