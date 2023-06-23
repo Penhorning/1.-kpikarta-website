@@ -157,7 +157,7 @@ export class MyKpiComponent implements OnInit {
   });
 
   measureForm = this.fb.group({
-    actualValue: [0, [Validators.required, Validators.pattern('^[0-9]*$')]]
+    actualValue: [0, [Validators.required, Validators.pattern('^[+-]?(([1-9][0-9]*)?[0-9](\.[0-9]*)?|\.[0-9]+)$')]]
   });
 
   @ViewChild('fileUploader')
@@ -199,7 +199,7 @@ export class MyKpiComponent implements OnInit {
     if (this.metricsData?.fields) {
       this.metricsData?.fields.forEach((element: any) => {
         const metricsForm = this.fb.group({
-          fieldValue: [element?.fieldValue, [Validators.required, Validators.pattern('^[0-9]*$')]],
+          fieldValue: [element?.fieldValue, [Validators.required, Validators.pattern('^[+-]?(([1-9][0-9]*)?[0-9](\.[0-9]*)?|\.[0-9]+)$')]],
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);
@@ -595,6 +595,16 @@ export class MyKpiComponent implements OnInit {
       (response: any) => {
         this.kpis = Array.from(response.kpi_nodes[0].data);
         if (response.kpi_nodes[0].metadata.length > 0) {
+          response.kpi_nodes[0].data = response.kpi_nodes[0].data.map((item: any) => {
+            item.isSelected = false;
+            if ((item.target[0].value <= item.achieved_value) && item.start_date) {
+              item.dueDays = this.calculateDueDays(item.completed_date, item.due_date, 'completed');
+            } else if ((item.target[0].value > item.achieved_value) && item.start_date) {
+              item.dueDays = this.calculateDueDays(item.start_date, item.due_date);
+            } else item.dueDays = 0;
+            return item;
+          });
+          this.kpis.push(...response.kpi_nodes[0].data);
           this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
       }
@@ -911,7 +921,7 @@ export class MyKpiComponent implements OnInit {
 
   // Number validation
   isNumeric(value: any) {
-    const isNumericData = (value: string): boolean => !new RegExp(/[^\d|]/g).test(value.trim());
+    const isNumericData = (value: string): boolean => !new RegExp(/[^\d.|]/g).test(value.trim());
     return isNumericData(value);
   }
 
