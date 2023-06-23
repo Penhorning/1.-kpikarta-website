@@ -786,7 +786,7 @@ export class MyKpiComponent implements OnInit {
 
   sortHeader(colName: any, index: number) {
     this.arrow_icon = !this.arrow_icon;
-    if(colName == 'percentage'){
+    if (colName == 'percentage'){
       this.headerList[7].sort = this.headerList[7].sort == 'ascending' ? 'descending' : 'ascending';
     }else{
       this.headerList[index].sort = this.headerList[index].sort == 'ascending' ? 'descending' : 'ascending';
