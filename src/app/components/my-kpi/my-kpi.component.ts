@@ -716,17 +716,16 @@ export class MyKpiComponent implements OnInit {
       this.loading = true;
       this._myKpiService.getKPIsByMonth(data).subscribe(
         (response: any) => {
-          // response.kpi_nodes[0].data = response.kpi_nodes[0].data.map((item: any) => {
-          //   item.isSelected = false;
-          //   if ((item.target[0].value <= item.achieved_value) && item.start_date) {
-          //     item.dueDays = this.calculateDueDays(item.completed_date, item.due_date, 'completed');
-          //   } else if ((item.target[0].value > item.achieved_value) && item.start_date) {
-          //     item.dueDays = this.calculateDueDays(item.start_date, item.due_date);
-          //   } else item.dueDays = 0;
-          //   return item;
-          // });
+          response.kpi_nodes[0].data = response.kpi_nodes[0].data.map((item: any) => {
+            item.isSelected = false;
+            if ((item.target[0].value <= item.achieved_value) && item.start_date) {
+              item.dueDays = this.calculateDueDays(item.completed_date, item.due_date, 'completed');
+            } else if ((item.target[0].value > item.achieved_value) && item.start_date) {
+              item.dueDays = this.calculateDueDays(item.start_date, item.due_date);
+            } else item.dueDays = 0;
+            return item;
+          });
           this.kpis.push(...response.kpi_nodes[0].data);
-          // this.kpis.forEach((item: any) => console.log(item.dueDays))
           if (response.kpi_nodes[0].metadata.length > 0) {
             this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
           } else this.totalAssignedKPIs = 0;
@@ -764,7 +763,6 @@ export class MyKpiComponent implements OnInit {
             return item;
           });
           this.kpis.push(...response.kpi_nodes[0].data);
-          // this.kpis.push(...response.kpi_nodes[0].data);
           this.exportKpis.push(...response.kpi_nodes[0].data);
           if (response.kpi_nodes[0].metadata.length > 0) {
             this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
