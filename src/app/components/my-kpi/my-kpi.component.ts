@@ -604,7 +604,7 @@ export class MyKpiComponent implements OnInit {
             } else item.dueDays = 0;
             return item;
           });
-          this.kpis.push(...response.kpi_nodes[0].data);
+          this.kpis = response.kpi_nodes[0].data;
           this.totalAssignedKPIs = response.kpi_nodes[0].metadata[0].total;
         } else this.totalAssignedKPIs = 0;
       }
