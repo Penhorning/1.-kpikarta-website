@@ -54,7 +54,7 @@ export class HistoricalViewComponent implements OnInit {
     calculatedValue: [0]
   });
   measureForm = this.fb.group({
-    actualValue: [0, [Validators.required, Validators.pattern('^[0-9]*$')]]
+    actualValue: [0, [Validators.required, Validators.pattern('^[+-]?(([1-9][0-9]*)?[0-9](\.[0-9]*)?|\.[0-9]+)$')]]
   });
 
   constructor(private _commonService: CommonService, private _myKpiService: MyKpiService, private fb: FormBuilder) {
@@ -71,7 +71,7 @@ export class HistoricalViewComponent implements OnInit {
     if (this.metricsData?.fields) {
       this.metricsData?.fields.forEach((element: any) => {
         const metricsForm = this.fb.group({
-          fieldValue: [element?.fieldValue, [Validators.required, Validators.pattern('^[0-9]*$')]],
+          fieldValue: [element?.fieldValue, [Validators.required, Validators.pattern('^[+-]?(([1-9][0-9]*)?[0-9](\.[0-9]*)?|\.[0-9]+)$')]],
           fieldName: [element?.fieldName]
         });
         this.fields.push(metricsForm);

@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  API_URL: 'https://api.kpikarta.com',
+  // API_URL: 'https://api.kpikarta.com',
   // API_URL: 'http://159.89.234.66:3340'
-  // API_URL: 'http://localhost:3000',
+  API_URL: 'http://localhost:3000',
   CHARGEBEE_API_KEY: 'test_6btSkQzxZJ1Vzvrv88VUZYtKcdUWZX1SV',
   CHARGEBEE_GATEWAY_ID: 'gw_16CIaiTdEaPET9sk',
   CHARGEBEE_SITE_URL: 'https://kpikarta-test.chargebee.com'
