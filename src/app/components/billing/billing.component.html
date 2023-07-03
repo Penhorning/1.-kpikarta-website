@@ -24,8 +24,8 @@
                           </div>
                       </div>
                       <div *ngIf="overview?.status == 'in_trial'" class="d-flex justify-content-between">
-                        <p class="mt-2 mb-0 trial-font">Trial started at: <span>{{ overview?.trialStart | date: 'mediumDate'}}</span></p>
-                        <p class="mt-2 mb-0 trial-font">Trial ends on: <span>{{ overview?.trialEnd | date: 'mediumDate'}}</span></p>
+                        <p class="mt-2 mb-0 trial-font">Trial started at: <span class="font-weight-normal">{{ overview?.trialStart | date: 'mediumDate'}}</span></p>
+                        <p class="mt-2 mb-0 trial-font">Trial ends on: <span class="font-weight-normal">{{ overview?.trialEnd | date: 'mediumDate'}}</span></p>
                       </div>
                       <div class="creators" *ngFor="let user of overview.userDetails">
                           <div class="creaters-header">
