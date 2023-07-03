@@ -54,7 +54,7 @@
                           {{ kpi.karta?.user?.fullName }}
                         </td>
                         <td class="bg-green">Actual</td>
-                        <td *ngFor="let node of kpi?.nodes; let i = index;" >
+                        <td *ngFor="let node of kpi?.nodes; let i = index;" class="min_max_width">
                            {{ node?.achieved === null ? '---' : node.achieved?.event_options?.updated?.achieved_value }}
                             <ng-container *ngIf="node.achieved !== null">
                                 <svg xmlns="http://www.w3.org/2000/svg"  (click)="editHistoryActualValue(node, kpi, i)" width="16"
