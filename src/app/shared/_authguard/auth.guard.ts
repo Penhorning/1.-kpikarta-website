@@ -23,9 +23,8 @@ export class AuthGuard implements CanActivateChild {
       }
       // Checking for other urls
       else if (this._commonService.getSession() && this._commonService.getSession().token) {
-        if (this._commonService.getUserSubscriptionStatus() === "cancelled" && state.url !== '/billing') {
-          // this.router.navigate(['/billing']);
-          // navigate to reactive again page.
+        if (this._commonService.getUserSubscriptionStatus() && this._commonService.getUserSubscriptionStatus() !== "active" && this._commonService.getUserSubscriptionStatus() !== "in_trial") {
+          this._commonService.deleteSession();
           return false;
         } else {
           // Get role
