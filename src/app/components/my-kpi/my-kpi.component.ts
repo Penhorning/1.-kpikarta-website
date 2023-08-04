@@ -1084,7 +1084,7 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
                     "percentage": Math.round(percentage)
                   }
                   if (percentage >= 100) element.node["completed_date"] = new Date();
-                } else {
+                } else if (originalElement.node_type == "metrics" && originalElement.node_formula) {
                   let data = this.calculateMetricFormulaForCSV(element, originalElement);
                   if (data) {
                     element.node = data;
