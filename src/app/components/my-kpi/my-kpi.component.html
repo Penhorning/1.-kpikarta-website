@@ -622,7 +622,6 @@
                         <div class="">
                           <label class="font-weight-bold">{{field.value.fieldName}}</label>
                           <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue"
-                            [maxlength]='4'
                             [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }">
                           <div
                             *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors"
@@ -667,7 +666,6 @@
                     <div class="">
                       <label for="actualValue" class="font-weight-bold">Actual Value</label>
                       <input type="text" id="actualValue" class="form-control" formControlName="actualValue"
-                        [maxlength]="4"
                         [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
                       <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors"
                         class="invalid-feedback">
