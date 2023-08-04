@@ -1140,7 +1140,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   changeAchievedValue() {
     let node = this.currentNode;
     if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
-    else if (this.currentNodeAchievedValue > 9999) this._commonService.errorToaster("Achieved value cannot be greater than 9999!");
     else if (this.currentNodeAchievedValue >= 0 && this.currentNodeAchievedValue !== null) {
       // Calculate new percentage
       this.target.forEach((element: any) => {
