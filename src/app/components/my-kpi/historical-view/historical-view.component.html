@@ -44,7 +44,7 @@
                           {{ kpi?.karta?.name }}
                         </td>
                         <td class="target">Target</td>
-                        <td *ngFor="let node of kpi?.nodes">
+                        <td *ngFor="let node of kpi?.nodes" class="short_text">
                             {{ node?.target === null ? '---' : node?.target?.event_options?.updated?.target[0]?.value }}
                         </td>
                      </tr>
@@ -55,10 +55,12 @@
                         </td>
                         <td class="bg-green">Actual</td>
                         <td *ngFor="let node of kpi?.nodes; let i = index;" class="min_max_width">
-                           {{ node?.achieved === null ? '---' : node.achieved?.event_options?.updated?.achieved_value }}
+                           <span class="short_text" style="display: inline-block; max-width: 50px; min-width: 25px;">
+                              {{ node?.achieved === null ? '---' : node.achieved?.event_options?.updated?.achieved_value }}
+                            </span>
                             <ng-container *ngIf="node.achieved !== null">
-                                <svg xmlns="http://www.w3.org/2000/svg"  (click)="editHistoryActualValue(node, kpi, i)" width="16"
-                                height="12" fill="currentColor" class="bi bi-pencil cursor_pointer"
+                                <svg xmlns="http://www.w3.org/2000/svg" (click)="editHistoryActualValue(node, kpi, i)" width="16"
+                                height="12" fill="currentColor" class="bi bi-pencil cursor_pointer" style="margin-top: -15px;"
                                 viewBox="0 0 16 16" data-toggle="modal" data-target="#editHistoryActualValueModal">
                                 <path
                                 d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />

@@ -321,7 +321,7 @@
                             <ng-container *ngIf="kpi?.target[0]?.percentage >= 101 ;else second">
                               <div class="container" style="padding-left:0px; padding-right:0px;">
                                 <div class="progress">
-                                  <div class="progress" style="width:70%; border-radius: 0px; ">
+                                  <!-- <div class="progress" style="width:70%; border-radius: 0px; ">
                                     <div class="progress-bar" style="border-radius: 0px;" aria-valuenow="20"
                                       aria-valuemin="0" aria-valuemax="100" role="progressbar"
                                       [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}"
@@ -334,9 +334,14 @@
                                     <div class="progress-bar" style="border-radius: unset; width:100%;"
                                       aria-valuemin="0" aria-valuemax="0" role="progressbar"
                                       [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}">
+                                      {{ kpi?.target[0]?.percentage > 100 ? (kpi?.target[0]?.percentage | number : '1.1-1') + '%' : '' }}
+                                    </div>
+                                  </div> -->
+                                    <div class="progress-bar" style="border-radius: unset; width:100%;"
+                                      aria-valuemin="0" aria-valuemax="0" role="progressbar"
+                                      [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}">
                                       {{ kpi?.target[0]?.percentage > 100 ? kpi?.target[0]?.percentage + '%' : '' }}
                                     </div>
-                                  </div>
                                 </div>
                               </div>
                             </ng-container>
@@ -537,7 +542,7 @@
                             <ng-container *ngIf="kpi?.target[0]?.percentage >= 101 ;else second">
                               <div class="container" style="padding-left:0px; padding-right:0px;">
                                 <div class="progress">
-                                  <div class="progress" style="width:70%; border-radius: 0px; ">
+                                  <!-- <div class="progress" style="width:70%; border-radius: 0px; ">
                                     <div class="progress-bar" style="border-radius: 0px;" aria-valuenow="20"
                                       aria-valuemin="0" aria-valuemax="100" role="progressbar"
                                       [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}"
@@ -550,9 +555,14 @@
                                     <div class="progress-bar" style="border-radius: unset; width:100%;"
                                       aria-valuemin="0" aria-valuemax="0" role="progressbar"
                                       [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}">
+                                      {{ kpi?.target[0]?.percentage > 100 ? (kpi?.target[0]?.percentage | number : '1.1-1') + '%' : '' }}
+                                    </div>
+                                  </div> -->
+                                    <div class="progress-bar" style="border-radius: unset; width:100%;"
+                                      aria-valuemin="0" aria-valuemax="0" role="progressbar"
+                                      [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}">
                                       {{ kpi?.target[0]?.percentage > 100 ? kpi?.target[0]?.percentage + '%' : '' }}
                                     </div>
-                                  </div>
                                 </div>
                               </div>
                             </ng-container>
