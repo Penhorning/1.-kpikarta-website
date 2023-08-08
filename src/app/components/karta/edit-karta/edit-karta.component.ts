@@ -758,10 +758,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       let percentage = (node.achieved_value / e.target.value) * 100;
       if (this.target.length > 0) {
         this.target[index].percentage = Math.round(percentage);
-        this.target[index].value = parseInt(e.target.value);
+        this.target[index].value = Number(e.target.value);
       } else {
         this.target.push(
-          { frequency: 'monthly', value: parseInt(e.target.value), percentage: Math.round(percentage) }
+          { frequency: 'monthly', value: Number(e.target.value), percentage: Math.round(percentage) }
         )
       }
       // Update achieved_value, node_formula and target
