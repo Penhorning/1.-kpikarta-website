@@ -755,27 +755,30 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.updateNode('target', this.target, 'node_updated', node);
     }
     else {
-      let percentage = (node.achieved_value / e.target.value) * 100;
-      if (this.target.length > 0) {
-        this.target[index].percentage = Math.round(percentage);
-        this.target[index].value = Number(e.target.value);
-      } else {
-        this.target.push(
-          { frequency: 'monthly', value: Number(e.target.value), percentage: Math.round(percentage) }
-        )
-      }
-      // Update achieved_value, node_formula and target
-      let randomKey = new Date().getTime();
-      let updatingParameters = [
-        { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: this.kpiType},
-        { key: 'target', value: this.target, node_updated: 'node_updated', node }
-      ];
-      if (node.node_formula && node.node_type === "metrics") {
-        updatingParameters.push({ key: 'node_formula', value: node.node_formula, node_updated: 'node_updated', node });
-      }
-      for (let param of updatingParameters) {
-        let metrics = param.metrics || null
-        this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+      if (e.target.value > 999999999999999) this._commonService.errorToaster("Target value cannot be greater than 999999999999999!");
+      else {
+        let percentage = (node.achieved_value / e.target.value) * 100;
+        if (this.target.length > 0) {
+          this.target[index].percentage = Math.round(percentage);
+          this.target[index].value = Number(e.target.value);
+        } else {
+          this.target.push(
+            { frequency: 'monthly', value: Number(e.target.value), percentage: Math.round(percentage) }
+          )
+        }
+        // Update achieved_value, node_formula and target
+        let randomKey = new Date().getTime();
+        let updatingParameters = [
+          { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: this.kpiType},
+          { key: 'target', value: this.target, node_updated: 'node_updated', node }
+        ];
+        if (node.node_formula && node.node_type === "metrics") {
+          updatingParameters.push({ key: 'node_formula', value: node.node_formula, node_updated: 'node_updated', node });
+        }
+        for (let param of updatingParameters) {
+          let metrics = param.metrics || null
+          this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+        }
       }
     }
   }
@@ -1140,6 +1143,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   changeAchievedValue() {
     let node = this.currentNode;
     if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
+    else if (this.currentNodeAchievedValue > 999999999999999) this._commonService.errorToaster("Achieved value cannot be greater than 999999999999999!");
     else if (this.currentNodeAchievedValue >= 0 && this.currentNodeAchievedValue !== null) {
       // Calculate new percentage
       this.target.forEach((element: any) => {

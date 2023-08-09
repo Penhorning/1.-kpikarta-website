@@ -44,7 +44,8 @@
                           {{ kpi?.karta?.name }}
                         </td>
                         <td class="target">Target</td>
-                        <td *ngFor="let node of kpi?.nodes" class="short_text">
+                        <td *ngFor="let node of kpi?.nodes" class="short_text min_max_width"
+                        [title]="node?.target === null ? '---' : node?.target?.event_options?.updated?.target[0]?.value">
                             {{ node?.target === null ? '---' : node?.target?.event_options?.updated?.target[0]?.value }}
                         </td>
                      </tr>
@@ -55,7 +56,8 @@
                         </td>
                         <td class="bg-green">Actual</td>
                         <td *ngFor="let node of kpi?.nodes; let i = index;" class="min_max_width">
-                           <span class="short_text" style="display: inline-block; max-width: 50px; min-width: 25px;">
+                           <span class="short_text" style="display: inline-block; max-width: 50px; min-width: 25px;" 
+                           [title]="node?.achieved === null ? '---' : node.achieved?.event_options?.updated?.achieved_value">
                               {{ node?.achieved === null ? '---' : node.achieved?.event_options?.updated?.achieved_value }}
                             </span>
                             <ng-container *ngIf="node.achieved !== null">
@@ -114,8 +116,7 @@
                       <div class="col-lg-12">
                         <div class="">
                           <label class="font-weight-bold">{{field.value.fieldName}}</label>
-                          <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue"
-                            [maxlength]='4'
+                          <input type="text" id="fieldValue" class="form-control" formControlName="fieldValue" [maxlength]="15"
                             [ngClass]="{ 'is-invalid': (submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors }">
                           <div
                             *ngIf="(submitted || field.get('fieldValue')?.touched) && field.get('fieldValue')?.errors"
@@ -153,13 +154,11 @@
           <form [formGroup]="measureForm" (ngSubmit)="onMeasureSubmit()">
             <div class="mt-3">
               <div class="form-group">
-                <!-- <h5 class="short_text max_width_500">{{editingKPI?.karta?.name}}: {{editingKPI?.name}} </h5> -->
                 <div class="row">
                   <div class="col-lg-12">
                     <div class="">
                       <label for="actualValue" class="font-weight-bold">Actual Value</label>
-                      <input type="text" id="actualValue" class="form-control" formControlName="actualValue"
-                        [maxlength]="4"
+                      <input type="text" id="actualValue" class="form-control" formControlName="actualValue" [maxlength]="15"
                         [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
                       <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors"
                         class="invalid-feedback">

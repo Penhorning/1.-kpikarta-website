@@ -983,10 +983,10 @@ export class MyKpiComponent implements OnInit {
                 // delete item.__EMPTY;
                 // delete item['My KPI Export'];
                 if (!this.isNumeric(item.__EMPTY_4) && i !== 0) {
-                  item.ac = true;
+                  item.invalid = true;
                   this.isTableDataWrong = true;
                 } else {
-                  item.ac = false;
+                  item.invalid = false;
                 }
                 return item;
               });

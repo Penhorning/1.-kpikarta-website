@@ -657,9 +657,10 @@
                                        class="form-control"
                                        [(ngModel)]="currentNodeAchievedValue"
                                        (blur)="changeAchievedValue()"
-                                       [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null }"
+                                       [ngClass]="{ 'is-invalid': currentNodeAchievedValue < 0 || currentNodeAchievedValue === null || currentNodeAchievedValue > 999999999999999 }"
                                    />
                                    <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue < 0 || currentNodeAchievedValue === null">Please enter achieved value!</div>
+                                   <div class="invalid-feedback d-block" *ngIf="currentNodeAchievedValue > 999999999999999">Achieved value cannot be greater than 999999999999999!</div>
                                </div>
                            </div>
                        </div>
@@ -725,7 +726,7 @@
                                                        class="invalid-feedback d-block"
                                                        *ngIf="formulaGroup.controls['fields'].controls[i].controls['fieldValue'].invalid && (formulaGroup.controls['fields'].controls[i].controls['fieldValue'].dirty || formulaGroup.controls['fields'].controls[i].controls['fieldValue'].touched)"
                                                    >
-                                                       Please enter value greater than 0
+                                                       Please enter value greater than 0!
                                                    </div>
                                                </div>
                                            </div>
