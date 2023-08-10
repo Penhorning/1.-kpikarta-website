@@ -3,7 +3,6 @@ import { MyKpiService } from './service/my-kpi.service';
 import { CommonService } from '@app/shared/_services/common.service';
 import * as moment from 'moment';
 import { FormBuilder, Validators, FormArray } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
 import * as XLSX from 'xlsx'
 
@@ -919,7 +918,8 @@ export class MyKpiComponent implements OnInit {
 
   // Number validation
   isNumeric(value: any) {
-    const isNumericData = (value: string): boolean => !new RegExp(/[^\d.|]/g).test(value.trim());
+    if (value.includes("e") || value.includes("E")) value = + value;
+    const isNumericData = (value: string): boolean => !new RegExp(/[^\d.|]/g).test(value.toString().trim());
     return isNumericData(value);
   }
 
