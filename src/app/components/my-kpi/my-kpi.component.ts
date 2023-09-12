@@ -138,6 +138,7 @@ export class MyKpiComponent implements OnInit {
   arrow_icon: boolean = true;
   currentNodeWeight: number = 0;
   // Achieved value pop up value
+  pastMonths: any = [];
   metricsData: any = [];
   submitted: boolean = false;
   submittedMeasure: boolean = false;
@@ -149,14 +150,17 @@ export class MyKpiComponent implements OnInit {
   index: any;
   metricsFormula: any;
   acheivedValueMetrics: any;
+
   metricsForm = this.fb.group({
     fields: this.fb.array([]),
     formula: [''],
-    calculatedValue: [0]
+    calculatedValue: [0],
+    pastMonth: []
   });
 
   measureForm = this.fb.group({
-    actualValue: [0, [Validators.required, Validators.pattern('^[+-]?(([1-9][0-9]*)?[0-9](\.[0-9]*)?|\.[0-9]+)$')]]
+    actualValue: [0, [Validators.required, Validators.pattern('^[+-]?(([1-9][0-9]*)?[0-9](\.[0-9]*)?|\.[0-9]+)$')]],
+    pastMonth: []
   });
 
   @ViewChild('fileUploader')
@@ -260,6 +264,7 @@ export class MyKpiComponent implements OnInit {
           metrics: true
         };
         delete request['calculatedValue'];
+        delete request['pastMonth'];
         this.target.forEach((element: any) => {
           let percentage = (+this.metricsForm.value.calculatedValue / element.value) * 100;
           return element.percentage = Math.round(percentage);
@@ -277,7 +282,10 @@ export class MyKpiComponent implements OnInit {
           target: this.target
         }
 
+        // Send completed_date if achieved
         if (this.target[0].percentage >= 100) data["completed_date"] = new Date();
+        // Send pastMonth if user wants to change the value for past
+        if (this.metricsForm.value.pastMonth < moment().month()) data["pastMonth"] = this.metricsForm.value.pastMonth;
         
         this._myKpiService.updateNode(this.currentNode, data).subscribe(
           (response) => {
@@ -288,30 +296,32 @@ export class MyKpiComponent implements OnInit {
 
             // Create history
             // Update achieved_value, node_formula and target
-            let randomKey = new Date().getTime().toString();
-            let updatingParameters = [
-              { key: 'node_formula', value: request, node_updated: 'node_updated', old_value: this.editingNode.node_formula },
-              { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', old_value: this.editingNode.achieved_value },
-              { key: 'target', value: this.target, node_updated: 'node_updated', old_value: this.editingNode.target }
-            ];
-            for (let param of updatingParameters) {
-              let history_data = {
-                event: param.node_updated,
-                eventValue: {
-                  [param.key]: param.value
-                },
-                oldValue: {
-                  [param.key]: param.old_value
-                },
-                kartaNodeId: this.editingNode._id,
-                userId: this._commonService.getUserId(),
-                versionId: this.editingNode.karta.versionId,
-                kartaId: this.editingNode.karta._id,
-                parentNodeId: this.editingNode.parentId || "None",
-                historyType: 'main',
-                randomKey
+            if (this.metricsForm.value.pastMonth == moment().month()) {
+              let randomKey = new Date().getTime().toString();
+              let updatingParameters = [
+                { key: 'node_formula', value: request, node_updated: 'node_updated', old_value: this.editingNode.node_formula },
+                { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', old_value: this.editingNode.achieved_value },
+                { key: 'target', value: this.target, node_updated: 'node_updated', old_value: this.editingNode.target }
+              ];
+              for (let param of updatingParameters) {
+                let history_data = {
+                  event: param.node_updated,
+                  eventValue: {
+                    [param.key]: param.value
+                  },
+                  oldValue: {
+                    [param.key]: param.old_value
+                  },
+                  kartaNodeId: this.editingNode._id,
+                  userId: this._commonService.getUserId(),
+                  versionId: this.editingNode.karta.versionId,
+                  kartaId: this.editingNode.karta._id,
+                  parentNodeId: this.editingNode.parentId || "None",
+                  historyType: 'main',
+                  randomKey
+                }
+                this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
               }
-              this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
             }
           },
           (err) => {
@@ -341,8 +351,10 @@ export class MyKpiComponent implements OnInit {
       target: this.target,
       is_achieved_modified: true
     }
-
+    // Send completed_date if achieved
     if (this.target[0].percentage >= 100) data["completed_date"] = new Date();
+    // Send pastMonth if user wants to change the value for past
+    if (this.measureForm.value.pastMonth < moment().month()) data["pastMonth"] = this.measureForm.value.pastMonth;
     this._myKpiService.updateNode(this.currentNode, data).subscribe(
       (response) => {
         if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
@@ -352,29 +364,31 @@ export class MyKpiComponent implements OnInit {
 
         // Create history
         // Update achieved_value and target
-        let randomKey = new Date().getTime();
-        let updatingParameters = [
-          { key: 'achieved_value', value: data.achieved_value, node_updated: 'node_updated', old_value: this.editingNode.achieved_value },
-          { key: 'target', value: this.target, node_updated: 'node_updated', old_value: this.editingNode.target }
-        ];
-        for (let param of updatingParameters) {
-          let history_data = {
-            event: param.node_updated,
-            eventValue: {
-              [param.key]: param.value
-            },
-            oldValue: {
-              [param.key]: param.old_value
-            },
-            kartaNodeId: this.editingNode._id,
-            userId: this._commonService.getUserId(),
-            versionId: this.editingNode.karta.versionId,
-            kartaId: this.editingNode.karta._id,
-            parentNodeId: this.editingNode.parentId || "None",
-            historyType: 'main',
-            randomKey: randomKey.toString()
+        if (this.measureForm.value.pastMonth == moment().month()) {
+          let randomKey = new Date().getTime();
+          let updatingParameters = [
+            { key: 'achieved_value', value: data.achieved_value, node_updated: 'node_updated', old_value: this.editingNode.achieved_value },
+            { key: 'target', value: this.target, node_updated: 'node_updated', old_value: this.editingNode.target }
+          ];
+          for (let param of updatingParameters) {
+            let history_data = {
+              event: param.node_updated,
+              eventValue: {
+                [param.key]: param.value
+              },
+              oldValue: {
+                [param.key]: param.old_value
+              },
+              kartaNodeId: this.editingNode._id,
+              userId: this._commonService.getUserId(),
+              versionId: this.editingNode.karta.versionId,
+              kartaId: this.editingNode.karta._id,
+              parentNodeId: this.editingNode.parentId || "None",
+              historyType: 'main',
+              randomKey: randomKey.toString()
+            }
+            this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
           }
-          this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
         }
       },
       (err) => {
@@ -564,17 +578,27 @@ export class MyKpiComponent implements OnInit {
     this.metricsForm.reset();
     this.measureForm.reset();
     this.fields.clear();
+    // Show months till current month only
+    let months = [];
+    let currentMonth = moment().month() + 1;
+    for (let i=0; i<currentMonth; i++) {
+      months.push(this._commonService.monthsName[i]);
+    }
+    this.pastMonths = months;
+    // Prepare form value according to measure or metrics
     if (node.node_type === "metrics") {
       this.metricFlag = true;
       this.metricsForm.patchValue({
         calculatedValue: node.node_formula.calculated_value ? node.node_formula.calculated_value : 0,
         achieved_value: node.achieved_value ? node.achieved_value : 0,
-        formula: node.node_formula.formula ? node.node_formula.formula : ''
+        formula: node.node_formula.formula ? node.node_formula.formula : '',
+        pastMonth: currentMonth -1
       });
     } else {
       this.metricFlag = false;
       this.measureForm.patchValue({
-        actualValue: node.achieved_value
+        actualValue: node.achieved_value,
+        pastMonth: currentMonth -1
       });
     }
     this.addMetricsData();
