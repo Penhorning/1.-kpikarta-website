@@ -580,8 +580,12 @@ export class MyKpiComponent implements OnInit {
     this.fields.clear();
     // Show months till current month only
     let months = [];
-    let currentMonth = moment().month() + 1;
-    for (let i=0; i<currentMonth; i++) {
+    let startsFrom = 0;
+    const currentMonth = moment().month() + 1;
+    const currentYear = moment().year();
+    const nodeCreatedYear = moment(node.createdAt).year();
+    if (nodeCreatedYear == currentYear) startsFrom = moment(node.createdAt).month();
+    for (let i=startsFrom; i<currentMonth; i++) {
       months.push(this._commonService.monthsName[i]);
     }
     this.pastMonths = months;
