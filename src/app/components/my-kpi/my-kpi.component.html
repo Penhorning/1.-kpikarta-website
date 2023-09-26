@@ -297,12 +297,19 @@
                               </ng-template>
                             </div>
                           </td>
-                          <td>{{ kpi?.updatedAt | date }}</td>
+                          <td>
+                            {{ kpi?.updatedAt | date }}
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            *ngIf="!sortMonth" (click)="getAuditTrail(kpis[i])" class="cursor_pointer" data-toggle="modal" data-target="#auditTrailModal">
+                              <path d="M5.02828 5.57202C5.78363 4.75703 6.70808 4.1171 7.73685 3.69709C10.4591 3.00565 11.8263 3.16151 14.2107 5.14327C14.8417 5.71804 15.3534 6.41149 15.7165 7.18401C16.0796 7.95653 16.287 8.793 16.3268 9.64566C16.4072 11.3677 15.8002 13.0511 14.6394 14.3257M9.70192 7.12349L9.49717 10.3185L11.7151 12.3386" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                              <path d="M12.7136 15.8176C12.1857 16.0735 11.6247 16.2545 11.0469 16.3555M8.46181 16.3275C7.82604 16.1887 7.21562 15.9521 6.65229 15.6263M3.61188 11.9103C3.80941 12.5304 4.10182 13.1161 4.4787 13.6466" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
+                              <path d="M4.06515 6.80162L4.00324 4.13953C4.00147 4.063 4.06302 4 4.13957 4H4.95455C5.02986 4 5.09091 4.06105 5.09091 4.13636V5.84553C5.09091 5.91901 5.14913 5.97928 5.22257 5.98181L6.93652 6.04091C7.00996 6.04345 7.06818 6.10371 7.06818 6.1772V6.8605C7.06818 6.93703 7.00522 6.99857 6.92872 6.99683L4.19838 6.93478C4.12553 6.93312 4.06685 6.87447 4.06515 6.80162Z" fill="black" stroke="black" stroke-width="0.136364"/>
+                            </svg>                              
+                          </td>
                           <td>{{ kpi.due_date ? (kpi.due_date | date) : 'N/A' }}</td>
                           <td>
                             <ng-container *ngIf="(kpi?.target[0]?.value > kpi?.achieved_value) && kpi?.start_date">
                               <img src="assets/img/Refresh.svg">
-                              <!-- <span [style.color]="calculateDueDays(kpi?.start_date, kpi?.due_date) >= 0 ? '' : '#dc3545'"> -->
                               <span>
                                 {{ kpi?.dueDays >= 0 ? kpi?.dueDays + ' Days left' : -kpi?.dueDays + ' Days overdue' }}
                               </span>
@@ -318,41 +325,25 @@
                             </ng-container>
                           </td>
                           <td>
-                            <ng-container *ngIf="kpi?.target[0]?.percentage >= 101 ;else second">
-                              <div class="container" style="padding-left:0px; padding-right:0px;">
+                            <div class="container px-0">
+                              <ng-container *ngIf="kpi?.target[0]?.percentage >= 101; else second">
                                 <div class="progress">
-                                  <!-- <div class="progress" style="width:70%; border-radius: 0px; ">
-                                    <div class="progress-bar" style="border-radius: 0px;" aria-valuenow="20"
-                                      aria-valuemin="0" aria-valuemax="100" role="progressbar"
-                                      [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}"
-                                      [style.width]="kpi?.target[0]?.percentage + '%'">
-                                      {{ kpi?.target[0]?.percentage > 100 ? '' : kpi?.target[0]?.percentage + '%' }}
-                                    </div>
-                                  </div>
-                                  <div class="progress" style="width:2%; border-radius: 0px"></div>
-                                  <div class="progress" style="width:28%; border-radius: 0px">
-                                    <div class="progress-bar" style="border-radius: unset; width:100%;"
-                                      aria-valuemin="0" aria-valuemax="0" role="progressbar"
-                                      [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}">
-                                      {{ kpi?.target[0]?.percentage > 100 ? (kpi?.target[0]?.percentage | number : '1.1-1') + '%' : '' }}
-                                    </div>
-                                  </div> -->
                                     <div class="progress-bar" style="border-radius: unset; width:100%;"
                                       aria-valuemin="0" aria-valuemax="0" role="progressbar"
                                       [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}">
                                       {{ kpi?.target[0]?.percentage > 100 ? kpi?.target[0]?.percentage + '%' : '' }}
                                     </div>
                                 </div>
-                              </div>
-                            </ng-container>
-                            <ng-template #second>
-                              <div class="progress">
-                                <div class="progress-bar" role="progressbar"
-                                  [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}"
-                                  [style.width]="kpi?.target[0]?.percentage || 0 + '%'" aria-valuenow="25" aria-valuemin="0"
-                                  aria-valuemax="100">{{ kpi?.target[0]?.percentage || 0 + '%' }}</div>
-                              </div>
-                            </ng-template>
+                              </ng-container>
+                              <ng-template #second>
+                                <div class="progress">
+                                  <div class="progress-bar" role="progressbar"
+                                    [ngStyle]="{'background-color':getNodePercentageColor(kpi?.target[0]?.percentage)}"
+                                    [style.width]="kpi?.target[0]?.percentage || 0 + '%'" aria-valuenow="25" aria-valuemin="0"
+                                    aria-valuemax="100">{{ kpi?.target[0]?.percentage || 0 + '%' }}</div>
+                                </div>
+                              </ng-template>
+                            </div>
                           </td>
                         </tr>
                       </tbody>
@@ -774,11 +765,6 @@
             </table>
           </div>
         </div>
-        <!-- <div class="row mt-2">
-          <div class="align-self-center col-lg-6">
-            <input type="file" (change)="onFileChange($event)" accept=".csv" multiple="false" />
-          </div>
-        </div> -->
         <div class="row">
           <div class="col-md-6 mt-4">
             <label class="sr-only" for="inlineFormInputGroup">Choose Files</label>
@@ -808,14 +794,6 @@
 
       <div class="modal-footer">
         <div class="no-gutters row w-100">
-          <!-- <div class="col-md-6">
-            <button (click)="submitCSV()" class="btn btn-info btn-sm" style="background-color: #5186c2 ;" [disabled]="importSubmitFlag">
-              <div class="spinner-border text-light align-top" role="status" *ngIf="importSubmitFlag">
-                <span class="sr-only">Loading...</span>
-              </div>
-              <ng-container *ngIf="!importSubmitFlag">Submit</ng-container>
-            </button>
-          </div> -->
           <div style="border-color: unset;" data-dismiss="" aria-label="" class="col-md-6">
             <span aria-hidden="true">
               <button type="submit" (click)="submitCSV()" class="send-btn" [disabled]="importSubmitFlag">
@@ -835,4 +813,34 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- Audit trail modal -->
+<div class="modal fade" id="auditTrailModal" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+   <div class="modal-dialog modal-lg">
+      <div class="modal-content p-4">
+         <div class="modal-header">
+            <h5 class="modal-title pt-0" id="staticBackdropLabel">Audit Trail</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <div class="card" *ngFor="let history of auditHistories">
+              <div class="card-header">
+                Quote
+              </div>
+              <div class="card-body">
+                <blockquote class="blockquote mb-0">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                  <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
+                </blockquote>
+              </div>
+            </div>
+            <div class="text-center mt-4" *ngIf="!auditLoading && totalAudits > auditHistories.length">
+              <p class="view_more" (click)="viewMoreAudit()">View More..</p>
+            </div>
+         </div>
+      </div>
+   </div>
 </div>

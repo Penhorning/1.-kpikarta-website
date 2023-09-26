@@ -15,6 +15,9 @@ export class MyKpiService {
   getKPIsByMonth(data: any) {
     return this._httpService.POST('/karta_nodes/view-previous-kpis-by-month', data);
   }
+  getNodeHistory(data: any) {
+    return this._httpService.POST('/karta_nodes/get-node-history', data);
+  }
   getKPIsByYear(data: any) {
     return this._httpService.POST('/karta_nodes/view-previous-kpis-by-year', data);
   }

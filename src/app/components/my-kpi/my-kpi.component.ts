@@ -70,7 +70,13 @@ export class MyKpiComponent implements OnInit {
   nodes: any = []
   openState: boolean = false;
   wsname: any;
-
+  // Audit Trail
+  auditingNodeId: string = "";
+  auditPageIndex: number = 0;
+  auditPageSize: number = 10;
+  totalAudits: number = 0;
+  auditHistories: any = [];
+  auditLoading: boolean = false;
   // Target filter
   target: any = [
     { frequency: "", value: 0, percentage: 0 }
@@ -166,9 +172,7 @@ export class MyKpiComponent implements OnInit {
   @ViewChild('fileUploader')
   fileUploader!: ElementRef;
   
-  constructor(private _myKpiService: MyKpiService, public _commonService: CommonService, private fb: FormBuilder) {
-    // this.maxDate = new Date();
-  }
+  constructor(private _myKpiService: MyKpiService, public _commonService: CommonService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     $(function () {
@@ -797,6 +801,44 @@ export class MyKpiComponent implements OnInit {
         }
       ).add(() => this.loading = false);
     }
+  }
+
+  // On click geting audit trial data
+  getAuditTrail(node: any) {
+    this.auditingNodeId = node._id;
+    let data = {
+      page: this.auditPageIndex + 1,
+      limit: this.auditPageSize,
+      nodeId: node._id
+    }
+    this.auditHistories = [];
+    this.auditLoading = true;
+    this._myKpiService.getNodeHistory(data).subscribe(
+      (response: any) => {
+        this.auditHistories = response.kpi_history[0].data;
+        if (response.kpi_history[0].metadata.length > 0) {
+          this.totalAudits = response.kpi_history[0].metadata[0].total;
+        } else this.totalAudits = 0;
+      }
+    ).add(() => this.auditLoading = false);
+  }
+  // View more audit
+  viewMoreAudit() {
+    this.auditPageIndex++;
+    let data = {
+      page: this.auditPageIndex + 1,
+      limit: this.auditPageSize,
+      nodeId: this.auditingNodeId
+    }
+    this.auditLoading = true;
+    this._myKpiService.getNodeHistory(data).subscribe(
+      (response: any) => {
+        this.auditHistories.push(...response.kpi_history[0].data);
+        if (response.kpi_history[0].metadata.length > 0) {
+          this.totalAudits = response.kpi_history[0].metadata[0].total;
+        } else this.totalAudits = 0;
+      }
+    ).add(() => this.auditLoading = false);
   }
 
   // Sort function starts
