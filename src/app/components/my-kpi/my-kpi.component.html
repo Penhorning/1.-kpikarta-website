@@ -299,7 +299,7 @@
                           </td>
                           <td>
                             {{ kpi?.updatedAt | date }}
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" title="Audit Trail"
                             *ngIf="!sortMonth" (click)="getAuditTrail(kpis[i])" class="cursor_pointer" data-toggle="modal" data-target="#auditTrailModal">
                               <path d="M5.02828 5.57202C5.78363 4.75703 6.70808 4.1171 7.73685 3.69709C10.4591 3.00565 11.8263 3.16151 14.2107 5.14327C14.8417 5.71804 15.3534 6.41149 15.7165 7.18401C16.0796 7.95653 16.287 8.793 16.3268 9.64566C16.4072 11.3677 15.8002 13.0511 14.6394 14.3257M9.70192 7.12349L9.49717 10.3185L11.7151 12.3386" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
                               <path d="M12.7136 15.8176C12.1857 16.0735 11.6247 16.2545 11.0469 16.3555M8.46181 16.3275C7.82604 16.1887 7.21562 15.9521 6.65229 15.6263M3.61188 11.9103C3.80941 12.5304 4.10182 13.1161 4.4787 13.6466" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
@@ -826,20 +826,30 @@
             </button>
          </div>
          <div class="modal-body">
-            <div class="card" *ngFor="let history of auditHistories">
+          <div class="audit_trial_div">
+            <div class="card my-2 mr-2" *ngFor="let history of auditHistories">
               <div class="card-header">
-                Quote
+                {{ auditingNode?.name }}
               </div>
               <div class="card-body">
                 <blockquote class="blockquote mb-0">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-                  <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
+                  <p class="mb-1">
+                    <b>{{ history?.user?.fullName }}</b> has updated the value to <b>{{ history?.event_options?.updated?.achieved_value }}</b>
+                     for the month of <b>{{ history?.createdAt | date: 'MMMM' }}</b></p>
+                  <footer class="blockquote-footer">{{ history?.createdAt | date: 'medium' }}</footer>
                 </blockquote>
               </div>
             </div>
+            <ng-container *ngIf="auditLoading">
+              <div [innerHtml]="loader"></div>
+            </ng-container>
+            <ng-container *ngIf="!auditLoading && auditHistories.length === 0">
+              <div [innerHtml]="noDataAvailable"></div>
+            </ng-container>
             <div class="text-center mt-4" *ngIf="!auditLoading && totalAudits > auditHistories.length">
               <p class="view_more" (click)="viewMoreAudit()">View More..</p>
             </div>
+          </div>
          </div>
       </div>
    </div>

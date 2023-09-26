@@ -71,7 +71,7 @@ export class MyKpiComponent implements OnInit {
   openState: boolean = false;
   wsname: any;
   // Audit Trail
-  auditingNodeId: string = "";
+  auditingNode: any;
   auditPageIndex: number = 0;
   auditPageSize: number = 10;
   totalAudits: number = 0;
@@ -805,7 +805,7 @@ export class MyKpiComponent implements OnInit {
 
   // On click geting audit trial data
   getAuditTrail(node: any) {
-    this.auditingNodeId = node._id;
+    this.auditingNode = node;
     let data = {
       page: this.auditPageIndex + 1,
       limit: this.auditPageSize,
@@ -815,9 +815,9 @@ export class MyKpiComponent implements OnInit {
     this.auditLoading = true;
     this._myKpiService.getNodeHistory(data).subscribe(
       (response: any) => {
-        this.auditHistories = response.kpi_history[0].data;
-        if (response.kpi_history[0].metadata.length > 0) {
-          this.totalAudits = response.kpi_history[0].metadata[0].total;
+        this.auditHistories = response.karta_history[0].data;
+        if (response.karta_history[0].metadata.length > 0) {
+          this.totalAudits = response.karta_history[0].metadata[0].total;
         } else this.totalAudits = 0;
       }
     ).add(() => this.auditLoading = false);
@@ -828,14 +828,14 @@ export class MyKpiComponent implements OnInit {
     let data = {
       page: this.auditPageIndex + 1,
       limit: this.auditPageSize,
-      nodeId: this.auditingNodeId
+      nodeId: this.auditingNode._id
     }
     this.auditLoading = true;
     this._myKpiService.getNodeHistory(data).subscribe(
       (response: any) => {
-        this.auditHistories.push(...response.kpi_history[0].data);
-        if (response.kpi_history[0].metadata.length > 0) {
-          this.totalAudits = response.kpi_history[0].metadata[0].total;
+        this.auditHistories.push(...response.karta_history[0].data);
+        if (response.karta_history[0].metadata.length > 0) {
+          this.totalAudits = response.karta_history[0].metadata[0].total;
         } else this.totalAudits = 0;
       }
     ).add(() => this.auditLoading = false);

@@ -227,6 +227,13 @@ a.nav-link-cus {
 
 }
 
+.audit_trial_div {
+    max-height: 550px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+}
+
 .short_text_with_width {
     text-overflow: ellipsis;
     white-space: nowrap;
