@@ -834,7 +834,7 @@
               <div class="card-body">
                 <blockquote class="blockquote mb-0">
                   <p class="mb-1">
-                    <b>{{ history?.user?.fullName }}</b> has updated the value to <b>{{ history?.event_options?.updated?.achieved_value }}</b>
+                    <b>{{ history?.user?.fullName || 'System' }}</b> has updated the actual value to <b>{{ history?.event_options?.updated?.achieved_value }}</b>
                      for the month of <b>{{ history?.createdAt | date: 'MMMM' }}</b></p>
                   <footer class="blockquote-footer">{{ history?.createdAt | date: 'medium' }}</footer>
                 </blockquote>

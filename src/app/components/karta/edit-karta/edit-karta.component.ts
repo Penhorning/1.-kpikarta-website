@@ -1141,27 +1141,29 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
   // Change achieved value
   changeAchievedValue() {
-    let node = this.currentNode;
-    if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
-    else if (this.currentNodeAchievedValue > 999999999999999) this._commonService.errorToaster("Achieved value cannot be greater than 999999999999999!");
-    else if (this.currentNodeAchievedValue >= 0 && this.currentNodeAchievedValue !== null) {
-      // Calculate new percentage
-      this.target.forEach((element: any) => {
-        let percentage = (this.currentNodeAchievedValue / element.value) * 100;
-        return (element.percentage = Math.round(percentage));
-      });
-      // Update achieved_value and target
-      let randomKey = new Date().getTime();
-      let updatingParameters = [
-        { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: "measure"},
-        { key: 'target', value: this.target, node_updated: 'node_updated', node }
-      ];
-      if (this.target[0].percentage >= 100) updatingParameters.push({
-        key: "completed_date", value: new Date(), node_updated: "node_updated", node
-      });
-      for (let param of updatingParameters) {
-        let metrics = param.metrics || null
-        this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+    if (this.currentNode.achieved_value != this.currentNodeAchievedValue) {
+      let node = this.currentNode;
+      if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
+      else if (this.currentNodeAchievedValue > 999999999999999) this._commonService.errorToaster("Achieved value cannot be greater than 999999999999999!");
+      else if (this.currentNodeAchievedValue >= 0 && this.currentNodeAchievedValue !== null) {
+        // Calculate new percentage
+        this.target.forEach((element: any) => {
+          let percentage = (this.currentNodeAchievedValue / element.value) * 100;
+          return (element.percentage = Math.round(percentage));
+        });
+        // Update achieved_value and target
+        let randomKey = new Date().getTime();
+        let updatingParameters = [
+          { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: "measure"},
+          { key: 'target', value: this.target, node_updated: 'node_updated', node }
+        ];
+        if (this.target[0].percentage >= 100) updatingParameters.push({
+          key: "completed_date", value: new Date(), node_updated: "node_updated", node
+        });
+        for (let param of updatingParameters) {
+          let metrics = param.metrics || null
+          this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+        }
       }
     }
   }
