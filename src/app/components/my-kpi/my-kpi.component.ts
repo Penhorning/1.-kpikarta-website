@@ -837,6 +837,7 @@ export class MyKpiComponent implements OnInit {
 
   // On click geting audit trial data
   getAuditTrail(node: any) {
+    this.auditPageIndex = 0;
     this.auditingNode = node;
     let data = {
       page: this.auditPageIndex + 1,
