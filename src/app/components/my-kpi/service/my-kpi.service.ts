@@ -15,8 +15,8 @@ export class MyKpiService {
   getKPIsByMonth(data: any) {
     return this._httpService.POST('/karta_nodes/view-previous-kpis-by-month', data);
   }
-  getNodeHistory(data: any) {
-    return this._httpService.POST('/karta_histories/get-node-history', data);
+  getKartaLogs(data: any) {
+    return this._httpService.POST('/karta_logs/get-logs', data);
   }
   getKPIsByYear(data: any) {
     return this._httpService.POST('/karta_nodes/view-previous-kpis-by-year', data);
@@ -32,6 +32,9 @@ export class MyKpiService {
   }
   createKartaHistory(data: any) {
     return this._httpService.POST('/karta_histories/create-karta-history', data);
+  }
+  createKartaLog(data: any) {
+    return this._httpService.POST('/karta_logs', data);
   }
   updateKartaHistory(histroyId: string, data: any) {
     return this._httpService.PATCH(`/karta_histories/${histroyId}`, data);

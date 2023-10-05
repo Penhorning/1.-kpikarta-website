@@ -170,10 +170,6 @@ export class HistoricalViewComponent implements OnInit {
       return;
     }
 
-    // this.target.forEach((element: any) => {
-    //   let percentage = (+this.measureForm.value.actualValue / element.value) * 100;
-    //   return element.percentage = Math.round(percentage);
-    // });
     const calculatePercentage = (actualValue: any, targetValue: any) => {
       let percentage = (+actualValue / targetValue) * 100;
       return Math.round(percentage);
@@ -198,11 +194,12 @@ export class HistoricalViewComponent implements OnInit {
     for (let i=0; i<value.length; i++) {
       data["event_options"]["updated"] = value[i];
       this._myKpiService.updateKartaHistory(ids[i], data).subscribe(
-        async (response: any) => {
+        (response: any) => {
           if (i === value.length-1) {
             if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
             $('#editHistoryActualValueModal').modal('hide');
             this.getKPIsByYear(this.selectedYear);
+
             // Update data in real node
             let kpi_created_month = new Date(this.editingNode.achieved.createdAt).getMonth();
             let current_month = new Date().getMonth();
@@ -212,8 +209,22 @@ export class HistoricalViewComponent implements OnInit {
                 target: this.editingNode.target.event_options.updated.target
               }
               if (this.editingNode.target.event_options.updated.target[0].percentage >= 100) data2["completed_date"] = new Date();
-              await this._myKpiService.updateNode(this.editingKPI._id, data2).toPromise();
+              this._myKpiService.updateNode(this.editingKPI._id, data2).subscribe();
             }
+
+            // Create log for achieved value
+            const log_data = {
+              event: "node_updated",
+              event_options: {
+                achieved_value: +this.measureForm.value.actualValue
+              },
+              kartaNodeId: this.editingNode.achieved.kartaNodeId,
+              userId: this._commonService.getUserId(),
+              versionId: this.editingNode.achieved.versionId,
+              kartaId: this.editingNode.achieved.kartaId,
+              duration: new Date(this.editingNode.achieved.createdAt).toLocaleString('default', { month: 'long' })
+            }
+            this._myKpiService.createKartaLog(log_data).subscribe();
           }
         },
         (err: any) => {
@@ -314,7 +325,7 @@ export class HistoricalViewComponent implements OnInit {
         for (let i=0; i<value.length; i++) {
           data["event_options"]["updated"] = value[i];
           this._myKpiService.updateKartaHistory(ids[i], data).subscribe(
-            async (response) => {
+            (response) => {
               if (i === value.length-1) {
                 if (response) { this._commonService.successToaster('Actual value updated successfully!'); }
                 $('#editHistoryActualValueModal').modal('hide');
@@ -333,8 +344,22 @@ export class HistoricalViewComponent implements OnInit {
                     }
                   }
                   if (this.editingNode.target.event_options.updated.target[0].percentage >= 100) data2["completed_date"] = new Date();
-                  await this._myKpiService.updateNode(this.editingKPI._id, data2).toPromise();
+                  this._myKpiService.updateNode(this.editingKPI._id, data2).subscribe();
                 }
+
+                // Create log for achieved value
+                const log_data = {
+                  event: "node_updated",
+                  event_options: {
+                    achieved_value: +this.metricsForm.value.calculatedValue
+                  },
+                  kartaNodeId: this.editingNode.achieved.kartaNodeId,
+                  userId: this._commonService.getUserId(),
+                  versionId: this.editingNode.achieved.versionId,
+                  kartaId: this.editingNode.achieved.kartaId,
+                  duration: new Date(this.editingNode.achieved.createdAt).toLocaleString('default', { month: 'long' })
+                }
+                this._myKpiService.createKartaLog(log_data).subscribe();
               }
             },
             (err) => {

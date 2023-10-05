@@ -123,6 +123,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   currentNodeDescription: string = '';
   currentNodeWeight: number = 0;
   currentNodeAchievedValue: number = 0;
+  isAchievedChanged: boolean = false;
   // Typography
   selectedFont: any = '';
   selectedColor: any = '';
@@ -598,6 +599,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                     { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', node, metrics: "metrics"},
                     { key: 'target', value: newTarget, node_updated: 'node_updated', node }
                   ];
+                  this.isAchievedChanged = true;
                   if (this.target[0].percentage >= 100) updatingParameters.push({
                     key: "completed_date", value: new Date(), node_updated: "node_updated", node
                   });
@@ -1143,6 +1145,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   changeAchievedValue() {
     if (this.currentNode.achieved_value != this.currentNodeAchievedValue) {
       let node = this.currentNode;
+      this.isAchievedChanged = true;
       if (this.currentNodeAchievedValue < 0) this._commonService.errorToaster("Please enter positive value!");
       else if (this.currentNodeAchievedValue > 999999999999999) this._commonService.errorToaster("Achieved value cannot be greater than 999999999999999!");
       else if (this.currentNodeAchievedValue >= 0 && this.currentNodeAchievedValue !== null) {
@@ -1480,18 +1483,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (key === "fiscal_year_start_date") data["fiscal_year_end_date"] = updatingNode.fiscal_year_end_date;
     // Send update node request
     this._kartaService.updateNode(updatingNode.id, data).subscribe(
-      async (response: any) => {
+      (response: any) => {
         const oldValue = { [key]: updatingNode[key] }
         updatingNode[key] = value;
         if (key === "notifyUserId") updatingNode["notify_type"] = type;
         this.D3SVG.update(updatingNode);
-        // Calculate new percentage when any achieved, target and weightage value changes
-        // if (key === "achieved_value" || key === "target" || key === "weightage" || 
-        // ((key === 'kpi_calc_period') && this.kpiCalculationPeriod === "monthly" || this.kpiCalculationPeriod === "month-to-date" || this.kpiCalculationPeriod === "year-to-date")) {
-        //   this.updateNewPercentage();
-        // }
+        // Calculate new percentage
         this.updateNewPercentage();
-        // Save the karta update history
+        // Create history
         let history_data = {
           event,
           eventValue: { [key]: value },
@@ -1504,7 +1503,21 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           historyType: 'main'
         }
         if (randomKey) history_data["randomKey"] = randomKey.toString();
-        await this._kartaService.createKartaHistory(history_data).toPromise();
+        this._kartaService.createKartaHistory(history_data).subscribe();
+        // Create log for achieved value
+        if (key === "achieved_value" && this.isAchievedChanged) {
+          const log_data = {
+            event,
+            event_options: { [key]: value },
+            kartaNodeId: updatingNode.id,
+            userId: this._commonService.getUserId(),
+            versionId: this.versionId,
+            kartaId: this.kartaId,
+            duration: new Date().toLocaleString('default', { month: 'long' })
+          }
+          this._kartaService.createKartaLog(log_data).subscribe();
+          this.isAchievedChanged = false;
+        }
       }
     );
   }

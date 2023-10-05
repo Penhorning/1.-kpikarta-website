@@ -110,6 +110,9 @@ export class KartaService {
   createKartaHistory(data: any) {
     return this._httpService.POST('/karta_histories/create-karta-history', data);
   }
+  createKartaLog(data: any) {
+    return this._httpService.POST('/karta_logs', data);
+  }
   updateNode(nodeId: string, data: any) {
     return this._httpService.PATCH(`/karta_nodes/${nodeId}`, data);
   }

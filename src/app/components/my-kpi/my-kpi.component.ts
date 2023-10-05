@@ -327,6 +327,22 @@ export class MyKpiComponent implements OnInit {
                 this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
               }
             }
+            // Create log for achieved value
+            const log_data = {
+              event: "node_updated",
+              event_options: {
+                achieved_value: Number(total)
+              },
+              kartaNodeId: this.editingNode._id,
+              userId: this._commonService.getUserId(),
+              versionId: this.editingNode.karta.versionId,
+              kartaId: this.editingNode.karta._id,
+              duration: new Date().toLocaleString('default', { month: 'long' })
+            }
+            if (this.metricsForm.value.pastMonth < moment().month()) {
+              log_data.duration = moment().month(this.metricsForm.value.pastMonth).format('MMMM');
+            }
+            this._myKpiService.createKartaLog(log_data).subscribe();
           },
           (err) => {
             console.log(err); this._commonService.errorToaster('Something went wrong!');
@@ -394,6 +410,22 @@ export class MyKpiComponent implements OnInit {
             this._myKpiService.createKartaHistory(history_data).subscribe(() => {});
           }
         }
+        // Create log for achieved value
+        const log_data = {
+          event: "node_updated",
+          event_options: {
+            achieved_value: data.achieved_value
+          },
+          kartaNodeId: this.editingNode._id,
+          userId: this._commonService.getUserId(),
+          versionId: this.editingNode.karta.versionId,
+          kartaId: this.editingNode.karta._id,
+          duration: new Date().toLocaleString('default', { month: 'long' })
+        }
+        if (this.measureForm.value.pastMonth < moment().month()) {
+          log_data.duration = moment().month(this.measureForm.value.pastMonth).format('MMMM');
+        }
+        this._myKpiService.createKartaLog(log_data).subscribe();
       },
       (err) => {
         console.log(err); this._commonService.errorToaster('Something went wrong!');
@@ -813,11 +845,11 @@ export class MyKpiComponent implements OnInit {
     }
     this.auditHistories = [];
     this.auditLoading = true;
-    this._myKpiService.getNodeHistory(data).subscribe(
+    this._myKpiService.getKartaLogs(data).subscribe(
       (response: any) => {
-        this.auditHistories = response.karta_history[0].data;
-        if (response.karta_history[0].metadata.length > 0) {
-          this.totalAudits = response.karta_history[0].metadata[0].total;
+        this.auditHistories = response.karta_log[0].data;
+        if (response.karta_log[0].metadata.length > 0) {
+          this.totalAudits = response.karta_log[0].metadata[0].total;
         } else this.totalAudits = 0;
       }
     ).add(() => this.auditLoading = false);
@@ -831,11 +863,11 @@ export class MyKpiComponent implements OnInit {
       nodeId: this.auditingNode._id
     }
     this.auditLoading = true;
-    this._myKpiService.getNodeHistory(data).subscribe(
+    this._myKpiService.getKartaLogs(data).subscribe(
       (response: any) => {
-        this.auditHistories.push(...response.karta_history[0].data);
-        if (response.karta_history[0].metadata.length > 0) {
-          this.totalAudits = response.karta_history[0].metadata[0].total;
+        this.auditHistories.push(...response.karta_log[0].data);
+        if (response.karta_log[0].metadata.length > 0) {
+          this.totalAudits = response.karta_log[0].metadata[0].total;
         } else this.totalAudits = 0;
       }
     ).add(() => this.auditLoading = false);
