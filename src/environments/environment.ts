@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  // API_URL: 'https://qa-api.kpikarta.com',
-  // API_URL: 'http://159.89.234.66:3340'
+  // API_URL: 'https://qa-api.kpikarta.com'
   API_URL: 'http://localhost:3000'
 };
 

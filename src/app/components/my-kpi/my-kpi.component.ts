@@ -1085,7 +1085,7 @@ export class MyKpiComponent implements OnInit {
               this.tableData = data.map((item: any, i: any) => {
                 // delete item.__EMPTY;
                 // delete item['My KPI Export'];
-                if (!this.isNumeric(item.__EMPTY_4) && i !== 0) {
+                if (i !== 0 && (!this.isNumeric(item.__EMPTY_4) || item.__EMPTY_4.length > 15)) {
                   item.invalid = true;
                   this.isTableDataWrong = true;
                 } else {
