@@ -17,6 +17,7 @@ export class SignUpComponent implements OnInit {
     userId: "",
     email: "",
     accessToken: "",
+    userType : "kpi"
   }
 
   submitted: boolean = false;
@@ -34,6 +35,9 @@ export class SignUpComponent implements OnInit {
     email: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.email)]],
     mobile: [{}, Validators.required],
     companyName: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]], // Validtion for blank space
+    userType : "kpi",
+    job_title: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
+    country: ['', [Validators.required, Validators.pattern(this._commonService.formValidation.blank_space)]],
   });
 
   get form() { return this.signupForm.controls; }
@@ -88,7 +92,8 @@ export class SignUpComponent implements OnInit {
                 email,
                 stage: 1,
                 emailVerified: false,
-                userId: ""
+                userId: "",
+                userType : "kpi"
               }
               this._signupService.setSignUpSession(sessionData);
               this.router.navigate(['/sign-up/verification']);

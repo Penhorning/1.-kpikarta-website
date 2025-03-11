@@ -27,15 +27,32 @@ export function openRightSidebar(value) {
     else $('#rightSidebar').scrollTop(0);
     $('body').addClass('rightSidebarOpened');
 }
+// Disable Element
+export function disablePhase() {
+    $('.phase_column').addClass('disableDiv');
+}
+// Enable Element
+export function enablePhase() {
+    $('.phase_column').removeClass('disableDiv');
+}
 // Disable chart
 export function disableChart() {
     $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
+    $('#karta-svg').addClass('disableKarta');
+    $('.karta_column').addClass('disableKarta');
+    $('.phase_column').addClass('disableDiv');
+    $('.phase_name').addClass('disableSpan');
+    $(".phase_name").css("pointer-events", "none", "cursor", "default");
 }
 // Enable chart
 export function enableChart() {
     // const isZoomed = getAttribute("#karta-svg svg g", "transform");
     // if (!isZoomed) $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
     $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+    $('#karta-svg').removeClass('disableKarta');
+    $('.karta_column').removeClass('disableKarta');
+    $('.phase_column').removeClass('disableDiv');
+    $(".phase_name").css("pointer-events", "all", "cursor", "pointer");
 }
 // Show modal
 export function showModal(id) {

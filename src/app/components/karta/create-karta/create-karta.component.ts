@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
+import data from './industries.json';
 
 @Component({
   selector: 'app-create-karta',
@@ -11,11 +12,17 @@ import { KartaService } from '../service/karta.service';
 })
 export class CreateKartaComponent implements OnInit {
 
+  industries: any = data.industries;
+  departments: any = [];
+
   submitted: boolean = false;
   submitFlag: boolean = false;
 
   kartaForm = this.fb.group({
     name: ['', [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
+    department: ['', Validators.required],
+    industry: ['', Validators.required],
+    otherDepartment: ['', [Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]],
   });
   get form() { return this.kartaForm.controls; }
 
@@ -27,6 +34,7 @@ export class CreateKartaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.industries)
   }
 
   // On submit
@@ -34,43 +42,49 @@ export class CreateKartaComponent implements OnInit {
     this.submitted = true;
 
     if (this.kartaForm.valid) {
-      this.submitFlag = true;
-      this.kartaForm.value.userId = this._commonService.getUserId();
-      
-      this._kartaService.findKartaByUser(this.kartaForm.value.userId).subscribe(
-        (response: any) => {
-          if (response.length > 0) {
-            this._kartaService.createKarta(this.kartaForm.value).subscribe(
-              (response: any) => {
-                location.replace(`/karta/edit/${response.id}`);
-              },
-              (error: any) => {
-                this.submitFlag = false;
-              }
-            );
-          } else {
-            this._kartaService.createKarta(this.kartaForm.value).subscribe(
-              (response: any) => {
-                this._commonService.updateSession('newkartaId', response.id);
-                this._kartaService.getIntroKarta().subscribe(
-                  (response: any) => {
-                    if (response.length > 0) this.router.navigate(['/karta/intro', response[0].id]);
-                  },
-                  (error: any) => {
-                    this.submitFlag = false;
-                  }
-                )
-              },
-              (error: any) => {
-                this.submitFlag = false;
-              }
-            );
+      if ((this.form.department.value == 'Other' && this.form.otherDepartment.value) || this.form.department.value !== 'Other') {
+        this.submitFlag = true;
+        this.kartaForm.value.userId = this._commonService.getUserId();
+        
+        this._kartaService.findKartaByUser(this.kartaForm.value.userId).subscribe(
+          (response: any) => {
+            if (response.length > 0) {
+              this._kartaService.createKarta(this.kartaForm.value).subscribe(
+                (response: any) => {
+                  location.replace(`/karta/edit/${response.id}`);
+                },
+                (error: any) => {
+                  this.submitFlag = false;
+                }
+              );
+            } else {
+              this._kartaService.createKarta(this.kartaForm.value).subscribe(
+                (response: any) => {
+                  this._commonService.updateSession('newkartaId', response.id);
+                  this._kartaService.getIntroKarta().subscribe(
+                    (response: any) => {
+                      if (response.length > 0) this.router.navigate(['/karta/intro', response[0].id]);
+                    },
+                    (error: any) => {
+                      this.submitFlag = false;
+                    }
+                  )
+                },
+                (error: any) => {
+                  this.submitFlag = false;
+                }
+              );
+            }
+          },
+          (error: any) => {
+            this.submitFlag = false;
           }
-        },
-        (error: any) => {
-          this.submitFlag = false;
-        }
-      );
+        );
+      }
+
+      if(this.form.department.value == 'Other' && !this.form.otherDepartment.value) {
+        this.kartaForm.markAllAsTouched();
+      }
     }
   }
 

@@ -2493,7 +2493,7 @@ button.next-btn {
 }
 
 .form-group.name-input-karta label {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
 }
 
@@ -2505,8 +2505,8 @@ button.next-btn {
   max-width: 80%;
   margin: 0 auto;
   background-color: #fff;
-  padding: 4rem 4rem 4rem 4rem;
-  margin-top: 3rem;
+  padding: 2rem 4rem 4rem 4rem;
+  margin-top: 2rem;
 }
 
 .main-content {

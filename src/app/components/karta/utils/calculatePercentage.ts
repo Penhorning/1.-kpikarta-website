@@ -83,41 +83,44 @@ export class CalculatePercentage {
         const businessDaysInYear = this.getNumberOfDays(true, 'year');
 
         const calculateTargetValue = (targetValue: any, durationType: string, f_startDate: any, f_endDate: any, daysToCalc: string) => {
-          const currentMonthNumber = new Date().getMonth();
-          const startMonthNumber = new Date(f_startDate).getMonth();
-          const endMonthNumber = new Date(f_endDate).getMonth();
+          if (moment.utc(f_startDate).isAfter(moment())) return 0;
+          else {
+            const currentMonthNumber = new Date().getMonth();
+            const startMonthNumber = new Date(f_startDate).getUTCMonth();
+            const endMonthNumber = new Date(f_endDate).getUTCMonth();
 
-          const getTargetValue = (isBusiness: boolean) => {
-            // Check if today's date greater than fiscal year start date or end date
-            if (moment(f_startDate).date() <= moment().date()) {
-              let fiscalDayOfMonth = this.getNumberOfDays(isBusiness, durationType, { type: "both", start: moment(f_startDate), end: moment() });
-              let fiscalDaysInMonth = this.getNumberOfDays(isBusiness, durationType, { type: "start", start: moment(f_startDate) });
-              return fiscalDayOfMonth * (targetValue / fiscalDaysInMonth);
-            } else {
-              let fiscalDayOfMonth = this.getNumberOfDays(isBusiness, durationType, { type: "both", start: moment(), end: moment(f_endDate) });
-              let fiscalDaysInMonth = this.getNumberOfDays(isBusiness, durationType, { type: "end", end: moment(f_endDate) });
-              return fiscalDayOfMonth * (targetValue / fiscalDaysInMonth);
+            const getTargetValue = (isBusiness: boolean) => {
+              // Check if today's date greater than fiscal year start date or end date
+              if (moment(f_startDate).date() <= moment().date()) {
+                let fiscalDayOfMonth = this.getNumberOfDays(isBusiness, durationType, { type: "both", start: moment.utc(f_startDate), end: moment() });
+                let fiscalDaysInMonth = this.getNumberOfDays(isBusiness, durationType, { type: "start", start: moment.utc(f_startDate) });
+                return fiscalDayOfMonth * (targetValue / fiscalDaysInMonth);
+              } else {
+                let fiscalDayOfMonth = this.getNumberOfDays(isBusiness, durationType, { type: "both", start: moment(), end: moment.utc(f_endDate) });
+                let fiscalDaysInMonth = this.getNumberOfDays(isBusiness, durationType, { type: "end", end: moment.utc(f_endDate) });
+                return fiscalDayOfMonth * (targetValue / fiscalDaysInMonth);
+              }
             }
+            
+            // Check if => Fiscal Year start date = date, Fiscal Year end date = date, Days to calculate = business
+            if (f_startDate && f_endDate && daysToCalc === "business") {
+              if (currentMonthNumber === startMonthNumber || currentMonthNumber === endMonthNumber) {
+                return getTargetValue(true);
+              } else return businessDayOfMonth * (targetValue / businessDaysInMonth);
+            }
+            // Check if => Fiscal Year start date = date, Fiscal Year end date = date, Days to calculate = all
+            else if (f_startDate && f_endDate && daysToCalc !== "business") {
+              if (currentMonthNumber === startMonthNumber || currentMonthNumber === endMonthNumber) {
+                return getTargetValue(false);
+              } else return dayOfMonth * (targetValue / daysInMonth);
+            }
+            // Check if => Fiscal Year start date = null, Fiscal Year end date = null, Days to calculate = business
+            else if (!f_startDate && !f_endDate && daysToCalc === "business") {
+              return businessDayOfMonth * (targetValue / businessDaysInMonth);
+            }
+            // Check if => Fiscal Year start date = null, Fiscal Year end date = null, Days to calculate = all
+            else return dayOfMonth * (targetValue / daysInMonth);
           }
-          
-          // Check if => Fiscal Year start date = date, Fiscal Year end date = date, Days to calculate = business
-          if (f_startDate && f_endDate && daysToCalc === "business") {
-            if (currentMonthNumber === startMonthNumber || currentMonthNumber === endMonthNumber) {
-              return getTargetValue(true);
-            } else return businessDayOfMonth * (targetValue / businessDaysInMonth);
-          }
-          // Check if => Fiscal Year start date = date, Fiscal Year end date = date, Days to calculate = all
-          else if (f_startDate && f_endDate && daysToCalc !== "business") {
-            if (currentMonthNumber === startMonthNumber || currentMonthNumber === endMonthNumber) {
-              return getTargetValue(false);
-            } else return dayOfMonth * (targetValue / daysInMonth);
-          }
-          // Check if => Fiscal Year start date = null, Fiscal Year end date = null, Days to calculate = business
-          else if (!f_startDate && !f_endDate && daysToCalc === "business") {
-            return businessDayOfMonth * (targetValue / businessDaysInMonth);
-          }
-          // Check if => Fiscal Year start date = null, Fiscal Year end date = null, Days to calculate = all
-          else return dayOfMonth * (targetValue / daysInMonth);
         }
         const findTarget = (type: string) => {
           return element.target.find((item: any) => item.frequency === type);
@@ -163,7 +166,7 @@ export class CalculatePercentage {
             else if (findTarget('yearly')) targetValue = findTarget('yearly').value / 12;
             else if (findTarget('quarterly')) targetValue = findTarget('quarterly').value / 4;
             // Set target value
-            targetValue = calculateTargetValue(targetValue, 'month', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate)!; 
+            targetValue = calculateTargetValue(targetValue, 'month', element.fiscal_year_start_date, element.fiscal_year_end_date, element.days_to_calculate); 
           }
         }
         // Set target value according to year to date

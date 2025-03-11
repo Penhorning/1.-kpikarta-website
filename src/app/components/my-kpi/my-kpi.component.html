@@ -685,7 +685,7 @@
                   <div class="col-lg-8">
                     <div class="">
                       <label for="actualValue" class="font-weight-bold">Actual Value</label>
-                      <input type="text" id="actualValue" class="form-control" formControlName="actualValue" [maxlength]="15"
+                      <input type="text" id="actualValue" class="form-control" (blur)="checkNegativeValue()" formControlName="actualValue" [maxlength]="15"
                         [ngClass]="{ 'is-invalid': (submittedMeasure || form.actualValue.touched) && form.actualValue.errors }">
                       <div *ngIf="(submittedMeasure || form.actualValue.touched) && form.actualValue.errors"
                         class="invalid-feedback">

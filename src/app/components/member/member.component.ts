@@ -97,6 +97,12 @@ export class MemberComponent implements OnInit {
         }
       }
     );
+
+    let session = this.getSignUpSession();
+    let session2 = this.getLoginSession();
+
+    console.log('sess-->>>',session)
+    console.log('sess-->>>',session2)
   }
 
   // Get all members users
@@ -211,6 +217,13 @@ export class MemberComponent implements OnInit {
     }
   }
 
+    // Get userType from sessionStorage
+    getSignUpSession() {
+      return JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
+    }
+    getLoginSession() {
+      return JSON.parse(window.sessionStorage.getItem("kpi-karta-login-session") || "{}");
+    }
   // Submit user data
   onSubmit() {
     this.submitted = true;
@@ -218,6 +231,11 @@ export class MemberComponent implements OnInit {
       let formData = this.inviteForm.getRawValue();
       formData.creatorId = this._commonService.getUserId();
 
+      let session = this.getSignUpSession();  // This retrieves the session data
+      let session2 = this.getLoginSession();  // This retrieves the session data
+      formData.userType = session?.userType || session2?.userType;   // Add userType to the formData
+      console.log("session?.userType",session?.userType)
+      console.log("session2?.userType",session2?.userType)
       // When new user create
       if (this.checkFormType === "CREATE") {
         this.submitFlag = true;

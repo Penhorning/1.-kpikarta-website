@@ -13,6 +13,9 @@ export class SubscriptionPlanService {
   getCreatorPalns() {
     return this._httpService.GET('/subscriptions/get-plans');
   }  
+  getCreatorPalnsFree() {
+    return this._httpService.GET('/subscriptions/get-plans-free');
+  }  
   assignPlan(data: any) {
     return this._httpService.POST(`/subscriptions/assign-plan?access_token=${this._signupService.getSignUpSession().token}`, data);
   }

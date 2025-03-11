@@ -15,7 +15,6 @@ declare const $: any;
   styleUrls: ['./my-kpi.component.scss'],
 })
 export class MyKpiComponent implements OnInit {
-
   karta: any = [];
   kpis: any = [];
   exportKpis: any = [];
@@ -196,10 +195,11 @@ export class MyKpiComponent implements OnInit {
     $("#kpi_tab_2 a").click();
   }
 
-  // Formula of metrics starts
+  // FORMULA OF METRICS START
   get fields() {
     return this.metricsForm.controls["fields"] as FormArray;
   }
+
   get form() { return this.measureForm.controls }
 
   addMetricsData() {
@@ -353,7 +353,7 @@ export class MyKpiComponent implements OnInit {
   }
 
   onMeasureSubmit() {
-    if (!this.measureForm.valid) {
+    if (!this.measureForm.valid && this.measureForm.value.actualValue < 0) {
       this.measureForm.markAllAsTouched();
       this.submittedMeasure = true;
       return;
@@ -433,7 +433,7 @@ export class MyKpiComponent implements OnInit {
     ).add(() => this.measureSubmitFlag = false);
     return;
   }
-  // Formula of metrics ends
+  // FORMULA OF METRICS ENDS
 
   // Get color settings
   getColorSettings() {
@@ -501,6 +501,7 @@ export class MyKpiComponent implements OnInit {
       else this.selectedHistoryKpis.clear();
     }
   }
+
   // Check/Uncheck single item
   checkUncheckSingleItem(e: any, index: number, id: string) {
     if (e.target.checked) {
@@ -514,12 +515,14 @@ export class MyKpiComponent implements OnInit {
       this.masterCheck = false;
     }
   }
+
   // Show history
   showHistory() {
     this.isHistoricalView = true;
     if (this.selectedHistoryKpis.size > 0) this.historyKpis = Array.from(this.selectedHistoryKpis);
     else for (let kpi of this.kpis) this.historyKpis.push(kpi._id);
   }
+
   // Hide history
   hideHistory() {
     this.isHistoricalView = false;
@@ -558,6 +561,7 @@ export class MyKpiComponent implements OnInit {
       this.getMyKPIsList();
     }, 1000);
   }
+
   clearSearch() {
     this.search_text = "";
     this.pageIndex = 0;
@@ -673,6 +677,7 @@ export class MyKpiComponent implements OnInit {
       }
     ).add(() => this.loading = false);
   }
+
   // Sort by month
   onSortByMonth() {
     this.pageIndex = 0;
@@ -855,6 +860,7 @@ export class MyKpiComponent implements OnInit {
       }
     ).add(() => this.auditLoading = false);
   }
+
   // View more audit
   viewMoreAudit() {
     this.auditPageIndex++;
@@ -924,7 +930,7 @@ export class MyKpiComponent implements OnInit {
     });
     if (colName == 'percentage' || 'achieved_value' || 'value') this.sortOrder == 'asc' ? this.sortOrder = 'dsc' : this.sortOrder = 'asc';
   }
-  // End of sort function
+  // END OF SORT FUNCTION
 
   // Stats filter
   filterByStatus(status: string) {
@@ -1105,7 +1111,7 @@ export class MyKpiComponent implements OnInit {
   }
 
   // Metrics formula calculation
-calculateMetricFormulaForCSV(values: any, originalValues: any) {
+  calculateMetricFormulaForCSV(values: any, originalValues: any) {
     let originalValue = originalValues.node_formula.formula.trim();
     let newValue: any = '';
     let value = originalValues.node_formula.formula.trim().split(/[\s() */%+-]+/g);
@@ -1231,6 +1237,13 @@ calculateMetricFormulaForCSV(values: any, originalValues: any) {
           }
         ).add(() => this.importSubmitFlag = false);
       }
+    }
+  }
+
+  // Check Negative Value error
+  checkNegativeValue() {
+    if (this.measureForm.value.actualValue < 0) {
+      this.measureForm.get("actualValue").setErrors({pattern : true});
     }
   }
 

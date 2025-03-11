@@ -124,23 +124,27 @@ export class LoginComponent implements OnInit {
       this._commonService.login(this.loginForm.value).subscribe(
         (response: any) => {
           this._commonService.deleteRememberMeSession();
-          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, subscriptionStatus } = response.user;
+          console.log("response.user",response.user)
+          let { id, fullName, email, profilePic, emailVerified, mobile, mobileVerified, _2faEnabled, subscriptionStatus, userType } = response.user;
           // If email is not verified
           if (!emailVerified) {
             let sessionData = {
               token: response.id,
               email,
-              stage: 1
+              stage: 1,
+              userType : response?.user?.userType
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/sign-up/verification']);
           }
           // If user does not have subscription
-          else if (subscriptionStatus === "none") {
+          else if (subscriptionStatus === "none" && userType !== 'appsumo') {
+            console.log('here1--->')
             let sessionData = {
               token: response.id,
               email,
-              stage: 1
+              stage: 1,
+              userType : response?.user?.userType
             }
             this._signupService.setSignUpSession(sessionData);
             this.router.navigate(['/subscription-plan']);
@@ -156,7 +160,8 @@ export class LoginComponent implements OnInit {
               companyLogo: response.user.company.logo,
               role: response.user.role.name,
               license: response.user.license.name,
-              companyId: response.user.companyId
+              companyId: response.user.companyId,
+              userType : response?.user?.userType
             }
             // Set remember session
             if (this.loginForm.value.rememberMe) {

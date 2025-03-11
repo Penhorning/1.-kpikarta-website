@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpService } from '@app/shared/_services/http/http.service';
 
@@ -6,7 +7,7 @@ import { HttpService } from '@app/shared/_services/http/http.service';
 })
 export class KartaService {
 
-  constructor(private _httpService: HttpService) { }
+  constructor(private _httpService: HttpService, private httpClient: HttpClient) { }
 
 /*============================== API FUNCTIONS STARTS ==============================*/
   getInventories(data: any) {
@@ -36,6 +37,9 @@ export class KartaService {
   }
   getSuggestion(data: any) {
     return this._httpService.POST('/suggestions/by-user', data);
+  }
+  getSuggestionByPhaseId(phaseId: any) {
+    return this._httpService.GET(`/suggestions?filter[where][phaseId]=${phaseId}`);
   }
   getKarta(kartaId: string) {
     return this._httpService.GET(`/karta/${kartaId}?filter[include]=node`);
@@ -155,6 +159,33 @@ export class KartaService {
   }
   toggleGlobalColorSetting(data: any) {
     return this._httpService.POST('/color_settings/toggle-global', data);
+  }
+
+  // Segment Services Below
+  getCountries() {
+    return this.httpClient.get('https://countriesnow.space/api/v0.1/countries/states');
+  }
+
+  getCities(country: string, state: string) {
+    return this.httpClient.post('https://countriesnow.space/api/v0.1/countries/state/cities', {country, state});
+  }
+
+  // OPENAI SERVICES BELOW
+  getSuggestionsByPrompt(prompt: any) {
+    return this._httpService.POST('/openais/suggest-names', prompt);
+  }
+
+  getSuggestionsByPhase(data: any) {
+    return this._httpService.POST('/openais/suggest-names-by-phase', data);
+  }
+
+  feelingLuckyKarta(prompt: any, kartaId: string) {
+    let data = {
+      prompt,
+      type: "button",
+      kartaId
+    };
+    return this._httpService.POST('/openais/suggest-names', data);
   }
 /*============================== API FUNCTIONS ENDS ==============================*/
 

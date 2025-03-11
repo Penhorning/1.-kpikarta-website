@@ -9,7 +9,7 @@
           </div>
           <form [formGroup]="kartaForm" (ngSubmit)="onSubmit()">
             <div class="row mt-5">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                   <div class="form-group name-input-karta">
                     <label for="name">Karta Name</label>
                     <input type="text" id="name" class="form-control" formControlName="name" [maxlength]="20"
@@ -19,7 +19,46 @@
                         <div *ngIf="form.name.errors.pattern">Blank space is not allowed!</div>
                     </div>
                   </div>
-                </div>  
+                </div>
+                <div class="col-lg-6 my-2">
+                  <div class="form-group name-input-karta">
+                    <label for="industry">Select Industry</label>
+                    <select class="form-control" id="industry" formControlName="industry">
+                        <option selected="" value="">Select Industry</option>
+                        <optgroup [label]=industry.name *ngFor="let industry of industries">
+                          <option *ngFor="let child of industry.child" [value]="child">{{child}}</option>
+                        </optgroup>
+                    </select>
+                    <div *ngIf="(submitted || form.industry.touched) && form.industry.errors" class="invalid-feedback d-block">
+                        <div *ngIf="form.industry.errors.required">Industry is required!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6 my-2">
+                  <div class="form-group name-input-karta">
+                    <label for="department">Select Department</label>
+                    <select class="form-control" id="department" formControlName="department">
+                        <option selected="" value="">Select department</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <div *ngIf="(submitted || form.department.touched) && form.department.errors" class="invalid-feedback d-block">
+                        <div *ngIf="form.department.errors.required">Department is required!</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6" *ngIf="form.department.value == 'Other'">
+                  <div class="form-group name-input-karta">
+                    <label for="name">Select Other Department</label>
+                    <input type="text" id="name" class="form-control" formControlName="otherDepartment" [maxlength]="20"
+                    [ngClass]="{ 'is-invalid': (form.department.value == 'Other' && form.otherDepartment.touched && !form.otherDepartment.value) }">
+                    <div *ngIf="(form.department.value == 'Other' && form.otherDepartment.touched && !form.otherDepartment.value)" class="invalid-feedback">
+                        <div *ngIf="form.department.value == 'Other' && form.otherDepartment.touched && !form.otherDepartment.value">Other Department is required!</div>
+                        <div *ngIf="form.otherDepartment.errors.pattern">Blank space is not allowed!</div>
+                    </div>
+                  </div>
+                </div>
                 <div class="col-lg-6">
                   <button class="next-btn" [disabled]="submitFlag">
                     <div class="spinner-border text-light align-top" role="status" *ngIf="submitFlag">

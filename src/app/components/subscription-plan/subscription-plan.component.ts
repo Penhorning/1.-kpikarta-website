@@ -25,6 +25,7 @@ export class SubscriptionPlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPlans();
+    // this.getPlansFree();
   }
 
   getPlans() {
@@ -37,6 +38,19 @@ export class SubscriptionPlanComponent implements OnInit {
       }
     ).add(() => this.loader = false );
   }
+  // getPlansFree() {
+  //   this._subscriptionPlanService.getCreatorPalnsFree().subscribe(
+  //     (response: any) => {
+  //       if (response.plans.length > 0) {
+  //         this.plans.free = response.plans.find((item: any) => {
+  //           console.log("item--",item)
+  //           item.item_price.plan_id === "Creator-Test-Free"
+  //         });
+  //         console.log("this.plans",response.plans)
+  //       } else this._commonService.errorToaster("Error, Something went wrong");
+  //     }
+  //   ).add(() => this.loader = false );
+  // }
 
   selectPlan(planId: string) {
     this.submitFlag = true;
@@ -44,6 +58,21 @@ export class SubscriptionPlanComponent implements OnInit {
       (response: any) => {
         this._signupService.updateSignUpSession(3);
         this.router.navigate(['/thank-you']);
+      }
+      
+    ).add(() => this.submitFlag = false);
+  }
+
+  selectPlanFree(planId: string) {
+    this.submitFlag = true;
+    this._subscriptionPlanService.assignPlan({ planId }).subscribe(
+      (response: any) => {
+        if (planId === "Creator-Test-Free") {
+          this._commonService.successToaster("Free subscription activated!");
+      } else {
+          this._signupService.updateSignUpSession(3);
+          this.router.navigate(['/thank-you']);
+      }
       }
       
     ).add(() => this.submitFlag = false);

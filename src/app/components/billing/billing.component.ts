@@ -20,6 +20,8 @@ export class BillingComponent implements OnInit {
   loader: any = this._commonService.loader;
   disableCancelBtn: boolean = false;
 
+  userType: string | undefined;
+
   constructor(public _commonService: CommonService, private _billingService: BillingService) { }
 
   // Confirm box
@@ -40,14 +42,29 @@ export class BillingComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSubscribedUsersDetail();
-  }
+    this.getSignUpSession();
 
+    let session = this.getSignUpSession();  // This retrieves the session data
+    this.userType = session?.userType;   // Add userType to the formData
+  }
+  getSignUpSession() {
+    return JSON.parse(window.sessionStorage.getItem("kpi-karta-signup-session") || "{}");
+  }
 
   // Get all subscribed users detail
   getSubscribedUsersDetail() {
+    let session = this.getSignUpSession();  // This retrieves the session data
+    let userType = session?.userType;   // Add userType to the formData
+    console.log("userType->",userType)
     this.loadingOverview = true;
-    this._billingService.getSubscribedUsers({companyId: this._commonService.getCompanyId()}).subscribe(
+    this._billingService.getSubscribedUsers(
+      {
+        companyId: this._commonService.getCompanyId(),
+        userType: userType
+      }
+    ).subscribe(
       (response: any) => {
+        console.log("response-",response)
         this.overview = response.users;
         this.loadingOverview = false;
       },

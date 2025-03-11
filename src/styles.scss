@@ -26,6 +26,82 @@ textarea {
 	pointer-events: none;
 }
 
+.disableKarta {
+	cursor: not-allowed;
+	pointer-events: none;
+}
+/* Full-page overlay */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex; /* Use flexbox to center the text */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Loading text */
+#loading-text {
+    font-size: 24px;
+    color: #fff; /* White color for the text */
+    font-weight: bold;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+/* Dots */
+#dots {
+    display: inline-block;
+    font-size: 30px;
+}
+
+.dot {
+    display: inline-block;
+    opacity: 0;
+    animation: bounce 1.5s infinite ease-in-out;
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+/* Bounce effect */
+@keyframes bounce {
+    0%, 100% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-10px);
+    }
+}
+
+
+
+.disableSpan {
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.enableDiv {
+	opacity: 1;
+	cursor: pointer;
+	pointer-events: all;
+}
+
 .next-btn:hover,
 .next-btn:active,
 .next-btn:focus,
@@ -339,6 +415,10 @@ input[type=number]::-webkit-outer-spin-button {
 	}
 }
 
+.highlight-node {
+	background-color: #016CCA !important;
+}
+
 // .introjs-tooltip {
 //     border-radius: 50% !important;
 //     background-color: red !important;
@@ -348,3 +428,38 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: rgba(0,0,0,0.4) !important;
     opacity: 0.4 !important;
 }
+
+// // Custom Scrollbar Css
+// /* Track */
+// ::-webkit-scrollbar {
+//     width: 8px;
+// }
+
+// /* Handle */
+// ::-webkit-scrollbar-thumb {
+//     background: #888;
+//     border-radius: 4px;
+// }
+
+// /* Handle on hover */
+// ::-webkit-scrollbar-thumb:hover {
+//     background: #555;
+// }
+
+// /* Firefox */
+// /* Track */
+// * {
+//     scrollbar-width: thin;
+//     scrollbar-color: #888 #f5f5f5; /* track color and thumb color */
+// }
+
+// /* Handle */
+// *::-webkit-scrollbar-thumb {
+//     background: #888;
+//     border-radius: 4px;
+// }
+
+// /* Handle on hover */
+// *::-webkit-scrollbar-thumb:hover {
+//     background: #555;
+// }

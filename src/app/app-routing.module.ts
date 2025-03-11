@@ -14,6 +14,8 @@ const routes: Routes = [
   { path: 'forgot-password', canActivateChild: [LoginGuard], loadChildren: () => import('./components/forgot-password/forgot-password.module').then(m => m.ForgotPasswordModule) },
   { path: 'reset-password', canActivateChild: [LoginGuard], loadChildren: () => import('./components/reset-password/reset-password.module').then(m => m.ResetPasswordModule) },
   { path: 'two-step-verification', canActivateChild: [LoginGuard], loadChildren: () => import('./components/two-step-verification/two-step-verification.module').then(m => m.TwoStepVerificationModule) },
+  { path: 'redemption-sign-up', canActivateChild: [LoginGuard], loadChildren: () => import('./components/appsumo-signup/appsumo-signup.module').then(m => m.RedemptionSignUpModule) },
+
   // Signup routes
   { path: 'subscription-plan', canActivate: [SignupGuard], loadChildren: () => import('./components/subscription-plan/subscription-plan.module').then(m => m.SubscriptionPlanModule) },
   { path: 'thank-you', canActivate: [SignupGuard], loadChildren: () => import('./components/thank-you/thank-you.module').then(m => m.ThankYouModule) },

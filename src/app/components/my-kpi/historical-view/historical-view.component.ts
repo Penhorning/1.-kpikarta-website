@@ -164,7 +164,7 @@ export class HistoricalViewComponent implements OnInit {
   }
 
   onMeasureSubmit() {
-    if (!this.measureForm.valid) {
+    if (!this.measureForm.valid && this.measureForm.value.actualValue < 0) {
       this.measureForm.markAllAsTouched();
       this.submittedMeasure = true;
       return;
@@ -368,6 +368,13 @@ export class HistoricalViewComponent implements OnInit {
           ).add(() => this.metricsSubmitFlag = false);
         }
       } else this._commonService.errorToaster(`Achieved value can't be a negative value..!! (${total})`);
+    }
+  }
+
+  // Check Negative Value error
+  checkNegativeValue() {
+    if (this.measureForm.value.actualValue < 0) {
+      this.measureForm.get("actualValue").setErrors({pattern : true});
     }
   }
 

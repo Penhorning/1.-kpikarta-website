@@ -22,6 +22,7 @@ export class MySuggestionComponent implements OnInit {
     definition: ['', Validators.required], // Validtion for blank space
     descriptions: this.fb.array([]) 
   });
+  selectedPhaseId: string;
 
   get descriptions(): FormArray {
     return this.suggestionForm.controls["descriptions"] as FormArray;
@@ -32,21 +33,26 @@ export class MySuggestionComponent implements OnInit {
       { name: 'basicstyles', groups: [ 'basicstyles' ] },
       { name: 'paragraph', groups: [ 'list' ] }
     ],
-    removeButtons: "Strike,Subscript,Superscript"
+    removeButtons: "Strike,Subscript,Superscript",
+    versionCheck : false
   }
 
   constructor(private fb: FormBuilder, private _commonService: CommonService, private _suggestionService: SuggestionService) { }
 
   ngOnInit(): void {
     this.getKartaPhases();
+
+    setTimeout(() => {
+      this.getKartaPhases();
+    }, 500);
   }
 
   patchForm() {
     setTimeout(() => {
       this.suggestionForm.patchValue({
-        definition: this.suggestion.definition,
+        definition: this.suggestion?.definition,
       });
-      this.suggestion.descriptions.forEach((item: any) => {
+      this.suggestion?.descriptions.forEach((item: any) => {
         const descriptionForm = this.fb.group({
           description: [{value: item.description, disabled: true}, [Validators.required, Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]], // Validtion for blank space
         });
@@ -60,6 +66,7 @@ export class MySuggestionComponent implements OnInit {
     this._suggestionService.getPhases().subscribe(
       (response: any) => {
         this.phases = response;
+        this.selectedPhaseId = this.phases[0].id;
         this.getSuggestion(this.phases[0].id);
       }).add(() => this.isLoading = false );
   }
@@ -71,7 +78,7 @@ export class MySuggestionComponent implements OnInit {
     }
     this._suggestionService.getSuggestion(data).subscribe(
       (response: any) => {
-        this.suggestionForm.reset();
+        // this.suggestionForm.reset();
         this.descriptions.clear();
         this.suggestion = response.suggestion;
         this.patchForm();
@@ -80,6 +87,7 @@ export class MySuggestionComponent implements OnInit {
   }
 
   onPhaseChange(phaseId: string) {
+    this.selectedPhaseId = phaseId;
     this.getSuggestion(phaseId); 
   }
 
@@ -105,42 +113,49 @@ export class MySuggestionComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-    
-    if ((this.suggestionForm.valid && this.suggestionForm.touched && this.suggestionForm.dirty) || (this.suggestionForm.valid && this.suggestion.descriptions.length != this.descriptions.length)) {
-
+  
+    if ((this.suggestionForm.valid && this.suggestionForm.touched && this.suggestionForm.dirty) ||(this.suggestionForm.valid && this.suggestion.descriptions.length !== this.descriptions.length)) {
       this.submitFlag = true;
-
-      if (this.suggestion.hasOwnProperty("userId")) {
-        this._suggestionService.updateSuggestion(this.suggestionForm.getRawValue(), this.suggestion.id).subscribe(
+  
+      const suggestionData = {
+        ...this.suggestionForm.getRawValue(),
+        userId: this.suggestion?.userId || this._commonService.getUserId(),
+        phaseId: this.suggestion?.phaseId || this.selectedPhaseId,
+      };
+  
+      if (this.suggestion && this.suggestion.hasOwnProperty('userId')) {
+        this._suggestionService.updateSuggestion(suggestionData, this.suggestion.id).subscribe(
           (response: any) => {
-            this._commonService.successToaster("Suggestion added successfully");
-            this.submitted = false;
-            this.suggestionForm.reset();
-            this.descriptions.clear();
+            this._commonService.successToaster('Suggestion added successfully');
             this.suggestion = response;
-            this.patchForm();
+            this.patchForm(); // Reflect updated values in the form
+            this.submitted = false;
           },
-          (error: any) => { }
-        ).add(() => { this.submitFlag = false });
+          (error: any) => {
+            console.error(error);
+          }
+        ).add(() => {
+          this.submitFlag = false;
+        });
       } else {
-        this.suggestionForm.value.userId = this._commonService.getUserId();
-        this.suggestionForm.value.phaseId = this.suggestion.phaseId;
-        this.suggestionForm.value.descriptions = this.suggestionForm.getRawValue().descriptions;
-        
-        this._suggestionService.createSuggestion(this.suggestionForm.value).subscribe(
+        // If new suggestion, create it
+        this._suggestionService.createSuggestion(suggestionData).subscribe(
           (response: any) => {
-            this._commonService.successToaster("Suggestion added successfully");
-            this.submitted = false;
-            this.suggestionForm.reset();
-            this.descriptions.clear();
+            this._commonService.successToaster('Suggestion added successfully');
             this.suggestion = response;
-            this.patchForm();
+            this.patchForm(); // Reflect updated values in the form
+            this.submitted = false;
           },
-          (error: any) => { }
-        ).add(() => { this.submitFlag = false });
+          (error: any) => {
+            console.error(error);
+          }
+        ).add(() => {
+          this.submitFlag = false;
+        });
       }
     }
   }
+  
 
   deleteSuggestion() {
     const phase = this.phases.filter((item: any) => item.id === this.suggestion.phaseId);
