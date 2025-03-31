@@ -187,7 +187,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 #freshworks-frame-wrapper {
 	left: 20px !important;
-} 
+}
 
 
 // D3 Styles
@@ -218,10 +218,10 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #karta-svg {
-	overflow-x: auto;
-	overflow-y: hidden;
-	resize: both;
-	scrollbar-width: thin;
+	// overflow-x: auto;
+	// overflow-y: hidden;
+	// resize: both;
+	// scrollbar-width: thin;
 
 	svg {
 		// min-width: 500px;
@@ -265,10 +265,11 @@ input[type=number]::-webkit-outer-spin-button {
 	.node-body {
 		background-color: #fff;
 		border: 1px solid #ccc;
-		border-radius: 10px;
+		border-radius: 50%;
 		box-shadow: rgb(0 0 0 / 20%) 0px 0.5px 3px -1px, rgb(0 0 0 / 15%) 0px 5px 30px -10px;
-		width: 65px;
-		margin-top: 18px;
+		width: 12px;
+    height: 12px;
+		margin-top: 24px;
 	}
 
 	.left-options {
@@ -279,8 +280,9 @@ input[type=number]::-webkit-outer-spin-button {
 
 	.center-options {
 		position: absolute;
-		top: 0;
-		width: 100%;
+		top: 7px;
+    left: 7px;
+		width: 90%;
 		display: flex;
 		justify-content: center;
 	}
@@ -314,9 +316,9 @@ input[type=number]::-webkit-outer-spin-button {
 	visibility: hidden;
 }
 
-.mindmap-node #nodeItem.hasChildren .center-options .toggle-item i[class*="fa-chevron-circle-down"] {
-	visibility: visible;
-}
+// .mindmap-node #nodeItem.hasChildren .center-options .toggle-item i[class*="fa-chevron-circle-down"] {
+// 	visibility: visible;
+// }
 
 .mindmap-node:hover .center-options .add-item i,
 .mindmap-node:hover .center-options .remove-item i,
@@ -336,7 +338,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .mindmap-node .center-options .option {
 	cursor: pointer;
-	font-size: 14px;
+	font-size: 12px;
 	margin-right: 5px;
 	color: darkgray;
 }
@@ -427,6 +429,14 @@ input[type=number]::-webkit-outer-spin-button {
 .introjs-overlay{
     background-color: rgba(0,0,0,0.4) !important;
     opacity: 0.4 !important;
+}
+
+.text-node{
+  height: 25px;
+  width: 120px;
+  white-space: nowrap;
+  overflow-x: auto;
+  font-size: 12px;
 }
 
 // // Custom Scrollbar Css

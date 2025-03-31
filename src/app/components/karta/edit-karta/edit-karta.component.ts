@@ -44,7 +44,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   saveSubmitFlag: boolean = false;
   globalPromptMapper: any = {};
   isLoading: boolean = false;
-  
+
   // Color variables
   colorSubmitFlag: boolean = false;
   editColorSettings: any;
@@ -389,7 +389,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       }
 
       // Getting Cities
-      if ((this.currentSegmentChildNode?.description?.geographic?.state && this.currentSegmentChildNode?.description?.geographic?.state.length > 0) && (this.states && this.states.length > 0)) {        
+      if ((this.currentSegmentChildNode?.description?.geographic?.state && this.currentSegmentChildNode?.description?.geographic?.state.length > 0) && (this.states && this.states.length > 0)) {
         for (const state of this.currentSegmentChildNode?.description?.geographic?.state) {
           for (const mapper of Object.keys(countryStateMapper)) {
             let states = countryStateMapper[mapper];
@@ -400,7 +400,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 }
               });
             }
-          } 
+          }
         }
       }
 
@@ -644,10 +644,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             let [total, newTarget, request] = response.data;
             this.currentNode.achieved_value = Number(total);
             this.currentNode.target = newTarget;
-            let updatedData = { 
-              node_formula: request, 
-              achieved_value: Number(total), 
-              target: newTarget 
+            let updatedData = {
+              node_formula: request,
+              achieved_value: Number(total),
+              target: newTarget
             };
             this._kartaService.updateNode(this.currentNode.id, updatedData).subscribe(
                 async (response) => {
@@ -670,7 +670,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                   });
                   for (let param of updatingParameters) {
                     let metrics = param.metrics || null
-                    this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+                    this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
                   }
 
                   this.formulaFlag = false;
@@ -867,7 +867,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         }
         for (let param of updatingParameters) {
           let metrics = param.metrics || null
-          this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+          this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
         }
       }
     }
@@ -944,7 +944,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       $("#selectTypeValue").val(param.node_type).change();
       this.kpiCalculationPeriod.frequency = param.kpi_calc_period;
       this.kpiCalculationPeriod.nodeId = param.id;
-      
+
       /* ===== Formula Code starts ===== */
       if (param.hasOwnProperty("node_formula") && param.node_formula) {
         this.formulaGroup.controls['fields'] = new FormArray([]);
@@ -994,7 +994,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       if (this.currentNode.due_date)
         this.currentNode.due_date = new Date(this.currentNode.due_date).toISOString().substring(0, 10);
       // Set fiscal year start and end date
-      if (this.currentNode.fiscal_year_start_date && this.currentNode.fiscal_year_end_date && 
+      if (this.currentNode.fiscal_year_start_date && this.currentNode.fiscal_year_end_date &&
         this.currentNode.fiscal_year_start_date.includes("T") && this.currentNode.fiscal_year_end_date.includes("T")) {
         this.currentNode.fiscal_year_start_date = this.currentNode.fiscal_year_start_date.split('T')[0];
         this.currentNode.fiscal_year_end_date = this.currentNode.fiscal_year_end_date.split('T')[0];
@@ -1063,7 +1063,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   selectedSuggestion: string = "";
   manual_suggestion: string = "";
   wrapperHeight: string = "325px";
-  // Open suggestion menu 
+  // Open suggestion menu
   async openSuggestionMenu(phase: any, index: number, type?: string, node?: any, event?: any) {
     this.isLoading = true;
     jqueryFunctions.disableChart();
@@ -1072,13 +1072,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.existingNodes = [];
     this.promptForPhaseMapper = {};
     // Setting Calista height for different phases
-    if (phase.global_name === "Goal" || phase.global_name === "Critical Success Factor") {
-      this.wrapperHeight = `${((this.phases.length - 3)*65) + 32}px`;
-    } else if (phase.global_name.includes("Segment")) {
-      this.wrapperHeight = `${((this.phases.length - 1)*65) + 5}px`;
-    } else {
-      this.wrapperHeight = `${((this.phases.length - 2)*65) - 2}px`;
-    }
+    // if (phase.global_name === "Goal" || phase.global_name === "Critical Success Factor") {
+    //   this.wrapperHeight = `${((this.phases.length - 3)*65) + 32}px`;
+    // } else if (phase.global_name.includes("Segment")) {
+    //   this.wrapperHeight = `${((this.phases.length - 1)*65) + 5}px`;
+    // } else {
+    //   this.wrapperHeight = `${((this.phases.length - 2)*65) - 2}px`;
+    // }
 
     // Initializing variables
     this.manual_suggestion = "";
@@ -1130,7 +1130,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             "Engage": { name: "Engage", type: "static", title: "Refine the message by delivering a targeted, meaningful, message to the potential customers that attract them to you for more detailed information." },
             "Convert": { name: "Convert", type: "static", title: "Provide enough incentive, and a simplified process, and cause the potential customer to execute your preferred action." },
             "Retain": { name: "Retain", type: "static", title: "Ensure you delivered value as promised and your product/service has long-term value so they keep coming back." },
-            "Manual": { type: "manual" } 
+            "Manual": { type: "manual" }
           };
 
           for (let elem of this.currentPhaseNodeChildrens) {
@@ -1182,7 +1182,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           "Engage": { name: "Engage", type: "static", title: "Refine the message by delivering a targeted, meaningful, message to the potential customers that attract them to you for more detailed information." },
           "Convert": { name: "Convert", type: "static", title: "Provide enough incentive, and a simplified process, and cause the potential customer to execute your preferred action." },
           "Retain": { name: "Retain", type: "static", title: "Ensure you delivered value as promised and your product/service has long-term value so they keep coming back." },
-          "Manual": { type: "manual" } 
+          "Manual": { type: "manual" }
         };
 
         this.existingNodes = [];
@@ -1230,7 +1230,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           console.log(err);
           jqueryFunctions.enableChart();
           this.enableElements();
-        });  
+        });
       }
     }
     else if (phase.global_name.includes("Segment")) {
@@ -1246,7 +1246,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       let data = {
         kartaId: this.karta.id,
         prompt
-      }; 
+      };
       this._kartaService.getSuggestionsByPhase(data).subscribe(result => {
         this.loadingSuggestion = false;
         this.nodeSuggestions = result.data;
@@ -1296,7 +1296,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       try {
         if (data.id === node.id) {
           // Check if the recursive reached till the node which was supposed to be found
-          // If found then set the globalPromptMapper and break the whole recursive function 
+          // If found then set the globalPromptMapper and break the whole recursive function
           let phaseName = data.phase.global_name.split(" ")[0] == "Critical" ? "CSF" : data.phase.global_name.split(" ")[0];
           this.globalPromptMapper[phaseName] = `My ${phaseName.toLowerCase()} is ${data.name}.`;
           flag = true;
@@ -1304,7 +1304,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         } else {
           // If not found the will loop through the children if children found
           if (data.children && data.children.length > 0) {
-            // Setting gloal prompt mapper at the current node value 
+            // Setting gloal prompt mapper at the current node value
             let phaseName = data.phase.global_name.split(" ")[0] == "Critical" ? "CSF" : data.phase.global_name.split(" ")[0];
             this.globalPromptMapper[phaseName] = `My ${phaseName.toLowerCase()} is ${data.name}.`;
             for (const element of data.children) {
@@ -1332,7 +1332,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   promptForPhaseMapper = {};
-  async generatePromptForPhase(node: any) {    
+  async generatePromptForPhase(node: any) {
     // Passed node on this function will denote till where the prompt should be generated
 
     // Setting default prompt value to Global Prompt
@@ -1548,7 +1548,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Need the same functionality on Enter for above function
   changeSegmentOnEnter() {
-    $('#segment-name-input').blur(); 
+    $('#segment-name-input').blur();
   }
 
   // Update segment description
@@ -1691,7 +1691,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           let responseData = {...response};
           delete responseData.id;
           delete responseData.phase;
-    
+
           let history_data = {
             event: "node_created",
             eventValue: responseData,
@@ -1944,7 +1944,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       ];
       for (let param of updatingParameters) {
         let metrics = param.metrics || null;
-        this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+        this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
       }
       this.currentNodeAchievedValue = 0;
       this.kpiType = el.target.value;
@@ -2002,7 +2002,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         });
         for (let param of updatingParameters) {
           let metrics = param.metrics || null
-          this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);  
+          this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
         }
       }
     }
@@ -2104,7 +2104,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.setChartConfiguration(false);
     });
   }
-  
+
   // Get all phases
   getPhases(type? : string) {
     this._kartaService.getPhases(this.kartaId).subscribe(
@@ -2299,58 +2299,64 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Add additional phase
   addChildPhase(phase: any, index: number) {
-    const message = "Are you sure you want to create a new Layer?";
-    this.confirmBox(message, () => {
-      jqueryFunctions.disableElement("#phase_tabs");
-      jqueryFunctions.disableChart();
-      this.setChartConfiguration(true);
+    if (this.phases.length < 12) {
+      const message = "Are you sure you want to create a new Layer?";
+      this.confirmBox(message, () => {
+        jqueryFunctions.disableElement("#phase_tabs");
+        jqueryFunctions.disableChart();
+        this.setChartConfiguration(true);
 
-      let mainPhaseId: string = "";
-      if (this.phases[index].hasOwnProperty("phaseId")) mainPhaseId = this.phases[index].phaseId;
-      else mainPhaseId = this.phases[index].id;
-      // Set new phase name
-      let nameString: any, lastString: any, num: any, joinedName: any, newName: any;
-      nameString = this.phases[index].name.split(" ");
-      lastString = parseInt(nameString[nameString.length - 1]);
-      num = lastString ? lastString + 1 : 1;
-      lastString ? nameString.pop() : nameString;
-      joinedName = nameString.join(" ");
-      // newName = `${joinedName == "Phase" ? "Marketing Phase" : joinedName} ${num}`;
-      newName = `${joinedName == "Phase" ? "Phase" : joinedName} ${num}`;
-  
-      let data = {
-        "name": newName,
-        "kartaId": this.kartaId,
-        "is_child": true,
-        "parentId": phase.id,
-        "phaseId": mainPhaseId,
-        "userId": this._commonService.getUserId(),
-        "nextPhaseId": this.phases[index + 1].id,
-        "addEmptyNodes": true
-      }
-      this._kartaService.addPhase(data).subscribe(
-        (response: any) => {
-          let resopnse_data = {
-            "id": response.id,
-            "name": response.name,
-            "global_name": response.name,
-            "is_child": response.is_child,
-            "kartaId": this.kartaId,
-            "parentId": phase.id,
-            "phaseId": mainPhaseId
-          }
-          this.phases.splice((index + 1), 0, resopnse_data);
-          this.reArrangePhases(this.phases);
-          this.D3SVG.buildOneKartaDivider();
-          this.updateNewPercentage();
+        let mainPhaseId: string = "";
+        if (this.phases[index].hasOwnProperty("phaseId")) mainPhaseId = this.phases[index].phaseId;
+        else mainPhaseId = this.phases[index].id;
+        // Set new phase name
+        let nameString: any, lastString: any, num: any, joinedName: any, newName: any;
+        nameString = this.phases[index].name.split(" ");
+        lastString = parseInt(nameString[nameString.length - 1]);
+        num = lastString ? lastString + 1 : 1;
+        lastString ? nameString.pop() : nameString;
+        joinedName = nameString.join(" ");
+        // newName = `${joinedName == "Phase" ? "Marketing Phase" : joinedName} ${num}`;
+        newName = `${joinedName == "Phase" ? "Phase" : joinedName} ${num}`;
+
+        let data = {
+          "name": newName,
+          "kartaId": this.kartaId,
+          "is_child": true,
+          "parentId": phase.id,
+          "phaseId": mainPhaseId,
+          "userId": this._commonService.getUserId(),
+          "nextPhaseId": this.phases[index + 1].id,
+          "addEmptyNodes": true
         }
-      ).add(() => {
-        jqueryFunctions.enableElement("#phase_tabs");
-        jqueryFunctions.enableChart();
-        this.setChartConfiguration(false);
-      });
-    },
-    () => { });
+        this._kartaService.addPhase(data).subscribe(
+          (response: any) => {
+            let resopnse_data = {
+              "id": response.id,
+              "name": response.name,
+              "global_name": response.name,
+              "is_child": response.is_child,
+              "kartaId": this.kartaId,
+              "parentId": phase.id,
+              "phaseId": mainPhaseId
+            }
+            this.phases.splice((index + 1), 0, resopnse_data);
+            this.reArrangePhases(this.phases);
+            this.D3SVG.buildOneKartaDivider();
+            this.updateNewPercentage();
+          }
+        ).add(() => {
+          jqueryFunctions.enableElement("#phase_tabs");
+          jqueryFunctions.enableChart();
+          this.setChartConfiguration(false);
+        });
+      }
+        ,
+      () => { });
+    } else {
+      const message = "You have reached the maximum limit of 12 Layers.";
+      this.confirmBox(message, () => { },() => { })
+    }
   }
 
   // Update new percentage
@@ -2643,7 +2649,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         let responseData = {...response};
         delete responseData.id;
         delete responseData.phase;
-  
+
         let history_data = {
           event: "node_created",
           eventValue: responseData,
@@ -2905,7 +2911,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Color setting functions 
+  // Color setting functions
   removeColor(index: number) {
     this.colorSettings.settings.splice(index, 1);
     this.saveColorSetting();
@@ -3361,7 +3367,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         let nextPhase = this.phases[this.phaseIndex(param.phaseId) + 2];
         data.nextPhaseId = nextPhase.id;
       }
-      let response = await this._kartaService.addNode(data).toPromise(); 
+      let response = await this._kartaService.addNode(data).toPromise();
       if (response) {
         if (this.isNodeAddingFromCalista) {
           this.currentPhaseNodeChildrens.push(response);
@@ -3406,7 +3412,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             let responseData = {...response};
             delete responseData.id;
             delete responseData.phase;
-      
+
             let history_data = {
               event: "node_created",
               eventValue: responseData,
@@ -3515,7 +3521,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         element.classList.add('disableDiv');
       }
 
-      // common Random Key for Undo Redo process 
+      // common Random Key for Undo Redo process
       const randomKey = new Date().getTime().toString();
       let promptMapper = {
         "default": `I'm working in ${this.karta.industry.toLowerCase()} industry in ${this.karta.department.toLowerCase()} department.`
@@ -3549,7 +3555,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 } else return true;
               }
             }
-            // if no children found then create nodes till KPI 
+            // if no children found then create nodes till KPI
             else {
               if (data.phase.global_name !== "KPI") {
                 if (data.name) {
@@ -3557,17 +3563,17 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                   promptMapper[data.phase.global_name] = `My ${lastLayerMapper[phaseName.toLowerCase()]} is ${data.name}.`
                 }
                 let prompt = Object.values(promptMapper).join(" ");
-  
+
                 // OpenAI Suggestions below before create a node starts ------------------
                 // Recursion in a recursion
                 let remainingKarta = await this._kartaService.feelingLuckyKarta(`${prompt} I'm feeling lucky.`, this.karta.id).toPromise();
-                
+
                 // this.isLoading = false;
                 // Recursive function which will loop through nodes to create new nodes for partially filled karta
                 const nodeCreateRecursively = async (parent: any, structure: any, randomKey?: any) => {
                   try {
                     if (!Array.isArray(structure)) {
-                      const name = structure.name || structure;                      
+                      const name = structure.name || structure;
                       let node = await this.addLuckyNodes(parent, randomKey, name);
                       if (structure.children && structure.children.length > 0) {
                         for(const element of structure.children) {
@@ -3586,17 +3592,17 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                     return true;
                   }
                 };
-  
+
                 // Recursion in a recursion for creating rest of the nodes
                 await nodeCreateRecursively(data, remainingKarta.data.children, randomKey);
-                
+
                 // OpenAI Suggestions below before create a node ends --------------------
                 return true;
               } else {
                 return true;
               };
             }
-  
+
             return true;
           } catch(err) {
             console.log(err);
@@ -3604,7 +3610,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             return true;
           }
         };
-  
+
         // Calling the function and passing the tree data of karta
         let resp = await nodeMappingRecursively(this.karta.node);
         // this.isLoading = false;
@@ -3617,7 +3623,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             let element = document.getElementById(elem);
             element.classList.remove('disableDiv');
           }
-        }    
+        }
       } else {
         // If the canvas is completely blank from Goal node
         let resp = await this.createKartaFromStart(promptMapper["default"], randomKey);

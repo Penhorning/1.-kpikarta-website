@@ -1,6 +1,7 @@
 'use strict';
 
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js").default;
+var nodeText = require("./nodeTemplates/nodeText.js").default;
 const { calculateSVGWidth } = require("./calculateSVGWidth.js");
 
 
@@ -9,18 +10,37 @@ var tree = null, root = null, nodes = null, parentLink = null, links = null, nod
 var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = null, domNode = null;
 var dragErrorMsg = "You cannot drag this node here";
 var haveKPIS = false;
+var nodeWidth = 180; // Space per depth level
 
 const getSVGSize = (tree) => {
     // let calculatedSVGWidth = calculateSVGWidth(tree);
     // width2 = $(".karta_column").width();
-    // height2 = totalPhases * 65;
-    width = kartaColumnWidth = $(".karta_column").width();
+    // height2 = totalPhases * nodeWidth;
+    // width = kartaColumnWidth = $(".karta_column").width();
     // width = calculatedSVGWidth > kartaColumnWidth ? calculatedSVGWidth : kartaColumnWidth;
-    height = totalPhases * 65;
+    // height = window.screen.height + 250;
     // return {
     //     width: calculatedSVGWidth > width2 ? calculatedSVGWidth : width2,
-    //     height: totalPhases * 65
+    //     height: totalPhases * nodeWidth
     // }
+
+    // 1️⃣ Create tree layout
+    let treeLayout = d3.layout.tree();
+
+    // 2️⃣ Get nodes list
+    let nodes = treeLayout.nodes(tree); // ✅ Use .nodes() in D3 v3
+
+    // 3️⃣ Count nodes at each depth level
+    let levelCounts = {};
+    nodes.forEach(d => {
+        levelCounts[d.depth] = (levelCounts[d.depth] || 0) + 1;
+    });
+
+    // 4️⃣ Find the maximum count
+    let maxNodes = d3.max(d3.values(levelCounts));
+
+    height = maxNodes * 55;
+    height = height > 500 ? height : 500
 }
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
@@ -33,13 +53,23 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     getSVGSize(treeData);
 
     var i = 0, duration = 750;
-    // tree = d3.layout.tree().nodeSize([90, 60]);
+  // tree = d3.layout.tree().nodeSize([90, 60]);
+
+    function getMaxDepth(node) {
+      if (!node.children || node.children.length === 0) return 1; // Leaf node
+      return 1 + Math.max(...node.children.map(getMaxDepth));
+    }
+
+    var maxDepth = getMaxDepth(treeData); // Get tree depth
+    maxDepth = maxDepth > 7 ? maxDepth : 7;
+    width = maxDepth * nodeWidth; // Dynamic width
 
     tree = d3.layout.tree()
-        .nodeSize([93, 60])
-        .separation(function (a, b) {
-            return a.parent == b.parent ? .8 : .8;
-        });
+    .nodeSize([60, 60])
+    .size([height - 50, width])
+    .separation(function (a, b) {
+      return a.parent == b.parent ? 1 : 1;
+    });
 
     // Options
     options.update = update;
@@ -123,7 +153,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                     exceededBy = (draggingDepth + selectedDepth) - (totalPhases-reduceBy);
                     dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
                     return false;
-                default: 
+                default:
                 return true;
             }
         } else {
@@ -141,7 +171,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                     exceededBy = (draggingDepth + selectedDepth) - (totalPhases-reduceBy);
                     dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
                     return false;
-                default: 
+                default:
                 return true;
             }
         }
@@ -174,13 +204,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     });
 
     var diagonal = d3.svg.diagonal()
-        .projection(function (d) { return [d.x + 45, d.y + 30]; });
+        .projection(function (d) { return [d.y + 45, d.x + 30]; });
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width", width)
         .attr("height", height)
         .call(zoomListener)
-        .attr({ viewBox: "" + (-width / 2) + " " + 0 + " " + width + " " + height })
+        .attr({ viewBox: "" + 0 + " " + 0 + " " + width + " " + height })
         .append("g");
+    var g = svg.append("g");
     root = treeData;
     // Setup lining
     buildKartaDivider();
@@ -261,7 +292,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 domNode = this;
                 initiateDrag(d, domNode);
             }
-            
+
             var dX = d3.event.x - 30;
             var dY = d3.event.y - 30;
             d3.select(this).attr("transform", "translate(" + dX + ", " + dY + ")");
@@ -343,17 +374,22 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         // var svgSize = getSVGSize(root);
         // width = svgSize.width;
         // height = svgSize.height;
+
+        maxDepth = getMaxDepth(root); // Get tree depth
+        maxDepth = maxDepth > 7 ? maxDepth : 7;
+        width = maxDepth * nodeWidth; // Dynamic width
+
         var svg = d3.select('#karta-svg svg')
             .attr("width", width)
             .attr("height", height)
-            .attr({ viewBox: "" + (-width / 2) + " " + 0 + " " + width + " " + height })
+            .attr({ viewBox: "" + 0 + " " + 0 + " " + width + " " + height })
             .select('g');
         buildKartaDivider();
         var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
 
         // Normalize for fixed-depth
-        nodes.forEach(function (d) { d.y = d.depth * 65; });
+        nodes.forEach(function (d) { d.y = d.depth * nodeWidth; });
         // Change phase ids of every nodes when someone dragging nodes
         // nodes.forEach(function (d) {
         //     // if (d.depth >= options.phases().length) d.depth -= d.depth;
@@ -366,9 +402,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             let hasSubPhases = children.find(item => options.phases().map(item => item.id).indexOf(item));
             if (hasSubPhases) {
                 let subPhaseDepth = getPhaseDepth(d, 0);
-                d.y = (subPhaseDepth)* 65;
+                d.y = (subPhaseDepth)* nodeWidth;
             }
-            else d.y = (d.depth + initialDepth) * 65;
+            else d.y = (d.depth + initialDepth) * nodeWidth;
         });
         // Declare the nodes…
         var node = svg.selectAll("g.node")
@@ -378,7 +414,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .call(dragListener)
             .attr("class", "node")
             .attr("width", 93)
-            .attr("height", 60)
+            .attr("height", 50)
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
             })
@@ -404,13 +440,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .append("foreignObject")
             .attr("class", "mindmap-node")
             .attr("width", 93)
-            .attr("height", 60)
+            .attr("height", 50)
             .html(node => nodeToHTML(node, nodeEnter));
         // phantom node to give us mouseover around it
         nodeEnter.append("foreignObject")
             .attr('class', 'ghostCircle')
             .attr("width", 93)
-            .attr("height", 60)
+            .attr("height", 50)
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
                 overCircle(node);
@@ -418,18 +454,36 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .on("mouseout", function (node) {
                 outCircle(node);
             });
+        nodeEnter
+            .append("foreignObject")
+            .style('text-align', (d) => (d.y == 0 ? "center" : d.children ? "right" : "left"))
+            .attr("x", (d) => (d.y == 0 ? "2" : d.children ? "-82" : "55"))
+            .attr("y", (d) => (d.y == 0 ? "35" : "19"))
+            .attr("width", 120)
+            .attr("height", 25)
+            .html(node => nodeText(node, nodeEnter));
+        // nodeEnter
+        //     .append("text")
+        //     .attr("dy", "33") // Moves text 10px above the node
+        //     .attr("x", (d) => (d.children ? "30" : "60")) // Center text above the node
+        //     .style("text-anchor", (d) => (d.children ? "end" : "start"))
+        //     .text((d) => "loreum loreum loreum loreum loreum loreum loreum loreum"||truncateText(d.name,18));
+
+        // function truncateText(text, maxLength) {
+        //   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+        // }
         // Transition nodes to their new position.
         //horizontal tree
         var nodeUpdate = node.transition()
             .duration(duration)
-            .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; })
+            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             node.select("foreignObject").html(node => nodeToHTML(node, nodeEnter));
 
 
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
             .duration(duration)
-            .attr("transform", function (d) { return "translate(" + source.x + "," + source.y + ")"; })
+            .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
             .remove();
         // Update the links…
         // Declare the links…
@@ -450,7 +504,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("stroke", options.events.linkColor)
             .attr("stroke-width", options.events.linkWidth)
             .attr("d", function (d) {
-                var o = { x: source.x, y: source.y };
+                var o = { x: source.y, y: source.x };
                 return diagonal({ source: o, target: o });
             });
         // Transition links to their new position.
@@ -462,7 +516,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         link.exit().transition()
             .duration(duration)
             .attr("d", function (d) {
-                var o = { x: source.x, y: source.y };
+                var o = { x: source.y, y: source.x };
                 return diagonal({ source: o, target: o });
             })
             .remove();
@@ -486,16 +540,38 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
 
     // Draw horizontal lines for phases
-    function buildKartaDivider() {
+  function buildKartaDivider() {
+        svg.selectAll(".karta_divider").remove();
+        // 🎯 **Step 1: Define Phase Positions**
+        var phasePositions = Array.from(
+          { length: maxDepth > 7 ? maxDepth : 7 },
+          (_, i) => (i + 1) * nodeWidth
+        ); // x-coordinates where phases occur
+
+        // 🎯 **Step 2: Draw Vertical Phase Lines**
+        g.selectAll(".karta_divider")
+          .data(phasePositions)
+          .enter()
+          .append("line")
+          .attr("class", "karta_divider")
+          .attr("x1", (d) => d)
+          .attr("y1", -height) // Extend to the top
+          .attr("x2", (d) => d)
+          .attr("y2", height) // Extend to the bottom
+          .attr("class", "karta_divider")
+          .attr("stroke", "lightgrey")
+          .attr("stroke-width", "1px");
+
+        return;
         svg.selectAll('.karta_divider').remove();
-        (new Array(parseInt($(".karta_column").height() / 65))).fill(0).forEach((val, index) => {
+        (new Array(parseInt($(".karta_column").height() / nodeWidth))).fill(0).forEach((val, index) => {
             var pathGenerator = d3.svg.line();
             // width2 = $(".karta_column").width();
             svg.append('path')
                 .attr("class", "karta_divider")
                 .attr('stroke', 'lightgrey')
                 .attr('stroke-width', '1px')
-                .attr('d', pathGenerator([[-100000, (index + 1) * 65], [100000, (1 + index) * 65]]));
+                .attr('d', pathGenerator([[-100000, (index + 1) * nodeWidth], [100000, (1 + index) * nodeWidth]]));
         });
     }
     // Draw one horizontal line, when new child phase added
@@ -506,7 +582,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("class", "karta_divider")
             .attr('stroke', 'lightgrey')
             .attr('stroke-width', '1px')
-            .attr('d', pathGenerator([[-width, 65], [width, 65]]));
+            .attr('d', pathGenerator([[-width, nodeWidth], [width, nodeWidth]]));
     }
     // Remove horizontal lines for phases, when child phase deleted
     function removeOneKartaDivider() {
@@ -562,7 +638,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         if (d.hasOwnProperty("children") && d.children.length > 0) {
             d.children.forEach(item => hightlightNode(item));
         }
-        
+
     }
     // Remove color from highlighted nodes
     function unHightlightNode(d) {

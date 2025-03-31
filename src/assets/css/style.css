@@ -689,7 +689,7 @@ a.for_pass {
 .item_middle {
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   flex-direction: column;
 }
 
@@ -2031,10 +2031,17 @@ button.Apply-btn.karta-edit {
   display: block;
 }
 
+.vertical-tabs .nav {
+  flex-wrap: nowrap;
+}
+
 .vertical-tabs .nav.nav-tabs {
   border-bottom: 0;
-  display: block;
-  float: left;
+  display: flex;
+}
+
+.vertical-tabs .nav.nav-tabs .nav-item {
+  width: 180px;
 }
 
 .vertical-tabs .sv-tab-panel {

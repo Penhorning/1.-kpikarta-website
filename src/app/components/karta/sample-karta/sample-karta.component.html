@@ -15,21 +15,10 @@
             </div>
         </div>
         <!-- Main content -->
-        <div class="main-center-content d-flex mb-3" style="margin-left: 100px;">
-            <div class="center-content mt-4 w-100">
-                <div class="row tab-content-center">
-                    <div class="phase_column">
-                        <div class="vertical-tabs">
-                            <ul class="nav nav-tabs" role="tablist" id="phase_tabs">
-                                <li class="nav-item" *ngFor="let phase of phases; let i = index">
-                                    <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
-                                        <div>{{phase?.name}}</div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="karta_column">
+          <div class="main-center-content d-flex mb-3" style="margin: 0px 5px 0px 100px;">
+            <div class="mt-4">
+                <div class="m-0 row tab-content-center">
+                    <div class="karta_column" [ngStyle]="{'width': (phases.length * 180) +'px'}">
                         <div class="tab-pane active">
                             <ng-container *ngIf="loadingKarta">
                                 <div class="p-5" [innerHtml]="loader"></div>
@@ -37,6 +26,17 @@
                             <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
                         </div>
                     </div>
+                    <div class="phase_column" [ngStyle]="{'width': (phases.length * 180) +'px'}">
+                      <div class="vertical-tabs">
+                          <ul class="nav nav-tabs" role="tablist" id="phase_tabs">
+                              <li class="nav-item" *ngFor="let phase of phases; let i = index">
+                                  <a class="nav-link short_text" [ngClass]="{ 'active': phase.id == phaseId }" [id]="phase.id">
+                                      <div>{{phase?.name}}</div>
+                                  </a>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
                 </div>
             </div>
             <div class="right_sidebar_overlay"></div>
@@ -395,4 +395,3 @@
     <!-- Page content -->
  </div>
  <!-- Wrapper -->
- 

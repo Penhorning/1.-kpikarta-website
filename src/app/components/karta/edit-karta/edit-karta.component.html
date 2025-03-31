@@ -248,7 +248,7 @@
                     <button type="button" class="save-btn-karta mr-1" [disabled]="(saveSubmitFlag && showLoader) || (saveSubmitFlag && !showLoader)" (click)="saveKarta()">
                         <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag && showLoader">
                             <span class="sr-only">Loading...</span>
-                        </div>                                                
+                        </div>
                         <ng-container *ngIf="!saveSubmitFlag && !showLoader">Save</ng-container>
                         <ng-container *ngIf="saveSubmitFlag && !showLoader">Save</ng-container>
                     </button>
@@ -382,639 +382,612 @@
         <!-- Full-page overlay that covers the entire page -->
         <div id="overlay" *ngIf="isLoading">
             <div class="text-center mb-3"><img width="350" src="../../../../assets/img/robo5.svg" alt=""></div>
-        </div>    
+        </div>
 
        <!-- Main content -->
-       <div class="main-center-content d-flex mb-3" style="margin-left: 100px;">
-            <!-- KARTA MID PORTION -->
-           <div class="center-content mt-4 w-100">
-               <div class="row tab-content-center bg-transparent">
-                    <!-- KARTA PHASE COLUMN-->
-                    <div class="phase_column">
-                        <!-- Phase list-->
-                        <div class="phase_list" *ngIf="isPhaseListVisible">
-                            <div class="single_phase" [ngClass]="{ 'karta-cmpltd': phase.hasNode, 'karta-current': (phase.id == phaseId || i==0 || phases[i-1].hasNode) }" *ngFor="let phase of phases; let i = index">
-                                <!-- <span [id]="phase.id" class="phase_name short_text disableSpan" [ngClass]="{'enableDiv': ((phase.id == phaseId || i==0 || phases[i-1].hasNode) && !changeModeFlag)}" (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name, i)" (click)="(setPhaseEditable && !changeModeFlag) ? null : openSuggestionMenu(phase, i)" [title]="phase?.name == 'Phase' ? 'Marketing Phase' : phase?.name">{{(phase?.name == "Phase" ? "Marketing Phase" : phase?.name) | uppercase}}</span> -->
-                                <span [id]="phase.id" class="phase_name short_text disableSpan" [ngClass]="{'enableDiv': ((phase.id == phaseId || i==0 || phases[i-1].hasNode) && !changeModeFlag)}" (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name, i)" (click)="(setPhaseEditable && !changeModeFlag) ? null : openSuggestionMenu(phase, i)" [title]="phase?.name">{{phase?.name | uppercase}}</span>
-                                <!-- <img src="assets/img/crt-arrow-right.svg" *ngIf="(phase.id == phaseId || i==0 || phases[i-1].hasNode)" class="suggestion_menu" alt="" (click)="openSuggestionMenu(phase, i)"> -->
-                                <div class="karta-selector dropdown" *ngIf="phase.global_name !== 'KPI' && phase.global_name !== 'Goal'">
-                                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-                                        <img src="assets/img/crt_tabler_dots_vert.svg" alt="" />
-                                    </a>
-                                    <img class="info-icon" src="assets/img/info-circle-white.svg" alt="" (click)="showLayerInfo(phase.phaseId, phase.global_name)" />
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" *ngIf="phase.lastChildren" (click)="addChildPhase(phase, i)"><i class="fa fa-plus"></i> Add</a>
-                                        <a class="dropdown-item" (click)="makePhaseEditable(phase.id)"><i class="fa fa-pencil"></i> Rename</a>
-                                        <a class="dropdown-item" *ngIf="phase.is_child" (click)="deletePhase(phase.id, i)"><i class="fa fa-trash"></i> Delete</a>
-                                    </div>
-                                </div>
-                                <div class="karta-selector" [ngClass]="{ 'karta-selector-info': (!phase.hasNode && (phase.id == phaseId || i==0 || phases[i-1].hasNode)) }">
-                                    <img class="info-icon" src="assets/img/info-circle-white.svg" alt="" (click)="showLayerInfo(phase.phaseId, phase.global_name)" />
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Phase suggestions -->
+       <div class="main-center-content d-flex mb-3" style="margin: 0px 5px 0px 100px;">
+           <!-- Phase suggestions -->
+           <!-- Phase Detail Section Start -->
+           <div class="mt-4 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" style="height: calc(100vh - 350px);">
+                      <!-- Goal & CSF Wrap -->
+                      <ng-template [ngSwitchCase]="currentPhase?.global_name === 'Goal' || currentPhase?.global_name === 'Critical Success Factor'">
+                          <div class="signle-karta-dtl-wrap">
+                              <div class="dtl-up-sec">
+                                  <div class="dtl-karta-header">
+                                      <div class="back-karta-btn">
+                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                      </div>
+                                      <div class="karta-dtl-title">
+                                          <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                          <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
+                                          <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
+                                              <span>NEXT</span>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="suggestions-sec">
+                                      <span>Here are some suggestions:</span>
+                                      <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
+                                  </div>
+                                  <div class="dtl-karta-body" style="height: calc(100vh - 435px);">
+                                      <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
+                                          <!-- RADIO BOXES FOR GOAL PHASE ONLY -->
+                                          <ng-container *ngIf="currentPhase?.global_name === 'Goal'; else multiCheck">
+                                              <!-- Suggestion auto -->
+                                              <ng-container *ngIf="suggestion.type === 'auto'">
+                                                  <div class="choose-sgtion-box">
+                                                      <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
+                                                      <label class="checkbox style-c">
+                                                          <input type="radio" [id]="i" name="sug_name" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
+                                                          <div class="checkbox__checkmark"></div>
+                                                      </label>
+                                                  </div>
+                                              </ng-container>
+                                              <!-- Suggestion manual -->
+                                              <ng-container *ngIf="suggestion.type === 'manual'">
+                                                  <div class="manual-item choose-sgtion-box">
+                                                      <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
+                                                      <label class="checkbox style-c">
+                                                          <input type="radio" [id]="i" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
+                                                          <div class="checkbox__checkmark"></div>
+                                                      </label>
+                                                  </div>
+                                              </ng-container>
+                                          </ng-container>
+                                          <!-- CHECK BOXES FOR OTHER PHASES -->
+                                          <ng-template #multiCheck>
+                                              <!-- Suggestion auto -->
+                                              <ng-container *ngIf="suggestion.type === 'auto'">
+                                                  <div class="choose-sgtion-box">
+                                                      <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
+                                                      <label class="checkbox style-c">
+                                                          <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
+                                                          <div class="checkbox__checkmark"></div>
+                                                      </label>
+                                                  </div>
+                                              </ng-container>
+                                              <!-- Suggestion manual -->
+                                              <ng-container *ngIf="suggestion.type === 'manual'">
+                                                  <div class="manual-item choose-sgtion-box">
+                                                      <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
+                                                      <label class="checkbox style-c">
+                                                          <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
+                                                          <div class="checkbox__checkmark"></div>
+                                                      </label>
+                                                  </div>
+                                              </ng-container>
+                                          </ng-template>
+                                          <!-- Suggestion prompt -->
+                                          <ng-container *ngIf="suggestion.type === 'prompt'">
+                                              <div class="manual-msg">{{suggestion?.name}}</div>
+                                          </ng-container>
+                                      </ng-container>
+                                  </div>
+                              </div>
+                          </div>
+                      </ng-template>
+                      <!-- Phase Wrap -->
+                      <ng-template [ngSwitchCase]="currentPhase?.global_name.includes('Phase')">
+                          <div class="signle-karta-dtl-wrap marketing-phse-main">
+                              <div class="dtl-up-sec">
+                                  <div class="dtl-karta-header">
+                                      <div class="back-karta-btn">
+                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                      </div>
+                                      <div class="karta-dtl-title">
+                                          <!-- <h5 class="short_text" [title]="currentPhase?.name">{{(currentPhase?.name == "Phase" ? "Marketing Phase" : currentPhase?.name) | uppercase}}</h5> -->
+                                          <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                          <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
+                                          <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
+                                              <span>NEXT</span>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="dtl-karta-body" style="height: calc(100vh - 435px);">
+                                      <div class="accordion" id="accordionPhase">
+                                          <!-- singular item -->
+                                          <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
+                                              <div class="card-header" [id]="'heading'+i">
+                                                  <h2 class="mb-0">
+                                                      <button class="btn btn-link btn-block text-left short_text collapsed dropdown_text" [ngClass]="{'collapsed': i != 0}" type="button" (click)="openSuggestionMenu(currentPhase, 0, 'reset', node)"
+                                                          data-toggle="collapse" [attr.data-target]="'#collapse'+i" aria-expanded="true" aria-controls="collapseOne">
+                                                          <span>{{node?.name}}</span>
+                                                      </button>
+                                                  </h2>
+                                              </div>
 
-                        <!-- Phase Detail Section Start -->
-                        <div class="bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible">
-                            <!-- Goal & CSF Wrap -->
-                            <ng-template [ngSwitchCase]="currentPhase?.global_name === 'Goal' || currentPhase?.global_name === 'Critical Success Factor'">
-                                <div class="signle-karta-dtl-wrap">
-                                    <div class="dtl-up-sec">
-                                        <div class="dtl-karta-header">
-                                            <div class="back-karta-btn">
-                                                <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
-                                            </div>
-                                            <div class="karta-dtl-title">
-                                                <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
-                                                <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
-                                                    <span>NEXT</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="suggestions-sec">
-                                            <span>Here are some suggestions:</span>
-                                            <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
-                                        </div>
-                                        <div class="dtl-karta-body" [ngStyle]="{height: wrapperHeight}">
-                                            <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
-                                                <!-- RADIO BOXES FOR GOAL PHASE ONLY -->
-                                                <ng-container *ngIf="currentPhase?.global_name === 'Goal'; else multiCheck">
-                                                    <!-- Suggestion auto -->
-                                                    <ng-container *ngIf="suggestion.type === 'auto'">
-                                                        <div class="choose-sgtion-box">
-                                                            <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
-                                                            <label class="checkbox style-c">
-                                                                <input type="radio" [id]="i" name="sug_name" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
-                                                                <div class="checkbox__checkmark"></div>
-                                                            </label>
-                                                        </div>
-                                                    </ng-container>
-                                                    <!-- Suggestion manual -->
-                                                    <ng-container *ngIf="suggestion.type === 'manual'">
-                                                        <div class="manual-item choose-sgtion-box">
-                                                            <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
-                                                            <label class="checkbox style-c">
-                                                                <input type="radio" [id]="i" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
-                                                                <div class="checkbox__checkmark"></div>
-                                                            </label>
-                                                        </div>
-                                                    </ng-container>
-                                                </ng-container>
-                                                <!-- CHECK BOXES FOR OTHER PHASES -->
-                                                <ng-template #multiCheck>
-                                                    <!-- Suggestion auto -->
-                                                    <ng-container *ngIf="suggestion.type === 'auto'">
-                                                        <div class="choose-sgtion-box">
-                                                            <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
-                                                            <label class="checkbox style-c">
-                                                                <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
-                                                                <div class="checkbox__checkmark"></div>
-                                                            </label>
-                                                        </div>
-                                                    </ng-container>
-                                                    <!-- Suggestion manual -->
-                                                    <ng-container *ngIf="suggestion.type === 'manual'">
-                                                        <div class="manual-item choose-sgtion-box">
-                                                            <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
-                                                            <label class="checkbox style-c">
-                                                                <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
-                                                                <div class="checkbox__checkmark"></div>
-                                                            </label>
-                                                        </div>
-                                                    </ng-container>
-                                                </ng-template>
-                                                <!-- Suggestion prompt -->
-                                                <ng-container *ngIf="suggestion.type === 'prompt'">
-                                                    <div class="manual-msg">{{suggestion?.name}}</div>
-                                                </ng-container>
-                                            </ng-container>
-                                        </div>
-                                    </div>
-                                </div>
-                            </ng-template>
-                            <!-- Phase Wrap -->
-                            <ng-template [ngSwitchCase]="currentPhase?.global_name.includes('Phase')">
-                                <div class="signle-karta-dtl-wrap marketing-phse-main">
-                                    <div class="dtl-up-sec">
-                                        <div class="dtl-karta-header">
-                                            <div class="back-karta-btn">
-                                                <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
-                                            </div>
-                                            <div class="karta-dtl-title">
-                                                <!-- <h5 class="short_text" [title]="currentPhase?.name">{{(currentPhase?.name == "Phase" ? "Marketing Phase" : currentPhase?.name) | uppercase}}</h5> -->
-                                                <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
-                                                <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
-                                                    <span>NEXT</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="dtl-karta-body" [ngStyle]="{height: wrapperHeight}">
-                                            <div class="accordion" id="accordionPhase">
-                                                <!-- singular item -->
-                                                <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
-                                                    <div class="card-header" [id]="'heading'+i">
-                                                        <h2 class="mb-0">
-                                                            <button class="btn btn-link btn-block text-left short_text collapsed dropdown_text" [ngClass]="{'collapsed': i != 0}" type="button" (click)="openSuggestionMenu(currentPhase, 0, 'reset', node)"
-                                                                data-toggle="collapse" [attr.data-target]="'#collapse'+i" aria-expanded="true" aria-controls="collapseOne">
-                                                                <span>{{node?.name}}</span>
-                                                            </button>
-                                                        </h2>
-                                                    </div>
-                    
-                                                    <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i === 0}" aria-labelledby="headingOne" data-parent="#accordionPhase">
-                                                        <div class="card-body">
-                                                            <ng-container *ngIf="loadingSuggestion">
-                                                                <div [innerHtml]="loader"></div>
-                                                              </ng-container>
-                                                            <div class="suggestions-sec">
-                                                                <span>Here are some suggestions:</span>
-                                                                <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
-                                                            </div>
-                                                            <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
-                                                                <!-- Suggestion auto -->
-                                                                <ng-container *ngIf="suggestion.type === 'auto' || suggestion.type === 'static'">
-                                                                    <div class="choose-sgtion-box">
-                                                                        <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
-                                                                        <div class="tooltip-wrap">
-                                                                            <!-- Trigger the modal with a button -->
-                                                                            <img src="assets/img/crt-tooltip-i.png" alt="" *ngIf="suggestion.type === 'static'" [title]="suggestion?.title" data-toggle="modal" data-target="#myModal" class="crt-tooltip">
-                                                                        </div>
-                                                                        <label class="checkbox style-c">
-                                                                            <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
-                                                                            <div class="checkbox__checkmark"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </ng-container>
-                                                                <!-- Suggestion manual -->
-                                                                <ng-container *ngIf="suggestion.type === 'manual'">
-                                                                    <div class="manual-item choose-sgtion-box">
-                                                                        <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
-                                                                        <label class="checkbox style-c">
-                                                                            <input type="checkbox" [id]="i" [disabled]="suggestion.disabled || !manual_suggestion" name="sug_name" [value]="manual_suggestion" (change)="addNodeFromSuggestion($event)" />
-                                                                            <div class="checkbox__checkmark"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </ng-container>
-                                                                <!-- Suggestion prompt -->
-                                                                <ng-container *ngIf="suggestion.type === 'prompt'">
-                                                                    <div class="manual-msg">{{suggestion?.name}}</div>
-                                                                </ng-container>
-                                                            </ng-container>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- singular item -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </ng-template>
-                            <!-- Segment Wrap -->
-                            <ng-template [ngSwitchCase]="currentPhase?.global_name.includes('Segment')">
-                                <div class="signle-karta-dtl-wrap segment-phse-main">
-                                    <div class="dtl-up-sec">
-                                        <div class="dtl-karta-header">
-                                            <div class="back-karta-btn">
-                                                <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
-                                            </div>
-                                            <div class="karta-dtl-title">
-                                                <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
-                                                <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
-                                                    <span>NEXT</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- CHILDRENS OF SEGMENT START-->
-                                        <div class="dtl-karta-body segement-dtl-sec" id="segment_section" [ngStyle]="{height: wrapperHeight}">
-                                            <div class="accordion" id="accordionSegment">
-                                            <!-- singular item -->
-                                            <div class="segment-dropdown my-3 mx-2" *ngFor="let node of currentPhaseNodes; let i = index" [id]="'heading'+i">
-                                                <button class="btn btn-link btn-block text-left collapsed dropdown_text segment-dropdown-btn" [ngClass]="{'collapsed': i != 0}" type="button" (click)="setPhaseNodeChildren(node)"
-                                                    data-toggle="collapse" [attr.data-target]="'#collapse'+i" aria-expanded="true" aria-controls="collapseOne">
-                                                    <span>{{node?.name}}</span>
-                                                    <span class="parentName short_text max_width_200">{{node?.parent?.name}}</span>
-                                                </button>
-                
-                                                <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i === 0}" aria-labelledby="headingOne"  data-parent="#accordionSegment">
-                                                    <div class="card-body p-0">
-                                                        <ng-container *ngIf="loadingSuggestion">
-                                                            <div [innerHtml]="loader"></div>
+                                              <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i === 0}" aria-labelledby="headingOne" data-parent="#accordionPhase">
+                                                  <div class="card-body">
+                                                      <ng-container *ngIf="loadingSuggestion">
+                                                          <div [innerHtml]="loader"></div>
                                                         </ng-container>
-                                                        <ng-container *ngFor="let children of currentPhaseNodeChildrens; let i = index">
-                                                            <div class="choose-sgtion-box" style="border-radius: 0;">
-                                                                <p class="short_text" [title]="children?.name">{{children?.name}}</p>
-                                                                <i class="fa fa-arrow-right align-self-center cursor_pointer" (click)="openSubSegment(node, children)"></i>
-                                                            </div>
-                                                        </ng-container>
-                                                        <div class="choose-sgtion-box" style="border-radius: 0;">
-                                                            <div class="next-karta-btn" (click)="openSubSegment(node)">
-                                                                <span>CREATE NEW</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- singular item -->
-                                            </div>
-                                        </div>
-                                        <!-- CHILDRENS OF SEGMENT END-->
-                                        <!-- SEGMENT SUB DETAILS START-->
-                                        <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" [ngStyle]="{height: wrapperHeight}">
-                                            <div class="sub-segment-header">
-                                                <div></div>
-                                                <h5 class="short_text" [title]="currentSegmentNode?.name" class="title">{{currentSegmentNode?.name}}</h5>
-                                                <button type="button" class="close" (click)="closeSubSegment()">&times;</button>
-                                            </div>
-                                            <div class="enter-seg-box">
-                                                <input type="text" class="form-control" id="segment-name-input" placeholder="Enter Segment" [value]="currentSegmentChildNode?.name" (blur)="changeSegmentNodeName($event)" (keyup.enter)="changeSegmentOnEnter()" [ngClass]="{'is-invalid': segmentInputTouched && !currentSegmentChildNode?.name}">
-                                                <div class="invalid-feedback d-block" *ngIf="segmentInputTouched && !currentSegmentChildNode?.name">Please enter name!</div>
-                                            </div>
-                    
-                                            <!-- 3 CATREGORIES OF SUB SEGMENT START-->
-                                            <ul class="nav accquire-sec-sub-tabs" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
-                                                <li class="nav-item aq-tab">
-                                                  <a class="nav-link p-0 active" id="tab1" data-toggle="tab" href="#tab_demographic">Demographic</a>
-                                                </li>
-                                                <li class="nav-item aq-tab">
-                                                  <a class="nav-link p-0" id="tab2" data-toggle="tab" href="#tab_geographic">Geographic</a>
-                                                </li>
-                                                <li class="nav-item aq-tab">
-                                                  <a class="nav-link p-0" id="tab3" data-toggle="tab" href="#tab_psychographic">Psychographic</a>
-                                                </li>
-                                            </ul>
-                                            <!-- CONTENT OF SUB SEGMENT START-->
-                                            <div class="tab-content mt-2" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
-                                                <div class="tab-pane fade show active" id="tab_demographic">
-                                                    <div class="aq-demographic-sec">
-                                                        <!-- B2B & B2C CATREGORIES OF Demographic START -->
-                                                        <div class="aq-demographic-tabs">
-                                                            <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2B'}">
-                                                                <span>B2B</span>
-                                                                <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2B')"></div>
-                                                            </div>
-                                                            <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2C'}">
-                                                                <span>B2C</span>
-                                                                <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2C')"></div>
-                                                            </div>
-                                                        </div>
-                                                        <!-- B2B Demographic START -->
-                                                        <div class="aq-demographic-b2b" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2B'">
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.industry_type || ''" (change)="updateSegmentDescription('demographic', 'industry_type', $event)">
-                                                                        <option disabled value="">Industry Type</option>
-                                                                        <optgroup [label]=industry.name *ngFor="let industry of industries">
-                                                                          <option *ngFor="let child of industry.child" [selected]="child == (currentSegmentChildNode?.description?.demographic?.industry_type || '')" [value]="child">{{child}}</option>
-                                                                        </optgroup>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.department || ''" (change)="updateSegmentDescription('demographic', 'department', $event)">
-                                                                        <option disabled value="">Department</option>
-                                                                        <option *ngFor="let dept of departments" [value]="dept.name" [selected]="dept.name === (currentSegmentChildNode?.description?.demographic?.department || '')">{{dept.name}}</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.job_title || ''" (change)="updateSegmentDescription('demographic', 'job_title', $event)">
-                                                                        <option disabled value="">Job Title</option>
-                                                                        <option *ngFor="let title of jobTitles" [value]="title" [selected]="title === (currentSegmentChildNode?.description?.demographic?.job_title || '')">{{title}}</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.company_size || ''" (change)="updateSegmentDescription('demographic', 'company_size', $event)">
-                                                                        <option disabled value="">Company Size</option>
-                                                                        <option *ngFor="let company of companySize" [value]="company.value" [selected]="company.value === (currentSegmentChildNode?.description?.demographic?.company_size || '')">{{company.name}}</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                            
-                                                        <!-- B2C Demographic START -->
-                                                        <div class="aq-demographic-b2c" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2C'">
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.age || ''" (change)="updateSegmentDescription('demographic', 'age', $event)">
-                                                                        <option disabled value="">Age</option>
-                                                                        <option value="0-17">0-17</option>
-                                                                        <option value="18-24">18-24</option>
-                                                                        <option value="25-35">25-35</option>
-                                                                        <option value="36-45">36-45</option>
-                                                                        <option value="46-55">46-55</option>
-                                                                        <option value="56-65">56-65</option>
-                                                                        <option value="65+">65+</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.education || ''" (change)="updateSegmentDescription('demographic', 'education', $event)">
-                                                                        <option disabled value="">Education</option>
-                                                                        <option value="Primary">Primary</option>
-                                                                        <option value="Secondary">Secondary</option>
-                                                                        <option value="Post-secondary">Post-secondary</option>
-                                                                        <option value="Masters">Masters</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.gender || ''" (change)="updateSegmentDescription('demographic', 'gender', $event)">
-                                                                        <option disabled value="">Gender</option>
-                                                                        <option value="Male">Male</option>
-                                                                        <option value="Female">Female</option>
-                                                                        <option value="Other">Other</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.occupation || ''" (change)="updateSegmentDescription('demographic', 'occupation', $event)">
-                                                                        <option disabled value="">Occupation</option>
-                                                                        <option *ngFor="let occupation of occupations" [value]="occupation" [selected]="occupation === (currentSegmentChildNode?.description?.demographic?.occupation || '')">{{occupation}}</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.income || ''" (change)="updateSegmentDescription('demographic', 'income', $event)">
-                                                                        <option disabled value="">Income</option>
-                                                                        <option value="<$30,000"><$30,000</option>
-                                                                        <option value="$30,001-$60,000">$30,001-$60,000</option>
-                                                                        <option value="$60,001-100,000">$60,001-100,000</option>
-                                                                        <option value="$100,001-$150,000">$100,001-$150,000</option>
-                                                                        <option value="$150,001-$250,000">$150,001-$250,000</option>
-                                                                        <option value="$250,001+">$250,001+</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.marital_status || ''" (change)="updateSegmentDescription('demographic', 'marital_status', $event)">
-                                                                        <option disabled value="">Marital Status</option>
-                                                                        <option value="Single">Single</option>
-                                                                        <option value="Married">Married</option>
-                                                                        <option value="Common-law">Common-law</option>
-                                                                        <option value="Separated">Separated</option>
-                                                                        <option value="Divorced">Divorced</option>
-                                                                        <option value="Widowed">Widowed</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <!-- B2C Demographic END -->
-                                                    </div>
-                                                </div>
-                                                <!-- Geographic START -->
-                                                <div class="tab-pane fade" id="tab_geographic">
-                                                    <div class="aq-demographic-sec">
-                                                        <!-- Geographic START -->
-                                                        <div class="aq-geographic">
-                                                            <div class="seg-options-grp">
-                                                                <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.country || ''" (change)="updateSegmentDescription('geographic', 'country', $event)">
-                                                                    <option value="">Country</option>
-                                                                    <option value="India">India</option>
-                                                                    <option value="Pakistan">Pakistan</option>
-                                                                </select> -->
-                                                                <ng-select 
-                                                                    class="seg-single-manual"
-                                                                    [items]="countries"
-                                                                    bindLabel="name" 
-                                                                    bindValue="name" 
-                                                                    [selectableGroup]="true" 
-                                                                    [selectableGroupAsModel]="false"
-                                                                    placeholder="Select Countries"
-                                                                    [loading]="loading" 
-                                                                    [multiple]="true" 
-                                                                    [searchable]="false"
-                                                                    [clearable]="false"
-                                                                    [(ngModel)]="currentSegmentChildNode?.description?.geographic?.country || selectedCountries"
-                                                                    (ngModelChange)="updateSegmentDescription('geographic', 'country', $event)"
-                                                                    >
-                                                                    <ng-template 
-                                                                        ng-option-tmp 
-                                                                        let-item="item" 
-                                                                        let-item$="item$" 
-                                                                        let-index="index">
-                                                                            <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/> 
-                                                                            {{item?.name}}
-                                                                    </ng-template>
-                                                                </ng-select>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.state || ''" (change)="updateSegmentDescription('geographic', 'state', $event)">
-                                                                    <option value="">State</option>
-                                                                    <option value="Delhi">Delhi</option>
-                                                                    <option value="Mumbai">Mumbai</option>
-                                                                </select> -->
-                                                                <ng-select 
-                                                                    class="seg-single-manual"
-                                                                    [items]="states"
-                                                                    bindLabel="name" 
-                                                                    bindValue="name" 
-                                                                    [selectableGroup]="true" 
-                                                                    [selectableGroupAsModel]="false"
-                                                                    placeholder="Select States"
-                                                                    [loading]="loading" 
-                                                                    [multiple]="true" 
-                                                                    [searchable]="false"
-                                                                    [clearable]="false"
-                                                                    [(ngModel)]="currentSegmentChildNode?.description?.geographic?.state || selectedStates"
-                                                                    (ngModelChange)="updateSegmentDescription('geographic', 'state', $event)"
-                                                                    >
-                                                                    <ng-template 
-                                                                        ng-option-tmp 
-                                                                        let-item="item" 
-                                                                        let-item$="item$" 
-                                                                        let-index="index">
-                                                                            <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/> 
-                                                                            {{item?.name}}
-                                                                    </ng-template>
-                                                                </ng-select>
-                                                            </div>
-                                                            <div class="seg-options-grp">
-                                                                <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.city || ''" (change)="updateSegmentDescription('geographic', 'city', $event)">
-                                                                    <option value="">City</option>
-                                                                    <option value="New Delhi">New Delhi</option>
-                                                                    <option value="Navi Mumbai">Navi Mumbai</option>
-                                                                </select> -->
-                                                                <ng-select 
-                                                                    class="seg-single-manual"
-                                                                    [items]="cities"
-                                                                    bindLabel="name" 
-                                                                    bindValue="name" 
-                                                                    [selectableGroup]="true" 
-                                                                    [selectableGroupAsModel]="false"
-                                                                    placeholder="Select Cities"
-                                                                    [loading]="loading" 
-                                                                    [multiple]="true" 
-                                                                    [searchable]="false"
-                                                                    [clearable]="false"
-                                                                    [(ngModel)]="currentSegmentChildNode?.description?.geographic?.city || selectedCities"
-                                                                    (ngModelChange)="updateSegmentDescription('geographic', 'city', $event)"
-                                                                    >
-                                                                    <ng-template 
-                                                                        ng-option-tmp 
-                                                                        let-item="item" 
-                                                                        let-item$="item$" 
-                                                                        let-index="index">
-                                                                            <input id="item-{{item}}" type="checkbox" [ngModel]="item$.selected"/> 
-                                                                            {{item}}
-                                                                    </ng-template>
-                                                                </ng-select>
-                                                            </div>
-                                                            <!-- <div class="seg-options-grp">
-                                                                <div class="seg-single">
-                                                                    <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.time_zone || ''" (change)="updateSegmentDescription('geographic', 'time_zone', $event)">
-                                                                        <option value="">Time Zone</option>
-                                                                        <option value="Asia/Kolkata">Asia/Kolkata</option>
-                                                                        <option value="America/New York">America/New York</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div> -->
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Psychographic START -->
-                                                <div class="tab-pane fade" id="tab_psychographic">
-                                                    <div class="aq-demographic-sec">
-                                                        <div class="aq-psychographic ">
-                                                            <div class="psy-options-grp">
-                                                                <span>Interest</span>
-                                                                <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.interest || ''" (blur)="updateSegmentDescription('psychographic', 'interest', $event)"></textarea>
-                                                            </div>
-                            
-                                                            <div class="psy-options-grp">
-                                                                <span>Customer Pain Points</span>
-                                                                <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.customer_points || ''" (blur)="updateSegmentDescription('psychographic', 'customer_points', $event)"></textarea>
-                                                            </div>
-                            
-                                                            <div class="psy-options-grp">
-                                                                <span>Values</span>
-                                                                <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.values || ''" (blur)="updateSegmentDescription('psychographic', 'values', $event)"></textarea>
-                                                            </div>
-                            
-                                                            <div class="psy-options-grp">
-                                                                <span>Habits</span>
-                                                                <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.habits || ''" (blur)="updateSegmentDescription('psychographic', 'habits', $event)"></textarea>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Psychographic END -->
-                                            </div>
-                                            <!-- CONTENT OF SUB SEGMENT END-->                                       
-                                        </div>
-                                        <!-- SEGMENT SUB DETAILS END-->
-                                    </div>
-                                </div>
-                                <!-- SEGMENT DETAIL SEC END -->
-                            </ng-template>
-                            <!-- Common Wrap -->
-                            <ng-template ngSwitchDefault>
-                                <div class="signle-karta-dtl-wrap marketing-phse-main">
-                                    <div class="dtl-up-sec">
-                                        <div class="dtl-karta-header">
-                                            <div class="back-karta-btn">
-                                                <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
-                                            </div>
-                                            <div class="karta-dtl-title">
-                                                <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
-                                                <div class="next-karta-btn" [ngClass]="currentPhase?.global_name === 'KPI' ? 'disableDiv' : ''" (click)="currentPhase?.global_name === 'KPI' ? null : goToNextPhase(currentPhase)">
-                                                    <span>NEXT</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="dtl-karta-body" [ngStyle]="{height: wrapperHeight}">
-                                            <div class="accordion" id="accordionCommon">
-                                                <!-- singular item -->
-                                                <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
-                                                    <div class="card-header" [id]="'heading'+i">
-                                                        <h2 class="mb-0">
-                                                            <button class="btn btn-link btn-block text-left short_text collapsed dropdown_text" [ngClass]="{'collapsed': i !== 0}" type="button" (click)="openSuggestionMenu(currentPhase, 0, 'reset', node, $event)"
-                                                                data-toggle="collapse" [attr.data-target]="'#collapse'+i" aria-expanded="false"
-                                                                aria-controls="collapseOne">
-                                                                <span>{{node?.name}}</span>
-                                                            </button>
-                                                        </h2>
-                                                    </div>
-                    
-                                                    <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i == 0}" aria-labelledby="headingOne"
-                                                        data-parent="#accordionCommon">
-                                                        <div class="card-body">
-                                                            <div class="suggestions-sec">
-                                                                <span>Here are some suggestions:</span>
-                                                                <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
-                                                            </div>
-                                                            <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
-                                                                <!-- Suggestion auto -->
-                                                                <ng-container *ngIf="suggestion.type === 'auto'">
-                                                                    <div class="choose-sgtion-box">
-                                                                        <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
-                                                                        <label class="checkbox style-c">
-                                                                            <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
-                                                                            <div class="checkbox__checkmark"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </ng-container>
-                                                                <!-- Suggestion manual -->
-                                                                <ng-container *ngIf="suggestion.type === 'manual'">
-                                                                    <div class="manual-item choose-sgtion-box">
-                                                                        <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
-                                                                        <label class="checkbox style-c">
-                                                                            <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
-                                                                            <div class="checkbox__checkmark"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </ng-container>
-                                                                <!-- Suggestion prompt -->
-                                                                <ng-container *ngIf="suggestion.type === 'prompt'">
-                                                                    <div class="manual-msg">{{suggestion?.name}}</div>
-                                                                </ng-container>
-                                                            </ng-container>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- singular item -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </ng-template>
-                            <div class="dt-cust-msg-sec" *ngIf="!currentPhase?.global_name.includes('Segment')">
-                                <textarea class="karta-message-box" [(ngModel)]="suggestionPrompt" placeholder="You can enter prompt here..." name="w3review"></textarea>
-                                <img *ngIf="!suggestionLoader" class="snd-prompt-karta-btn" src="assets/img/crt-send-promt.png" alt="" (click)="generateSuggestion()">
-                                <div *ngIf="suggestionLoader" class="spinner-border snd-prompt-karta-btn" role="status"></div>
-                            </div>
-                        </div>
-                        <!-- GOAL DETAIL SEC END -->
-                    </div>
+                                                      <div class="suggestions-sec">
+                                                          <span>Here are some suggestions:</span>
+                                                          <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
+                                                      </div>
+                                                      <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
+                                                          <!-- Suggestion auto -->
+                                                          <ng-container *ngIf="suggestion.type === 'auto' || suggestion.type === 'static'">
+                                                              <div class="choose-sgtion-box">
+                                                                  <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
+                                                                  <div class="tooltip-wrap">
+                                                                      <!-- Trigger the modal with a button -->
+                                                                      <img src="assets/img/crt-tooltip-i.png" alt="" *ngIf="suggestion.type === 'static'" [title]="suggestion?.title" data-toggle="modal" data-target="#myModal" class="crt-tooltip">
+                                                                  </div>
+                                                                  <label class="checkbox style-c">
+                                                                      <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
+                                                                      <div class="checkbox__checkmark"></div>
+                                                                  </label>
+                                                              </div>
+                                                          </ng-container>
+                                                          <!-- Suggestion manual -->
+                                                          <ng-container *ngIf="suggestion.type === 'manual'">
+                                                              <div class="manual-item choose-sgtion-box">
+                                                                  <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
+                                                                  <label class="checkbox style-c">
+                                                                      <input type="checkbox" [id]="i" [disabled]="suggestion.disabled || !manual_suggestion" name="sug_name" [value]="manual_suggestion" (change)="addNodeFromSuggestion($event)" />
+                                                                      <div class="checkbox__checkmark"></div>
+                                                                  </label>
+                                                              </div>
+                                                          </ng-container>
+                                                          <!-- Suggestion prompt -->
+                                                          <ng-container *ngIf="suggestion.type === 'prompt'">
+                                                              <div class="manual-msg">{{suggestion?.name}}</div>
+                                                          </ng-container>
+                                                      </ng-container>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <!-- singular item -->
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </ng-template>
+                      <!-- Segment Wrap -->
+                      <ng-template [ngSwitchCase]="currentPhase?.global_name.includes('Segment')">
+                          <div class="signle-karta-dtl-wrap segment-phse-main">
+                              <div class="dtl-up-sec">
+                                  <div class="dtl-karta-header">
+                                      <div class="back-karta-btn">
+                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                      </div>
+                                      <div class="karta-dtl-title">
+                                          <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                          <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
+                                          <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
+                                              <span>NEXT</span>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <!-- CHILDRENS OF SEGMENT START-->
+                                  <div class="dtl-karta-body segement-dtl-sec" id="segment_section" style="height: calc(100vh - 435px);">
+                                      <div class="accordion" id="accordionSegment">
+                                      <!-- singular item -->
+                                      <div class="segment-dropdown my-3 mx-2" *ngFor="let node of currentPhaseNodes; let i = index" [id]="'heading'+i">
+                                          <button class="btn btn-link btn-block text-left collapsed dropdown_text segment-dropdown-btn" [ngClass]="{'collapsed': i != 0}" type="button" (click)="setPhaseNodeChildren(node)"
+                                              data-toggle="collapse" [attr.data-target]="'#collapse'+i" aria-expanded="true" aria-controls="collapseOne">
+                                              <span>{{node?.name}}</span>
+                                              <span class="parentName short_text max_width_200">{{node?.parent?.name}}</span>
+                                          </button>
+
+                                          <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i === 0}" aria-labelledby="headingOne"  data-parent="#accordionSegment">
+                                              <div class="card-body p-0">
+                                                  <ng-container *ngIf="loadingSuggestion">
+                                                      <div [innerHtml]="loader"></div>
+                                                  </ng-container>
+                                                  <ng-container *ngFor="let children of currentPhaseNodeChildrens; let i = index">
+                                                      <div class="choose-sgtion-box" style="border-radius: 0;">
+                                                          <p class="short_text" [title]="children?.name">{{children?.name}}</p>
+                                                          <i class="fa fa-arrow-right align-self-center cursor_pointer" (click)="openSubSegment(node, children)"></i>
+                                                      </div>
+                                                  </ng-container>
+                                                  <div class="choose-sgtion-box" style="border-radius: 0;">
+                                                      <div class="next-karta-btn" (click)="openSubSegment(node)">
+                                                          <span>CREATE NEW</span>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <!-- singular item -->
+                                      </div>
+                                  </div>
+                                  <!-- CHILDRENS OF SEGMENT END-->
+                                  <!-- SEGMENT SUB DETAILS START-->
+                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" style="height: calc(100vh - 435px);">
+                                      <div class="sub-segment-header">
+                                          <div></div>
+                                          <h5 class="short_text" [title]="currentSegmentNode?.name" class="title">{{currentSegmentNode?.name}}</h5>
+                                          <button type="button" class="close" (click)="closeSubSegment()">&times;</button>
+                                      </div>
+                                      <div class="enter-seg-box">
+                                          <input type="text" class="form-control" id="segment-name-input" placeholder="Enter Segment" [value]="currentSegmentChildNode?.name" (blur)="changeSegmentNodeName($event)" (keyup.enter)="changeSegmentOnEnter()" [ngClass]="{'is-invalid': segmentInputTouched && !currentSegmentChildNode?.name}">
+                                          <div class="invalid-feedback d-block" *ngIf="segmentInputTouched && !currentSegmentChildNode?.name">Please enter name!</div>
+                                      </div>
+
+                                      <!-- 3 CATREGORIES OF SUB SEGMENT START-->
+                                      <ul class="nav accquire-sec-sub-tabs" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
+                                          <li class="nav-item aq-tab">
+                                            <a class="nav-link p-0 active" id="tab1" data-toggle="tab" href="#tab_demographic">Demographic</a>
+                                          </li>
+                                          <li class="nav-item aq-tab">
+                                            <a class="nav-link p-0" id="tab2" data-toggle="tab" href="#tab_geographic">Geographic</a>
+                                          </li>
+                                          <li class="nav-item aq-tab">
+                                            <a class="nav-link p-0" id="tab3" data-toggle="tab" href="#tab_psychographic">Psychographic</a>
+                                          </li>
+                                      </ul>
+                                      <!-- CONTENT OF SUB SEGMENT START-->
+                                      <div class="tab-content mt-2" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
+                                          <div class="tab-pane fade show active" id="tab_demographic">
+                                              <div class="aq-demographic-sec">
+                                                  <!-- B2B & B2C CATREGORIES OF Demographic START -->
+                                                  <div class="aq-demographic-tabs">
+                                                      <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2B'}">
+                                                          <span>B2B</span>
+                                                          <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2B')"></div>
+                                                      </div>
+                                                      <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2C'}">
+                                                          <span>B2C</span>
+                                                          <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2C')"></div>
+                                                      </div>
+                                                  </div>
+                                                  <!-- B2B Demographic START -->
+                                                  <div class="aq-demographic-b2b" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2B'">
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.industry_type || ''" (change)="updateSegmentDescription('demographic', 'industry_type', $event)">
+                                                                  <option disabled value="">Industry Type</option>
+                                                                  <optgroup [label]=industry.name *ngFor="let industry of industries">
+                                                                    <option *ngFor="let child of industry.child" [selected]="child == (currentSegmentChildNode?.description?.demographic?.industry_type || '')" [value]="child">{{child}}</option>
+                                                                  </optgroup>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.department || ''" (change)="updateSegmentDescription('demographic', 'department', $event)">
+                                                                  <option disabled value="">Department</option>
+                                                                  <option *ngFor="let dept of departments" [value]="dept.name" [selected]="dept.name === (currentSegmentChildNode?.description?.demographic?.department || '')">{{dept.name}}</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.job_title || ''" (change)="updateSegmentDescription('demographic', 'job_title', $event)">
+                                                                  <option disabled value="">Job Title</option>
+                                                                  <option *ngFor="let title of jobTitles" [value]="title" [selected]="title === (currentSegmentChildNode?.description?.demographic?.job_title || '')">{{title}}</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.company_size || ''" (change)="updateSegmentDescription('demographic', 'company_size', $event)">
+                                                                  <option disabled value="">Company Size</option>
+                                                                  <option *ngFor="let company of companySize" [value]="company.value" [selected]="company.value === (currentSegmentChildNode?.description?.demographic?.company_size || '')">{{company.name}}</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+
+                                                  <!-- B2C Demographic START -->
+                                                  <div class="aq-demographic-b2c" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2C'">
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.age || ''" (change)="updateSegmentDescription('demographic', 'age', $event)">
+                                                                  <option disabled value="">Age</option>
+                                                                  <option value="0-17">0-17</option>
+                                                                  <option value="18-24">18-24</option>
+                                                                  <option value="25-35">25-35</option>
+                                                                  <option value="36-45">36-45</option>
+                                                                  <option value="46-55">46-55</option>
+                                                                  <option value="56-65">56-65</option>
+                                                                  <option value="65+">65+</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.education || ''" (change)="updateSegmentDescription('demographic', 'education', $event)">
+                                                                  <option disabled value="">Education</option>
+                                                                  <option value="Primary">Primary</option>
+                                                                  <option value="Secondary">Secondary</option>
+                                                                  <option value="Post-secondary">Post-secondary</option>
+                                                                  <option value="Masters">Masters</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.gender || ''" (change)="updateSegmentDescription('demographic', 'gender', $event)">
+                                                                  <option disabled value="">Gender</option>
+                                                                  <option value="Male">Male</option>
+                                                                  <option value="Female">Female</option>
+                                                                  <option value="Other">Other</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.occupation || ''" (change)="updateSegmentDescription('demographic', 'occupation', $event)">
+                                                                  <option disabled value="">Occupation</option>
+                                                                  <option *ngFor="let occupation of occupations" [value]="occupation" [selected]="occupation === (currentSegmentChildNode?.description?.demographic?.occupation || '')">{{occupation}}</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.income || ''" (change)="updateSegmentDescription('demographic', 'income', $event)">
+                                                                  <option disabled value="">Income</option>
+                                                                  <option value="<$30,000"><$30,000</option>
+                                                                  <option value="$30,001-$60,000">$30,001-$60,000</option>
+                                                                  <option value="$60,001-100,000">$60,001-100,000</option>
+                                                                  <option value="$100,001-$150,000">$100,001-$150,000</option>
+                                                                  <option value="$150,001-$250,000">$150,001-$250,000</option>
+                                                                  <option value="$250,001+">$250,001+</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.marital_status || ''" (change)="updateSegmentDescription('demographic', 'marital_status', $event)">
+                                                                  <option disabled value="">Marital Status</option>
+                                                                  <option value="Single">Single</option>
+                                                                  <option value="Married">Married</option>
+                                                                  <option value="Common-law">Common-law</option>
+                                                                  <option value="Separated">Separated</option>
+                                                                  <option value="Divorced">Divorced</option>
+                                                                  <option value="Widowed">Widowed</option>
+                                                              </select>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                                  <!-- B2C Demographic END -->
+                                              </div>
+                                          </div>
+                                          <!-- Geographic START -->
+                                          <div class="tab-pane fade" id="tab_geographic">
+                                              <div class="aq-demographic-sec">
+                                                  <!-- Geographic START -->
+                                                  <div class="aq-geographic">
+                                                      <div class="seg-options-grp">
+                                                          <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.country || ''" (change)="updateSegmentDescription('geographic', 'country', $event)">
+                                                              <option value="">Country</option>
+                                                              <option value="India">India</option>
+                                                              <option value="Pakistan">Pakistan</option>
+                                                          </select> -->
+                                                          <ng-select
+                                                              class="seg-single-manual"
+                                                              [items]="countries"
+                                                              bindLabel="name"
+                                                              bindValue="name"
+                                                              [selectableGroup]="true"
+                                                              [selectableGroupAsModel]="false"
+                                                              placeholder="Select Countries"
+                                                              [loading]="loading"
+                                                              [multiple]="true"
+                                                              [searchable]="false"
+                                                              [clearable]="false"
+                                                              [(ngModel)]="currentSegmentChildNode?.description?.geographic?.country || selectedCountries"
+                                                              (ngModelChange)="updateSegmentDescription('geographic', 'country', $event)"
+                                                              >
+                                                              <ng-template
+                                                                  ng-option-tmp
+                                                                  let-item="item"
+                                                                  let-item$="item$"
+                                                                  let-index="index">
+                                                                      <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
+                                                                      {{item?.name}}
+                                                              </ng-template>
+                                                          </ng-select>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.state || ''" (change)="updateSegmentDescription('geographic', 'state', $event)">
+                                                              <option value="">State</option>
+                                                              <option value="Delhi">Delhi</option>
+                                                              <option value="Mumbai">Mumbai</option>
+                                                          </select> -->
+                                                          <ng-select
+                                                              class="seg-single-manual"
+                                                              [items]="states"
+                                                              bindLabel="name"
+                                                              bindValue="name"
+                                                              [selectableGroup]="true"
+                                                              [selectableGroupAsModel]="false"
+                                                              placeholder="Select States"
+                                                              [loading]="loading"
+                                                              [multiple]="true"
+                                                              [searchable]="false"
+                                                              [clearable]="false"
+                                                              [(ngModel)]="currentSegmentChildNode?.description?.geographic?.state || selectedStates"
+                                                              (ngModelChange)="updateSegmentDescription('geographic', 'state', $event)"
+                                                              >
+                                                              <ng-template
+                                                                  ng-option-tmp
+                                                                  let-item="item"
+                                                                  let-item$="item$"
+                                                                  let-index="index">
+                                                                      <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
+                                                                      {{item?.name}}
+                                                              </ng-template>
+                                                          </ng-select>
+                                                      </div>
+                                                      <div class="seg-options-grp">
+                                                          <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.city || ''" (change)="updateSegmentDescription('geographic', 'city', $event)">
+                                                              <option value="">City</option>
+                                                              <option value="New Delhi">New Delhi</option>
+                                                              <option value="Navi Mumbai">Navi Mumbai</option>
+                                                          </select> -->
+                                                          <ng-select
+                                                              class="seg-single-manual"
+                                                              [items]="cities"
+                                                              bindLabel="name"
+                                                              bindValue="name"
+                                                              [selectableGroup]="true"
+                                                              [selectableGroupAsModel]="false"
+                                                              placeholder="Select Cities"
+                                                              [loading]="loading"
+                                                              [multiple]="true"
+                                                              [searchable]="false"
+                                                              [clearable]="false"
+                                                              [(ngModel)]="currentSegmentChildNode?.description?.geographic?.city || selectedCities"
+                                                              (ngModelChange)="updateSegmentDescription('geographic', 'city', $event)"
+                                                              >
+                                                              <ng-template
+                                                                  ng-option-tmp
+                                                                  let-item="item"
+                                                                  let-item$="item$"
+                                                                  let-index="index">
+                                                                      <input id="item-{{item}}" type="checkbox" [ngModel]="item$.selected"/>
+                                                                      {{item}}
+                                                              </ng-template>
+                                                          </ng-select>
+                                                      </div>
+                                                      <!-- <div class="seg-options-grp">
+                                                          <div class="seg-single">
+                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.time_zone || ''" (change)="updateSegmentDescription('geographic', 'time_zone', $event)">
+                                                                  <option value="">Time Zone</option>
+                                                                  <option value="Asia/Kolkata">Asia/Kolkata</option>
+                                                                  <option value="America/New York">America/New York</option>
+                                                              </select>
+                                                          </div>
+                                                      </div> -->
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <!-- Psychographic START -->
+                                          <div class="tab-pane fade" id="tab_psychographic">
+                                              <div class="aq-demographic-sec">
+                                                  <div class="aq-psychographic ">
+                                                      <div class="psy-options-grp">
+                                                          <span>Interest</span>
+                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.interest || ''" (blur)="updateSegmentDescription('psychographic', 'interest', $event)"></textarea>
+                                                      </div>
+
+                                                      <div class="psy-options-grp">
+                                                          <span>Customer Pain Points</span>
+                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.customer_points || ''" (blur)="updateSegmentDescription('psychographic', 'customer_points', $event)"></textarea>
+                                                      </div>
+
+                                                      <div class="psy-options-grp">
+                                                          <span>Values</span>
+                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.values || ''" (blur)="updateSegmentDescription('psychographic', 'values', $event)"></textarea>
+                                                      </div>
+
+                                                      <div class="psy-options-grp">
+                                                          <span>Habits</span>
+                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.habits || ''" (blur)="updateSegmentDescription('psychographic', 'habits', $event)"></textarea>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <!-- Psychographic END -->
+                                      </div>
+                                      <!-- CONTENT OF SUB SEGMENT END-->
+                                  </div>
+                                  <!-- SEGMENT SUB DETAILS END-->
+                              </div>
+                          </div>
+                          <!-- SEGMENT DETAIL SEC END -->
+                      </ng-template>
+                      <!-- Common Wrap -->
+                      <ng-template ngSwitchDefault>
+                          <div class="signle-karta-dtl-wrap marketing-phse-main">
+                              <div class="dtl-up-sec">
+                                  <div class="dtl-karta-header">
+                                      <div class="back-karta-btn">
+                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                      </div>
+                                      <div class="karta-dtl-title">
+                                          <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
+                                      </div>
+                                      <div class="d-flex align-items-center">
+                                          <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
+                                          <div class="next-karta-btn" [ngClass]="currentPhase?.global_name === 'KPI' ? 'disableDiv' : ''" (click)="currentPhase?.global_name === 'KPI' ? null : goToNextPhase(currentPhase)">
+                                              <span>NEXT</span>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div class="dtl-karta-body" style="height: calc(100vh - 435px);">
+                                      <div class="accordion" id="accordionCommon">
+                                          <!-- singular item -->
+                                          <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
+                                              <div class="card-header" [id]="'heading'+i">
+                                                  <h2 class="mb-0">
+                                                      <button class="btn btn-link btn-block text-left short_text collapsed dropdown_text" [ngClass]="{'collapsed': i !== 0}" type="button" (click)="openSuggestionMenu(currentPhase, 0, 'reset', node, $event)"
+                                                          data-toggle="collapse" [attr.data-target]="'#collapse'+i" aria-expanded="false"
+                                                          aria-controls="collapseOne">
+                                                          <span>{{node?.name}}</span>
+                                                      </button>
+                                                  </h2>
+                                              </div>
+
+                                              <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i == 0}" aria-labelledby="headingOne"
+                                                  data-parent="#accordionCommon">
+                                                  <div class="card-body">
+                                                      <div class="suggestions-sec">
+                                                          <span>Here are some suggestions:</span>
+                                                          <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
+                                                      </div>
+                                                      <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
+                                                          <!-- Suggestion auto -->
+                                                          <ng-container *ngIf="suggestion.type === 'auto'">
+                                                              <div class="choose-sgtion-box">
+                                                                  <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
+                                                                  <label class="checkbox style-c">
+                                                                      <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
+                                                                      <div class="checkbox__checkmark"></div>
+                                                                  </label>
+                                                              </div>
+                                                          </ng-container>
+                                                          <!-- Suggestion manual -->
+                                                          <ng-container *ngIf="suggestion.type === 'manual'">
+                                                              <div class="manual-item choose-sgtion-box">
+                                                                  <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
+                                                                  <label class="checkbox style-c">
+                                                                      <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
+                                                                      <div class="checkbox__checkmark"></div>
+                                                                  </label>
+                                                              </div>
+                                                          </ng-container>
+                                                          <!-- Suggestion prompt -->
+                                                          <ng-container *ngIf="suggestion.type === 'prompt'">
+                                                              <div class="manual-msg">{{suggestion?.name}}</div>
+                                                          </ng-container>
+                                                      </ng-container>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          <!-- singular item -->
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </ng-template>
+                      <div class="dt-cust-msg-sec" *ngIf="!currentPhase?.global_name.includes('Segment')">
+                          <textarea class="karta-message-box" [(ngModel)]="suggestionPrompt" placeholder="You can enter prompt here..." name="w3review"></textarea>
+                          <img *ngIf="!suggestionLoader" class="snd-prompt-karta-btn" src="assets/img/crt-send-promt.png" alt="" (click)="generateSuggestion()">
+                          <div *ngIf="suggestionLoader" class="spinner-border snd-prompt-karta-btn" role="status"></div>
+                      </div>
+           </div>
+           <!-- KARTA MID PORTION -->
+           <div class="mt-4 w-100 overflow-auto" style="overflow-x: hidden;">
+               <div class="tab-content-center bg-transparent">
                    <!-- KARTA CANVAS COLUMN -->
-                   <div class="karta_column">
+                   <div class="karta_column" [ngStyle]="{'width': (phases.length * 180) - 5 +'px'}">
                        <div class="tab-pane active">
                            <ng-container *ngIf="loadingKarta">
                                <div class="p-5" [innerHtml]="loader"></div>
                            </ng-container>
                            <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
-                           <div *ngIf="!showSVG && !loadingKarta" class="bg-white">
+                           <div style="width: 2265px;background-color: #ffffff;" *ngIf="!showSVG && !loadingKarta" class="bg-white d-flex">
                                <ng-container *ngFor="let phase of phases; let i = index">
                                    <div *ngIf="i == 0"
                                        class="karta_dummy_lines"
@@ -1038,18 +1011,33 @@
                            </div>
                        </div>
                    </div>
-                   <!-- I AM FEELING LUCKY -->
-                   <div class="crt-final-sub-btn" id="feeling-lucky-holder">
-                        <button class="module" [ngClass]="{'disableDiv': feelingLoader}" (click)="!feelingLoader && feelingLucky()">
-                            <ng-container *ngIf="feelingLoader">
-                                <div [innerHtml]="loader"></div>
-                            </ng-container>
-                            <span *ngIf="!feelingLoader">
-                                I'm Feeling Lucky
-                            </span>
-                        </button>
+                   <!-- KARTA PHASE COLUMN-->
+                   <div class="phase_column" [ngStyle]="{'width': (phases.length * 180) - 5 +'px'}">
+                    <!-- Phase list-->
+                    <div class="phase_list">
+                        <div class="single_phase" [ngClass]="{ 'karta-cmpltd': phase.hasNode, 'karta-current': (phase.id == phaseId || i==0 || phases[i-1].hasNode) }" *ngFor="let phase of phases; let i = index">
+                            <!-- <span [id]="phase.id" class="phase_name short_text disableSpan" [ngClass]="{'enableDiv': ((phase.id == phaseId || i==0 || phases[i-1].hasNode) && !changeModeFlag)}" (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name, i)" (click)="(setPhaseEditable && !changeModeFlag) ? null : openSuggestionMenu(phase, i)" [title]="phase?.name == 'Phase' ? 'Marketing Phase' : phase?.name">{{(phase?.name == "Phase" ? "Marketing Phase" : phase?.name) | uppercase}}</span> -->
+                            <span [id]="phase.id" class="phase_name short_text disableSpan" [ngClass]="{'enableDiv': ((phase.id == phaseId || i==0 || phases[i-1].hasNode) && !changeModeFlag)}" (keypress)="setLimitForContentEditable($event, 24)" (blur)="changePhaseName($event, phase.id, phase.name, i)" (click)="(setPhaseEditable && !changeModeFlag) ? null : openSuggestionMenu(phase, i)" [title]="phase?.name">{{phase?.name | uppercase}}</span>
+                            <!-- <img src="assets/img/crt-arrow-right.svg" *ngIf="(phase.id == phaseId || i==0 || phases[i-1].hasNode)" class="suggestion_menu" alt="" (click)="openSuggestionMenu(phase, i)"> -->
+                            <div class="karta-selector dropdown" *ngIf="phase.global_name !== 'KPI' && phase.global_name !== 'Goal'">
+                                <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="assets/img/crt_tabler_dots_vert.svg" alt="" />
+                                </a>
+                                <img class="info-icon" src="assets/img/info-circle-white.svg" alt="" (click)="showLayerInfo(phase.phaseId, phase.global_name)" />
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" *ngIf="phase.lastChildren" (click)="addChildPhase(phase, i)"><i class="fa fa-plus"></i> Add</a>
+                                    <a class="dropdown-item" (click)="makePhaseEditable(phase.id)"><i class="fa fa-pencil"></i> Rename</a>
+                                    <a class="dropdown-item" *ngIf="phase.is_child" (click)="deletePhase(phase.id, i)"><i class="fa fa-trash"></i> Delete</a>
+                                </div>
+                            </div>
+                            <div class="karta-selector" [ngClass]="{ 'karta-selector-info': (!phase.hasNode && (phase.id == phaseId || i==0 || phases[i-1].hasNode)) }">
+                                <img class="info-icon" src="assets/img/info-circle-white.svg" alt="" (click)="showLayerInfo(phase.phaseId, phase.global_name)" />
+                            </div>
+                        </div>
                     </div>
-               </div>
+                    <!-- GOAL DETAIL SEC END -->
+                   </div>
+                </div>
            </div>
            <!-- KARTA RIGHT SIDEBAR-->
            <div class="right_sidebar_overlay"></div>
@@ -1464,6 +1452,17 @@
            </div>
        </div>
        <!-- Main content -->
+      <!-- I AM FEELING LUCKY -->
+      <div class="crt-final-sub-btn" id="feeling-lucky-holder" style="margin: 10px 110px;">
+          <button class="module" [ngClass]="{'disableDiv': feelingLoader}" (click)="!feelingLoader && feelingLucky()">
+              <ng-container *ngIf="feelingLoader">
+                  <div [innerHtml]="loader"></div>
+              </ng-container>
+              <span *ngIf="!feelingLoader">
+                  I'm Feeling Lucky
+              </span>
+          </button>
+      </div>
    </div>
    <!-- Page content -->
 </div>
@@ -1487,25 +1486,25 @@
                  <label class="short_text max_width_500">{{sharingKarta?.name}}</label>
                  <div class="row">
                     <div class="col-lg-12">
-                     <ng-select 
+                     <ng-select
                      [items]="members"
-                      [addTag]="addTagPromise" 
+                      [addTag]="addTagPromise"
                       groupBy="selectedAllGroup"
-                     [selectableGroup]="true" 
+                     [selectableGroup]="true"
                      [selectableGroupAsModel]="false"
-                     placeholder="Select users" 
-                     [loading]="loading" 
-                     [multiple]="true" 
-                     bindLabel="email" 
-                     [(ngModel)]="selectedSharedUsers" 
-                     (change)="onSelectUser()" 
+                     placeholder="Select users"
+                     [loading]="loading"
+                     [multiple]="true"
+                     bindLabel="email"
+                     [(ngModel)]="selectedSharedUsers"
+                     (change)="onSelectUser()"
                      (clear)="enableEditOption()"
                      >
                      <ng-template ng-tag-tmp let-search="searchTerm">
                         <b>Add new email</b>: {{search}}
                      </ng-template>
-                     <ng-template 
-                     ng-optgroup-tmp let-item="item" 
+                     <ng-template
+                     ng-optgroup-tmp let-item="item"
                      let-item$="item$" let-index="index" >
                      <input id="item-{{index}}" type="checkbox"
                      [ngModel] ="item$.selected"/> Select All
