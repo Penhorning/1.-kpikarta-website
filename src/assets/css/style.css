@@ -2041,7 +2041,8 @@ button.Apply-btn.karta-edit {
 }
 
 .vertical-tabs .nav.nav-tabs .nav-item {
-  width: 180px;
+  width: 250px;
+  height: 67px;
 }
 
 .vertical-tabs .sv-tab-panel {

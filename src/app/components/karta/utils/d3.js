@@ -7,10 +7,10 @@ const { calculateSVGWidth } = require("./calculateSVGWidth.js");
 
 var totalPhases = 0, kartaColumnWidth = 0, width = 0, height = 0;
 var tree = null, root = null, nodes = null, parentLink = null, links = null, nodePaths = null, nodesExit = null;
-var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = null, domNode = null;
+var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = false, domNode = null, dragStartPos=null, dragThreshold = 3;
 var dragErrorMsg = "You cannot drag this node here";
 var haveKPIS = false;
-var nodeWidth = 180; // Space per depth level
+var nodeWidth = 250; // Space per depth level
 
 const getSVGSize = (tree) => {
     // let calculatedSVGWidth = calculateSVGWidth(tree);
@@ -60,7 +60,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
       return 1 + Math.max(...node.children.map(getMaxDepth));
     }
 
-    var maxDepth = getMaxDepth(treeData); // Get tree depth
+    var maxDepth = totalPhases || getMaxDepth(treeData); // Get tree depth
     maxDepth = maxDepth > 7 ? maxDepth : 7;
     width = maxDepth * nodeWidth; // Dynamic width
 
@@ -68,7 +68,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     .nodeSize([60, 60])
     .size([height - 50, width])
     .separation(function (a, b) {
-      return a.parent == b.parent ? 1 : 1;
+      return a.parent == b.parent ? 0.3 : 1;
     });
 
     // Options
@@ -257,7 +257,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             return false;
         }).remove();
 
-        dragStarted = null;
+        dragStarted = false;
     }
     // Drag end
     function endDrag(success = false) {
@@ -275,16 +275,25 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // Drag start
     var dragListener = d3.behavior.drag()
-        .on("dragstart", function (d) {
+      .on("dragstart", function (d) {
+            dragStartPos = d3.mouse(this);
             if (d == root) {
                 return;
             }
-            dragStarted = true;
+            dragStarted = false;
             nodes = tree.nodes(d);
             d3.event.sourceEvent.stopPropagation();
             options.events.onDragStart(d);
             // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
         }).on("drag", function (d) {
+            dragStarted = true;
+            var [x, y] = d3.mouse(this);
+            var dx = x - dragStartPos[0];
+            var dy = y - dragStartPos[1];
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist <= dragThreshold) {
+              return;
+            }
             if (d == root) {
                 return;
             }
@@ -297,6 +306,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             var dY = d3.event.y - 30;
             d3.select(this).attr("transform", "translate(" + dX + ", " + dY + ")");
         }).on("dragend", function (d) {
+            dragStarted = false;
             if (d == root) {
                 return;
             } else if (draggingNode !== null && selectedNode !== null && draggingNode.parentId === selectedNode.id) {
@@ -375,7 +385,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         // width = svgSize.width;
         // height = svgSize.height;
 
-        maxDepth = getMaxDepth(root); // Get tree depth
+        maxDepth = totalPhases || getMaxDepth(root); // Get tree depth
         maxDepth = maxDepth > 7 ? maxDepth : 7;
         width = maxDepth * nodeWidth; // Dynamic width
 
@@ -414,7 +424,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .call(dragListener)
             .attr("class", "node")
             .attr("width", 93)
-            .attr("height", 50)
+            .attr("height", 40)
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
             })
@@ -440,13 +450,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .append("foreignObject")
             .attr("class", "mindmap-node")
             .attr("width", 93)
-            .attr("height", 50)
+            .attr("height", 40)
             .html(node => nodeToHTML(node, nodeEnter));
         // phantom node to give us mouseover around it
         nodeEnter.append("foreignObject")
             .attr('class', 'ghostCircle')
             .attr("width", 93)
-            .attr("height", 50)
+            .attr("height", 40)
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
                 overCircle(node);
@@ -456,10 +466,10 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             });
         nodeEnter
             .append("foreignObject")
-            .style('text-align', (d) => (d.y == 0 ? "center" : d.children ? "right" : "left"))
-            .attr("x", (d) => (d.y == 0 ? "2" : d.children ? "-82" : "55"))
+            .style('text-align', (d) => (d.y == 0 ? "left" : d.children ? "right" : "left"))
+            .attr("x", (d) => (d.y == 0 ? "40" : d.children ? "-155" : "55"))
             .attr("y", (d) => (d.y == 0 ? "35" : "19"))
-            .attr("width", 120)
+            .attr("width", 190)
             .attr("height", 25)
             .html(node => nodeText(node, nodeEnter));
         // nodeEnter
