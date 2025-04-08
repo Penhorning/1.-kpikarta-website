@@ -248,7 +248,7 @@
                     <button type="button" class="save-btn-karta mr-1" [disabled]="(saveSubmitFlag && showLoader) || (saveSubmitFlag && !showLoader)" (click)="saveKarta()">
                         <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag && showLoader">
                             <span class="sr-only">Loading...</span>
-                        </div>                                                
+                        </div>
                         <ng-container *ngIf="!saveSubmitFlag && !showLoader">Save</ng-container>
                         <ng-container *ngIf="saveSubmitFlag && !showLoader">Save</ng-container>
                     </button>
@@ -382,7 +382,7 @@
         <!-- Full-page overlay that covers the entire page -->
         <div id="overlay" *ngIf="isLoading">
             <div class="text-center mb-3"><img width="350" src="../../../../assets/img/robo5.svg" alt=""></div>
-        </div>    
+        </div>
 
        <!-- Main content -->
        <div class="main-center-content d-flex mb-3" style="margin-left: 100px;">
@@ -527,7 +527,7 @@
                                                             </button>
                                                         </h2>
                                                     </div>
-                    
+
                                                     <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i === 0}" aria-labelledby="headingOne" data-parent="#accordionPhase">
                                                         <div class="card-body">
                                                             <ng-container *ngIf="loadingSuggestion">
@@ -604,7 +604,7 @@
                                                     <span>{{node?.name}}</span>
                                                     <span class="parentName short_text max_width_200">{{node?.parent?.name}}</span>
                                                 </button>
-                
+
                                                 <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i === 0}" aria-labelledby="headingOne"  data-parent="#accordionSegment">
                                                     <div class="card-body p-0">
                                                         <ng-container *ngIf="loadingSuggestion">
@@ -639,7 +639,7 @@
                                                 <input type="text" class="form-control" id="segment-name-input" placeholder="Enter Segment" [value]="currentSegmentChildNode?.name" (blur)="changeSegmentNodeName($event)" (keyup.enter)="changeSegmentOnEnter()" [ngClass]="{'is-invalid': segmentInputTouched && !currentSegmentChildNode?.name}">
                                                 <div class="invalid-feedback d-block" *ngIf="segmentInputTouched && !currentSegmentChildNode?.name">Please enter name!</div>
                                             </div>
-                    
+
                                             <!-- 3 CATREGORIES OF SUB SEGMENT START-->
                                             <ul class="nav accquire-sec-sub-tabs" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
                                                 <li class="nav-item aq-tab">
@@ -704,7 +704,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                            
+
                                                         <!-- B2C Demographic START -->
                                                         <div class="aq-demographic-b2c" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2C'">
                                                             <div class="seg-options-grp">
@@ -791,27 +791,27 @@
                                                                     <option value="India">India</option>
                                                                     <option value="Pakistan">Pakistan</option>
                                                                 </select> -->
-                                                                <ng-select 
+                                                                <ng-select
                                                                     class="seg-single-manual"
                                                                     [items]="countries"
-                                                                    bindLabel="name" 
-                                                                    bindValue="name" 
-                                                                    [selectableGroup]="true" 
+                                                                    bindLabel="name"
+                                                                    bindValue="name"
+                                                                    [selectableGroup]="true"
                                                                     [selectableGroupAsModel]="false"
                                                                     placeholder="Select Countries"
-                                                                    [loading]="loading" 
-                                                                    [multiple]="true" 
+                                                                    [loading]="loading"
+                                                                    [multiple]="true"
                                                                     [searchable]="false"
                                                                     [clearable]="false"
                                                                     [(ngModel)]="currentSegmentChildNode?.description?.geographic?.country || selectedCountries"
                                                                     (ngModelChange)="updateSegmentDescription('geographic', 'country', $event)"
                                                                     >
-                                                                    <ng-template 
-                                                                        ng-option-tmp 
-                                                                        let-item="item" 
-                                                                        let-item$="item$" 
+                                                                    <ng-template
+                                                                        ng-option-tmp
+                                                                        let-item="item"
+                                                                        let-item$="item$"
                                                                         let-index="index">
-                                                                            <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/> 
+                                                                            <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
                                                                             {{item?.name}}
                                                                     </ng-template>
                                                                 </ng-select>
@@ -822,27 +822,27 @@
                                                                     <option value="Delhi">Delhi</option>
                                                                     <option value="Mumbai">Mumbai</option>
                                                                 </select> -->
-                                                                <ng-select 
+                                                                <ng-select
                                                                     class="seg-single-manual"
                                                                     [items]="states"
-                                                                    bindLabel="name" 
-                                                                    bindValue="name" 
-                                                                    [selectableGroup]="true" 
+                                                                    bindLabel="name"
+                                                                    bindValue="name"
+                                                                    [selectableGroup]="true"
                                                                     [selectableGroupAsModel]="false"
                                                                     placeholder="Select States"
-                                                                    [loading]="loading" 
-                                                                    [multiple]="true" 
+                                                                    [loading]="loading"
+                                                                    [multiple]="true"
                                                                     [searchable]="false"
                                                                     [clearable]="false"
                                                                     [(ngModel)]="currentSegmentChildNode?.description?.geographic?.state || selectedStates"
                                                                     (ngModelChange)="updateSegmentDescription('geographic', 'state', $event)"
                                                                     >
-                                                                    <ng-template 
-                                                                        ng-option-tmp 
-                                                                        let-item="item" 
-                                                                        let-item$="item$" 
+                                                                    <ng-template
+                                                                        ng-option-tmp
+                                                                        let-item="item"
+                                                                        let-item$="item$"
                                                                         let-index="index">
-                                                                            <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/> 
+                                                                            <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
                                                                             {{item?.name}}
                                                                     </ng-template>
                                                                 </ng-select>
@@ -853,27 +853,27 @@
                                                                     <option value="New Delhi">New Delhi</option>
                                                                     <option value="Navi Mumbai">Navi Mumbai</option>
                                                                 </select> -->
-                                                                <ng-select 
+                                                                <ng-select
                                                                     class="seg-single-manual"
                                                                     [items]="cities"
-                                                                    bindLabel="name" 
-                                                                    bindValue="name" 
-                                                                    [selectableGroup]="true" 
+                                                                    bindLabel="name"
+                                                                    bindValue="name"
+                                                                    [selectableGroup]="true"
                                                                     [selectableGroupAsModel]="false"
                                                                     placeholder="Select Cities"
-                                                                    [loading]="loading" 
-                                                                    [multiple]="true" 
+                                                                    [loading]="loading"
+                                                                    [multiple]="true"
                                                                     [searchable]="false"
                                                                     [clearable]="false"
                                                                     [(ngModel)]="currentSegmentChildNode?.description?.geographic?.city || selectedCities"
                                                                     (ngModelChange)="updateSegmentDescription('geographic', 'city', $event)"
                                                                     >
-                                                                    <ng-template 
-                                                                        ng-option-tmp 
-                                                                        let-item="item" 
-                                                                        let-item$="item$" 
+                                                                    <ng-template
+                                                                        ng-option-tmp
+                                                                        let-item="item"
+                                                                        let-item$="item$"
                                                                         let-index="index">
-                                                                            <input id="item-{{item}}" type="checkbox" [ngModel]="item$.selected"/> 
+                                                                            <input id="item-{{item}}" type="checkbox" [ngModel]="item$.selected"/>
                                                                             {{item}}
                                                                     </ng-template>
                                                                 </ng-select>
@@ -898,17 +898,17 @@
                                                                 <span>Interest</span>
                                                                 <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.interest || ''" (blur)="updateSegmentDescription('psychographic', 'interest', $event)"></textarea>
                                                             </div>
-                            
+
                                                             <div class="psy-options-grp">
                                                                 <span>Customer Pain Points</span>
                                                                 <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.customer_points || ''" (blur)="updateSegmentDescription('psychographic', 'customer_points', $event)"></textarea>
                                                             </div>
-                            
+
                                                             <div class="psy-options-grp">
                                                                 <span>Values</span>
                                                                 <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.values || ''" (blur)="updateSegmentDescription('psychographic', 'values', $event)"></textarea>
                                                             </div>
-                            
+
                                                             <div class="psy-options-grp">
                                                                 <span>Habits</span>
                                                                 <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.habits || ''" (blur)="updateSegmentDescription('psychographic', 'habits', $event)"></textarea>
@@ -918,7 +918,7 @@
                                                 </div>
                                                 <!-- Psychographic END -->
                                             </div>
-                                            <!-- CONTENT OF SUB SEGMENT END-->                                       
+                                            <!-- CONTENT OF SUB SEGMENT END-->
                                         </div>
                                         <!-- SEGMENT SUB DETAILS END-->
                                     </div>
@@ -956,7 +956,7 @@
                                                             </button>
                                                         </h2>
                                                     </div>
-                    
+
                                                     <div [id]="'collapse'+i" class="collapse" [ngClass]="{'show': i == 0}" aria-labelledby="headingOne"
                                                         data-parent="#accordionCommon">
                                                         <div class="card-body">
@@ -1487,25 +1487,25 @@
                  <label class="short_text max_width_500">{{sharingKarta?.name}}</label>
                  <div class="row">
                     <div class="col-lg-12">
-                     <ng-select 
+                     <ng-select
                      [items]="members"
-                      [addTag]="addTagPromise" 
+                      [addTag]="addTagPromise"
                       groupBy="selectedAllGroup"
-                     [selectableGroup]="true" 
+                     [selectableGroup]="true"
                      [selectableGroupAsModel]="false"
-                     placeholder="Select users" 
-                     [loading]="loading" 
-                     [multiple]="true" 
-                     bindLabel="email" 
-                     [(ngModel)]="selectedSharedUsers" 
-                     (change)="onSelectUser()" 
+                     placeholder="Select users"
+                     [loading]="loading"
+                     [multiple]="true"
+                     bindLabel="email"
+                     [(ngModel)]="selectedSharedUsers"
+                     (change)="onSelectUser()"
                      (clear)="enableEditOption()"
                      >
                      <ng-template ng-tag-tmp let-search="searchTerm">
                         <b>Add new email</b>: {{search}}
                      </ng-template>
-                     <ng-template 
-                     ng-optgroup-tmp let-item="item" 
+                     <ng-template
+                     ng-optgroup-tmp let-item="item"
                      let-item$="item$" let-index="index" >
                      <input id="item-{{index}}" type="checkbox"
                      [ngModel] ="item$.selected"/> Select All
@@ -1616,7 +1616,24 @@
                        <div class="col-lg-12">
                            <form [formGroup]="viewKartaForm" (ngSubmit)="onViewKartaSubmit()">
                                <div class="row">
-                                   <div class="col-lg-6">
+                                   <div class="col-lg-4">
+                                       <div class="form-group">
+                                           <label>Year <span class="text-danger">*</span></label>
+                                           <select
+                                               class="form-control custom-select-option"
+                                               formControlName="year"
+                                               (change)="viewKartaYear($event)"
+                                               [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.year.touched) && viewKarta.year.errors }"
+                                           >
+                                                <option value="" selected>Select</option>
+                                                <option *ngFor="let year of yearOptions" [value]="year.value">{{ year?.name }} </option>
+                                           </select>
+                                           <div *ngIf="(viewKartaSubmitted || viewKarta.year.touched) && viewKarta.year.errors" class="invalid-feedback">
+                                               <div *ngIf="viewKarta.year.errors.required">Year is required!</div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <div class="col-lg-4">
                                        <div class="form-group">
                                            <label>Type <span class="text-danger">*</span></label>
                                            <select
@@ -1634,10 +1651,14 @@
                                            </div>
                                        </div>
                                    </div>
-                                   <div class="col-lg-6">
+                                   <div class="col-lg-4">
                                        <div class="form-group">
                                            <label>Duration <span class="text-danger">*</span></label>
-                                           <select class="form-control custom-select-option" formControlName="duration" [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.duration.touched) && viewKarta.duration.errors }">
+                                           <select
+                                               class="form-control custom-select-option"
+                                               formControlName="duration"
+                                               [ngClass]="{ 'is-invalid': (viewKartaSubmitted || viewKarta.duration.touched) && viewKarta.duration.errors }"
+                                               >
                                                <option value="" selected>Select</option>
                                                <option *ngFor="let number of viewKartaDurations" [value]="number.value">{{ number?.name }} </option>
                                            </select>
