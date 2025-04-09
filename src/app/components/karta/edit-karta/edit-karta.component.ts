@@ -22,6 +22,7 @@ declare const $: any;
 })
 export class EditKartaComponent implements OnInit, OnDestroy {
 
+  nodeWidth: number = (window.innerWidth - 100) / 7
   unauthorizedUser: any;
   kartaId: string = '';
   lastSavedDate: string = '';

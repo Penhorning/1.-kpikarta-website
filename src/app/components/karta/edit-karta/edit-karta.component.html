@@ -385,10 +385,10 @@
         </div>
 
        <!-- Main content -->
-       <div class="main-center-content d-flex mb-3" style="margin: 0px 5px 0px 100px;">
+       <div class="main-center-content d-flex" style="margin: 0px 0px 0px 100px;">
            <!-- Phase suggestions -->
            <!-- Phase Detail Section Start -->
-           <div class="mt-4 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" style="height: calc(100vh - 350px);width: 350px;">
+           <div class="mt-4 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" style="height: calc(100vh - 190px);width: 350px;">
                       <!-- Goal & CSF Wrap -->
                       <ng-template [ngSwitchCase]="currentPhase?.global_name === 'Goal' || currentPhase?.global_name === 'Critical Success Factor'">
                           <div class="signle-karta-dtl-wrap">
@@ -978,10 +978,10 @@
                       </div>
            </div>
            <!-- KARTA MID PORTION -->
-           <div class="mt-4 w-100 overflow-auto" style="overflow-x: hidden;">
+           <div class="w-100 overflow-auto" style="overflow-x: hidden;">
                <div class="tab-content-center bg-transparent">
                    <!-- KARTA CANVAS COLUMN -->
-                   <div class="karta_column" [ngStyle]="{'width': (phases.length * 250) - 5 +'px'}">
+                   <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px'}">
                        <div class="tab-pane active">
                            <ng-container *ngIf="loadingKarta">
                                <div class="p-5" [innerHtml]="loader"></div>
@@ -1012,7 +1012,7 @@
                        </div>
                    </div>
                    <!-- KARTA PHASE COLUMN-->
-                   <div class="phase_column" [ngStyle]="{'width': (phases.length * 250) - 5 +'px'}">
+                   <div class="phase_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px'}">
                     <!-- Phase list-->
                     <div class="phase_list">
                         <div class="single_phase" [ngClass]="{ 'karta-cmpltd': phase.hasNode, 'karta-current': (phase.id == phaseId || i==0 || phases[i-1].hasNode) }" *ngFor="let phase of phases; let i = index">
@@ -1453,7 +1453,7 @@
        </div>
        <!-- Main content -->
       <!-- I AM FEELING LUCKY -->
-      <div class="crt-final-sub-btn" id="feeling-lucky-holder" style="margin: 10px 110px;">
+      <div class="d-none crt-final-sub-btn" id="feeling-lucky-holder" style="margin: 10px 110px;">
           <button class="module" [ngClass]="{'disableDiv': feelingLoader}" (click)="!feelingLoader && feelingLucky()">
               <ng-container *ngIf="feelingLoader">
                   <div [innerHtml]="loader"></div>

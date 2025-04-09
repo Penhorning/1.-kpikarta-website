@@ -2127,14 +2127,14 @@ select.form-control.custom-select-karta-mode {
   border-bottom: 1px solid #E1E1E1;
   margin: 0;
   width: 100%;
-  padding: 15px 8px 0 118px;
+  padding: 8px 8px 8px 118px;
   /* position: fixed; */
   z-index: 9999;
   /* overflow: hidden; */
 }
 
 .karta-edit-contnet {
-  margin-top: 4.8rem;
+  margin-top: 4rem;
 }
 
 .btn-info:not(:disabled):not(.disabled).active:focus,

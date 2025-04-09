@@ -4,7 +4,7 @@
  */
 export default (node, source) => {
   return `
-    <div id="nodeItem" nodeid=${node.id} class="d-flex align-self-center ${node.children || node._children ? 'hasChildren' : ''}">
+    <div id="nodeItem" nodeid=${node.id} class="d-flex ${node.children || node._children ? 'hasChildren' : ''}">
       <div class="center-options" id="${node.phase.name == 'Goal' ? 'step3' : ''}">
         ${node.phase.global_name !== 'KPI' ? `<div class="option add-item"><i id="addNode" class="fa fa-plus-circle"></i></div>` : ''}
         ${node.phase.global_name !== 'Goal' ? `<div class="option remove-item"><i id="removeNode" class="fa fa-minus-circle"></i></div>` : ''}

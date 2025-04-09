@@ -39,13 +39,13 @@ const getSVGSize = (tree) => {
     // 4️⃣ Find the maximum count
     let maxNodes = d3.max(d3.values(levelCounts));
 
-    height = maxNodes * 55;
-    height = height > 500 ? height : 500
+    height = maxNodes * 25;
+    nodeWidth = (window.innerWidth - 100) / 7
 }
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var margin = { top: 0, right: 0, bottom: 20, left: 0 };
-    width = window.screen.width - margin.right - margin.left;
+    width = window.innerWidth - margin.right - margin.left;
     height = window.screen.height - margin.top - margin.bottom;
 
     // Set totalphases count and svg dimensions
@@ -68,7 +68,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     .nodeSize([60, 60])
     .size([height - 50, width])
     .separation(function (a, b) {
-      return a.parent == b.parent ? 0.3 : 1;
+      return a.parent == b.parent ? 1 : 1;
     });
 
     // Options
@@ -204,7 +204,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     });
 
     var diagonal = d3.svg.diagonal()
-        .projection(function (d) { return [d.y + 45, d.x + 30]; });
+        .projection(function (d) { return [d.y + 5, d.x + 30]; });
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -423,7 +423,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         var nodeEnter = node.enter().append("g")
             .call(dragListener)
             .attr("class", "node")
-            .attr("width", 93)
+            .attr("width", nodeWidth)
             .attr("height", 40)
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
@@ -448,14 +448,15 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             });
         nodeEnter
             .append("foreignObject")
-            .attr("class", "mindmap-node")
-            .attr("width", 93)
+            .attr("class", (d) => (d.y == 0 ? "mindmap-node center" : d.children ? "mindmap-node right" : "mindmap-node left"))
+            .attr("x", -(nodeWidth * 0.45))
+            .attr("width", nodeWidth)
             .attr("height", 40)
             .html(node => nodeToHTML(node, nodeEnter));
         // phantom node to give us mouseover around it
         nodeEnter.append("foreignObject")
             .attr('class', 'ghostCircle')
-            .attr("width", 93)
+            .attr("width", nodeWidth)
             .attr("height", 40)
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
@@ -467,9 +468,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         nodeEnter
             .append("foreignObject")
             .style('text-align', (d) => (d.y == 0 ? "left" : d.children ? "right" : "left"))
-            .attr("x", (d) => (d.y == 0 ? "40" : d.children ? "-155" : "55"))
-            .attr("y", (d) => (d.y == 0 ? "35" : "19"))
-            .attr("width", 190)
+            .attr("x", (d) => (d.y == 0 ? "3" : d.children ? -(nodeWidth - 20) : nodeWidth * 0.1))
+            .attr("y", (d) => (d.y == 0 ? "35" : "20"))
+            .attr("width", nodeWidth - 20)
             .attr("height", 25)
             .html(node => nodeText(node, nodeEnter));
         // nodeEnter

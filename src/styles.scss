@@ -280,12 +280,23 @@ input[type=number]::-webkit-outer-spin-button {
 
 	.center-options {
 		position: absolute;
-		top: 7px;
-    left: 7px;
-		width: 90%;
 		display: flex;
 		justify-content: center;
+    top: 50%;
 	}
+
+  &.left .center-options {
+    right: 55%;
+  }
+
+  &.right .center-options {
+    left: 55%;
+  }
+
+  &.center .center-options {
+    left: 47%;
+    top: 20%;
+  }
 
 	.right-options {
 		top: 20px;
@@ -340,7 +351,15 @@ input[type=number]::-webkit-outer-spin-button {
 	cursor: pointer;
 	font-size: 12px;
 	margin-right: 5px;
-	color: darkgray;
+  i {
+    color: #3571AA;
+    background-color: #ffffff;
+    border-radius: 100%;
+  }
+}
+
+.mindmap-node .center-options .option:last-child {
+  margin-right: 0px;
 }
 
 .mindmap-node .left-options .option,
@@ -433,10 +452,11 @@ input[type=number]::-webkit-outer-spin-button {
 
 .text-node{
   height: 25px;
-  width: 190px;
   white-space: nowrap;
-  overflow-x: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 12px;
+  font-weight: 600;
 }
 
 // // Custom Scrollbar Css

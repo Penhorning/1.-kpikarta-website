@@ -42,7 +42,7 @@ button.bg-light.viewFilterBtn:focus {
 
 .sidebar_collapsible_btn {
     z-index: 999;
-    top: 44%;
+    top:10%;
     position: fixed;
     left: 100px;
     transition: left 0.2s ease-in-out;
@@ -92,7 +92,7 @@ button.bg-light.viewFilterBtn:focus {
 // }
 
 .karta_column {
-    height: calc(100vh - 350px);
+    max-height: calc(100vh - 190px);
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1 1 auto;
@@ -375,29 +375,27 @@ input[type="number"] {
 }
 .phase_name {
     display: inline-block;
-    max-width: 50%;
+    max-width: 80%;
     padding-right: 5px;
 }
 .single_phase{
     flex:1;
     position: relative;
     border-radius: 45px;
-    outline: 3px solid #c0deea;
-    border: 3px solid #fff;
-    // padding: 10px 0px 10px 20%;
-    padding: 10px 0px;
-    text-align: center;
-    margin: 15px 10px;
+    border: 1px solid #fff;
+    padding: 5px 0px 5px 15px;
+    text-align: left;
+    margin: 5px;
 }
 
-.karta-cmpltd:before {
-    content: ' ';
-    position: absolute;
-    left: 20px;
-    height: 24px;
-    width: 24px;
-    background-image: url('../../../../assets/img/crt-cmpltd-krt.svg');
-}
+// .karta-cmpltd:before {
+//     content: ' ';
+//     position: absolute;
+//     left: 20px;
+//     height: 24px;
+//     width: 24px;
+//     background-image: url('../../../../assets/img/crt-cmpltd-krt.svg');
+// }
 
 .single_phase span {
     position: relative;
@@ -415,8 +413,7 @@ input[type="number"] {
 
 .karta-current,
 .karta-cmpltd {
-    outline: 3px solid #3571AA;
-    border: 3px solid #fff;
+    border: 1px solid #fff;
     background-color: #3571AA;
     transition: 0.5s;
     // cursor: pointer;
@@ -434,8 +431,8 @@ input[type="number"] {
 .karta-cmpltd .karta-selector {
     display: block;
     position: absolute;
-    right: 12px;
-    top: 20%;
+    right: 0px;
+    top: 10%;
 }
 
 .karta-selector-info {
