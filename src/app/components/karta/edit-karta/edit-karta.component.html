@@ -388,7 +388,7 @@
        <div class="main-center-content d-flex" style="margin: 0px 0px 0px 100px;">
            <!-- Phase suggestions -->
            <!-- Phase Detail Section Start -->
-           <div class="mt-4 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" style="height: calc(100vh - 190px);width: 350px;">
+           <div class="bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" style="height: calc(100vh - 150px);width: 350px;">
                       <!-- Goal & CSF Wrap -->
                       <ng-template [ngSwitchCase]="currentPhase?.global_name === 'Goal' || currentPhase?.global_name === 'Critical Success Factor'">
                           <div class="signle-karta-dtl-wrap">
@@ -411,7 +411,7 @@
                                       <span>Here are some suggestions:</span>
                                       <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
                                   </div>
-                                  <div class="dtl-karta-body" style="height: calc(100vh - 393px);">
+                                  <div class="dtl-karta-body" style="height: calc(100vh - 290px);">
                                       <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
                                           <!-- RADIO BOXES FOR GOAL PHASE ONLY -->
                                           <ng-container *ngIf="currentPhase?.global_name === 'Goal'; else multiCheck">
@@ -487,7 +487,7 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <div class="dtl-karta-body" style="height: calc(100vh - 393px);">
+                                  <div class="dtl-karta-body" style="height: calc(100vh - 290px);">
                                       <div class="accordion" id="accordionPhase">
                                           <!-- singular item -->
                                           <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
@@ -567,7 +567,7 @@
                                       </div>
                                   </div>
                                   <!-- CHILDRENS OF SEGMENT START-->
-                                  <div class="dtl-karta-body segement-dtl-sec" id="segment_section" style="height: calc(100vh - 393px);">
+                                  <div class="dtl-karta-body segement-dtl-sec" id="segment_section" style="height: calc(100vh - 290px);">
                                       <div class="accordion" id="accordionSegment">
                                       <!-- singular item -->
                                       <div class="segment-dropdown my-3 mx-2" *ngFor="let node of currentPhaseNodes; let i = index" [id]="'heading'+i">
@@ -601,7 +601,7 @@
                                   </div>
                                   <!-- CHILDRENS OF SEGMENT END-->
                                   <!-- SEGMENT SUB DETAILS START-->
-                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" style="height: calc(100vh - 393px);">
+                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" style="height: calc(100vh - 290px);">
                                       <div class="sub-segment-header">
                                           <div></div>
                                           <h5 class="short_text" [title]="currentSegmentNode?.name" class="title">{{currentSegmentNode?.name}}</h5>
@@ -915,7 +915,7 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <div class="dtl-karta-body" style="height: calc(100vh - 393px);">
+                                  <div class="dtl-karta-body" style="height: calc(100vh - 290px);">
                                       <div class="accordion" id="accordionCommon">
                                           <!-- singular item -->
                                           <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
@@ -1453,7 +1453,7 @@
        </div>
        <!-- Main content -->
       <!-- I AM FEELING LUCKY -->
-      <div class="d-none crt-final-sub-btn" id="feeling-lucky-holder" style="margin: 10px 110px;">
+      <div class="crt-final-sub-btn" id="feeling-lucky-holder" [ngStyle]="{'width': (nodeWidth - 30) +'px', 'left': !isPhaseListVisible ? '390px' : '120px'}">
           <button class="module" [ngClass]="{'disableDiv': feelingLoader}" (click)="!feelingLoader && feelingLucky()">
               <ng-container *ngIf="feelingLoader">
                   <div [innerHtml]="loader"></div>

@@ -15,10 +15,9 @@
             </div>
         </div>
         <!-- Main content -->
-          <div class="main-center-content d-flex mb-3" style="margin: 0px 5px 0px 100px;">
-            <div class="mt-4 w-100 overflow-auto" style="overflow-x: hidden;">
+          <div class="main-center-content d-flex" style="margin: 0px 0px 0px 100px;">
               <div class="tab-content-center bg-transparent">
-                    <div class="karta_column" [ngStyle]="{'width': (phases.length * 250) +'px'}">
+                    <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px'}">
                         <div class="tab-pane active">
                             <ng-container *ngIf="loadingKarta">
                                 <div class="p-5" [innerHtml]="loader"></div>
@@ -26,7 +25,7 @@
                             <div id="karta-svg" [hidden]="!showSVG || loadingKarta"></div>
                         </div>
                     </div>
-                    <div class="phase_column" [ngStyle]="{'width': (phases.length * 250) +'px'}">
+                    <div class="phase_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px'}">
                       <div class="vertical-tabs">
                           <ul class="nav nav-tabs" role="tablist" id="phase_tabs">
                               <li class="nav-item" *ngFor="let phase of phases; let i = index">
@@ -37,8 +36,7 @@
                           </ul>
                       </div>
                   </div>
-                </div>
-            </div>
+              </div>
             <div class="right_sidebar_overlay"></div>
             <div class="right-side-bar" id="rightSidebar">
                 <div class="row">

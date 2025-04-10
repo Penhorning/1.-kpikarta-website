@@ -73,7 +73,7 @@ button.bg-light.viewFilterBtn:focus {
 .phase_column {
     width: fit-content;
     flex: 1 1 auto;
-    border: 3px solid #0171d4;
+    border: 1px solid #0171d4;
 }
 
 // @media (width >= 1980px) {
@@ -92,7 +92,7 @@ button.bg-light.viewFilterBtn:focus {
 // }
 
 .karta_column {
-    max-height: calc(100vh - 190px);
+    max-height: calc(100vh - 200px);
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1 1 auto;
@@ -385,7 +385,7 @@ input[type="number"] {
     border: 1px solid #fff;
     padding: 5px 0px 5px 15px;
     text-align: left;
-    margin: 5px;
+    margin: 3px;
 }
 
 // .karta-cmpltd:before {
@@ -422,6 +422,7 @@ input[type="number"] {
 .karta-current span,
 .karta-cmpltd span {
     color: #fff;
+    margin-top: 4px;
 }
 
 .karta-selector {
@@ -432,7 +433,7 @@ input[type="number"] {
     display: block;
     position: absolute;
     right: 0px;
-    top: 10%;
+    top: 15%;
 }
 
 .karta-selector-info {
@@ -447,11 +448,9 @@ input[type="number"] {
 }
 
 .crt-final-sub-btn {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    width: 20%;
+    position: absolute;
+    top: 150px;
     padding: 3px;
-    position: relative;
     background: linear-gradient(to bottom, #01254A, #016CCA);
     text-align: center;
     border-radius: 45px;
@@ -461,10 +460,10 @@ input[type="number"] {
 .crt-final-sub-btn .module {
     background: #ffffff;
     color: #000;
-    font-size: 16px;
-    padding: 12px 0;
+    font-size: 14px;
+    padding: 5px 0;
     border-radius: 45px;
-    font-weight: 700;
+    font-weight: 600;
     width: 100%;
 }
 
@@ -1012,7 +1011,7 @@ input[type="number"] {
 /* PROMPT MESSAGE SECTION START */
 .karta-message-box {
     resize: none;
-    height: 76px;
+    height: 41px;
     border: unset;
     width: 100%;
     padding: 7px;

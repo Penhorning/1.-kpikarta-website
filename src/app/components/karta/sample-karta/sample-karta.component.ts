@@ -19,6 +19,7 @@ declare const $: any;
 })
 export class SampleKartaComponent implements OnInit, OnDestroy {
 
+  nodeWidth: number = (window.innerWidth - 100) / 7
   kartaId: string = '';
   karta: any;
   currentNode: any = {};
@@ -242,7 +243,7 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
       $("#selectTypeValue").val(param.node_type).change();
       this.kpiCalculationPeriod.frequency = param.kpi_calc_period;
       this.kpiCalculationPeriod.nodeId = param.id;
-      
+
       /* ===== Formula Code starts ===== */
       if (param.hasOwnProperty("node_formula") && param.node_formula) {
         this.formulaGroup.controls['fields'] = new FormArray([]);
@@ -310,7 +311,7 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
       }
     ).add(() => (this.loadingKarta = false));
   }
-  
+
   // Get all phases
   getPhases() {
     this._kartaService.getGlobalPhases().subscribe(

@@ -1307,7 +1307,7 @@ button.openbtn {
   color: #fff;
   display: block;
   text-align: center;
-  padding: 20px 5px;
+  padding: 10% 5px;
   font-size: 14px;
 }
 .sidebar ul a.active {
@@ -2012,12 +2012,9 @@ button.Apply-btn.karta-edit {
   border-radius: 0;
   background: #fff;
   text-align: center;
-  font-size: 13px;
+  font-size: 12px;
   border: 1px solid #CCCCCC;
   color: #171725;
-  height: 66px;
-  /* width: 200px; */
-  padding-top: 1.4rem;
   font-weight: 600;
 }
 
@@ -2041,8 +2038,7 @@ button.Apply-btn.karta-edit {
 }
 
 .vertical-tabs .nav.nav-tabs .nav-item {
-  width: 250px;
-  height: 67px;
+  flex: 1;
 }
 
 .vertical-tabs .sv-tab-panel {
@@ -2128,6 +2124,7 @@ select.form-control.custom-select-karta-mode {
   margin: 0;
   width: 100%;
   padding: 8px 8px 8px 118px;
+  margin: 5px 0px;
   /* position: fixed; */
   z-index: 9999;
   /* overflow: hidden; */

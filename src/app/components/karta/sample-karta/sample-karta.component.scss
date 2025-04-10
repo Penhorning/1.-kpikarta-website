@@ -62,7 +62,7 @@ button.bg-light.viewFilterBtn:focus {
 }
 
 .karta_column {
-  height: calc(100vh - 270px);
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1 1 auto;

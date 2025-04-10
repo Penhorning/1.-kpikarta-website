@@ -295,7 +295,7 @@ input[type=number]::-webkit-outer-spin-button {
 
   &.center .center-options {
     left: 47%;
-    top: 20%;
+    top: 12%;
   }
 
 	.right-options {
@@ -457,6 +457,11 @@ input[type=number]::-webkit-outer-spin-button {
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
+  span{
+    background-color: #EDEEEF;
+    box-shadow: 1px 1px 2px #0000004d;
+    padding: 0px 2px;
+  }
 }
 
 // // Custom Scrollbar Css
