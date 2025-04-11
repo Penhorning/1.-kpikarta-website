@@ -269,7 +269,6 @@ input[type=number]::-webkit-outer-spin-button {
 		box-shadow: rgb(0 0 0 / 20%) 0px 0.5px 3px -1px, rgb(0 0 0 / 15%) 0px 5px 30px -10px;
 		width: 12px;
     height: 12px;
-		margin-top: 24px;
 	}
 
 	.left-options {
@@ -282,7 +281,7 @@ input[type=number]::-webkit-outer-spin-button {
 		position: absolute;
 		display: flex;
 		justify-content: center;
-    top: 50%;
+    top: 21%;
 	}
 
   &.left .center-options {
@@ -295,7 +294,7 @@ input[type=number]::-webkit-outer-spin-button {
 
   &.center .center-options {
     left: 47%;
-    top: 12%;
+    top: -12%;
   }
 
 	.right-options {
@@ -457,11 +456,11 @@ input[type=number]::-webkit-outer-spin-button {
   text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 600;
-  span{
-    background-color: #EDEEEF;
-    box-shadow: 1px 1px 2px #0000004d;
-    padding: 0px 2px;
-  }
+  // span{
+  //   background-color: #EDEEEF;
+  //   box-shadow: 1px 1px 2px #0000004d;
+  //   padding: 0px 2px;
+  // }
 }
 
 // // Custom Scrollbar Css

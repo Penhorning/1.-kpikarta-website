@@ -375,7 +375,7 @@ input[type="number"] {
 }
 .phase_name {
     display: inline-block;
-    max-width: 80%;
+    max-width: 65%;
     padding-right: 5px;
 }
 .single_phase{
@@ -397,7 +397,17 @@ input[type="number"] {
 //     background-image: url('../../../../assets/img/crt-cmpltd-krt.svg');
 // }
 
-.single_phase span {
+.single_phase .single_phase_collapse {
+  position: absolute;
+  top: 7px;
+  right: 45px;
+  i {
+    cursor: pointer;
+    color: #fff;
+  }
+}
+
+.single_phase .phase_name {
     position: relative;
     color: #b3b3b3;
     font-size: 12px;
@@ -419,8 +429,8 @@ input[type="number"] {
     // cursor: pointer;
 }
 
-.karta-current span,
-.karta-cmpltd span {
+.karta-current .phase_name,
+.karta-cmpltd .phase_name {
     color: #fff;
     margin-top: 4px;
 }

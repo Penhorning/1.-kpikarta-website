@@ -216,6 +216,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
   }
 
+  toggleSinglePhaseCollapse(depth:number) {
+    const allCollapsed = this.D3SVG.areAllNodesAtDepthCollapsed(this.karta.node, depth)
+    this.D3SVG.collapseByDepth(this.karta.node, depth, allCollapsed)
+    this.D3SVG.update(this.karta.node, true);
+  }
+
+  areAllNodesAtDepthCollapsed(depth: number) {
+    return this.karta && this.karta.node ? this.D3SVG.areAllNodesAtDepthCollapsed(this.karta.node, depth) : false
+  }
+
   // Confirm box
   confirmBox(message: string, yesCallback: any, noCallback: any) {
     $("#confirm_message").text(message);

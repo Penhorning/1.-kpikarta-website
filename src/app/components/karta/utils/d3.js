@@ -18,7 +18,7 @@ const getSVGSize = (tree) => {
     // height2 = totalPhases * nodeWidth;
     // width = kartaColumnWidth = $(".karta_column").width();
     // width = calculatedSVGWidth > kartaColumnWidth ? calculatedSVGWidth : kartaColumnWidth;
-    // height = window.screen.height + 250;
+    // height = window.innerHeight + 250;
     // return {
     //     width: calculatedSVGWidth > width2 ? calculatedSVGWidth : width2,
     //     height: totalPhases * nodeWidth
@@ -38,15 +38,13 @@ const getSVGSize = (tree) => {
 
     // 4️⃣ Find the maximum count
     let maxNodes = d3.max(d3.values(levelCounts));
-
-    height = maxNodes * 23;
-    // height = height > window.screen.height ? height : window.screen.height;
+    height = Math.max(maxNodes * 25, window.innerHeight);
 }
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var margin = { top: 0, right: 0, bottom: 20, left: 0 };
     width = window.innerWidth - margin.right - margin.left;
-    height = window.screen.height - margin.top - margin.bottom;
+    height = window.innerHeight - margin.top - margin.bottom;
 
     // Set totalphases count and svg dimensions
     totalPhases = options.phases().length;
@@ -83,6 +81,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.inventoryDraggingNode = inventoryDraggingNode;
     options.buildOneKartaDivider = buildOneKartaDivider;
     options.removeOneKartaDivider = removeOneKartaDivider;
+    options.collapseByDepth = collapseByDepth
+    options.areAllNodesAtDepthCollapsed = areAllNodesAtDepthCollapsed
 
     options.rerender = function (data = root) {
         update(data, true);
@@ -204,7 +204,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     });
 
     var diagonal = d3.svg.diagonal()
-        .projection(function (d) { return [d.y + 5, d.x + 30]; });
+        .projection(function (d) { return [d.y + 5, d.x]; });
     var svg = d3.select(treeContainerDom).append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -397,9 +397,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         buildKartaDivider();
         var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
-
+        var xExtent = d3.extent(nodes, function(d) { return d.x; });
+        var xScale = d3.scale.linear().domain(xExtent).range([70, height - 70]); // compress or expand to fit
         // Normalize for fixed-depth
-        nodes.forEach(function (d) { d.y = d.depth * nodeWidth; });
+        nodes.forEach(function (d) {
+          d.x = xScale(d.x);
+          d.y = d.depth * nodeWidth;
+        });
         // Change phase ids of every nodes when someone dragging nodes
         // nodes.forEach(function (d) {
         //     // if (d.depth >= options.phases().length) d.depth -= d.depth;
@@ -452,6 +456,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("x", -(nodeWidth * 0.45))
             .attr("width", nodeWidth)
             .attr("height", 40)
+            .attr("y", -18)
             .html(node => nodeToHTML(node, nodeEnter));
         // phantom node to give us mouseover around it
         nodeEnter.append("foreignObject")
@@ -469,7 +474,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .append("foreignObject")
             .style('text-align', (d) => (d.y == 0 ? "left" : d.children ? "right" : "left"))
             .attr("x", (d) => (d.y == 0 ? "3" : d.children ? -(nodeWidth - 20) : nodeWidth * 0.1))
-            .attr("y", (d) => (d.y == 0 ? "42" : "20"))
+            .attr("y", (d) => (d.y == 0 ? "5" : "-10"))
             .attr("width", nodeWidth - 20)
             .attr("height", 25)
             .html(node => nodeText(node, nodeEnter));
@@ -683,6 +688,44 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, height);
             doc.save(`${name}.pdf`);
         });
+    }
+
+    function  collapseByDepth(node, targetDepth, allCollapsed) {
+      if (!node) return;
+
+      // If we're at the target phase depth, collapse this node
+      if (node.depth === targetDepth && node.children && !allCollapsed) {
+        node._children = node.children;
+        node.children = null;
+      }
+      if (node.depth === targetDepth && node._children && allCollapsed) {
+        node.children = node._children;
+        node._children = null;
+      }
+
+      // Recurse into children
+      if (node.children) {
+        node.children.forEach(child => collapseByDepth(child, targetDepth, allCollapsed));
+      } else if (node._children) {
+        node._children.forEach(child => collapseByDepth(child, targetDepth, allCollapsed));
+      }
+    }
+
+    function areAllNodesAtDepthCollapsed(root, targetDepth) {
+      var allCollapsed = true;
+
+      // Traverse all nodes
+      var nodes = d3.layout.tree().nodes(root);
+
+      nodes.forEach(function(d) {
+          if (d.depth === targetDepth) {
+              if (d.children) {
+                  allCollapsed = false; // Found an expanded node at this depth
+              }
+          }
+      });
+
+      return allCollapsed;
     }
 
     // Chart events
