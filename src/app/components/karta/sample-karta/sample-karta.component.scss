@@ -88,12 +88,12 @@ button.bg-light.viewFilterBtn:focus {
 
 .karta_dummy_lines {
     height: 100vh;
-    width: 250px;
     padding-right: 1rem;
     align-items: center;
     justify-content: flex-end;
     border: 1px solid #dee2e6;
     display: flex;
+    flex: 1;
 }
 .mode-btn{
     margin-inline-start: auto;

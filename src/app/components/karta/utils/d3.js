@@ -398,7 +398,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
         var xExtent = d3.extent(nodes, function(d) { return d.x; });
-        var xScale = d3.scale.linear().domain(xExtent).range([70, height - 70]); // compress or expand to fit
+        var xScale = d3.scale.linear().domain(xExtent).range([25, height - 25]); // compress or expand to fit
         // Normalize for fixed-depth
         nodes.forEach(function (d) {
           d.x = xScale(d.x);

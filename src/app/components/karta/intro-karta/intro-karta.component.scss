@@ -88,12 +88,12 @@
 
 .karta_dummy_lines {
   height: 100vh;
-  width: 250px;
   padding-right: 1rem;
   align-items: center;
   justify-content: flex-end;
   border: 1px solid #dee2e6;
   display: flex;
+  flex: 1;
 }
 
 ::ng-deep #karta-svg .mindmap-node .center-options .add-item i,

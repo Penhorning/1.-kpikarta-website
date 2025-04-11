@@ -205,6 +205,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   selectedCities: any = [];
   cities: any = [];
 
+  headerCollapsed: Boolean = true;
+
   constructor(
     private _kartaService: KartaService,
     private _commonService: CommonService,
@@ -214,6 +216,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   ) {
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
+  }
+
+  toggleHeaderCollapse() {
+    this.headerCollapsed = !this.headerCollapsed;
   }
 
   toggleSinglePhaseCollapse(depth:number) {
@@ -770,7 +776,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.saveSubmitFlag = false;
       for(let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        element.classList.remove('disableDiv');
+        if(element) element.classList.remove('disableDiv');
       }
     } else {
       jqueryFunctions.disableChart();
@@ -779,7 +785,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.saveSubmitFlag = true;
       for(let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        element.classList.add('disableDiv');
+        if(element) element.classList.add('disableDiv');
       }
     }
   }
@@ -1714,7 +1720,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             randomKey
           };
           let element = document.getElementById("header_operation_row");
-          element.classList.add('disableDiv');
+          if(element) element.classList.add('disableDiv');
           const index = this.phaseIndex(this.currentPhase.id);
           this.hasNodeInNextPhase = (this.phases[index + 1] && this.phases[index + 1].hasNode) || false;
           this._kartaService.createKartaHistory(history_data).subscribe(
@@ -1726,7 +1732,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             this.manual_suggestion = "";
             this.nodeSuggestions.push({ type: "manual" });
             let element = document.getElementById("header_operation_row");
-            element.classList.remove('disableDiv');
+            if(element) element.classList.remove('disableDiv');
             jqueryFunctions.enablePhase();
           });
         });
@@ -2558,14 +2564,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   onMouseOverKartaLines(ev: any) {
     ev.preventDefault();
     let element = document.getElementById(ev.target.id);
-    if (element) element.classList.add('selectedPhase');
+    if (element) if(element) element.classList.add('selectedPhase');
   }
 
   onMouseLeaveKartaLines(ev: any) {
     ev.preventDefault();
     this.isRtNodDrgingFrmSide = false;
     let element = document.getElementById(ev.target.id);
-    if (element) element.classList.remove('selectedPhase');
+    if (element) if(element) element.classList.remove('selectedPhase');
   }
 
   // addRootNode(ev: any) {
@@ -2582,31 +2588,31 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     // Check is root node dragging
     if (this.isRtNodDrgingFrmSide && elAttributes.name.value === "KPI") {
       this.isNodeDropable = false;
-      element.classList.add('selectedPhaseError');
+      if(element) element.classList.add('selectedPhaseError');
     } else if (this.isRtNodDrgingFrmSide && elAttributes.name.value !== "KPI") {
       this.isNodeDropable = true;
-      element.classList.add('selectedPhase');
+      if(element) element.classList.add('selectedPhase');
     }
     // Check if inventory node dragging
     else if (this.draggingInventoryNode && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value === "KPI") {
       this.isNodeDropable = false;
-      element.classList.add('selectedPhaseError');
+      if(element) element.classList.add('selectedPhaseError');
     } else if (this.draggingInventoryNode && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value !== "KPI") {
       const draggingDepth = this.getDepth(this.draggingInventoryNode.node);
       const selectedDepth = this.phaseIndex(ev.target.id.substring(9));
       if ((draggingDepth + selectedDepth) > 5) {
         this.isNodeDropable = false;
-        element.classList.add('selectedPhaseError');
+        if(element) element.classList.add('selectedPhaseError');
       } else {
         this.isNodeDropable = true;
-        element.classList.add('selectedPhase');
+        if(element) element.classList.add('selectedPhase');
       }
     } else if (this.draggingInventoryNode && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value === "KPI") {
       this.isNodeDropable = true;
-      element.classList.add('selectedPhase');
+      if(element) element.classList.add('selectedPhase');
     } else if (this.draggingInventoryNode && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value !== "KPI") {
       this.isNodeDropable = false;
-      element.classList.add('selectedPhaseError');
+      if(element) element.classList.add('selectedPhaseError');
     }
   }
 
@@ -2614,8 +2620,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     ev.preventDefault();
     let element = document.getElementById(ev.target.id);
     if (element) {
-      element.classList.remove('selectedPhase');
-      element.classList.remove('selectedPhaseError');
+      if(element) element.classList.remove('selectedPhase');
+      if(element) element.classList.remove('selectedPhaseError');
     }
   }
 
@@ -2671,13 +2677,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           historyType: 'main'
         };
         let element = document.getElementById("header_operation_row");
-        element.classList.add('disableDiv');
+        if(element) element.classList.add('disableDiv');
         this._kartaService.createKartaHistory(history_data).subscribe(
           (result: any) => { },
           (error: any) => { }
         ).add(() => {
           let element = document.getElementById("header_operation_row");
-          element.classList.remove('disableDiv');
+          if(element) element.classList.remove('disableDiv');
         });
       });
     } else {
@@ -2685,8 +2691,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.isRtNodDrgingFrmSide = false;
       let element = document.getElementById(ev.target.id);
       if (element) {
-        element.classList.remove('selectedPhase');
-        element.classList.remove('selectedPhaseError');
+        if(element) element.classList.remove('selectedPhase');
+        if(element) element.classList.remove('selectedPhaseError');
       }
     }
   }
@@ -2705,7 +2711,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
     jqueryFunctions.disableChart();
     let element = document.getElementById("header_operation_row");
-    element.classList.add('disableDiv');
+    if(element) element.classList.add('disableDiv');
     this._kartaService.addNodeByInventory(data).subscribe(
       (response: any) => {
         this.updateNewPercentage();
@@ -2719,7 +2725,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       }
     ).add(() => {
       let element = document.getElementById("header_operation_row");
-      element.classList.remove('disableDiv');
+      if(element) element.classList.remove('disableDiv');
     });
   }
 
@@ -3434,14 +3440,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               historyType: 'main'
             };
             let element = document.getElementById("header_operation_row");
-            element.classList.add('disableDiv');
+            if(element) element.classList.add('disableDiv');
             this._kartaService.createKartaHistory(history_data).subscribe(
               (result: any) => { },
               (error: any) => { }
             ).add(() => {
               // Resetting Manual Input box if user creates using manual
               let element = document.getElementById("header_operation_row");
-              element.classList.remove('disableDiv');
+              if(element) element.classList.remove('disableDiv');
             });
 
             await this.getKartaInfo();
@@ -3529,7 +3535,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       jqueryFunctions.disableChart();
       for (let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        element.classList.add('disableDiv');
+        if(element) element.classList.add('disableDiv');
       }
 
       // common Random Key for Undo Redo process
@@ -3632,7 +3638,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           for(let elem of this.controlElements) {
             let element = document.getElementById(elem);
-            element.classList.remove('disableDiv');
+            if(element) element.classList.remove('disableDiv');
           }
         }
       } else {
@@ -3646,7 +3652,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           for(let elem of this.controlElements) {
             let element = document.getElementById(elem);
-            element.classList.remove('disableDiv');
+            if(element) element.classList.remove('disableDiv');
           }
         }
       }
@@ -3656,7 +3662,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.loadingKarta = false;
       for(let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        element.classList.remove('disableDiv');
+        if(element) element.classList.remove('disableDiv');
       }
     }
   }
@@ -3666,7 +3672,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     jqueryFunctions.disableChart();
     for (let elem of this.controlElements) {
       let element = document.getElementById(elem);
-      element.classList.add('disableDiv');
+      if(element) element.classList.add('disableDiv');
     }
   }
 
@@ -3674,7 +3680,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     jqueryFunctions.enableChart();
     for (let elem of this.controlElements) {
       let element = document.getElementById(elem);
-      element.classList.remove('disableDiv');
+      if(element) element.classList.remove('disableDiv');
     }
   }
 }

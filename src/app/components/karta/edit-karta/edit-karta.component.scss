@@ -40,6 +40,17 @@ button.bg-light.viewFilterBtn:focus {
     background-color: #fff !important;
 }
 
+.karta_edit_header_collapsible_btn {
+  z-index: 999;
+  top: 15px;
+  position: fixed;
+  right: 100px;
+  transition: left 0.2s ease-in-out;
+  img {
+    transform: rotate(90deg);
+  }
+}
+
 .sidebar_collapsible_btn {
     z-index: 999;
     top:10%;
@@ -92,7 +103,6 @@ button.bg-light.viewFilterBtn:focus {
 // }
 
 .karta_column {
-    max-height: calc(100vh - 200px);
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1 1 auto;
@@ -104,12 +114,12 @@ button.bg-light.viewFilterBtn:focus {
 
 .karta_dummy_lines {
     height: 100vh;
-    width: 250px;
     padding-right: 1rem;
     align-items: center;
     justify-content: flex-end;
     border: 1px solid #dee2e6;
     display: flex;
+    flex: 1;
 }
 .mode-btn{
     margin-inline-start: auto;
@@ -459,7 +469,6 @@ input[type="number"] {
 
 .crt-final-sub-btn {
     position: absolute;
-    top: 150px;
     padding: 3px;
     background: linear-gradient(to bottom, #01254A, #016CCA);
     text-align: center;
