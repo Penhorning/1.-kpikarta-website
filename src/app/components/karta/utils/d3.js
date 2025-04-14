@@ -452,8 +452,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             });
         nodeEnter
             .append("foreignObject")
-            .attr("class", (d) => (d.y == 0 ? "mindmap-node center" : d.children ? "mindmap-node right" : "mindmap-node left"))
-            .attr("x", -(nodeWidth * 0.45))
+            .attr("class", (d) => (d.y == 0 ? "mindmap-node center" : "mindmap-node left"))
+            .attr("x", -((nodeWidth / 2) - 10))
             .attr("width", nodeWidth)
             .attr("height", 40)
             .attr("y", -18)
@@ -472,22 +472,12 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             });
         nodeEnter
             .append("foreignObject")
-            .style('text-align', (d) => (d.y == 0 ? "left" : d.children ? "right" : "left"))
-            .attr("x", (d) => (d.y == 0 ? "3" : d.children ? -(nodeWidth - 20) : nodeWidth * 0.1))
-            .attr("y", (d) => (d.y == 0 ? "5" : "-10"))
-            .attr("width", nodeWidth - 20)
+            .style('text-align', "left")
+            .attr("x", 18)
+            .attr("y", -12)
+            .attr("width", nodeWidth - 15)
             .attr("height", 25)
             .html(node => nodeText(node, nodeEnter));
-        // nodeEnter
-        //     .append("text")
-        //     .attr("dy", "33") // Moves text 10px above the node
-        //     .attr("x", (d) => (d.children ? "30" : "60")) // Center text above the node
-        //     .style("text-anchor", (d) => (d.children ? "end" : "start"))
-        //     .text((d) => "loreum loreum loreum loreum loreum loreum loreum loreum"||truncateText(d.name,18));
-
-        // function truncateText(text, maxLength) {
-        //   return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-        // }
         // Transition nodes to their new position.
         //horizontal tree
         var nodeUpdate = node.transition()
