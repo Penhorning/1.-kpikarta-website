@@ -135,23 +135,19 @@
    </button>
    <!-- Page Content  -->
    <div id="content" class="karta-edit-contnet">
-        <button type="button" id="sidebarCollapse" class="btn btn-info cutom-toggle karta_edit_header_collapsible_btn" (click)="toggleHeaderCollapse()">
-          <img [src]="headerCollapsed?'assets/img/side-arrow-right.svg':'assets/img/side-arrow-left.svg'" alt="" />
-        </button>
-
-        <div *ngIf="!headerCollapsed" class="mt-4 karta-edit-header">
-           <div class="row no-gutters align-items-center" id="header_operation_row">
-                <div class="col-md-1">
-                    <p [title]="karta?.name" class="short_text">{{karta?.name}}</p>
+        <div class="karta-edit-header">
+           <div class="d-flex no-gutters align-items-center justify-content-center" id="header_operation_row">
+                <div class="mr-2" *ngIf="karta?.name">
+                    <p [title]="karta?.name" class="short_text mb-0 text-center" style="font-size: 12px;">{{karta.name.length > 15 ? karta.name.slice(0,15) + '...' : karta.name}}</p>
                 </div>
-                <div class="col-md-1" id="version-holder">
+                <div id="version-holder" class="mr-2">
                     <div class="select-karta-name">
-                        <select class="form-control custom-select-karta" [disabled]="disableVersionFlag" (change)="versionRollback($event)" [(ngModel)]="versionId">
+                        <select class="form-control custom-select-karta" style="font-size: 12px;" [disabled]="disableVersionFlag" (change)="versionRollback($event)" [(ngModel)]="versionId">
                             <option *ngFor="let ver of version" [disabled]="ver.is_copied" [value]="ver.id">Version {{ver.name}}</option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-1 text-center" id="undo-redo-holder">
+                <div class="text-center mr-2" id="undo-redo-holder">
                     <a class="mr-1 cursor_pointer" title="Undo" id="UndoAnchor" (click)="undoRedoFlag ? null : undoKarta()">
                         <img src="assets/img/Undo.svg" style="height: 17px;" [class]="undoRedoFlag ? 'img-fluid cursor-not-allowed' : 'img-fluid'" />
                     </a>
@@ -160,23 +156,23 @@
                     </a>
                     <img class="img-fluid cursor_pointer" src="assets/img/reset-zoom.svg" style="height: 16px;" title="Reset Zoom" id="reset_zoom_btn" />
                 </div>
-                <div class="col-md-2">
+                <div class="mr-2" style="width: 185px;">
                     <div><span class="last-saved">Last Saved:</span><span> {{ lastSavedDate | date:'d/M/yyyy, H:mm' }}</span></div>
                     <div><span class="last-saved">Last Updated:</span><span> {{ lastUpdatedDate | date:'d/M/yyyy, H:mm' }}</span></div>
                 </div>
-                <div class="col mr-3">
+                <div class="mr-2">
                     <div class="select-karta-name">
-                        <select class="form-control custom-select-karta-mode" id="chartMode" (change)="changeMode($event)">
+                        <select class="form-control custom-select-karta-mode" style="font-size: 12px;" id="chartMode" (change)="changeMode($event)">
                             <option value="enable">Editor Mode</option>
                             <option value="disable">Viewer Mode</option>
                         </select>
                     </div>
                 </div>
-                <div class="col d-flex align-items-center" id="karta-as-of-holder">
+                <div class="mr-2 d-flex align-items-center" id="karta-as-of-holder">
                     <div class="text-nowrap mr-1 font-weight-bold">Karta as of:</div>
-                    <button type="button" class="btn bg-light border text-nowrap viewFilterBtn" [disabled]="disableKartaAsOf" [title]="disableKartaAsOf ? 'This functionality is applicable on latest version only.' : ''" (click)="checkKartaFilter()" [ngClass]="disableKartaAsOf ? 'disableKartaAsOf' : (viewKartaFilterApplied ? 'viewFilterActive' : 'viewFilterNotActive')">{{ disableKartaAsOf ? 'N/A' : viewKartaText }}</button>
+                    <button type="button" class="btn bg-light border text-nowrap viewFilterBtn" style="font-size: 12px;" [disabled]="disableKartaAsOf" [title]="disableKartaAsOf ? 'This functionality is applicable on latest version only.' : ''" (click)="checkKartaFilter()" [ngClass]="disableKartaAsOf ? 'disableKartaAsOf' : (viewKartaFilterApplied ? 'viewFilterActive' : 'viewFilterNotActive')">{{ disableKartaAsOf ? 'N/A' : viewKartaText }}</button>
                 </div>
-                <div class="col-md-2 ml-3" id="action-buttons-holder">
+                <div class="mr-2" id="action-buttons-holder">
                     <div class="icon-karta">
                         <!-- Share karta -->
                         <a href="javascript:void(0);" data-toggle="modal" data-target="#shareKartaModal" title="Share" (click)="onShare()"><img src="assets/img/share-icon.svg" /></a>
@@ -247,7 +243,7 @@
                         </div>
                     </div>
                 </div>
-               <div class="col">
+               <div>
                 <div class="d-flex align-items-center justify-content-end">
                     <button type="button" class="save-btn-karta mr-1" [disabled]="(saveSubmitFlag && showLoader) || (saveSubmitFlag && !showLoader)" (click)="saveKarta()">
                         <div class="spinner-border text-light align-top" role="status" *ngIf="saveSubmitFlag && showLoader">
@@ -392,7 +388,7 @@
        <div class="main-center-content d-flex" style="margin: 0px 0px 0px 100px;">
            <!-- Phase suggestions -->
            <!-- Phase Detail Section Start -->
-           <div class="mt-1 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" [ngStyle]="{'height': headerCollapsed ? 'calc(100vh - 71px)' : 'calc(100vh - 220px)','width': '350px'}">
+           <div class="mt-1 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" [ngStyle]="{'height': 'calc(100vh - 71px)','width': '350px'}">
                       <!-- Goal & CSF Wrap -->
                       <ng-template [ngSwitchCase]="currentPhase?.global_name === 'Goal' || currentPhase?.global_name === 'Critical Success Factor'">
                           <div class="signle-karta-dtl-wrap">
@@ -415,7 +411,7 @@
                                       <span>Here are some suggestions:</span>
                                       <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
                                   </div>
-                                  <div class="dtl-karta-body" [ngStyle]="{'height': headerCollapsed ? 'calc(100vh - 195px)' : 'calc(100vh - 210px)'}">
+                                  <div class="dtl-karta-body" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
                                       <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
                                           <!-- RADIO BOXES FOR GOAL PHASE ONLY -->
                                           <ng-container *ngIf="currentPhase?.global_name === 'Goal'; else multiCheck">
@@ -491,7 +487,7 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <div class="dtl-karta-body" [ngStyle]="{'height': headerCollapsed ? 'calc(100vh - 195px)' : 'calc(100vh - 210px)'}">
+                                  <div class="dtl-karta-body" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
                                       <div class="accordion" id="accordionPhase">
                                           <!-- singular item -->
                                           <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
@@ -571,7 +567,7 @@
                                       </div>
                                   </div>
                                   <!-- CHILDRENS OF SEGMENT START-->
-                                  <div class="dtl-karta-body segement-dtl-sec" id="segment_section" [ngStyle]="{'height': headerCollapsed ? 'calc(100vh - 195px)' : 'calc(100vh - 210px)'}">
+                                  <div class="dtl-karta-body segement-dtl-sec" id="segment_section" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
                                       <div class="accordion" id="accordionSegment">
                                       <!-- singular item -->
                                       <div class="segment-dropdown my-3 mx-2" *ngFor="let node of currentPhaseNodes; let i = index" [id]="'heading'+i">
@@ -605,7 +601,7 @@
                                   </div>
                                   <!-- CHILDRENS OF SEGMENT END-->
                                   <!-- SEGMENT SUB DETAILS START-->
-                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" [ngStyle]="{'height': headerCollapsed ? 'calc(100vh - 195px)' : 'calc(100vh - 210px)'}">
+                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
                                       <div class="sub-segment-header">
                                           <div></div>
                                           <h5 class="short_text" [title]="currentSegmentNode?.name" class="title">{{currentSegmentNode?.name}}</h5>
@@ -919,7 +915,7 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <div class="dtl-karta-body" [ngStyle]="{'height': headerCollapsed ? 'calc(100vh - 195px)' : 'calc(100vh - 210px)'}">
+                                  <div class="dtl-karta-body" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
                                       <div class="accordion" id="accordionCommon">
                                           <!-- singular item -->
                                           <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
@@ -985,7 +981,7 @@
            <div class="mt-1 w-100 overflow-auto" style="overflow-x: hidden;">
                <div class="tab-content-center bg-transparent">
                    <!-- KARTA CANVAS COLUMN -->
-                   <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px', 'max-height': headerCollapsed ? 'calc(100vh - 121px)' : 'calc(100vh - 220px)'}">
+                   <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px', 'max-height': 'calc(100vh - 121px)'}">
                        <div class="tab-pane active">
                            <ng-container *ngIf="loadingKarta">
                                <div class="p-5" [innerHtml]="loader"></div>
@@ -1458,7 +1454,7 @@
        </div>
        <!-- Main content -->
       <!-- I AM FEELING LUCKY -->
-      <div class="crt-final-sub-btn" id="feeling-lucky-holder" [ngStyle]="{'width': (nodeWidth - 30) +'px', 'left': !isPhaseListVisible ? '390px' : '120px', 'top': headerCollapsed ? '75px' : '175px'}">
+      <div class="crt-final-sub-btn" id="feeling-lucky-holder" [ngStyle]="{'width': (nodeWidth - 30) +'px', 'left': !isPhaseListVisible ? '390px' : '120px', 'top': '75px'}">
           <button class="module" [ngClass]="{'disableDiv': feelingLoader}" (click)="!feelingLoader && feelingLucky()">
               <ng-container *ngIf="feelingLoader">
                   <div [innerHtml]="loader"></div>

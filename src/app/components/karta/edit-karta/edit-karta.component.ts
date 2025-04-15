@@ -205,8 +205,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   selectedCities: any = [];
   cities: any = [];
 
-  headerCollapsed: Boolean = true;
-
   constructor(
     private _kartaService: KartaService,
     private _commonService: CommonService,
@@ -216,10 +214,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   ) {
     // Get karta id from url
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
-  }
-
-  toggleHeaderCollapse() {
-    this.headerCollapsed = !this.headerCollapsed;
   }
 
   toggleSinglePhaseCollapse(depth:number) {

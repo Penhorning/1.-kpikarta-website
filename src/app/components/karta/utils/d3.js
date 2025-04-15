@@ -474,7 +474,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .append("foreignObject")
             .style('text-align', "left")
             .attr("x", 18)
-            .attr("y", -12)
+            .attr("y", -10)
             .attr("width", nodeWidth - 15)
             .attr("height", 25)
             .html(node => nodeText(node, nodeEnter));

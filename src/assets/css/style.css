@@ -2110,7 +2110,7 @@ span.last-saved {
 
 select.form-control.custom-select-karta {
   border-radius: 50px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 select.form-control.custom-select-karta-mode {
@@ -2118,16 +2118,20 @@ select.form-control.custom-select-karta-mode {
 }
 
 .karta-edit-header {
-  background-color: #fff;
-  height: 70px;
-  border-bottom: 1px solid #E1E1E1;
-  margin: 0;
-  width: 100%;
-  padding: 8px 8px 8px 118px;
-  margin: 5px 0px;
+  /* background-color: #fff; */
+  /* height: 70px; */
+  /* border-bottom: 1px solid #E1E1E1; */
+  /* margin: 0; */
+  /* width: 100%; */
+  /* padding: 8px; */
   /* position: fixed; */
-  z-index: 9999;
   /* overflow: hidden; */
+  margin: 0px 220px;
+  z-index: 9999;
+  position: absolute;
+  top: 16px;
+  font-size: 12px;
+  width: -webkit-fill-available;
 }
 
 .karta-edit-contnet {
