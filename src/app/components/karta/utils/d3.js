@@ -38,7 +38,7 @@ const getSVGSize = (tree) => {
 
     // 4️⃣ Find the maximum count
     let maxNodes = d3.max(d3.values(levelCounts));
-    height = Math.max(maxNodes * 25, window.innerHeight);
+    height = Math.max(maxNodes * 15, window.innerHeight - 121);
 }
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
@@ -64,7 +64,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
 
     tree = d3.layout.tree()
     .nodeSize([60, 60])
-    .size([height - 50, width])
+    .size([height, width])
     .separation(function (a, b) {
       return a.parent == b.parent ? 1 : 1;
     });
@@ -398,7 +398,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
         var xExtent = d3.extent(nodes, function(d) { return d.x; });
-        var xScale = d3.scale.linear().domain(xExtent).range([25, height - 25]); // compress or expand to fit
+        var xScale = d3.scale.linear().domain(xExtent).range([20, height - 20]); // compress or expand to fit
         // Normalize for fixed-depth
         nodes.forEach(function (d) {
           d.x = xScale(d.x);
@@ -428,7 +428,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .call(dragListener)
             .attr("class", "node")
             .attr("width", nodeWidth)
-            .attr("height", 40)
+            .attr("height", 15)
             .attr("transform", function (d) {
                 return "translate(" + source.x + "," + source.y + ")";
             })
@@ -452,17 +452,17 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             });
         nodeEnter
             .append("foreignObject")
-            .attr("class", (d) => (d.y == 0 ? "mindmap-node center" : "mindmap-node left"))
+            .attr("class", (d) => (d.y == 0 ? "mindmap-node right" : "mindmap-node left"))
             .attr("x", -((nodeWidth / 2) - 10))
             .attr("width", nodeWidth)
-            .attr("height", 40)
-            .attr("y", -18)
+            .attr("height", 15)
+            .attr("y", -7)
             .html(node => nodeToHTML(node, nodeEnter));
         // phantom node to give us mouseover around it
         nodeEnter.append("foreignObject")
             .attr('class', 'ghostCircle')
             .attr("width", nodeWidth)
-            .attr("height", 40)
+            .attr("height", 15)
             .attr('pointer-events', 'mouseover')
             .on("mouseover", function (node) {
                 overCircle(node);
@@ -472,18 +472,20 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             });
         nodeEnter
             .append("foreignObject")
+            .attr('class', 'nodetext-container')
             .style('text-align', "left")
-            .attr("x", 18)
-            .attr("y", -10)
-            .attr("width", nodeWidth - 15)
-            .attr("height", 25)
+            .attr("x", (d) => (d.y == 0 ? 5 : 18))
+            .attr("y", (d) => (d.y == 0 ? 5 : -10))
+            .attr("width", nodeWidth - 20)
+            .attr("height", 15)
             .html(node => nodeText(node, nodeEnter));
         // Transition nodes to their new position.
         //horizontal tree
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
-            node.select("foreignObject").html(node => nodeToHTML(node, nodeEnter));
+            node.select(".mindmap-node").html(node => nodeToHTML(node, nodeEnter));
+            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter));
 
 
         // Transition exiting nodes to the parent's new position.

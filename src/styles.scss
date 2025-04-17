@@ -183,7 +183,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #launcher-frame {
-	left: 0 !important;
+	left: 78px !important;
   bottom: 45px !important;
 }
 #freshworks-frame-wrapper {
@@ -200,7 +200,7 @@ input[type=number]::-webkit-outer-spin-button {
 	font: 10px sans-serif;
 	fill: #fff;
 	margin: auto;
-	margin-top: 12px;
+	margin-top: 0px;
 	width: auto;
 	text-align: center;
 	text-decoration: none;
@@ -282,7 +282,7 @@ input[type=number]::-webkit-outer-spin-button {
 		position: absolute;
 		display: flex;
 		justify-content: center;
-    top: 21%;
+    top: -10%;
 	}
 
   &.left .center-options {
@@ -349,7 +349,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .mindmap-node .center-options .option {
 	cursor: pointer;
-	font-size: 12px;
+	font-size: 11px;
 	margin-right: 5px;
   i {
     color: #3571AA;
