@@ -388,7 +388,7 @@
        <div class="main-center-content d-flex" style="margin: 0px 0px 0px 100px;">
            <!-- Phase suggestions -->
            <!-- Phase Detail Section Start -->
-           <div class="mt-1 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" [ngStyle]="{'height': 'calc(100vh - 71px)','width': '350px'}">
+           <div class="mt-1 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" [ngStyle]="{'height': '100%','width': '350px', 'z-index': '2147483001'}">
                       <!-- Goal & CSF Wrap -->
                       <ng-template [ngSwitchCase]="currentPhase?.global_name === 'Goal' || currentPhase?.global_name === 'Critical Success Factor'">
                           <div class="signle-karta-dtl-wrap">
@@ -411,7 +411,7 @@
                                       <span>Here are some suggestions:</span>
                                       <img src="assets/img/crt-suggest-icon.png" alt="" (click)="!newSuggestionsLoader && newSuggestions()" />
                                   </div>
-                                  <div class="dtl-karta-body" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
+                                  <div class="dtl-karta-body">
                                       <ng-container *ngFor="let suggestion of nodeSuggestions; let i = index">
                                           <!-- RADIO BOXES FOR GOAL PHASE ONLY -->
                                           <ng-container *ngIf="currentPhase?.global_name === 'Goal'; else multiCheck">
@@ -487,7 +487,7 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <div class="dtl-karta-body" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
+                                  <div class="dtl-karta-body">
                                       <div class="accordion" id="accordionPhase">
                                           <!-- singular item -->
                                           <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
@@ -567,7 +567,7 @@
                                       </div>
                                   </div>
                                   <!-- CHILDRENS OF SEGMENT START-->
-                                  <div class="dtl-karta-body segement-dtl-sec" id="segment_section" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
+                                  <div class="dtl-karta-body segement-dtl-sec" id="segment_section">
                                       <div class="accordion" id="accordionSegment">
                                       <!-- singular item -->
                                       <div class="segment-dropdown my-3 mx-2" *ngFor="let node of currentPhaseNodes; let i = index" [id]="'heading'+i">
@@ -588,11 +588,304 @@
                                                           <i class="fa fa-arrow-right align-self-center cursor_pointer" (click)="openSubSegment(node, children)"></i>
                                                       </div>
                                                   </ng-container>
-                                                  <div class="choose-sgtion-box" style="border-radius: 0;">
+                                                  <div *ngIf="!subSegmentMenu" class="choose-sgtion-box" style="border-radius: 0;">
                                                       <div class="next-karta-btn" (click)="openSubSegment(node)">
                                                           <span>CREATE NEW</span>
                                                       </div>
                                                   </div>
+                                                  <!-- SEGMENT SUB DETAILS START-->
+                                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" [ngStyle]="{'height': '200px','padding': '0px 10px'}">
+                                                    <div class="sub-segment-header">
+                                                        <div></div>
+                                                        <h5 class="short_text" [title]="currentSegmentNode?.name" class="title">{{currentSegmentNode?.name}}</h5>
+                                                        <button type="button" class="close" (click)="closeSubSegment()">&times;</button>
+                                                    </div>
+                                                    <div class="enter-seg-box">
+                                                        <input type="text" class="form-control" id="segment-name-input" placeholder="Enter Segment" [value]="currentSegmentChildNode?.name" (blur)="changeSegmentNodeName($event)" (keyup.enter)="changeSegmentOnEnter()" [ngClass]="{'is-invalid': segmentInputTouched && !currentSegmentChildNode?.name}">
+                                                        <div class="invalid-feedback d-block" *ngIf="segmentInputTouched && !currentSegmentChildNode?.name">Please enter name!</div>
+                                                    </div>
+
+                                                    <!-- 3 CATREGORIES OF SUB SEGMENT START-->
+                                                    <ul class="nav accquire-sec-sub-tabs" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
+                                                        <li class="nav-item aq-tab">
+                                                          <a class="nav-link p-0 active" id="tab1" data-toggle="tab" href="#tab_demographic">Demographic</a>
+                                                        </li>
+                                                        <li class="nav-item aq-tab">
+                                                          <a class="nav-link p-0" id="tab2" data-toggle="tab" href="#tab_geographic">Geographic</a>
+                                                        </li>
+                                                        <li class="nav-item aq-tab">
+                                                          <a class="nav-link p-0" id="tab3" data-toggle="tab" href="#tab_psychographic">Psychographic</a>
+                                                        </li>
+                                                    </ul>
+                                                    <!-- CONTENT OF SUB SEGMENT START-->
+                                                    <div class="tab-content mt-2" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
+                                                        <div class="tab-pane fade show active" id="tab_demographic">
+                                                            <div class="aq-demographic-sec">
+                                                                <!-- B2B & B2C CATREGORIES OF Demographic START -->
+                                                                <div class="aq-demographic-tabs">
+                                                                    <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2B'}">
+                                                                        <span>B2B</span>
+                                                                        <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2B')"></div>
+                                                                    </div>
+                                                                    <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2C'}">
+                                                                        <span>B2C</span>
+                                                                        <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2C')"></div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- B2B Demographic START -->
+                                                                <div class="aq-demographic-b2b" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2B'">
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.industry_type || ''" (change)="updateSegmentDescription('demographic', 'industry_type', $event)">
+                                                                                <option disabled value="">Industry Type</option>
+                                                                                <optgroup [label]=industry.name *ngFor="let industry of industries">
+                                                                                  <option *ngFor="let child of industry.child" [selected]="child == (currentSegmentChildNode?.description?.demographic?.industry_type || '')" [value]="child">{{child}}</option>
+                                                                                </optgroup>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.department || ''" (change)="updateSegmentDescription('demographic', 'department', $event)">
+                                                                                <option disabled value="">Department</option>
+                                                                                <option *ngFor="let dept of departments" [value]="dept.name" [selected]="dept.name === (currentSegmentChildNode?.description?.demographic?.department || '')">{{dept.name}}</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.job_title || ''" (change)="updateSegmentDescription('demographic', 'job_title', $event)">
+                                                                                <option disabled value="">Job Title</option>
+                                                                                <option *ngFor="let title of jobTitles" [value]="title" [selected]="title === (currentSegmentChildNode?.description?.demographic?.job_title || '')">{{title}}</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.company_size || ''" (change)="updateSegmentDescription('demographic', 'company_size', $event)">
+                                                                                <option disabled value="">Company Size</option>
+                                                                                <option *ngFor="let company of companySize" [value]="company.value" [selected]="company.value === (currentSegmentChildNode?.description?.demographic?.company_size || '')">{{company.name}}</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- B2C Demographic START -->
+                                                                <div class="aq-demographic-b2c" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2C'">
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.age || ''" (change)="updateSegmentDescription('demographic', 'age', $event)">
+                                                                                <option disabled value="">Age</option>
+                                                                                <option value="0-17">0-17</option>
+                                                                                <option value="18-24">18-24</option>
+                                                                                <option value="25-35">25-35</option>
+                                                                                <option value="36-45">36-45</option>
+                                                                                <option value="46-55">46-55</option>
+                                                                                <option value="56-65">56-65</option>
+                                                                                <option value="65+">65+</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.education || ''" (change)="updateSegmentDescription('demographic', 'education', $event)">
+                                                                                <option disabled value="">Education</option>
+                                                                                <option value="Primary">Primary</option>
+                                                                                <option value="Secondary">Secondary</option>
+                                                                                <option value="Post-secondary">Post-secondary</option>
+                                                                                <option value="Masters">Masters</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.gender || ''" (change)="updateSegmentDescription('demographic', 'gender', $event)">
+                                                                                <option disabled value="">Gender</option>
+                                                                                <option value="Male">Male</option>
+                                                                                <option value="Female">Female</option>
+                                                                                <option value="Other">Other</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.occupation || ''" (change)="updateSegmentDescription('demographic', 'occupation', $event)">
+                                                                                <option disabled value="">Occupation</option>
+                                                                                <option *ngFor="let occupation of occupations" [value]="occupation" [selected]="occupation === (currentSegmentChildNode?.description?.demographic?.occupation || '')">{{occupation}}</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.income || ''" (change)="updateSegmentDescription('demographic', 'income', $event)">
+                                                                                <option disabled value="">Income</option>
+                                                                                <option value="<$30,000"><$30,000</option>
+                                                                                <option value="$30,001-$60,000">$30,001-$60,000</option>
+                                                                                <option value="$60,001-100,000">$60,001-100,000</option>
+                                                                                <option value="$100,001-$150,000">$100,001-$150,000</option>
+                                                                                <option value="$150,001-$250,000">$150,001-$250,000</option>
+                                                                                <option value="$250,001+">$250,001+</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.marital_status || ''" (change)="updateSegmentDescription('demographic', 'marital_status', $event)">
+                                                                                <option disabled value="">Marital Status</option>
+                                                                                <option value="Single">Single</option>
+                                                                                <option value="Married">Married</option>
+                                                                                <option value="Common-law">Common-law</option>
+                                                                                <option value="Separated">Separated</option>
+                                                                                <option value="Divorced">Divorced</option>
+                                                                                <option value="Widowed">Widowed</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- B2C Demographic END -->
+                                                            </div>
+                                                        </div>
+                                                        <!-- Geographic START -->
+                                                        <div class="tab-pane fade" id="tab_geographic">
+                                                            <div class="aq-demographic-sec">
+                                                                <!-- Geographic START -->
+                                                                <div class="aq-geographic">
+                                                                    <div class="seg-options-grp">
+                                                                        <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.country || ''" (change)="updateSegmentDescription('geographic', 'country', $event)">
+                                                                            <option value="">Country</option>
+                                                                            <option value="India">India</option>
+                                                                            <option value="Pakistan">Pakistan</option>
+                                                                        </select> -->
+                                                                        <ng-select
+                                                                            class="seg-single-manual"
+                                                                            [items]="countries"
+                                                                            bindLabel="name"
+                                                                            bindValue="name"
+                                                                            [selectableGroup]="true"
+                                                                            [selectableGroupAsModel]="false"
+                                                                            placeholder="Select Countries"
+                                                                            [loading]="loading"
+                                                                            [multiple]="true"
+                                                                            [searchable]="false"
+                                                                            [clearable]="false"
+                                                                            [(ngModel)]="currentSegmentChildNode?.description?.geographic?.country || selectedCountries"
+                                                                            (ngModelChange)="updateSegmentDescription('geographic', 'country', $event)"
+                                                                            >
+                                                                            <ng-template
+                                                                                ng-option-tmp
+                                                                                let-item="item"
+                                                                                let-item$="item$"
+                                                                                let-index="index">
+                                                                                    <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
+                                                                                    {{item?.name}}
+                                                                            </ng-template>
+                                                                        </ng-select>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.state || ''" (change)="updateSegmentDescription('geographic', 'state', $event)">
+                                                                            <option value="">State</option>
+                                                                            <option value="Delhi">Delhi</option>
+                                                                            <option value="Mumbai">Mumbai</option>
+                                                                        </select> -->
+                                                                        <ng-select
+                                                                            class="seg-single-manual"
+                                                                            [items]="states"
+                                                                            bindLabel="name"
+                                                                            bindValue="name"
+                                                                            [selectableGroup]="true"
+                                                                            [selectableGroupAsModel]="false"
+                                                                            placeholder="Select States"
+                                                                            [loading]="loading"
+                                                                            [multiple]="true"
+                                                                            [searchable]="false"
+                                                                            [clearable]="false"
+                                                                            [(ngModel)]="currentSegmentChildNode?.description?.geographic?.state || selectedStates"
+                                                                            (ngModelChange)="updateSegmentDescription('geographic', 'state', $event)"
+                                                                            >
+                                                                            <ng-template
+                                                                                ng-option-tmp
+                                                                                let-item="item"
+                                                                                let-item$="item$"
+                                                                                let-index="index">
+                                                                                    <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
+                                                                                    {{item?.name}}
+                                                                            </ng-template>
+                                                                        </ng-select>
+                                                                    </div>
+                                                                    <div class="seg-options-grp">
+                                                                        <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.city || ''" (change)="updateSegmentDescription('geographic', 'city', $event)">
+                                                                            <option value="">City</option>
+                                                                            <option value="New Delhi">New Delhi</option>
+                                                                            <option value="Navi Mumbai">Navi Mumbai</option>
+                                                                        </select> -->
+                                                                        <ng-select
+                                                                            class="seg-single-manual"
+                                                                            [items]="cities"
+                                                                            bindLabel="name"
+                                                                            bindValue="name"
+                                                                            [selectableGroup]="true"
+                                                                            [selectableGroupAsModel]="false"
+                                                                            placeholder="Select Cities"
+                                                                            [loading]="loading"
+                                                                            [multiple]="true"
+                                                                            [searchable]="false"
+                                                                            [clearable]="false"
+                                                                            [(ngModel)]="currentSegmentChildNode?.description?.geographic?.city || selectedCities"
+                                                                            (ngModelChange)="updateSegmentDescription('geographic', 'city', $event)"
+                                                                            >
+                                                                            <ng-template
+                                                                                ng-option-tmp
+                                                                                let-item="item"
+                                                                                let-item$="item$"
+                                                                                let-index="index">
+                                                                                    <input id="item-{{item}}" type="checkbox" [ngModel]="item$.selected"/>
+                                                                                    {{item}}
+                                                                            </ng-template>
+                                                                        </ng-select>
+                                                                    </div>
+                                                                    <!-- <div class="seg-options-grp">
+                                                                        <div class="seg-single">
+                                                                            <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.time_zone || ''" (change)="updateSegmentDescription('geographic', 'time_zone', $event)">
+                                                                                <option value="">Time Zone</option>
+                                                                                <option value="Asia/Kolkata">Asia/Kolkata</option>
+                                                                                <option value="America/New York">America/New York</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div> -->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Psychographic START -->
+                                                        <div class="tab-pane fade" id="tab_psychographic">
+                                                            <div class="aq-demographic-sec">
+                                                                <div class="aq-psychographic ">
+                                                                    <div class="psy-options-grp">
+                                                                        <span>Interest</span>
+                                                                        <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.interest || ''" (blur)="updateSegmentDescription('psychographic', 'interest', $event)"></textarea>
+                                                                    </div>
+
+                                                                    <div class="psy-options-grp">
+                                                                        <span>Customer Pain Points</span>
+                                                                        <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.customer_points || ''" (blur)="updateSegmentDescription('psychographic', 'customer_points', $event)"></textarea>
+                                                                    </div>
+
+                                                                    <div class="psy-options-grp">
+                                                                        <span>Values</span>
+                                                                        <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.values || ''" (blur)="updateSegmentDescription('psychographic', 'values', $event)"></textarea>
+                                                                    </div>
+
+                                                                    <div class="psy-options-grp">
+                                                                        <span>Habits</span>
+                                                                        <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.habits || ''" (blur)="updateSegmentDescription('psychographic', 'habits', $event)"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Psychographic END -->
+                                                    </div>
+                                                    <!-- CONTENT OF SUB SEGMENT END-->
+                                                  </div>
+                                                  <!-- SEGMENT SUB DETAILS END-->
                                               </div>
                                           </div>
                                       </div>
@@ -600,299 +893,6 @@
                                       </div>
                                   </div>
                                   <!-- CHILDRENS OF SEGMENT END-->
-                                  <!-- SEGMENT SUB DETAILS START-->
-                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
-                                      <div class="sub-segment-header">
-                                          <div></div>
-                                          <h5 class="short_text" [title]="currentSegmentNode?.name" class="title">{{currentSegmentNode?.name}}</h5>
-                                          <button type="button" class="close" (click)="closeSubSegment()">&times;</button>
-                                      </div>
-                                      <div class="enter-seg-box">
-                                          <input type="text" class="form-control" id="segment-name-input" placeholder="Enter Segment" [value]="currentSegmentChildNode?.name" (blur)="changeSegmentNodeName($event)" (keyup.enter)="changeSegmentOnEnter()" [ngClass]="{'is-invalid': segmentInputTouched && !currentSegmentChildNode?.name}">
-                                          <div class="invalid-feedback d-block" *ngIf="segmentInputTouched && !currentSegmentChildNode?.name">Please enter name!</div>
-                                      </div>
-
-                                      <!-- 3 CATREGORIES OF SUB SEGMENT START-->
-                                      <ul class="nav accquire-sec-sub-tabs" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
-                                          <li class="nav-item aq-tab">
-                                            <a class="nav-link p-0 active" id="tab1" data-toggle="tab" href="#tab_demographic">Demographic</a>
-                                          </li>
-                                          <li class="nav-item aq-tab">
-                                            <a class="nav-link p-0" id="tab2" data-toggle="tab" href="#tab_geographic">Geographic</a>
-                                          </li>
-                                          <li class="nav-item aq-tab">
-                                            <a class="nav-link p-0" id="tab3" data-toggle="tab" href="#tab_psychographic">Psychographic</a>
-                                          </li>
-                                      </ul>
-                                      <!-- CONTENT OF SUB SEGMENT START-->
-                                      <div class="tab-content mt-2" [ngClass]="{'disableDiv': !currentSegmentChildNode}">
-                                          <div class="tab-pane fade show active" id="tab_demographic">
-                                              <div class="aq-demographic-sec">
-                                                  <!-- B2B & B2C CATREGORIES OF Demographic START -->
-                                                  <div class="aq-demographic-tabs">
-                                                      <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2B'}">
-                                                          <span>B2B</span>
-                                                          <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2B')"></div>
-                                                      </div>
-                                                      <div class="aq-demographic-sngl-tab" [ngClass]="{'active': currentSegmentChildNode?.description?.demographic?.type === 'B2C'}">
-                                                          <span>B2C</span>
-                                                          <div class="cust-bullet" (click)="updateSegmentDescription('demographic', 'type', 'B2C')"></div>
-                                                      </div>
-                                                  </div>
-                                                  <!-- B2B Demographic START -->
-                                                  <div class="aq-demographic-b2b" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2B'">
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.industry_type || ''" (change)="updateSegmentDescription('demographic', 'industry_type', $event)">
-                                                                  <option disabled value="">Industry Type</option>
-                                                                  <optgroup [label]=industry.name *ngFor="let industry of industries">
-                                                                    <option *ngFor="let child of industry.child" [selected]="child == (currentSegmentChildNode?.description?.demographic?.industry_type || '')" [value]="child">{{child}}</option>
-                                                                  </optgroup>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.department || ''" (change)="updateSegmentDescription('demographic', 'department', $event)">
-                                                                  <option disabled value="">Department</option>
-                                                                  <option *ngFor="let dept of departments" [value]="dept.name" [selected]="dept.name === (currentSegmentChildNode?.description?.demographic?.department || '')">{{dept.name}}</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.job_title || ''" (change)="updateSegmentDescription('demographic', 'job_title', $event)">
-                                                                  <option disabled value="">Job Title</option>
-                                                                  <option *ngFor="let title of jobTitles" [value]="title" [selected]="title === (currentSegmentChildNode?.description?.demographic?.job_title || '')">{{title}}</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.company_size || ''" (change)="updateSegmentDescription('demographic', 'company_size', $event)">
-                                                                  <option disabled value="">Company Size</option>
-                                                                  <option *ngFor="let company of companySize" [value]="company.value" [selected]="company.value === (currentSegmentChildNode?.description?.demographic?.company_size || '')">{{company.name}}</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                  </div>
-
-                                                  <!-- B2C Demographic START -->
-                                                  <div class="aq-demographic-b2c" *ngIf="currentSegmentChildNode?.description?.demographic?.type === 'B2C'">
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.age || ''" (change)="updateSegmentDescription('demographic', 'age', $event)">
-                                                                  <option disabled value="">Age</option>
-                                                                  <option value="0-17">0-17</option>
-                                                                  <option value="18-24">18-24</option>
-                                                                  <option value="25-35">25-35</option>
-                                                                  <option value="36-45">36-45</option>
-                                                                  <option value="46-55">46-55</option>
-                                                                  <option value="56-65">56-65</option>
-                                                                  <option value="65+">65+</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.education || ''" (change)="updateSegmentDescription('demographic', 'education', $event)">
-                                                                  <option disabled value="">Education</option>
-                                                                  <option value="Primary">Primary</option>
-                                                                  <option value="Secondary">Secondary</option>
-                                                                  <option value="Post-secondary">Post-secondary</option>
-                                                                  <option value="Masters">Masters</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.gender || ''" (change)="updateSegmentDescription('demographic', 'gender', $event)">
-                                                                  <option disabled value="">Gender</option>
-                                                                  <option value="Male">Male</option>
-                                                                  <option value="Female">Female</option>
-                                                                  <option value="Other">Other</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.occupation || ''" (change)="updateSegmentDescription('demographic', 'occupation', $event)">
-                                                                  <option disabled value="">Occupation</option>
-                                                                  <option *ngFor="let occupation of occupations" [value]="occupation" [selected]="occupation === (currentSegmentChildNode?.description?.demographic?.occupation || '')">{{occupation}}</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.income || ''" (change)="updateSegmentDescription('demographic', 'income', $event)">
-                                                                  <option disabled value="">Income</option>
-                                                                  <option value="<$30,000"><$30,000</option>
-                                                                  <option value="$30,001-$60,000">$30,001-$60,000</option>
-                                                                  <option value="$60,001-100,000">$60,001-100,000</option>
-                                                                  <option value="$100,001-$150,000">$100,001-$150,000</option>
-                                                                  <option value="$150,001-$250,000">$150,001-$250,000</option>
-                                                                  <option value="$250,001+">$250,001+</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.demographic?.marital_status || ''" (change)="updateSegmentDescription('demographic', 'marital_status', $event)">
-                                                                  <option disabled value="">Marital Status</option>
-                                                                  <option value="Single">Single</option>
-                                                                  <option value="Married">Married</option>
-                                                                  <option value="Common-law">Common-law</option>
-                                                                  <option value="Separated">Separated</option>
-                                                                  <option value="Divorced">Divorced</option>
-                                                                  <option value="Widowed">Widowed</option>
-                                                              </select>
-                                                          </div>
-                                                      </div>
-                                                  </div>
-                                                  <!-- B2C Demographic END -->
-                                              </div>
-                                          </div>
-                                          <!-- Geographic START -->
-                                          <div class="tab-pane fade" id="tab_geographic">
-                                              <div class="aq-demographic-sec">
-                                                  <!-- Geographic START -->
-                                                  <div class="aq-geographic">
-                                                      <div class="seg-options-grp">
-                                                          <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.country || ''" (change)="updateSegmentDescription('geographic', 'country', $event)">
-                                                              <option value="">Country</option>
-                                                              <option value="India">India</option>
-                                                              <option value="Pakistan">Pakistan</option>
-                                                          </select> -->
-                                                          <ng-select
-                                                              class="seg-single-manual"
-                                                              [items]="countries"
-                                                              bindLabel="name"
-                                                              bindValue="name"
-                                                              [selectableGroup]="true"
-                                                              [selectableGroupAsModel]="false"
-                                                              placeholder="Select Countries"
-                                                              [loading]="loading"
-                                                              [multiple]="true"
-                                                              [searchable]="false"
-                                                              [clearable]="false"
-                                                              [(ngModel)]="currentSegmentChildNode?.description?.geographic?.country || selectedCountries"
-                                                              (ngModelChange)="updateSegmentDescription('geographic', 'country', $event)"
-                                                              >
-                                                              <ng-template
-                                                                  ng-option-tmp
-                                                                  let-item="item"
-                                                                  let-item$="item$"
-                                                                  let-index="index">
-                                                                      <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
-                                                                      {{item?.name}}
-                                                              </ng-template>
-                                                          </ng-select>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.state || ''" (change)="updateSegmentDescription('geographic', 'state', $event)">
-                                                              <option value="">State</option>
-                                                              <option value="Delhi">Delhi</option>
-                                                              <option value="Mumbai">Mumbai</option>
-                                                          </select> -->
-                                                          <ng-select
-                                                              class="seg-single-manual"
-                                                              [items]="states"
-                                                              bindLabel="name"
-                                                              bindValue="name"
-                                                              [selectableGroup]="true"
-                                                              [selectableGroupAsModel]="false"
-                                                              placeholder="Select States"
-                                                              [loading]="loading"
-                                                              [multiple]="true"
-                                                              [searchable]="false"
-                                                              [clearable]="false"
-                                                              [(ngModel)]="currentSegmentChildNode?.description?.geographic?.state || selectedStates"
-                                                              (ngModelChange)="updateSegmentDescription('geographic', 'state', $event)"
-                                                              >
-                                                              <ng-template
-                                                                  ng-option-tmp
-                                                                  let-item="item"
-                                                                  let-item$="item$"
-                                                                  let-index="index">
-                                                                      <input id="item-{{item.name}}" type="checkbox" [ngModel]="item$.selected"/>
-                                                                      {{item?.name}}
-                                                              </ng-template>
-                                                          </ng-select>
-                                                      </div>
-                                                      <div class="seg-options-grp">
-                                                          <!-- <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.city || ''" (change)="updateSegmentDescription('geographic', 'city', $event)">
-                                                              <option value="">City</option>
-                                                              <option value="New Delhi">New Delhi</option>
-                                                              <option value="Navi Mumbai">Navi Mumbai</option>
-                                                          </select> -->
-                                                          <ng-select
-                                                              class="seg-single-manual"
-                                                              [items]="cities"
-                                                              bindLabel="name"
-                                                              bindValue="name"
-                                                              [selectableGroup]="true"
-                                                              [selectableGroupAsModel]="false"
-                                                              placeholder="Select Cities"
-                                                              [loading]="loading"
-                                                              [multiple]="true"
-                                                              [searchable]="false"
-                                                              [clearable]="false"
-                                                              [(ngModel)]="currentSegmentChildNode?.description?.geographic?.city || selectedCities"
-                                                              (ngModelChange)="updateSegmentDescription('geographic', 'city', $event)"
-                                                              >
-                                                              <ng-template
-                                                                  ng-option-tmp
-                                                                  let-item="item"
-                                                                  let-item$="item$"
-                                                                  let-index="index">
-                                                                      <input id="item-{{item}}" type="checkbox" [ngModel]="item$.selected"/>
-                                                                      {{item}}
-                                                              </ng-template>
-                                                          </ng-select>
-                                                      </div>
-                                                      <!-- <div class="seg-options-grp">
-                                                          <div class="seg-single">
-                                                              <select class="form-control sub_segment_selector" [value]="currentSegmentChildNode?.description?.geographic?.time_zone || ''" (change)="updateSegmentDescription('geographic', 'time_zone', $event)">
-                                                                  <option value="">Time Zone</option>
-                                                                  <option value="Asia/Kolkata">Asia/Kolkata</option>
-                                                                  <option value="America/New York">America/New York</option>
-                                                              </select>
-                                                          </div>
-                                                      </div> -->
-                                                  </div>
-                                              </div>
-                                          </div>
-                                          <!-- Psychographic START -->
-                                          <div class="tab-pane fade" id="tab_psychographic">
-                                              <div class="aq-demographic-sec">
-                                                  <div class="aq-psychographic ">
-                                                      <div class="psy-options-grp">
-                                                          <span>Interest</span>
-                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.interest || ''" (blur)="updateSegmentDescription('psychographic', 'interest', $event)"></textarea>
-                                                      </div>
-
-                                                      <div class="psy-options-grp">
-                                                          <span>Customer Pain Points</span>
-                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.customer_points || ''" (blur)="updateSegmentDescription('psychographic', 'customer_points', $event)"></textarea>
-                                                      </div>
-
-                                                      <div class="psy-options-grp">
-                                                          <span>Values</span>
-                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.values || ''" (blur)="updateSegmentDescription('psychographic', 'values', $event)"></textarea>
-                                                      </div>
-
-                                                      <div class="psy-options-grp">
-                                                          <span>Habits</span>
-                                                          <textarea placeholder="Enter here.." [value]="currentSegmentChildNode?.description?.psychographic?.habits || ''" (blur)="updateSegmentDescription('psychographic', 'habits', $event)"></textarea>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                          <!-- Psychographic END -->
-                                      </div>
-                                      <!-- CONTENT OF SUB SEGMENT END-->
-                                  </div>
-                                  <!-- SEGMENT SUB DETAILS END-->
                               </div>
                           </div>
                           <!-- SEGMENT DETAIL SEC END -->
@@ -915,7 +915,7 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <div class="dtl-karta-body" [ngStyle]="{'height': 'calc(100vh - 195px)'}">
+                                  <div class="dtl-karta-body">
                                       <div class="accordion" id="accordionCommon">
                                           <!-- singular item -->
                                           <div class="card" *ngFor="let node of currentPhaseNodes; let i = index">
@@ -981,7 +981,7 @@
            <div class="mt-1 w-100 overflow-auto" style="overflow-x: hidden;">
                <div class="tab-content-center bg-transparent">
                    <!-- KARTA CANVAS COLUMN -->
-                   <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px', 'max-height': 'calc(100vh - 121px)'}">
+                   <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px', 'max-height': 'calc(100vh - 118px)'}">
                        <div class="tab-pane active">
                            <ng-container *ngIf="loadingKarta">
                                <div class="p-5" [innerHtml]="loader"></div>
@@ -1454,7 +1454,7 @@
        </div>
        <!-- Main content -->
       <!-- I AM FEELING LUCKY -->
-      <div class="crt-final-sub-btn" id="feeling-lucky-holder" [ngStyle]="{'width': '155px', 'left': !isPhaseListVisible ? '420px' : '105px', 'bottom': '100px'}">
+      <div class="crt-final-sub-btn" id="feeling-lucky-holder">
           <button class="module" [ngClass]="{'disableDiv': feelingLoader}" (click)="!feelingLoader && feelingLucky()">
               <ng-container *ngIf="feelingLoader">
                   <div [innerHtml]="loader"></div>

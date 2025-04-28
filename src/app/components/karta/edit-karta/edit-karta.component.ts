@@ -205,6 +205,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   selectedCities: any = [];
   cities: any = [];
 
+  zoomLevel: number = window.devicePixelRatio;
+
   constructor(
     private _kartaService: KartaService,
     private _commonService: CommonService,
@@ -606,6 +608,17 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:scroll', ['$event'])
+  @HostListener('window:resize', ['$event'])
+
+  async onResize() {
+    const newZoomLevel = window.devicePixelRatio;
+    if (this.zoomLevel !== newZoomLevel) {
+      this.zoomLevel = newZoomLevel;
+      this.nodeWidth = (window.innerWidth - 100) / 7;
+      this.D3SVG.update(this.karta.node, true);
+    }
+  }
+
   getScrollPosition() {
     return $('#rightSidebar').scrollTop();
   }
@@ -1531,7 +1544,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       });
       this.jobTitles = jobs[0].child;
     }
-    $("#segment_section").hide();
+    // $("#segment_section").hide();
   }
 
   // Close sub segment menu

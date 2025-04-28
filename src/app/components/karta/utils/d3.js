@@ -10,7 +10,7 @@ var tree = null, root = null, nodes = null, parentLink = null, links = null, nod
 var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = false, domNode = null, dragStartPos=null, dragThreshold = 3;
 var dragErrorMsg = "You cannot drag this node here";
 var haveKPIS = false;
-var nodeWidth = (window.innerWidth - 100) / 7; // Space per depth level
+var nodeWidth = null; // Space per depth level
 
 const getSVGSize = (tree) => {
     // let calculatedSVGWidth = calculateSVGWidth(tree);
@@ -39,6 +39,7 @@ const getSVGSize = (tree) => {
     // 4️⃣ Find the maximum count
     let maxNodes = d3.max(d3.values(levelCounts));
     height = Math.max(maxNodes * 15, window.innerHeight - 121);
+    nodeWidth = (window.innerWidth - 100) / 7
 }
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
@@ -475,8 +476,8 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr('class', 'nodetext-container')
             .style('text-align', "left")
             .attr("x", (d) => (d.y == 0 ? 5 : 18))
-            .attr("y", (d) => (d.y == 0 ? 5 : -10))
-            .attr("width", nodeWidth - 20)
+            .attr("y", (d) => (d.y == 0 ? 5 : -9))
+            .attr("width", nodeWidth - 50)
             .attr("height", 15)
             .html(node => nodeText(node, nodeEnter));
         // Transition nodes to their new position.

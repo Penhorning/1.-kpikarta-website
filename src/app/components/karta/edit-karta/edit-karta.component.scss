@@ -468,6 +468,9 @@ input[type="number"] {
 }
 
 .crt-final-sub-btn {
+    width: 155px;
+    left: 105px;
+    bottom: 100px;
     position: absolute;
     padding: 3px;
     background: linear-gradient(to bottom, #01254A, #016CCA);
@@ -493,6 +496,7 @@ input[type="number"] {
 
 .dtl-karta-body {
     // height: 28.5vh;
+    max-height: calc(100vh - 168px);
     overflow-y: scroll;
 }
 
@@ -538,11 +542,11 @@ input[type="number"] {
     line-height: 0;
 }
 .next-karta-btn span {
-    border: 1px solid #243864;
+    border: 1px solid #FF9149;
     border-radius: 8px;
     padding: 0px 10px;
     // margin-top: 8px;
-    color: #243864;
+    color: #FF9149;
     font-size: 12px;
     font-weight: 400;
     cursor: pointer;

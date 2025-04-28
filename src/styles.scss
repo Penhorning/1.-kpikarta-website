@@ -41,7 +41,7 @@ textarea {
     display: flex; /* Use flexbox to center the text */
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 2147483002;
 }
 
 /* Loading text */
@@ -350,7 +350,7 @@ input[type=number]::-webkit-outer-spin-button {
 .mindmap-node .center-options .option {
 	cursor: pointer;
 	font-size: 11px;
-	margin-right: 5px;
+	margin-right: 2px;
   i {
     color: #3571AA;
     background-color: #ffffff;
@@ -451,11 +451,10 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .text-node{
-  height: 25px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   // span{
   //   background-color: #EDEEEF;
