@@ -486,7 +486,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .duration(duration)
             .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             node.select(".mindmap-node").html(node => nodeToHTML(node, nodeEnter));
-            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter));
+            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter)).attr("width", nodeWidth - 50);
 
 
         // Transition exiting nodes to the parent's new position.
