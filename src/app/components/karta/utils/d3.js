@@ -477,7 +477,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .style('text-align', "left")
             .attr("x", (d) => (d.y == 0 ? 5 : 18))
             .attr("y", (d) => (d.y == 0 ? 5 : -9))
-            .attr("width", nodeWidth - 50)
+            .attr("width", nodeWidth - 55)
             .attr("height", 15)
             .html(node => nodeText(node, nodeEnter));
         // Transition nodes to their new position.
@@ -486,7 +486,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .duration(duration)
             .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             node.select(".mindmap-node").html(node => nodeToHTML(node, nodeEnter));
-            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter)).attr("width", nodeWidth - 50);
+            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter)).attr("width", nodeWidth - 55);
 
 
         // Transition exiting nodes to the parent's new position.
