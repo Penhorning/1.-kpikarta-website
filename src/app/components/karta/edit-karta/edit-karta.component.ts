@@ -1506,6 +1506,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Set phase node children in segment menu
   setPhaseNodeChildren(node: any) {
+    this.closeSubSegment()
     this.currentPhaseNodeChildren = {};
     this.currentPhaseNodeChildrens = [];
     if (node.children) {

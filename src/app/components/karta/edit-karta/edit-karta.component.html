@@ -588,13 +588,13 @@
                                                           <i class="fa fa-arrow-right align-self-center cursor_pointer" (click)="openSubSegment(node, children)"></i>
                                                       </div>
                                                   </ng-container>
-                                                  <div *ngIf="!subSegmentMenu" class="choose-sgtion-box" style="border-radius: 0;">
+                                                  <div *ngIf="!subSegmentMenu" class="choose-sgtion-box p-3 d-flex justify-content-center align-items-center" style="border-radius: 0;">
                                                       <div class="next-karta-btn" (click)="openSubSegment(node)">
                                                           <span>CREATE NEW</span>
                                                       </div>
                                                   </div>
                                                   <!-- SEGMENT SUB DETAILS START-->
-                                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu" [ngStyle]="{'height': '200px','padding': '0px 10px'}">
+                                                  <div class="dtl-karta-body sub-segement-dtl" *ngIf="subSegmentMenu">
                                                     <div class="sub-segment-header">
                                                         <div></div>
                                                         <h5 class="short_text" [title]="currentSegmentNode?.name" class="title">{{currentSegmentNode?.name}}</h5>
