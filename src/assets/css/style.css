@@ -1168,7 +1168,7 @@ a.for_pass {
 
 /* new-sidebar */
 .head_logo img {
-  width: 185px;
+  width: 100%;
   height: 47px;
 }
 a.closebtn {
