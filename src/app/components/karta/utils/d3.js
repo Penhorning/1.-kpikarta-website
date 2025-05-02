@@ -82,8 +82,9 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.inventoryDraggingNode = inventoryDraggingNode;
     options.buildOneKartaDivider = buildOneKartaDivider;
     options.removeOneKartaDivider = removeOneKartaDivider;
-    options.collapseByDepth = collapseByDepth
-    options.areAllNodesAtDepthCollapsed = areAllNodesAtDepthCollapsed
+    options.collapseByDepth = collapseByDepth;
+    options.areAllNodesAtDepthCollapsed = areAllNodesAtDepthCollapsed;
+    options.getNode = getNode;
 
     options.rerender = function (data = root) {
         update(data, true);
@@ -702,6 +703,17 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
       } else if (node._children) {
         node._children.forEach(child => collapseByDepth(child, targetDepth, allCollapsed));
       }
+    }
+
+    function getNode(root, targetDepth,targetID) {
+      // Traverse all nodes
+      var nodes = d3.layout.tree().nodes(root),node=null;
+      nodes.forEach(function(d) {
+          if (d.depth === targetDepth && d.id === targetID) {
+            node = d;
+          }
+      });
+      return node;
     }
 
     function areAllNodesAtDepthCollapsed(root, targetDepth) {

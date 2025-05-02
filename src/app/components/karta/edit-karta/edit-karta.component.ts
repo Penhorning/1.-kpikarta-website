@@ -1683,8 +1683,23 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       jqueryFunctions.disablePhase();
       this.currentSuggestionIndex = +event.target.id;
       const randomKey = new Date().getTime().toString();
+      if (!event.target.checked) {
+        jqueryFunctions.disableCommonPhase();
+        const parent = this.currentPhaseNodeChildren;
+        if (parent && parent.children && parent.children.length) {
+          const node_name = event.target.value
+          const node = parent.children.find(e => e.name === node_name);
+          if(node) this.removeNode(node);
+          setTimeout(() => {
+            const node_ele = this.D3SVG.getNode(this.karta.node, parent.depth, parent.id)
+            this.currentPhaseNodeChildren = node_ele;
+            this.currentPhaseNodeChildrens = node_ele.children ? node_ele.children : [];
+            jqueryFunctions.enableCommonPhase();
+          }, 2000);
+       }
+      }
       // For Goal phase
-      if (event.target.checked && this.currentPhase.global_name === "Goal") {
+      else if (event.target.checked && this.currentPhase.global_name === "Goal") {
         // Removing whole karta for history
         if (this.karta?.node?.name) {
           await this.removeWholeKarta(this.karta.node, randomKey);
@@ -2197,6 +2212,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   // Add node
   timeout = null;
   addNode(param: any, name = "Child") {
+    jqueryFunctions.disableCommonPhase();
     if (this.timeout) clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       let phase = this.phases[this.phaseIndex(param.phaseId) + 1];
@@ -2245,9 +2261,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           if (this.currentSuggestionIndex > -1) {
             this.nodeSuggestions[this.currentSuggestionIndex].disabled = true;
           }
+          setTimeout(() => {
+            const node_ele = this.D3SVG.getNode(this.karta.node, this.currentPhaseNodeChildren.depth, this.currentPhaseNodeChildren.id)
+            this.currentPhaseNodeChildren = node_ele;
+            this.currentPhaseNodeChildrens = node_ele.children ? node_ele.children : [];
+            jqueryFunctions.enableCommonPhase();
+          }, 1000);
         },
         (error: any) => {
           jqueryFunctions.enableChart();
+          jqueryFunctions.enableCommonPhase();
         }
       );
     }, 500);

@@ -36,6 +36,16 @@ export function enablePhase() {
     $('.phase_column').removeClass('disableDiv');
 }
 // Disable chart
+export function disableCommonPhase() {
+  $("#common_phase_dtl_wrap").css("pointer-events", "none", "cursor", "default");
+  $('#common_phase_dtl_wrap').addClass('disableDiv');
+}
+// Enable chart
+export function enableCommonPhase() {
+  $("#common_phase_dtl_wrap").css("pointer-events", "all", "cursor", "pointer");
+  $('#common_phase_dtl_wrap').removeClass('disableDiv');
+}
+// Disable chart
 export function disableChart() {
     $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
     $('#karta-svg').addClass('disableKarta');

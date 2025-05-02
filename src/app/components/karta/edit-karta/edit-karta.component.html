@@ -443,7 +443,7 @@
                                                   <div class="choose-sgtion-box">
                                                       <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
                                                       <label class="checkbox style-c">
-                                                          <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
+                                                          <input type="checkbox" [id]="i" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
                                                           <div class="checkbox__checkmark"></div>
                                                       </label>
                                                   </div>
@@ -453,7 +453,7 @@
                                                   <div class="manual-item choose-sgtion-box">
                                                       <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
                                                       <label class="checkbox style-c">
-                                                          <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
+                                                          <input type="checkbox" [id]="i" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
                                                           <div class="checkbox__checkmark"></div>
                                                       </label>
                                                   </div>
@@ -519,7 +519,7 @@
                                                                       <img src="assets/img/crt-tooltip-i.png" alt="" *ngIf="suggestion.type === 'static'" [title]="suggestion?.title" data-toggle="modal" data-target="#myModal" class="crt-tooltip">
                                                                   </div>
                                                                   <label class="checkbox style-c">
-                                                                      <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
+                                                                      <input type="checkbox" [id]="i" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
                                                                       <div class="checkbox__checkmark"></div>
                                                                   </label>
                                                               </div>
@@ -942,7 +942,7 @@
                                                               <div class="choose-sgtion-box">
                                                                   <p class="short_text" [title]="suggestion?.name">{{suggestion?.name}}</p>
                                                                   <label class="checkbox style-c">
-                                                                      <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
+                                                                      <input type="checkbox" [id]="i" [checked]="suggestion.disabled" name="sug_name" [value]="suggestion?.name" (change)="addNodeFromSuggestion($event)"/>
                                                                       <div class="checkbox__checkmark"></div>
                                                                   </label>
                                                               </div>
@@ -952,7 +952,7 @@
                                                               <div class="manual-item choose-sgtion-box">
                                                                   <input type="text" class="manual_sugg_inupt" [(ngModel)]="manual_suggestion" placeholder="Enter Manually" name="w3review">
                                                                   <label class="checkbox style-c">
-                                                                      <input type="checkbox" [id]="i" [disabled]="suggestion.disabled" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
+                                                                      <input type="checkbox" [id]="i" name="sug_name" [value]="manual_suggestion" [disabled]="!manual_suggestion" (change)="addNodeFromSuggestion($event)" />
                                                                       <div class="checkbox__checkmark"></div>
                                                                   </label>
                                                               </div>
