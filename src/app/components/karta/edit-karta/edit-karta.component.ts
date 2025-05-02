@@ -1447,6 +1447,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
   }
 
+  goToPrevPhase(phase: any) {
+    if (this.currentPhase.hasNode) {
+      this.subSegmentMenu = false;
+      const index = this.phaseIndex(phase.id);
+      this.currentPhase = this.phases[index-1];
+      this.openSuggestionMenu(this.currentPhase, index-1);
+    }
+  }
+
   //*** SEGMENT FUNCTIONS STARTS ***//
   isNodeAddingFromCalista: boolean = false;
   currentSegmentNode: any;

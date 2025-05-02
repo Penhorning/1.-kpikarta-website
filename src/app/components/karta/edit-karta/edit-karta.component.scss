@@ -532,10 +532,31 @@ input[type="number"] {
 }
 
 .back-karta-btn img {
-    height: 20px;
+    height: 13px;
     cursor: pointer;
 }
+.back-karta-btn{
+  // margin-top: 5px;
+  margin-right: 4%;
+  line-height: 0;
+}
+.back-karta-btn span {
+  border: 1px solid #808080;
+  border-radius: 8px;
+  padding: 0px 10px;
+  // margin-top: 8px;
+  color: #808080;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.back-karta-btn span:hover{
+  background-color: #dbdbdb;
+}
 
+.back-karta-btn-close{
+  margin-top: 5px;
+}
 .next-karta-btn{
     // margin-top: 5px;
     margin-right: 4%;

@@ -388,20 +388,23 @@
        <div class="main-center-content d-flex" style="margin: 0px 0px 0px 100px;">
            <!-- Phase suggestions -->
            <!-- Phase Detail Section Start -->
-           <div class="mt-1 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" [ngStyle]="{'height': '100%','width': '350px', 'z-index': '2147483001'}">
+           <div class="mt-1 bg-white" id="common_phase_dtl_wrap" [ngSwitch]="true" *ngIf="!isPhaseListVisible" [ngStyle]="{'height': '100%','width': '450px', 'z-index': '2147483001'}">
                       <!-- Goal & CSF Wrap -->
                       <ng-template [ngSwitchCase]="currentPhase?.global_name === 'Goal' || currentPhase?.global_name === 'Critical Success Factor'">
                           <div class="signle-karta-dtl-wrap">
                               <div class="dtl-up-sec">
                                   <div class="dtl-karta-header">
                                       <div class="back-karta-btn">
-                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                          <img src="assets/img/close.svg" alt="" (click)="showPhaseList()">
                                       </div>
                                       <div class="karta-dtl-title">
                                           <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
                                       </div>
                                       <div class="d-flex align-items-center">
                                           <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
+                                          <div *ngIf="currentPhase?.global_name !== 'Goal'" class="back-karta-btn" (click)="goToPrevPhase(currentPhase)">
+                                              <span>BACK</span>
+                                          </div>
                                           <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
                                               <span>NEXT</span>
                                           </div>
@@ -474,7 +477,7 @@
                               <div class="dtl-up-sec">
                                   <div class="dtl-karta-header">
                                       <div class="back-karta-btn">
-                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                          <img src="assets/img/close.svg" alt="" (click)="showPhaseList()">
                                       </div>
                                       <div class="karta-dtl-title">
                                           <!-- <h5 class="short_text" [title]="currentPhase?.name">{{(currentPhase?.name == "Phase" ? "Marketing Phase" : currentPhase?.name) | uppercase}}</h5> -->
@@ -482,6 +485,9 @@
                                       </div>
                                       <div class="d-flex align-items-center">
                                           <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
+                                          <div class="back-karta-btn" (click)="goToPrevPhase(currentPhase)">
+                                              <span>BACK</span>
+                                          </div>
                                           <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
                                               <span>NEXT</span>
                                           </div>
@@ -554,13 +560,16 @@
                               <div class="dtl-up-sec">
                                   <div class="dtl-karta-header">
                                       <div class="back-karta-btn">
-                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                          <img src="assets/img/close.svg" alt="" (click)="showPhaseList()">
                                       </div>
                                       <div class="karta-dtl-title">
                                           <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
                                       </div>
                                       <div class="d-flex align-items-center">
                                           <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
+                                          <div class="back-karta-btn" (click)="goToPrevPhase(currentPhase)">
+                                              <span>BACK</span>
+                                          </div>
                                           <div class="next-karta-btn" [ngClass]="(currentPhase.hasNode) ? '' : 'disableDiv'" (click)="goToNextPhase(currentPhase)">
                                               <span>NEXT</span>
                                           </div>
@@ -903,14 +912,17 @@
                               <div class="dtl-up-sec">
                                   <div class="dtl-karta-header">
                                       <div class="back-karta-btn">
-                                          <img src="assets/img/crt-arrow-back.svg" alt="" (click)="showPhaseList()">
+                                          <img src="assets/img/close.svg" alt="" (click)="showPhaseList()">
                                       </div>
                                       <div class="karta-dtl-title">
                                           <h5 class="short_text" [title]="currentPhase?.name">{{currentPhase?.name | uppercase}}</h5>
                                       </div>
                                       <div class="d-flex align-items-center">
                                           <img class="info-icon" src="assets/img/info-circle.svg" alt="" (click)="showLayerInfo(currentPhase.phaseId, currentPhase.global_name)" />
-                                          <div class="next-karta-btn" [ngClass]="currentPhase?.global_name === 'KPI' ? 'disableDiv' : ''" (click)="currentPhase?.global_name === 'KPI' ? null : goToNextPhase(currentPhase)">
+                                          <div class="back-karta-btn" (click)="goToPrevPhase(currentPhase)">
+                                              <span>BACK</span>
+                                          </div>
+                                          <div *ngIf="currentPhase?.global_name !== 'KPI'" class="next-karta-btn" [ngClass]="currentPhase?.global_name === 'KPI' ? 'disableDiv' : ''" (click)="currentPhase?.global_name === 'KPI' ? null : goToNextPhase(currentPhase)">
                                               <span>NEXT</span>
                                           </div>
                                       </div>
@@ -981,7 +993,7 @@
            <div class="mt-1 w-100 overflow-auto" style="overflow-x: hidden;">
                <div class="tab-content-center bg-transparent">
                    <!-- KARTA CANVAS COLUMN -->
-                   <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px', 'max-height': 'calc(100vh - 118px)'}">
+                   <div class="karta_column" [ngStyle]="{'width': (phases.length * nodeWidth) +'px', 'max-height': 'calc(100vh - 125px)'}">
                        <div class="tab-pane active">
                            <ng-container *ngIf="loadingKarta">
                                <div class="p-5" [innerHtml]="loader"></div>

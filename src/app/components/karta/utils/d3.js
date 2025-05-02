@@ -38,7 +38,7 @@ const getSVGSize = (tree) => {
 
     // 4️⃣ Find the maximum count
     let maxNodes = d3.max(d3.values(levelCounts));
-    height = Math.max(maxNodes * 15, window.innerHeight - 121);
+    height = Math.max(maxNodes * 15, window.innerHeight - 125);
     nodeWidth = (window.innerWidth - 100) / 7
 }
 
