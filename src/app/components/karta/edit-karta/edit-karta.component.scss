@@ -1120,3 +1120,9 @@ input[type="number"] {
 .info-icon:hover {
     cursor: pointer;
 }
+
+.graph-section{
+    max-height:calc(100vh - 65px);
+    overflow: auto;
+    min-height:calc(100vh - 65px);
+}
