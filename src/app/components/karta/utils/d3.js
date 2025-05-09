@@ -396,7 +396,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .attr("height", height)
             .attr({ viewBox: "" + 0 + " " + 0 + " " + width + " " + height })
             .select('g');
-        buildKartaDivider();
+        
         var nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes);
         var xExtent = d3.extent(nodes, function(d) { return d.x; });
@@ -428,7 +428,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         // Enter the nodes.
         var nodeEnter = node.enter().append("g")
             .call(dragListener)
-            .attr("class", "node")
+            .attr("class", "node")        
             .attr("width", nodeWidth)
             .attr("height", 15)
             .attr("transform", function (d) {
@@ -452,6 +452,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
                 outCircle(dropped_node);
                 draggingNodeType = null;
             });
+            buildKartaDivider();
         nodeEnter
             .append("foreignObject")
             .attr("class", (d) => (d.y == 0 ? "mindmap-node right" : "mindmap-node left"))
@@ -553,24 +554,41 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
   function buildKartaDivider() {
         svg.selectAll(".karta_divider").remove();
         // 🎯 **Step 1: Define Phase Positions**
-        var phasePositions = Array.from(
-          { length: maxDepth > 7 ? maxDepth : 7 },
-          (_, i) => (i + 1) * nodeWidth
-        ); // x-coordinates where phases occur
-
+        // var phasePositions = Array.from(
+        //   { length: maxDepth > 7 ? maxDepth : 7 },
+        //   (_, i) => (i + 1) * nodeWidth
+        // ); // x-coordinates where phases occur
+        var nodes = svg.selectAll(".node")
+        // nodes=nodes.filter((node)=>node?.)
+        svg.selectAll(".node"); // or whatever your selector is
+        let levelAdded = [];
+        nodes.each(function (d) {
+          if (!levelAdded?.includes(d?.depth)) {
+            d3.select(this)
+              .append("line")
+              .attr("class", "karta_divider")
+              .attr("x1", (d) => d)
+              .attr("y1", -(window.innerHeight * d?.depth)) // Extend to the top
+              .attr("x2", (d) => d)
+              .attr("y2", window.innerHeight) // Extend to the bottom
+              .style("stroke", "lightgrey")
+              .style("stroke-width", "1px");
+          }
+          levelAdded.push(d.depth);
+        });
         // 🎯 **Step 2: Draw Vertical Phase Lines**
-        g.selectAll(".karta_divider")
-          .data(phasePositions)
-          .enter()
-          .append("line")
-          .attr("class", "karta_divider")
-          .attr("x1", (d) => d)
-          .attr("y1", -height) // Extend to the top
-          .attr("x2", (d) => d)
-          .attr("y2", height) // Extend to the bottom
-          .attr("class", "karta_divider")
-          .attr("stroke", "lightgrey")
-          .attr("stroke-width", "1px");
+        // g.selectAll(".karta_divider")
+        //   .data(phasePositions)
+        //   .enter()
+        //   .append("line")
+        //   .attr("class", "karta_divider")
+        //   .attr("x1", (d) => d)
+        //   .attr("y1", -height) // Extend to the top
+        //   .attr("x2", (d) => d)
+        //   .attr("y2", height) // Extend to the bottom
+        //   .attr("class", "karta_divider")
+        //   .attr("stroke", "lightgrey")
+        //   .attr("stroke-width", "1px");
 
         return;
         svg.selectAll('.karta_divider').remove();
