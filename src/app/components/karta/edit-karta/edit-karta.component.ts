@@ -610,7 +610,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   async onResize() {
     this.nodeWidth = (window.innerWidth - 100) / 7;
-    this.D3SVG.update(this.karta.node, true);
+    BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+    // this.D3SVG.update(this.karta.node, true);
+    
   }
 
   getScrollPosition() {
