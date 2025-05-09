@@ -683,7 +683,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   @HostListener('window:resize', ['$event'])
   async onResize() {
     this.nodeWidth = (window.innerWidth - 100) / 7;
-    this.D3SVG.update(this.karta.node, true);
+    BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+    // this.D3SVG.update(this.karta.node, true);
+    
   }
 
   getScrollPosition() {
@@ -1233,7 +1235,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   highlightNode(nodeToHighlight: any, structure: any) {
     delete structure['highlight-node'];
-    console.log('delete', structure['highlight-node']);
     if (structure.children && structure.children.length > 0) {
       for (let element of structure.children) {
         this.highlightNode(nodeToHighlight, element);
@@ -1297,7 +1298,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (phase.global_name == 'Goal') {
       if (this.karta.node) {
         this.currentPhaseNodeChildren = this.karta.node || null;
-        this.currentPhaseNodeChildrens = [this.karta.node] || [];
+        this.currentPhaseNodeChildrens = [this.karta.node];
       }
     }
 
