@@ -48,8 +48,8 @@ export function enableCommonPhase() {
 // Disable chart
 export function disableChart() {
     $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
-    $('#karta-svg').addClass('disableKarta');
-    $('.karta_column').addClass('disableKarta');
+    // $('#karta-svg').addClass('disableKarta');
+    // $('.karta_column').addClass('disableKarta');
     $('.phase_column').addClass('disableDiv');
     $('.phase_name').addClass('disableSpan');
     $(".phase_name").css("pointer-events", "none", "cursor", "default");
