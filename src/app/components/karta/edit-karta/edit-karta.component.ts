@@ -1056,17 +1056,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   highlightNode(nodeToHighlight: any, structure: any) {
-    if(nodeToHighlight.id == structure.id) {
-      structure["highlight-node"] = "highlight-node";
+    delete structure['highlight-node'];
+    if (structure.children && structure.children.length > 0) {
+      for (let element of structure.children) {
+        this.highlightNode(nodeToHighlight, element);
+      }
+    }
+    if (nodeToHighlight.id == structure.id) {
+      structure['highlight-node'] = 'highlight-node';
       BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
       jqueryFunctions.removeKarta();
-    } else {
-      delete structure["highlight-node"];
-      if (structure.children && structure.children.length > 0) {
-        for(let element of structure.children) {
-          this.highlightNode(nodeToHighlight, element);
-        }
-      }
     }
   }
 
