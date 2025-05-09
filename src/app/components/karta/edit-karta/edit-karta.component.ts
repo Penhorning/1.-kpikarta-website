@@ -1296,7 +1296,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (phase.global_name == 'Goal') {
       if (this.karta.node) {
         this.currentPhaseNodeChildren = this.karta.node || null;
-        this.currentPhaseNodeChildrens = [this.karta.node];
+        this.currentPhaseNodeChildrens = [this.karta.node]
       }
     }
 
@@ -1530,6 +1530,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
 
     this.newSuggestionsLoader = false;
+
   }
 
   async generateGlobalPrompt(node: any) {
@@ -1779,12 +1780,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Set phase node children in segment menu
   setPhaseNodeChildren(node: any) {
+    console.log("In setPhaseNodeChildren", this.currentPhaseNodeChildren);
     this.closeSubSegment();
     this.currentPhaseNodeChildren = {};
     this.currentPhaseNodeChildrens = [];
-    if (node.children) {
+    if (node) {
       this.currentPhaseNodeChildren = node;
-      this.currentPhaseNodeChildrens = [...node.children];
+      if (node.children) {
+        this.currentPhaseNodeChildrens = [...node.children];
+      }
     } else {
       this.currentPhaseNodeChildren = {};
       this.currentPhaseNodeChildrens = [];
@@ -2015,6 +2019,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Add node from suggestion
   async addNodeFromSuggestion(event: any, node?: any) {
+    console.log("in suggestion");
     if (event.target.value) {
       jqueryFunctions.disablePhase();
       this.currentSuggestionIndex = +event.target.id;
@@ -2743,6 +2748,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       jqueryFunctions.disableChart();
       this._kartaService.addNode(data).subscribe(
         (response: any) => {
+          try{
           if (this.isNodeAddingFromCalista) {
             this.currentPhaseNodeChildrens.push(response);
             this.currentSegmentChildNode = response;
@@ -2772,11 +2778,16 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               this.currentPhaseNodeChildren.id
             );
             this.currentPhaseNodeChildren = node_ele;
-            this.currentPhaseNodeChildrens = node_ele.children
+            this.currentPhaseNodeChildrens = node_ele?.children
               ? node_ele.children
               : [];
             jqueryFunctions.enableCommonPhase();
           }, 1000);
+
+          }catch(e) {
+            jqueryFunctions.enableCommonPhase();
+            console.log(e);
+          }
         },
         (error: any) => {
           jqueryFunctions.enableChart();
