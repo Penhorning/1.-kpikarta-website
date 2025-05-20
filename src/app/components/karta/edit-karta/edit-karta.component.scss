@@ -1126,3 +1126,18 @@ input[type="number"] {
     overflow: auto;
     min-height:calc(100vh - 69px);
 }
+
+
+.custom_scroll::-webkit-scrollbar {
+    height: 10px;
+}
+.custom_scroll::-webkit-scrollbar-thumb {
+    background: #808080;
+    border-radius: 10px;
+}
+.custom_scroll::-webkit-scrollbar-thumb:hover {
+    background: #808080;
+}
+.custom_scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
