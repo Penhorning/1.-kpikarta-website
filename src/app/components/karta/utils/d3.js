@@ -677,7 +677,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     }
     // Get bas64Image of chart
     function getBase64Image(node, callback) {
-        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -10}).then(uri => {
+        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", }).then(uri => {
             unHightlightNode(node);
             callback(uri);
         });
@@ -686,14 +686,14 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     // Export as image
     function exportAsImage(name) {
         // svg.selectAll('.karta_divider').remove();
-        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF", left: -10});
+        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF", });
         // Draw phase lines
         // buildKartaDivider();
     }
     // Export as pdf
     function exportAsPDF(name) {
         window.jsPDF = window.jspdf.jsPDF;
-        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", left: -10}).then(uri => {
+        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", }).then(uri => {
             let imageBase64 = uri.split(',')[1];
             let svgWidth = $("#karta-svg svg").width();
             let doc = new jsPDF('1', 'px', [width, height]);
