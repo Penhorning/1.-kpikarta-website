@@ -2250,6 +2250,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       jqueryFunctions.disableChart();
       this._kartaService.addNode(data).subscribe(
         (response: any) => {
+          try {
+            
+          
           if (this.isNodeAddingFromCalista) {
             this.currentPhaseNodeChildrens.push(response);
             this.currentSegmentChildNode = response;
@@ -2276,6 +2279,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             this.currentPhaseNodeChildrens = node_ele.children ? node_ele.children : [];
             jqueryFunctions.enableCommonPhase();
           }, 1000);
+          } catch (error) {
+            jqueryFunctions.enableCommonPhase();
+            console.log(error);
+          }
         },
         (error: any) => {
           jqueryFunctions.enableChart();
@@ -3564,6 +3571,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   async feelingLucky() {
     try {
+      this.showPhaseList()
       this.isLoading = true;
       this.feelingLoader = true;
       jqueryFunctions.disableChart();
