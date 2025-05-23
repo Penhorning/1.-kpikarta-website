@@ -137,7 +137,7 @@ export class MyProfileComponent implements OnInit {
         // Set profile pic variables
         this.profileImage.oldImage = response.profilePic;
         if (response.profilePic) {
-          this.profileImage.fileImageUrl = `${this._commonService.MEDIA_URL}/api/user/${response.profilePic}`;
+          this.profileImage.fileImageUrl = `${this._commonService.MEDIA_URL}/user/${response.profilePic}`;
           this._commonService.updateSession('profilePic', response.profilePic);
         } else this.profileImage.fileImageUrl = "assets/img/avatar.png";
 

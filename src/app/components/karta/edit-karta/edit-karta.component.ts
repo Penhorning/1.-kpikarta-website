@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ExportToCsv } from 'export-to-csv';
@@ -21,6 +21,12 @@ declare const $: any;
   styleUrls: ['./edit-karta.component.scss'],
 })
 export class EditKartaComponent implements OnInit, OnDestroy {
+
+  @Input() fontSize: number = 14;
+  @Input() minFontSize: number = 10;
+  @Input() maxFontSize: number = 50;
+
+  @Output() fontSizeChange = new EventEmitter<number>();
 
   nodeWidth: number = (window.innerWidth - 100) / 7
   unauthorizedUser: any;
@@ -45,7 +51,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   saveSubmitFlag: boolean = false;
   globalPromptMapper: any = {};
   isLoading: boolean = false;
-
+  fontSizeOptions: Options = {
+    floor: 8,
+    ceil: 48,
+    step: 1,
+    showTicks: true,
+    showTicksValues: true
+  };
   // Color variables
   colorSubmitFlag: boolean = false;
   editColorSettings: any;
@@ -118,6 +130,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         weightage = weightage <= 0 ? 10 : weightage;
         return (weightage / 10) / 2;
       }
+    },
+    styleOptions: {
+      fontSize: this.fontSize,
     }
   }
 
@@ -216,7 +231,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.kartaId = this.route.snapshot.paramMap.get('id') || '';
   }
 
-  toggleSinglePhaseCollapse(depth:number) {
+  toggleSinglePhaseCollapse(depth: number) {
     const allCollapsed = this.D3SVG.areAllNodesAtDepthCollapsed(this.karta.node, depth)
     this.D3SVG.collapseByDepth(this.karta.node, depth, allCollapsed)
     this.D3SVG.update(this.karta.node, true);
@@ -231,12 +246,12 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     $("#confirm_message").text(message);
     jqueryFunctions.showModal("confirmModal");
     $('#btnYes').unbind('click');
-    $('#btnYes').click(function() {
+    $('#btnYes').click(function () {
       jqueryFunctions.hideModal("confirmModal");
       yesCallback();
     });
     $('#btnNo').unbind('click');
-    $('#btnNo').click(function() {
+    $('#btnNo').click(function () {
       jqueryFunctions.hideModal("confirmModal");
       noCallback();
     });
@@ -270,7 +285,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       // Show months till current month only
       let months = [];
       let currentMonth = moment().month() + 1;
-      for (let i=0; i<currentMonth; i++) {
+      for (let i = 0; i < currentMonth; i++) {
         months.push(this._commonService.monthsName[i]);
       }
       this.viewKartaDurations = months;
@@ -278,7 +293,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       // Show quarters till current quarter only
       let quarters = [];
       let currentQuarter = moment().quarter();
-      for (let i=0; i<currentQuarter; i++) {
+      for (let i = 0; i < currentQuarter; i++) {
         quarters.push(this._commonService.quartersName[i]);
       }
       this.viewKartaDurations = quarters;
@@ -343,8 +358,12 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     } else jqueryFunctions.showModal('viewKartaModal');
   }
 
+  ngOnChanges() {
+    this.fontSizeChange.emit(this.fontSize);
+  }
   ngOnInit(): void {
     // Formula Fields
+    this.fontSizeChange.emit(this.fontSize);
     this.formulaGroup = this.fb.group({
       calculatedValue: [0],
       fields: this.fb.array([]),
@@ -390,7 +409,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           if (this.currentSegmentChildNode?.description?.geographic?.country.includes(country.name)) {
             states = [...states, ...country.states];
             let statesArray = [];
-            for( let statesName of country.states) {
+            for (let statesName of country.states) {
               statesArray.push(statesName.name);
             }
             countryStateMapper[country.name] = statesArray;
@@ -406,7 +425,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             let states = countryStateMapper[mapper];
             if (states.includes(state)) {
               this._kartaService.getCities(mapper, state).subscribe((city: any) => {
-                if(city.data.length > 0) {
+                if (city.data.length > 0) {
                   this.cities = [...this.cities, ...city.data];
                 }
               });
@@ -415,7 +434,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         }
       }
 
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
@@ -427,7 +446,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   // Reset monitor by
   resetMontiorBy() {
     this.filterKartaBy = "";
-    $("input:radio[name='targetFilter']").each(function() {
+    $("input:radio[name='targetFilter']").each(function () {
       this.checked = false;
     });
     this.updateNewPercentage("");
@@ -499,7 +518,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Get last saved karta history
   lastSavedKarta() {
-    this._kartaService.lastSavedKarta({kartaId: this.kartaId}).subscribe(
+    this._kartaService.lastSavedKarta({ kartaId: this.kartaId }).subscribe(
       (response: any) => {
         if (response.kpi_node) this.lastSavedDate = response.kpi_node.updatedAt;
       }
@@ -508,7 +527,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Get last updated karta history
   lastUpdatedKarta() {
-    this._kartaService.lastUpdatedKarta({kartaId: this.kartaId}).subscribe(
+    this._kartaService.lastUpdatedKarta({ kartaId: this.kartaId }).subscribe(
       (response: any) => {
         if (response.kpi_node) this.lastUpdatedDate = response.kpi_node.updatedAt;
       }
@@ -610,7 +629,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   async onResize() {
     this.nodeWidth = (window.innerWidth - 100) / 7;
-    this.D3SVG.update(this.karta.node,true);  
+    this.D3SVG.update(this.karta.node, true);
     // BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
   }
 
@@ -669,41 +688,41 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               target: newTarget
             };
             this._kartaService.updateNode(this.currentNode.id, updatedData).subscribe(
-                async (response) => {
-                  this.currentNode.node_formula = response.node_formula;
-                  $('#formula-field').addClass('is-valid');
-                  this.formulaError = "";
-                  let scrollValue = this.getScrollPosition();
-                  this.updateNodeProperties(response, scrollValue);
-                  let node = this.currentNode;
-                  // Update achieved_value, node_formula and target
-                  let randomKey = new Date().getTime();
-                  let updatingParameters = [
-                    { key: 'node_formula', value: request, node_updated: 'node_updated', node },
-                    { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', node, metrics: "metrics"},
-                    { key: 'target', value: newTarget, node_updated: 'node_updated', node }
-                  ];
-                  this.isAchievedChanged = true;
-                  if (this.target[0].percentage >= 100) updatingParameters.push({
-                    key: "completed_date", value: new Date(), node_updated: "node_updated", node
-                  });
-                  for (let param of updatingParameters) {
-                    let metrics = param.metrics || null
-                    this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
-                  }
-
-                  this.formulaFlag = false;
-                  jqueryFunctions.enableElement("#addIcon");
-                  jqueryFunctions.enableElement("#removeIcon");
-                },
-                (err) => {
-                  console.log(err);
-                  this._commonService.errorToaster('Something went wrong..!!');
-                  this.formulaFlag = false;
-                  jqueryFunctions.enableElement("#addIcon");
-                  jqueryFunctions.enableElement("#removeIcon");
+              async (response) => {
+                this.currentNode.node_formula = response.node_formula;
+                $('#formula-field').addClass('is-valid');
+                this.formulaError = "";
+                let scrollValue = this.getScrollPosition();
+                this.updateNodeProperties(response, scrollValue);
+                let node = this.currentNode;
+                // Update achieved_value, node_formula and target
+                let randomKey = new Date().getTime();
+                let updatingParameters = [
+                  { key: 'node_formula', value: request, node_updated: 'node_updated', node },
+                  { key: 'achieved_value', value: Number(total), node_updated: 'node_updated', node, metrics: "metrics" },
+                  { key: 'target', value: newTarget, node_updated: 'node_updated', node }
+                ];
+                this.isAchievedChanged = true;
+                if (this.target[0].percentage >= 100) updatingParameters.push({
+                  key: "completed_date", value: new Date(), node_updated: "node_updated", node
+                });
+                for (let param of updatingParameters) {
+                  let metrics = param.metrics || null
+                  this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
                 }
-              );
+
+                this.formulaFlag = false;
+                jqueryFunctions.enableElement("#addIcon");
+                jqueryFunctions.enableElement("#removeIcon");
+              },
+              (err) => {
+                console.log(err);
+                this._commonService.errorToaster('Something went wrong..!!');
+                this.formulaFlag = false;
+                jqueryFunctions.enableElement("#addIcon");
+                jqueryFunctions.enableElement("#removeIcon");
+              }
+            );
           }
         } else {
           this.formulaFlag = false;
@@ -776,18 +795,18 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.changeModeFlag = false;
       // Save Button disable
       this.saveSubmitFlag = false;
-      for(let elem of this.controlElements) {
+      for (let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        if(element) element.classList.remove('disableDiv');
+        if (element) element.classList.remove('disableDiv');
       }
     } else {
       jqueryFunctions.disableChart();
       this.changeModeFlag = true;
       // Save Button enable
       this.saveSubmitFlag = true;
-      for(let elem of this.controlElements) {
+      for (let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        if(element) element.classList.add('disableDiv');
+        if (element) element.classList.add('disableDiv');
       }
     }
   }
@@ -878,7 +897,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         // Update achieved_value, node_formula and target
         let randomKey = new Date().getTime();
         let updatingParameters = [
-          { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: this.kpiType},
+          { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: this.kpiType },
           { key: 'target', value: this.target, node_updated: 'node_updated', node }
         ];
         if (node.node_formula && node.node_type === "metrics") {
@@ -1051,7 +1070,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.currentPhaseNodeChildren = null;
     this.subSegmentMenu = false;
     this.isPhaseListVisible = true;
-    this.highlightNode({id: "123"}, this.karta.node);
+    this.highlightNode({ id: "123" }, this.karta.node);
     BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
     jqueryFunctions.removeKarta();
   }
@@ -1115,7 +1134,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (phase.global_name == "Goal") {
       if (this.karta.node) {
         this.currentPhaseNodeChildren = this.karta.node || null;
-        this.currentPhaseNodeChildrens = [this.karta.node] || [];
+        this.currentPhaseNodeChildrens = [this.karta.node]
       }
     }
 
@@ -1128,14 +1147,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (type !== 'reset' && phase.global_name !== "Goal") {
       // Get all childrens of second previous phase that means all the nodes of a previous phase
       let previousPhase: any = {};
-      if(phase.global_name == "Critical Success Factor") {
-        previousPhase = this.phases[index-1];
+      if (phase.global_name == "Critical Success Factor") {
+        previousPhase = this.phases[index - 1];
         this.currentPhaseNodes = [this.karta.node];
         this.currentPhaseNodeChildrens = this.karta.node.children || [];
         this.currentPhaseNodeChildren = this.karta.node;
         await this.generatePromptForPhase(this.currentPhaseNodeChildren);
       } else {
-        previousPhase = this.phases[index-2];
+        previousPhase = this.phases[index - 2];
         this.currentPhaseNodes = this.getAllNodesOfPhase(previousPhase.id);
         this.currentPhaseNodeChildrens = this.currentPhaseNodes[0].children || [];
         this.currentPhaseNodeChildren = this.currentPhaseNodes[0];
@@ -1173,7 +1192,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.nodeSuggestions = finalObj;
         }
       }
-      if(!this.newSuggestionsLoader && this.karta.node) {
+      if (!this.newSuggestionsLoader && this.karta.node) {
         this.highlightNode(this.currentPhaseNodes[0], this.karta.node);
       }
       // In case of all the other phases
@@ -1300,6 +1319,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
 
     this.newSuggestionsLoader = false;
+
   }
 
   async generateGlobalPrompt(node: any) {
@@ -1339,7 +1359,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           };
         }
         return false;
-      } catch(err) {
+      } catch (err) {
         console.log(err);
         return false;
       }
@@ -1383,7 +1403,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           // Check if the recursive reached till the node which was supposed to be found
           // If found then set the globalPromptMapper and break the whole recursive function
           let phaseName = data.phase.global_name.split(" ")[0] == "Critical" ? "CSF" : data.phase.global_name.split(" ")[0];
-          if(phaseName.toLowerCase() == "goal" && this.currentPhase.global_name.toLowerCase() == "goal") {
+          if (phaseName.toLowerCase() == "goal" && this.currentPhase.global_name.toLowerCase() == "goal") {
             this.promptForPhaseMapper[phaseName] = `suggest me appropriate goals.`;
           } else {
             this.promptForPhaseMapper[phaseName] = `My ${layerMapper[phaseName.toLowerCase()]} is ${data.name}. suggest me appropriate ${lastLayerMapper[phaseName.toLowerCase()]}.`;
@@ -1419,14 +1439,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           }
           return false;
         }
-      } catch(err) {
+      } catch (err) {
         console.log(err);
         return false;
       }
     }
 
     // Initializing Recursive function
-    if(node) {
+    if (node) {
       await recursive(this.karta.node);
     }
   }
@@ -1442,8 +1462,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (this.currentPhase.hasNode) {
       this.subSegmentMenu = false;
       const index = this.phaseIndex(phase.id);
-      this.currentPhase = this.phases[index+1];
-      this.openSuggestionMenu(this.currentPhase, index+1);
+      this.currentPhase = this.phases[index + 1];
+      this.openSuggestionMenu(this.currentPhase, index + 1);
     }
   }
 
@@ -1451,8 +1471,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     if (this.currentPhase.hasNode) {
       this.subSegmentMenu = false;
       const index = this.phaseIndex(phase.id);
-      this.currentPhase = this.phases[index-1];
-      this.openSuggestionMenu(this.currentPhase, index-1);
+      this.currentPhase = this.phases[index - 1];
+      this.openSuggestionMenu(this.currentPhase, index - 1);
     }
   }
 
@@ -1497,7 +1517,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this._kartaService.getSuggestionByPhaseId(phaseId).subscribe(
       (data) => {
         this.selectedModalDefinition = data[0].definition;
-        for(const element of data[0].descriptions) {
+        for (const element of data[0].descriptions) {
           this.selectedModalSuggestion += `<p>${element.description}</p>\n`;
         }
         jqueryFunctions.showModal('calistaInfoModal');
@@ -1518,9 +1538,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.closeSubSegment()
     this.currentPhaseNodeChildren = {};
     this.currentPhaseNodeChildrens = [];
-    if (node.children) {
+    if (node) {
       this.currentPhaseNodeChildren = node;
-      this.currentPhaseNodeChildrens = [...node.children];
+      if (node.children) {
+        this.currentPhaseNodeChildrens = [...node.children];
+      }
     } else {
       this.currentPhaseNodeChildren = {};
       this.currentPhaseNodeChildrens = [];
@@ -1634,7 +1656,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
   }
 
-//*** SEGMENT FUNCTIONS ENDS ***//
+  //*** SEGMENT FUNCTIONS ENDS ***//
   // Generate suggestion from AI By Prompt
   suggestionLoader: boolean = false;
   generateSuggestion() {
@@ -1643,7 +1665,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       const promptSuggestion = `${Object.values(this.globalPromptMapper).join(" ")} ${this.suggestionPrompt}`;
       this.nodeSuggestions.push({ name: this.suggestionPrompt, type: "prompt" });
       this.suggestionPrompt = "";
-      this._kartaService.getSuggestionsByPrompt({prompt: promptSuggestion, kartaId: this.karta.id}).subscribe(response => {
+      this._kartaService.getSuggestionsByPrompt({ prompt: promptSuggestion, kartaId: this.karta.id }).subscribe(response => {
         const suggestions = response.data;
         this.nodeSuggestions = this.nodeSuggestions.filter((suggestion: any) => suggestion.type !== "manual");
         this.nodeSuggestions.push(...suggestions);
@@ -1658,7 +1680,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   async removeWholeKarta(node: any, randomKey: any) {
     try {
       if (node.children && node.children.length > 0) {
-        for(let child of node.children) {
+        for (let child of node.children) {
           await this.removeWholeKarta(child, randomKey);
           let phase = this.phases[this.phaseIndex(node.phaseId)];
           let data = {
@@ -1667,7 +1689,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             phaseId: phase.id,
             randomKey
           }
-          if(node?.parent?.id) data["parentId"] = node?.parent?.id;
+          if (node?.parent?.id) data["parentId"] = node?.parent?.id;
           await this._kartaService.removeNode(data).toPromise();
         }
       } else {
@@ -1678,16 +1700,17 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           phaseId: phase.id,
           randomKey
         }
-        if(node?.parent?.id) data["parentId"] = node?.parent?.id;
+        if (node?.parent?.id) data["parentId"] = node?.parent?.id;
         await this._kartaService.removeNode(data).toPromise();
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
 
   // Add node from suggestion
   async addNodeFromSuggestion(event: any, node?: any) {
+    console.log("in suggestion");
     if (event.target.value) {
       jqueryFunctions.disablePhase();
       this.currentSuggestionIndex = +event.target.id;
@@ -1698,14 +1721,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         if (parent && parent.children && parent.children.length) {
           const node_name = event.target.value
           const node = parent.children.find(e => e.name === node_name);
-          if(node) this.removeNode(node);
+          if (node) this.removeNode(node);
           setTimeout(() => {
             const node_ele = this.D3SVG.getNode(this.karta.node, parent.depth, parent.id)
             this.currentPhaseNodeChildren = node_ele;
             this.currentPhaseNodeChildrens = node_ele.children ? node_ele.children : [];
             jqueryFunctions.enableCommonPhase();
           }, 2000);
-       }
+        }
       }
       // For Goal phase
       else if (event.target.checked && this.currentPhase.global_name === "Goal") {
@@ -1731,7 +1754,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             jqueryFunctions.removeKarta();
             this.showSVG = true;
           }
-          let responseData = {...response};
+          let responseData = { ...response };
           delete responseData.id;
           delete responseData.phase;
 
@@ -1746,7 +1769,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             randomKey
           };
           let element = document.getElementById("header_operation_row");
-          if(element) element.classList.add('disableDiv');
+          if (element) element.classList.add('disableDiv');
           const index = this.phaseIndex(this.currentPhase.id);
           this.hasNodeInNextPhase = (this.phases[index + 1] && this.phases[index + 1].hasNode) || false;
           this._kartaService.createKartaHistory(history_data).subscribe(
@@ -1758,7 +1781,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             this.manual_suggestion = "";
             this.nodeSuggestions.push({ type: "manual" });
             let element = document.getElementById("header_operation_row");
-            if(element) element.classList.remove('disableDiv');
+            if (element) element.classList.remove('disableDiv');
             jqueryFunctions.enablePhase();
           });
         });
@@ -1799,14 +1822,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       (response: any) => {
         e.target.textContent = name;
         this.phases[index].name = name;
-        jqueryFunctions.setAttribute(`#${id}`,"contenteditable", false);
+        jqueryFunctions.setAttribute(`#${id}`, "contenteditable", false);
         jqueryFunctions.setStyle('.karta-cmpltd', 'cursor', 'pointer');
         this.setPhaseEditable = false;
 
         let history_data = {
           event: "phase_updated",
           eventValue: { name },
-          oldValue: {name : oldName},
+          oldValue: { name: oldName },
           kartaNodeId: id,
           userId: this._commonService.getUserId(),
           versionId: this.versionId,
@@ -1814,7 +1837,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           parentNodeId: "None",
           historyType: 'main'
         }
-        this._kartaService.createKartaHistory(history_data).subscribe(() => {});
+        this._kartaService.createKartaHistory(history_data).subscribe(() => { });
       },
       err => {
         console.log(err);
@@ -1834,7 +1857,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
       const data = {
         phaseId: id,
-        nextPhaseId: this.phases[index+1].id,
+        nextPhaseId: this.phases[index + 1].id,
         kartaId: this.kartaId
       }
       this._kartaService.deletePhase(data).subscribe(
@@ -1842,7 +1865,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.phases.splice(index, 1);
           // Reconnect child phase to another parent
           if (this.phases[index].is_child) {
-            this.phases[index].parentId = this.phases[index-1].id;
+            this.phases[index].parentId = this.phases[index - 1].id;
           }
           this.reArrangePhases(this.phases);
           this.updateNewPercentage();
@@ -1854,7 +1877,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.setChartConfiguration(false);
       });
     },
-    () => { });
+      () => { });
   }
 
   // Change node name
@@ -2015,10 +2038,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.updateNode("target", node.target, "node_updated", node, el.target.value, randomKey);
       }
     },
-    () => {
-      el.target.value = reverseObj[el.target.value];
-      return false;
-    });
+      () => {
+        el.target.value = reverseObj[el.target.value];
+        return false;
+      });
   }
 
   // Change achieved value
@@ -2037,7 +2060,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         // Update achieved_value and target
         let randomKey = new Date().getTime();
         let updatingParameters = [
-          { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: "measure"},
+          { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: "measure" },
           { key: 'target', value: this.target, node_updated: 'node_updated', node }
         ];
         if (this.target[0].percentage >= 100) updatingParameters.push({
@@ -2094,7 +2117,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     const setKartaDetails = async (response: any) => {
       this.karta = response;
       this.versionId = response.versionId;
-      if (response.versionId == this.version[this.version.length - 1].id ) this.disableKartaAsOf = false;
+      if (response.versionId == this.version[this.version.length - 1].id) this.disableKartaAsOf = false;
       else this.disableKartaAsOf = true;
       if (this.karta.node) {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
@@ -2149,7 +2172,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   // Get all phases
-  getPhases(type? : string) {
+  getPhases(type?: string) {
     this._kartaService.getPhases(this.kartaId).subscribe(
       (response: any) => {
         this.reArrangePhases(response);
@@ -2184,6 +2207,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this._kartaService.getColorSettingsByKarta(data).subscribe(
       (response: any) => {
         this.colorSettings = response.color_settings;
+        this.fontSize = response.color_settings.fontSize;
+        this.D3SVG.styleOptions.fontSize = this.fontSize;
+        if (this?.karta?.node) {
+          this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+          this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
+          this.D3SVG.update(this.karta.node, true);
+        }
         if (this.kartaId !== response.color_settings.kartaId) this.colorSettings.is_global = false;
         this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
         this.getPhases();
@@ -2250,9 +2280,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       jqueryFunctions.disableChart();
       this._kartaService.addNode(data).subscribe(
         (response: any) => {
-          try {
-            
-          
+          try{
           if (this.isNodeAddingFromCalista) {
             this.currentPhaseNodeChildrens.push(response);
             this.currentSegmentChildNode = response;
@@ -2262,26 +2290,31 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.updateNewPercentage();
           if (this.currentPhase) {
             const index = this.phaseIndex(this.currentPhase.id);
-            this.hasNodeInNextPhase = (this.phases[index + 1] && this.phases[index + 1].hasNode) || false;
+            this.hasNodeInNextPhase =
+              (this.phases[index + 1] && this.phases[index + 1].hasNode) ||
+              false;
           }
 
-          // Resetting Manual Input box if user creates using manual
-          this.nodeSuggestions.pop();
-          this.manual_suggestion = "";
-          this.nodeSuggestions.push({ type: "manual" });
 
           if (this.currentSuggestionIndex > -1) {
             this.nodeSuggestions[this.currentSuggestionIndex].disabled = true;
           }
           setTimeout(() => {
-            const node_ele = this.D3SVG.getNode(this.karta.node, this.currentPhaseNodeChildren.depth, this.currentPhaseNodeChildren.id)
+            const node_ele = this.D3SVG.getNode(
+              this.karta.node,
+              this.currentPhaseNodeChildren.depth,
+              this.currentPhaseNodeChildren.id
+            );
             this.currentPhaseNodeChildren = node_ele;
-            this.currentPhaseNodeChildrens = node_ele.children ? node_ele.children : [];
+            this.currentPhaseNodeChildrens = node_ele?.children
+              ? node_ele.children
+              : [];
             jqueryFunctions.enableCommonPhase();
           }, 1000);
-          } catch (error) {
+
+          }catch(e) {
             jqueryFunctions.enableCommonPhase();
-            console.log(error);
+            console.log(e);
           }
         },
         (error: any) => {
@@ -2301,9 +2334,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       if (childPhase) {
         delete childPhase.lastChildren;
         phaseResult.push(childPhase);
-        array.splice(array.findIndex((a: any) => a.id === childPhase.id) , 1);
+        array.splice(array.findIndex((a: any) => a.id === childPhase.id), 1);
         findSubPhase(array, childPhase.id);
-      } else phaseResult[phaseResult.length-1].lastChildren = true;
+      } else phaseResult[phaseResult.length - 1].lastChildren = true;
     }
     // Iterate phases
     for (let phase of phases) {
@@ -2410,10 +2443,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         });
       }
         ,
-      () => { });
+        () => { });
     } else {
       const message = "You have reached the maximum limit of 12 Layers.";
-      this.confirmBox(message, () => { },() => { })
+      this.confirmBox(message, () => { }, () => { })
     }
   }
 
@@ -2605,14 +2638,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   onMouseOverKartaLines(ev: any) {
     ev.preventDefault();
     let element = document.getElementById(ev.target.id);
-    if (element) if(element) element.classList.add('selectedPhase');
+    if (element) if (element) element.classList.add('selectedPhase');
   }
 
   onMouseLeaveKartaLines(ev: any) {
     ev.preventDefault();
     this.isRtNodDrgingFrmSide = false;
     let element = document.getElementById(ev.target.id);
-    if (element) if(element) element.classList.remove('selectedPhase');
+    if (element) if (element) element.classList.remove('selectedPhase');
   }
 
   // addRootNode(ev: any) {
@@ -2629,31 +2662,31 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     // Check is root node dragging
     if (this.isRtNodDrgingFrmSide && elAttributes.name.value === "KPI") {
       this.isNodeDropable = false;
-      if(element) element.classList.add('selectedPhaseError');
+      if (element) element.classList.add('selectedPhaseError');
     } else if (this.isRtNodDrgingFrmSide && elAttributes.name.value !== "KPI") {
       this.isNodeDropable = true;
-      if(element) element.classList.add('selectedPhase');
+      if (element) element.classList.add('selectedPhase');
     }
     // Check if inventory node dragging
     else if (this.draggingInventoryNode && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value === "KPI") {
       this.isNodeDropable = false;
-      if(element) element.classList.add('selectedPhaseError');
+      if (element) element.classList.add('selectedPhaseError');
     } else if (this.draggingInventoryNode && this.draggingInventoryNode.node_type === "branch" && elAttributes.name.value !== "KPI") {
       const draggingDepth = this.getDepth(this.draggingInventoryNode.node);
       const selectedDepth = this.phaseIndex(ev.target.id.substring(9));
       if ((draggingDepth + selectedDepth) > 5) {
         this.isNodeDropable = false;
-        if(element) element.classList.add('selectedPhaseError');
+        if (element) element.classList.add('selectedPhaseError');
       } else {
         this.isNodeDropable = true;
-        if(element) element.classList.add('selectedPhase');
+        if (element) element.classList.add('selectedPhase');
       }
     } else if (this.draggingInventoryNode && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value === "KPI") {
       this.isNodeDropable = true;
-      if(element) element.classList.add('selectedPhase');
+      if (element) element.classList.add('selectedPhase');
     } else if (this.draggingInventoryNode && (this.draggingInventoryNode.node_type === "measure" || this.draggingInventoryNode.node_type === "metric") && elAttributes.name.value !== "KPI") {
       this.isNodeDropable = false;
-      if(element) element.classList.add('selectedPhaseError');
+      if (element) element.classList.add('selectedPhaseError');
     }
   }
 
@@ -2661,8 +2694,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     ev.preventDefault();
     let element = document.getElementById(ev.target.id);
     if (element) {
-      if(element) element.classList.remove('selectedPhase');
-      if(element) element.classList.remove('selectedPhaseError');
+      if (element) element.classList.remove('selectedPhase');
+      if (element) element.classList.remove('selectedPhaseError');
     }
   }
 
@@ -2704,7 +2737,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         this.isRtNodDrgingFrmSide = false;
         this.isNodeDropable = false;
         // this.updateNodeProperties(response);
-        let responseData = {...response};
+        let responseData = { ...response };
         delete responseData.id;
         delete responseData.phase;
 
@@ -2718,13 +2751,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           historyType: 'main'
         };
         let element = document.getElementById("header_operation_row");
-        if(element) element.classList.add('disableDiv');
+        if (element) element.classList.add('disableDiv');
         this._kartaService.createKartaHistory(history_data).subscribe(
           (result: any) => { },
           (error: any) => { }
         ).add(() => {
           let element = document.getElementById("header_operation_row");
-          if(element) element.classList.remove('disableDiv');
+          if (element) element.classList.remove('disableDiv');
         });
       });
     } else {
@@ -2732,8 +2765,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.isRtNodDrgingFrmSide = false;
       let element = document.getElementById(ev.target.id);
       if (element) {
-        if(element) element.classList.remove('selectedPhase');
-        if(element) element.classList.remove('selectedPhaseError');
+        if (element) element.classList.remove('selectedPhase');
+        if (element) element.classList.remove('selectedPhaseError');
       }
     }
   }
@@ -2752,7 +2785,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
     jqueryFunctions.disableChart();
     let element = document.getElementById("header_operation_row");
-    if(element) element.classList.add('disableDiv');
+    if (element) element.classList.add('disableDiv');
     this._kartaService.addNodeByInventory(data).subscribe(
       (response: any) => {
         this.updateNewPercentage();
@@ -2766,7 +2799,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       }
     ).add(() => {
       let element = document.getElementById("header_operation_row");
-      if(element) element.classList.remove('disableDiv');
+      if (element) element.classList.remove('disableDiv');
     });
   }
 
@@ -2948,7 +2981,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     } else if (this.selectedSharedUsers.length === 1 && this.selectedSharedUsers[0].email == this._commonService.getEmailId()) {
       this._commonService.warningToaster("You can not share Karta to yourself!");
     } else {
-      this.emails = this.selectedSharedUsers.filter((item:any)=> item.email !== this._commonService.getEmailId()).map((el:any)=> el.email)
+      this.emails = this.selectedSharedUsers.filter((item: any) => item.email !== this._commonService.getEmailId()).map((el: any) => el.email)
       if (this.emails.length > 0) {
         let data = {
           kartaId: this.sharingKarta.id,
@@ -3042,28 +3075,38 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
         if (this.colorSettings.hasOwnProperty("userId") && (this.colorSettings.hasOwnProperty("kartaId") && this.colorSettings.kartaId === this.kartaId)) {
-          this._kartaService.updateColorSetting(this.colorSettings, this.colorSettings.id).subscribe(
+          this._kartaService.updateColorSetting({...this.colorSettings, fontSize:this.fontSize}, this.colorSettings.id, ).subscribe(
             (response: any) => {
               this.colorSettings = response;
+              console.log(response.fontSize, 'response font size');
+              this.fontSize = response.fontSize;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
               this._commonService.successToaster("Settings saved successfully");
               // this.reRenderKarta();
               this.updateNewPercentage();
-            }
-          ).add(() => this.colorSubmitFlag = false);
+              if (this.D3SVG && typeof this.D3SVG.setFontSize === 'function'){
+                this.D3SVG.setFontSize(this.fontSize);
+              }
+            }).add(() => this.colorSubmitFlag = false);
         } else {
           let settingData = {
             userId: this._commonService.getUserId(),
             kartaId: this.kartaId,
-            settings: this.colorSettings.settings
+            settings: this.colorSettings.settings,
+            fontSize: this.fontSize
           }
           this._kartaService.createColorSetting(settingData).subscribe(
             (response: any) => {
               this.colorSettings = response;
               this.colorSettings.settings = this.colorSettings.settings.sort((a: any, b: any) => a.min - b.min);
+              this.karta.fontSize = this.fontSize;
               this._commonService.successToaster("Settings saved successfully");
               // this.reRenderKarta();
               this.updateNewPercentage();
+              console.log(typeof this.D3SVG.setFontSize, 'create check');
+              if (this.D3SVG && typeof this.D3SVG.setFontSize === 'function'){
+                this.D3SVG.setFontSize(this.fontSize);
+              }
             }
           ).add(() => this.colorSubmitFlag = false);
         }
@@ -3169,7 +3212,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 }
                 break;
               case "phase_created":
-                if(x.data.data) {
+                if (x.data.data) {
                   this.getPhases("existing");
                   this.currentNode.phase = "";
                   this.showSVG = true;
@@ -3182,7 +3225,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 }
                 break;
               case "phase_updated":
-                if(x.data.data) {
+                if (x.data.data) {
                   this.getPhases("existing");
                   this.currentNode.phase = "";
                   this.showSVG = true;
@@ -3195,7 +3238,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 }
                 break;
               case "phase_removed":
-                if(x.data.data) {
+                if (x.data.data) {
                   this.getPhases("existing");
                   this.currentNode.phase = "";
                   this.showSVG = true;
@@ -3312,7 +3355,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 }
                 break;
               case "phase_created":
-                if(x.data.data) {
+                if (x.data.data) {
                   this.getPhases("existing");
                   this.currentNode.phase = "";
                   this.showSVG = true;
@@ -3325,7 +3368,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 }
                 break;
               case "phase_updated":
-                if(x.data.data) {
+                if (x.data.data) {
                   this.getPhases("existing");
                   this.currentNode.phase = "";
                   this.showSVG = true;
@@ -3338,7 +3381,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                 }
                 break;
               case "phase_removed":
-                if(x.data.data) {
+                if (x.data.data) {
                   this.getPhases("existing");
                   this.currentNode.phase = "";
                   this.showSVG = true;
@@ -3442,7 +3485,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         }
         return response;
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err);
       jqueryFunctions.enableChart();
     }
@@ -3457,7 +3500,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
       const recursion = async (parent: any, data: any) => {
         try {
-          if(!parent) {
+          if (!parent) {
             let nodeData = {
               name: data.name,
               phaseId: this.phases[0].id,
@@ -3467,7 +3510,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             response.phase = this.phases[0];
 
             // Creating History of root node
-            let responseData = {...response};
+            let responseData = { ...response };
             delete responseData.id;
             delete responseData.phase;
 
@@ -3481,14 +3524,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               historyType: 'main'
             };
             let element = document.getElementById("header_operation_row");
-            if(element) element.classList.add('disableDiv');
+            if (element) element.classList.add('disableDiv');
             this._kartaService.createKartaHistory(history_data).subscribe(
               (result: any) => { },
               (error: any) => { }
             ).add(() => {
               // Resetting Manual Input box if user creates using manual
               let element = document.getElementById("header_operation_row");
-              if(element) element.classList.remove('disableDiv');
+              if (element) element.classList.remove('disableDiv');
             });
 
             await this.getKartaInfo();
@@ -3497,7 +3540,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             jqueryFunctions.disableChart();
 
             if (data.children && data.children.length > 0) {
-              for(const element of data.children) {
+              for (const element of data.children) {
                 await recursion(this.karta.node, element);
               }
             }
@@ -3506,14 +3549,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             const name = data.name || data;
             let node = await this.addLuckyNodes(parent, randomKey, name);
             if (data.children && data.children.length > 0) {
-              for(const element of data.children) {
+              for (const element of data.children) {
                 await recursion(node, element);
               }
             }
             return true;
           }
         }
-        catch(err) {
+        catch (err) {
           console.log(err);
           return true;
         }
@@ -3522,7 +3565,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       await recursion(null, remainingKarta.data);
       return true;
     }
-    catch(err) {
+    catch (err) {
       console.log(err);
       jqueryFunctions.enableChart();
       this.loadingKarta = false;
@@ -3536,15 +3579,15 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       const weightRecursion = async (structure: any) => {
         if (structure.children && structure.children.length > 0) {
           let phaseName = structure.phase.global_name == "Critical Success Factor" ? "CSF" : (structure.phase.global_name.includes("Phase") ? "Phase" : structure.phase.global_name)
-          this.weightageMapping[phaseName] = 100/structure.children.length;
+          this.weightageMapping[phaseName] = 100 / structure.children.length;
           if (structure.parent) {
             let parentName = structure.parent.phase.global_name == "Critical Success Factor" ? "CSF" : (structure.parent.phase.global_name.includes("Phase") ? "Phase" : structure.parent.phase.global_name)
-            await this._kartaService.updateNode(structure.id, {'weightage': this.weightageMapping[parentName]}).toPromise();
+            await this._kartaService.updateNode(structure.id, { 'weightage': this.weightageMapping[parentName] }).toPromise();
             const oldValue = { 'weightage': structure.weightage }
             // Create history
             let history_data = {
               event: 'node_updated',
-              eventValue: {'weightage': this.weightageMapping[parentName]},
+              eventValue: { 'weightage': this.weightageMapping[parentName] },
               oldValue,
               kartaNodeId: structure.id,
               userId: this._commonService.getUserId(),
@@ -3557,14 +3600,14 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             await this._kartaService.createKartaHistory(history_data).toPromise();
           }
 
-          for(let element of structure.children) {
+          for (let element of structure.children) {
             await weightRecursion(element);
           }
         }
       }
 
       await weightRecursion(this.karta.node);
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   }
@@ -3577,7 +3620,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       jqueryFunctions.disableChart();
       for (let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        if(element) element.classList.add('disableDiv');
+        if (element) element.classList.add('disableDiv');
       }
 
       // common Random Key for Undo Redo process
@@ -3601,13 +3644,13 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               "kpi": 'kpi',
             };
             // checking if the node has children or not
-            if(data.children && data.children.length > 0) {
+            if (data.children && data.children.length > 0) {
               if (data.name) {
                 let phaseName = data.phase.global_name == "Critical Success Factor" ? "CSF" : (data.phase.global_name.includes("Phase") ? "Phase" : data.phase.global_name)
                 promptMapper[data.phase.global_name] = `My ${lastLayerMapper[phaseName.toLowerCase()]} is ${data.name}.`
               }
               // If child found then passing it again on recursive function
-              for(const element of data.children) {
+              for (const element of data.children) {
                 let resp = await nodeMappingRecursively(element);
                 if (resp) {
                   delete promptMapper[element.phase.global_name];
@@ -3635,18 +3678,18 @@ export class EditKartaComponent implements OnInit, OnDestroy {
                       const name = structure.name || structure;
                       let node = await this.addLuckyNodes(parent, randomKey, name);
                       if (structure.children && structure.children.length > 0) {
-                        for(const element of structure.children) {
+                        for (const element of structure.children) {
                           await nodeCreateRecursively(node, element, randomKey);
                         }
                       }
                       return true;
                     } else {
-                      for(const element of structure) {
+                      for (const element of structure) {
                         await nodeCreateRecursively(parent, element, randomKey);
                       }
                       return true;
                     }
-                  } catch(err) {
+                  } catch (err) {
                     console.log(err);
                     return true;
                   }
@@ -3663,7 +3706,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             }
 
             return true;
-          } catch(err) {
+          } catch (err) {
             console.log(err);
             this.feelingLoader = false;
             return true;
@@ -3678,9 +3721,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.updateNewPercentage();
           this.feelingLoader = false;
           this.isLoading = false;
-          for(let elem of this.controlElements) {
+          for (let elem of this.controlElements) {
             let element = document.getElementById(elem);
-            if(element) element.classList.remove('disableDiv');
+            if (element) element.classList.remove('disableDiv');
           }
         }
       } else {
@@ -3692,19 +3735,19 @@ export class EditKartaComponent implements OnInit, OnDestroy {
           this.updateNewPercentage();
           this.feelingLoader = false;
           this.isLoading = false;
-          for(let elem of this.controlElements) {
+          for (let elem of this.controlElements) {
             let element = document.getElementById(elem);
-            if(element) element.classList.remove('disableDiv');
+            if (element) element.classList.remove('disableDiv');
           }
         }
       }
-    } catch(err) {
+    } catch (err) {
       console.log(err);
       jqueryFunctions.enableChart();
       this.loadingKarta = false;
-      for(let elem of this.controlElements) {
+      for (let elem of this.controlElements) {
         let element = document.getElementById(elem);
-        if(element) element.classList.remove('disableDiv');
+        if (element) element.classList.remove('disableDiv');
       }
     }
   }
@@ -3714,7 +3757,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     jqueryFunctions.disableChart();
     for (let elem of this.controlElements) {
       let element = document.getElementById(elem);
-      if(element) element.classList.add('disableDiv');
+      if (element) element.classList.add('disableDiv');
     }
   }
 
@@ -3722,7 +3765,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     jqueryFunctions.enableChart();
     for (let elem of this.controlElements) {
       let element = document.getElementById(elem);
-      if(element) element.classList.remove('disableDiv');
+      if (element) element.classList.remove('disableDiv');
     }
   }
+
 }

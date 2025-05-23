@@ -8,7 +8,7 @@
                     <div class="profile-section d-flex align-self-center">
                         <div class="profile_img">
                             <ng-container *ngIf="_commonService.getSession().profilePic; else defaultImage">
-                                <img [src]="_commonService.MEDIA_URL+'/api/user/'+_commonService.getSession().profilePic" alt="">
+                                <img [src]="_commonService.MEDIA_URL+'/user/'+_commonService.getSession().profilePic" alt="">
                             </ng-container>
                             <ng-template #defaultImage>
                                 <img src="assets/img/avatar.png" alt="">

@@ -85,6 +85,13 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     options.collapseByDepth = collapseByDepth;
     options.areAllNodesAtDepthCollapsed = areAllNodesAtDepthCollapsed;
     options.getNode = getNode;
+    options.setFontSize = function (newFontSize) {
+        options.styleOptions.fontSize = newFontSize;
+        if (typeof update === 'function') {
+            update(root, true, newFontSize);
+        }
+    }
+    
 
     options.rerender = function (data = root) {
         update(data, true);
@@ -378,7 +385,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
     var initialDepth = getPhaseDepth(root);
     update(root);
 
-    function update(source, isRoot = false) {
+    function update(source, isRoot = false, fontSize = options.styleOptions.fontSize) {
         totalPhases = options.phases().length;
         if (isRoot) root = source;
         // Compute the new tree layout.
@@ -473,22 +480,23 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
             .on("mouseout", function (node) {
                 outCircle(node);
             });
+        const nodeHeight = fontSize * 1.5;
         nodeEnter
             .append("foreignObject")
             .attr('class', 'nodetext-container')
             .style('text-align', "left")
             .attr("x", (d) => (d.y == 0 ? 5 : 18))
             .attr("y", (d) => (d.y == 0 ? 5 : -9))
-            .attr("width", nodeWidth - 55)
-            .attr("height", 15)
-            .html(node => nodeText(node, nodeEnter));
+            .attr("width", nodeWidth)
+            .attr("height", nodeHeight)
+            .html(node => nodeText(node, nodeEnter, {fontSize}));
         // Transition nodes to their new position.
         //horizontal tree
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
             node.select(".mindmap-node").html(node => nodeToHTML(node, nodeEnter));
-            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter)).attr("width", nodeWidth - 55);
+            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter, {fontSize})).attr("width", nodeWidth - 55);
 
 
         // Transition exiting nodes to the parent's new position.
