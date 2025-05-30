@@ -485,7 +485,7 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
       return d.x;
     });
 
-    const spacingMultiplier = 0.05 * fontSize + 0.4;
+    const spacingMultiplier = 0.05 * fontSize + 0.5;
     var xScale = d3.scale
       .linear()
       .domain(xExtent)
@@ -574,7 +574,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
         outCircle(node);
       });
     const nodeHeight = fontSize * 1.5;
-    console.log("nodeHeight", nodeHeight);
     nodeEnter
       .append("foreignObject")
       .attr("class", "nodetext-container")
@@ -600,7 +599,6 @@ module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
       .attr("width", nodeWidth - 55)
       .attr("height", nodeHeight);
 
-    console.log(node)
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node
       .exit()
