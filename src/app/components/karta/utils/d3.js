@@ -1,790 +1,944 @@
-'use strict';
+"use strict";
 
 var nodeToHTML = require("./nodeTemplates/nodeToHTML.js").default;
 var nodeText = require("./nodeTemplates/nodeText.js").default;
 const { calculateSVGWidth } = require("./calculateSVGWidth.js");
 
-
-var totalPhases = 0, kartaColumnWidth = 0, width = 0, height = 0;
-var tree = null, root = null, nodes = null, parentLink = null, links = null, nodePaths = null, nodesExit = null;
-var selectedNode = null, draggingNode = null, draggingNodeType = null, dragStarted = false, domNode = null, dragStartPos=null, dragThreshold = 3;
+var totalPhases = 0,
+  kartaColumnWidth = 0,
+  width = 0,
+  height = 0;
+var tree = null,
+  root = null,
+  nodes = null,
+  parentLink = null,
+  links = null,
+  nodePaths = null,
+  nodesExit = null;
+var selectedNode = null,
+  draggingNode = null,
+  draggingNodeType = null,
+  dragStarted = false,
+  domNode = null,
+  dragStartPos = null,
+  dragThreshold = 3;
 var dragErrorMsg = "You cannot drag this node here";
 var haveKPIS = false;
 var nodeWidth = null; // Space per depth level
 
 const getSVGSize = (tree) => {
-    // let calculatedSVGWidth = calculateSVGWidth(tree);
-    // width2 = $(".karta_column").width();
-    // height2 = totalPhases * nodeWidth;
-    // width = kartaColumnWidth = $(".karta_column").width();
-    // width = calculatedSVGWidth > kartaColumnWidth ? calculatedSVGWidth : kartaColumnWidth;
-    // height = window.innerHeight + 250;
-    // return {
-    //     width: calculatedSVGWidth > width2 ? calculatedSVGWidth : width2,
-    //     height: totalPhases * nodeWidth
-    // }
+  // let calculatedSVGWidth = calculateSVGWidth(tree);
+  // width2 = $(".karta_column").width();
+  // height2 = totalPhases * nodeWidth;
+  // width = kartaColumnWidth = $(".karta_column").width();
+  // width = calculatedSVGWidth > kartaColumnWidth ? calculatedSVGWidth : kartaColumnWidth;
+  // height = window.innerHeight + 250;
+  // return {
+  //     width: calculatedSVGWidth > width2 ? calculatedSVGWidth : width2,
+  //     height: totalPhases * nodeWidth
+  // }
 
-    // 1️⃣ Create tree layout
-    let treeLayout = d3.layout.tree();
+  // 1️⃣ Create tree layout
+  let treeLayout = d3.layout.tree();
 
-    // 2️⃣ Get nodes list
-    let nodes = treeLayout.nodes(tree); // ✅ Use .nodes() in D3 v3
+  // 2️⃣ Get nodes list
+  let nodes = treeLayout.nodes(tree); // ✅ Use .nodes() in D3 v3
 
-    // 3️⃣ Count nodes at each depth level
-    let levelCounts = {};
-    nodes.forEach(d => {
-        levelCounts[d.depth] = (levelCounts[d.depth] || 0) + 1;
-    });
+  // 3️⃣ Count nodes at each depth level
+  let levelCounts = {};
+  nodes.forEach((d) => {
+    levelCounts[d.depth] = (levelCounts[d.depth] || 0) + 1;
+  });
 
-    // 4️⃣ Find the maximum count
-    let maxNodes = d3.max(d3.values(levelCounts));
-    height = Math.max(maxNodes * 15, window.innerHeight - 125);
-    nodeWidth = (window.innerWidth - 100) / 7
-}
+  // 4️⃣ Find the maximum count
+  let maxNodes = d3.max(d3.values(levelCounts));
+  height = Math.max(maxNodes * 15, window.innerHeight - 125);
+  nodeWidth = (window.innerWidth - 100) / 7;
+};
 
 module.exports = function BuildKPIKarta(treeData, treeContainerDom, options) {
-    var margin = { top: 0, right: 0, bottom: 20, left: 0 };
-    width = window.innerWidth - margin.right - margin.left;
-    height = window.innerHeight - margin.top - margin.bottom;
+  var margin = { top: 0, right: 0, bottom: 20, left: 0 };
+  width = window.innerWidth - margin.right - margin.left;
+  height = window.innerHeight - margin.top - margin.bottom;
 
-    // Set totalphases count and svg dimensions
-    totalPhases = options.phases().length;
-    getSVGSize(treeData);
+  // Set totalphases count and svg dimensions
+  totalPhases = options.phases().length;
+  getSVGSize(treeData);
 
-    var i = 0, duration = 750;
+  var i = 0,
+    duration = 750;
   // tree = d3.layout.tree().nodeSize([90, 60]);
 
-    function getMaxDepth(node) {
-      if (!node.children || node.children.length === 0) return 1; // Leaf node
-      return 1 + Math.max(...node.children.map(getMaxDepth));
-    }
+  function getMaxDepth(node) {
+    if (!node.children || node.children.length === 0) return 1; // Leaf node
+    return 1 + Math.max(...node.children.map(getMaxDepth));
+  }
 
-    var maxDepth = totalPhases || getMaxDepth(treeData); // Get tree depth
-    maxDepth = maxDepth > 7 ? maxDepth : 7;
-    width = maxDepth * nodeWidth; // Dynamic width
+  var maxDepth = totalPhases || getMaxDepth(treeData); // Get tree depth
+  maxDepth = maxDepth > 7 ? maxDepth : 7;
+  width = maxDepth * nodeWidth; // Dynamic width
 
-    tree = d3.layout.tree()
+  tree = d3.layout
+    .tree()
     .nodeSize([60, 60])
     .size([height, width])
     .separation(function (a, b) {
       return a.parent == b.parent ? 1 : 1;
     });
 
-    // Options
-    options.update = update;
-    options.updateNode = updateNode;
-    options.updateNewNode = updateNewNode;
-    options.updateRemovedNode = updateRemovedNode;
-    options.hightlightNode = hightlightNode;
-    options.getBase64Image = getBase64Image;
-    options.exportAsImage = exportAsImage;
-    options.exportAsPDF = exportAsPDF;
-    options.inventoryDraggingNode = inventoryDraggingNode;
-    options.buildOneKartaDivider = buildOneKartaDivider;
-    options.removeOneKartaDivider = removeOneKartaDivider;
-    options.collapseByDepth = collapseByDepth;
-    options.areAllNodesAtDepthCollapsed = areAllNodesAtDepthCollapsed;
-    options.getNode = getNode;
-    options.setFontSize = function (newFontSize) {
-        options.styleOptions.fontSize = newFontSize;
-        if (typeof update === 'function') {
-            update(root, true, newFontSize);
-        }
+  // Options
+  options.update = update;
+  options.updateNode = updateNode;
+  options.updateNewNode = updateNewNode;
+  options.updateRemovedNode = updateRemovedNode;
+  options.hightlightNode = hightlightNode;
+  options.getBase64Image = getBase64Image;
+  options.exportAsImage = exportAsImage;
+  options.exportAsPDF = exportAsPDF;
+  options.inventoryDraggingNode = inventoryDraggingNode;
+  options.buildOneKartaDivider = buildOneKartaDivider;
+  options.removeOneKartaDivider = removeOneKartaDivider;
+  options.collapseByDepth = collapseByDepth;
+  options.areAllNodesAtDepthCollapsed = areAllNodesAtDepthCollapsed;
+  options.getNode = getNode;
+  options.setFontSize = function (newFontSize) {
+    options.styleOptions.fontSize = newFontSize;
+    if (typeof update === "function") {
+      update(root, true, newFontSize);
     }
-    
+  };
 
-    options.rerender = function (data = root) {
-        update(data, true);
-    };
+  options.rerender = function (data = root) {
+    update(data, true);
+  };
 
-    // Context menu
-    const contextMenuItems = [
-        {
-            title: 'Save',
-            action: function(elm, d, i) {
-                let node_type = "branch";
-                if (d.phase.global_name === "KPI") node_type = d.node_type;
-                options.events.onRightClick(d, node_type);
-            }
+  // Context menu
+  const contextMenuItems = [
+    {
+      title: "Save",
+      action: function (elm, d, i) {
+        let node_type = "branch";
+        if (d.phase.global_name === "KPI") node_type = d.node_type;
+        options.events.onRightClick(d, node_type);
+      },
+    },
+  ];
+  // Get depth of nested child
+  function getDepth(node) {
+    const children = node.children || node._children;
+    let depth = 0;
+    if (children) {
+      children.forEach(function (d) {
+        if (d.node_type && d.target[0].value >= 0) haveKPIS = true;
+        let tmpDepth = getDepth(d);
+        if (tmpDepth > depth) {
+          depth = tmpDepth;
         }
-    ]
-    // Get depth of nested child
-    function getDepth(node) {
-        const children = node.children || node._children;
-        let depth = 0;
-        if (children) {
-            children.forEach(function (d) {
-                if (d.node_type && d.target[0].value >= 0) haveKPIS = true;
-                let tmpDepth = getDepth(d);
-                if (tmpDepth > depth) {
-                    depth = tmpDepth
-                }
-            });
-        }
-        return ++depth;
+      });
     }
-    // Get phase by phase id
-    function getPhase(phaseId, index = 0) {
-        return options.phases()[options.phases().map(item => item.id).indexOf(phaseId) + index]
-    }
-    // Get phase index by phase id
-    function getPhaseIndex(phaseId) {
-        return options.phases().map(item => item.id).indexOf(phaseId);
-    }
-    // Check drop condition
-    function isDroppable(selectedNode, draggingNode, isDraggingInventory = false) {
-        // Getting depth
-        haveKPIS = false;
-        let reduceBy = 2;
-        const draggingDepth = getDepth(draggingNode);
-        if (haveKPIS) reduceBy = 1;
-        const selectedDepth = getPhaseIndex(selectedNode.phaseId);
-        // Getting phase
-        const selectedPhase = getPhase(selectedNode.phaseId);
-        const draggingPhase = getPhase(draggingNode.phaseId);
-        // Get last action phase name of just above the kpi (because we can have more than one action phase)
-        const lastActionPhase = options.phases()[totalPhases-2];
+    return ++depth;
+  }
+  // Get phase by phase id
+  function getPhase(phaseId, index = 0) {
+    return options.phases()[
+      options
+        .phases()
+        .map((item) => item.id)
+        .indexOf(phaseId) + index
+    ];
+  }
+  // Get phase index by phase id
+  function getPhaseIndex(phaseId) {
+    return options
+      .phases()
+      .map((item) => item.id)
+      .indexOf(phaseId);
+  }
+  // Check drop condition
+  function isDroppable(
+    selectedNode,
+    draggingNode,
+    isDraggingInventory = false
+  ) {
+    // Getting depth
+    haveKPIS = false;
+    let reduceBy = 2;
+    const draggingDepth = getDepth(draggingNode);
+    if (haveKPIS) reduceBy = 1;
+    const selectedDepth = getPhaseIndex(selectedNode.phaseId);
+    // Getting phase
+    const selectedPhase = getPhase(selectedNode.phaseId);
+    const draggingPhase = getPhase(draggingNode.phaseId);
+    // Get last action phase name of just above the kpi (because we can have more than one action phase)
+    const lastActionPhase = options.phases()[totalPhases - 2];
 
-        // If dragging is happening from the inventory's nodes that are not exists in the karta yet
-        let exceededBy = 0;
-        if (isDraggingInventory === true) {
-            switch(true) {
-                case selectedPhase.global_name === "KPI":
-                    dragErrorMsg = "You cannot drop any node on KPI Phase!";
-                    return false;
-                case selectedPhase.global_name === lastActionPhase.global_name && draggingNodeType === "branch":
-                    dragErrorMsg = "You can only drop Measure or Metrics node on Action Phase..!!";
-                    return false;
-                case selectedPhase.global_name !== lastActionPhase.global_name && (draggingNodeType === "measure" || draggingNodeType === "metrics"):
-                    dragErrorMsg = "You cannot drop any Branch on Action Phase..!!";
-                    return false;
-                case selectedPhase.global_name !== lastActionPhase.global_name && draggingNodeType === "branch" && (draggingDepth + selectedDepth) > totalPhases-reduceBy:
-                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-reduceBy);
-                    dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
-                    return false;
-                default:
-                return true;
-            }
+    // If dragging is happening from the inventory's nodes that are not exists in the karta yet
+    let exceededBy = 0;
+    if (isDraggingInventory === true) {
+      switch (true) {
+        case selectedPhase.global_name === "KPI":
+          dragErrorMsg = "You cannot drop any node on KPI Phase!";
+          return false;
+        case selectedPhase.global_name === lastActionPhase.global_name &&
+          draggingNodeType === "branch":
+          dragErrorMsg =
+            "You can only drop Measure or Metrics node on Action Phase..!!";
+          return false;
+        case selectedPhase.global_name !== lastActionPhase.global_name &&
+          (draggingNodeType === "measure" || draggingNodeType === "metrics"):
+          dragErrorMsg = "You cannot drop any Branch on Action Phase..!!";
+          return false;
+        case selectedPhase.global_name !== lastActionPhase.global_name &&
+          draggingNodeType === "branch" &&
+          draggingDepth + selectedDepth > totalPhases - reduceBy:
+          exceededBy = draggingDepth + selectedDepth - (totalPhases - reduceBy);
+          dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
+          return false;
+        default:
+          return true;
+      }
+    } else {
+      switch (true) {
+        case selectedPhase.global_name === "KPI":
+          dragErrorMsg = "You cannot drop any node on KPI Phase..!!";
+          return false;
+        case selectedPhase.global_name !== lastActionPhase.global_name &&
+          draggingPhase.global_name === "KPI":
+          dragErrorMsg = "You can only drop KPI node on Action Phase..!!";
+          return false;
+        case selectedPhase.global_name === lastActionPhase.global_name &&
+          draggingPhase.global_name !== "KPI":
+          dragErrorMsg = "You cannot drop Non-KPI node on Action Phase..!!";
+          return false;
+        case selectedPhase.global_name !== lastActionPhase.global_name &&
+          draggingPhase.global_name !== "KPI" &&
+          draggingDepth + selectedDepth > totalPhases - reduceBy:
+          exceededBy = draggingDepth + selectedDepth - (totalPhases - reduceBy);
+          dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
+          return false;
+        default:
+          return true;
+      }
+    }
+  }
+
+  // Define the zoom function for the zoomable tree
+  function zoom() {
+    // $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
+    svg.selectAll(".karta_divider").remove();
+    svg.attr(
+      "transform",
+      "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")"
+    );
+  }
+  // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+  var zoomListener = d3.behavior.zoom().scaleExtent([0.5, 3]).on("zoom", zoom);
+  // Reset the zoom, when click on reset button
+  $(document).on("click", "#reset_zoom_btn", function () {
+    let g_attribute = d3.select("g").attr("transform");
+    if (g_attribute) {
+      let attributeArray = g_attribute.split(")");
+      if (attributeArray.length > 2) {
+        svg.transition().duration(500).attr("transform", d3.zoomIdentity);
+        // Restore zoom position
+        zoomListener.translate([0, 0]).scale(1);
+        // Draw phase lines
+        buildKartaDivider();
+        // Make chart editable based on the current chart mode
+        let current_chart_mode = $("#chartMode").val();
+        // if (current_chart_mode === "enable") $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
+      }
+    }
+  });
+
+  var diagonal = d3.svg.diagonal().projection(function (d) {
+    return [d.y + 5, d.x];
+  });
+  var svg = d3
+    .select(treeContainerDom)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .call(zoomListener)
+    .attr({ viewBox: "" + 0 + " " + 0 + " " + width + " " + height })
+    .append("g");
+  var g = svg.append("g");
+  root = treeData;
+  // Setup lining
+  buildKartaDivider();
+
+  /* Drag and drop feature */
+  // Initiate drag
+  function initiateDrag(d, domNode) {
+    draggingNode = d;
+    d3.select(domNode).select(".ghostCircle").attr("pointer-events", "none");
+    d3.selectAll(".ghostCircle").attr("class", "ghostCircle show");
+    d3.select(domNode).attr("class", "node activeDrag");
+
+    d3.selectAll("g.node").sort(function (a, b) {
+      // select the parent and sort the path's
+      if (a.id != draggingNode.id)
+        return 1; // a is not the hovered element, send "a" to the back
+      else return -1; // a is the hovered element, bring "a" to the front
+    });
+    // if nodes has children, remove the links and nodes
+    if (nodes.length > 1) {
+      // remove link paths
+      links = tree.links(nodes);
+      nodePaths = d3
+        .selectAll("path.link")
+        .data(links, function (d) {
+          return d.target.id;
+        })
+        .remove();
+      // remove child nodes
+      nodesExit = d3
+        .selectAll("g.node")
+        .data(nodes, function (d) {
+          return d.id;
+        })
+        .filter(function (d, i) {
+          if (d.id == draggingNode.id) {
+            return false;
+          }
+          return true;
+        })
+        .remove();
+    }
+
+    // remove parent link
+    parentLink = tree.links(tree.nodes(draggingNode.parent));
+    d3.selectAll("path.link")
+      .filter(function (d, i) {
+        if (d.target.id == draggingNode.id) {
+          return true;
+        }
+        return false;
+      })
+      .remove();
+
+    dragStarted = false;
+  }
+  // Drag end
+  function endDrag(success = false) {
+    if (selectedNode != null)
+      $(`.node-text[nodeid=${selectedNode.id}]`).css("background", "white");
+    selectedNode = null;
+    d3.selectAll(".ghostCircle").attr("class", "ghostCircle");
+    d3.select(domNode).attr("class", "node");
+    // now restore the mouseover event or we won't be able to drag a 2nd time
+    d3.select(domNode).select(".ghostCircle").attr("pointer-events", "");
+    if (draggingNode !== null) {
+      update(root);
+      if (success) options.events.updateDraggedNode(draggingNode);
+      draggingNode = draggingNodeType = null;
+    }
+  }
+  // Drag start
+  var dragListener = d3.behavior
+    .drag()
+    .on("dragstart", function (d) {
+      dragStartPos = d3.mouse(this);
+      if (d == root) {
+        return;
+      }
+      dragStarted = false;
+      nodes = tree.nodes(d);
+      d3.event.sourceEvent.stopPropagation();
+      options.events.onDragStart(d);
+      // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
+    })
+    .on("drag", function (d) {
+      dragStarted = true;
+      var [x, y] = d3.mouse(this);
+      var dx = x - dragStartPos[0];
+      var dy = y - dragStartPos[1];
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist <= dragThreshold) {
+        return;
+      }
+      if (d == root) {
+        return;
+      }
+      if (dragStarted) {
+        domNode = this;
+        initiateDrag(d, domNode);
+      }
+
+      var dX = d3.event.x - 30;
+      var dY = d3.event.y - 30;
+      d3.select(this).attr("transform", "translate(" + dX + ", " + dY + ")");
+    })
+    .on("dragend", function (d) {
+      dragStarted = false;
+      if (d == root) {
+        return;
+      } else if (
+        draggingNode !== null &&
+        selectedNode !== null &&
+        draggingNode.parentId === selectedNode.id
+      ) {
+        return endDrag(false);
+      }
+      domNode = this;
+
+      if (selectedNode && draggingNode) {
+        // Check whether the node is droppable or not
+        if (!isDroppable(selectedNode, draggingNode)) {
+          options.events.nodeWarning(dragErrorMsg);
+          endDrag(false);
         } else {
-            switch(true) {
-                case selectedPhase.global_name === "KPI":
-                    dragErrorMsg = "You cannot drop any node on KPI Phase..!!";
-                    return false;
-                case selectedPhase.global_name !== lastActionPhase.global_name && draggingPhase.global_name === "KPI":
-                    dragErrorMsg = "You can only drop KPI node on Action Phase..!!";
-                    return false;
-                case selectedPhase.global_name === lastActionPhase.global_name && draggingPhase.global_name !== "KPI":
-                    dragErrorMsg = "You cannot drop Non-KPI node on Action Phase..!!";
-                    return false;
-                case selectedPhase.global_name !== lastActionPhase.global_name && draggingPhase.global_name !== "KPI" && (draggingDepth + selectedDepth) > totalPhases-reduceBy:
-                    exceededBy = (draggingDepth + selectedDepth) - (totalPhases-reduceBy);
-                    dragErrorMsg = `Your total node depth exceeded the last phase by ${exceededBy}! Please drop it ${exceededBy} phase above.`;
-                    return false;
-                default:
-                return true;
+          // now remove the element from the parent, and insert it into the new elements children
+          const index = draggingNode.parent.children.indexOf(draggingNode);
+          const newPhaseId = getPhase(selectedNode.phaseId, 1).id;
+          if (index > -1) {
+            draggingNode.parent.children.splice(index, 1);
+          }
+          if (
+            typeof selectedNode.children !== "undefined" ||
+            typeof selectedNode._children !== "undefined"
+          ) {
+            if (typeof selectedNode.children !== "undefined") {
+              draggingNode.parentId = selectedNode.id;
+              selectedNode.children.push(draggingNode);
+              draggingNode.parent = selectedNode;
+              draggingNode.phaseId = newPhaseId;
+            } else {
+              draggingNode.parentId = selectedNode.id;
+              selectedNode._children.push(draggingNode);
+              draggingNode.parent = selectedNode;
+              draggingNode.phaseId = newPhaseId;
             }
+          } else {
+            selectedNode.children = [];
+            draggingNode.parentId = selectedNode.id;
+            selectedNode.children.push(draggingNode);
+            draggingNode.parent = selectedNode;
+            draggingNode.phaseId = newPhaseId;
+          }
+          endDrag(true);
         }
-    }
-
-    // Define the zoom function for the zoomable tree
-    function zoom() {
-        // $("#karta-svg svg .node").css("pointer-events", "none", "cursor", "default");
-        svg.selectAll('.karta_divider').remove();
-        svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-    }
-    // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-    var zoomListener = d3.behavior.zoom().scaleExtent([0.5, 3]).on("zoom", zoom);
-    // Reset the zoom, when click on reset button
-    $(document).on('click', '#reset_zoom_btn', function () {
-        let g_attribute = d3.select("g").attr("transform");
-        if (g_attribute) {
-            let attributeArray = g_attribute.split(')');
-            if (attributeArray.length > 2) {
-                svg.transition().duration(500).attr("transform", d3.zoomIdentity);
-                // Restore zoom position
-                zoomListener.translate([0,0]).scale(1);
-                // Draw phase lines
-                buildKartaDivider();
-                // Make chart editable based on the current chart mode
-                let current_chart_mode = $("#chartMode").val();
-                // if (current_chart_mode === "enable") $("#karta-svg svg .node").css("pointer-events", "all", "cursor", "pointer");
-            }
-        }
+      } else {
+        endDrag(false);
+      }
     });
 
-    var diagonal = d3.svg.diagonal()
-        .projection(function (d) { return [d.y + 5, d.x]; });
-    var svg = d3.select(treeContainerDom).append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .call(zoomListener)
-        .attr({ viewBox: "" + 0 + " " + 0 + " " + width + " " + height })
-        .append("g");
-    var g = svg.append("g");
-    root = treeData;
-    // Setup lining
+  var overCircle = function (d, isDraggingInventory = false) {
+    selectedNode = d;
+    if (
+      selectedNode != draggingNode &&
+      selectedNode !== null &&
+      draggingNode !== null
+    ) {
+      let colorCode = "#76ff03"; // Green color
+
+      // Check whether the node is droppable or not
+      if (!isDroppable(selectedNode, draggingNode, isDraggingInventory))
+        colorCode = "#ff1744"; // Red color
+
+      $(`.node-text[nodeid=${selectedNode.id}]`).css("background", colorCode);
+    }
+  };
+  var outCircle = function (d) {
+    if (selectedNode != draggingNode && selectedNode !== null)
+      $(`.node-text[nodeid=${selectedNode.id}]`).css("background", "white");
+    selectedNode = null;
+  };
+
+  // Find max depth of phases
+  function getPhaseDepth(node) {
+    return options
+      .phases()
+      .map((item) => item.id)
+      .indexOf(node.phaseId);
+  }
+  var initialDepth = getPhaseDepth(root);
+  update(root);
+
+  function update(
+    source,
+    isRoot = false,
+    fontSize = options.styleOptions.fontSize
+  ) {
+    totalPhases = options.phases().length;
+    if (isRoot) root = source;
+    // Compute the new tree layout.
+    getSVGSize(root);
+    // var svgSize = getSVGSize(root);
+    // width = svgSize.width;
+    // height = svgSize.height;
+
+    maxDepth = totalPhases || getMaxDepth(root); // Get tree depth
+    maxDepth = maxDepth > 7 ? maxDepth : 7;
+    width = maxDepth * nodeWidth; // Dynamic width
+
+    var svg = d3
+      .select("#karta-svg svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr({ viewBox: "" + 0 + " " + 0 + " " + width + " " + height })
+      .select("g");
+
+    var nodes = tree.nodes(root).reverse(),
+      links = tree.links(nodes);
+    var xExtent = d3.extent(nodes, function (d) {
+      return d.x;
+    });
+
+    const spacingMultiplier = 0.05 * fontSize + 0.4;
+    var xScale = d3.scale
+      .linear()
+      .domain(xExtent)
+      .range([20, (height - 100) * spacingMultiplier]);
+    // Normalize for fixed-depth
+    nodes.forEach(function (d) {
+      d.x = xScale(d.x);
+      d.y = d.depth * nodeWidth;
+    });
+    // Change phase ids of every nodes when someone dragging nodes
+    // nodes.forEach(function (d) {
+    //     // if (d.depth >= options.phases().length) d.depth -= d.depth;
+    //     // console.log("my depth ", d.depth)
+    //     d.phaseId = options.phases()[d.depth].id;
+    //     d.phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
+    // });
+    nodes.forEach(function (d) {
+      let children = (d.parent || { children: [] }).children;
+      let hasSubPhases = children.find((item) =>
+        options
+          .phases()
+          .map((item) => item.id)
+          .indexOf(item)
+      );
+      if (hasSubPhases) {
+        let subPhaseDepth = getPhaseDepth(d, 0);
+        d.y = subPhaseDepth * nodeWidth;
+      } else d.y = (d.depth + initialDepth) * nodeWidth;
+    });
+    // Declare the nodes…
+    var node = svg.selectAll("g.node").data(nodes, function (d) {
+      return d.id || (d.id = ++i);
+    });
+    // Enter the nodes.
+    var nodeEnter = node
+      .enter()
+      .append("g")
+      .call(dragListener)
+      .attr("class", "node")
+      .attr("width", nodeWidth)
+      .attr("height", 5)
+      .attr("transform", function (d) {
+        return "translate(" + source.x + "," + source.y + ")";
+      })
+      .on("click", nodeclick)
+      .on("contextmenu", d3.contextMenu(contextMenuItems))
+      // Drag and drop from inventory
+      .on("dragover", function (node) {
+        d3.event.preventDefault();
+        overCircle(node, true);
+      })
+      .on("dragleave", function (node) {
+        d3.event.preventDefault();
+        outCircle(node);
+      })
+      .on("drop", function (dropped_node) {
+        if (!isDroppable(dropped_node, draggingNode, true))
+          options.events.nodeWarning(dragErrorMsg);
+        else options.events.onInventoryDrop(draggingNode, dropped_node);
+
+        outCircle(dropped_node);
+        draggingNodeType = null;
+      });
     buildKartaDivider();
+    nodeEnter
+      .append("foreignObject")
+      .attr("class", (d) =>
+        d.y == 0 ? "mindmap-node right" : "mindmap-node left"
+      )
+      .attr("x", -(nodeWidth / 2 - 10))
+      .attr("width", nodeWidth)
+      .attr("height", 15)
+      .attr("y", -7)
+      .html((node) => nodeToHTML(node, nodeEnter));
+    // phantom node to give us mouseover around it
+    nodeEnter
+      .append("foreignObject")
+      .attr("class", "ghostCircle")
+      .attr("width", nodeWidth)
+      .attr("height", 15)
+      .attr("pointer-events", "mouseover")
+      .on("mouseover", function (node) {
+        overCircle(node);
+      })
+      .on("mouseout", function (node) {
+        outCircle(node);
+      });
+    const nodeHeight = fontSize * 1.5;
+    console.log("nodeHeight", nodeHeight);
+    nodeEnter
+      .append("foreignObject")
+      .attr("class", "nodetext-container")
+      .style("text-align", "left")
+      .attr("x", (d) => (d.y == 0 ? 5 : 18))
+      .attr("y", (d) => (d.y == 0 ? 5 : fontSize * -0.9))
+      .attr("width", nodeWidth)
+      .attr("height", nodeHeight)
+      .html((node) => nodeText(node, nodeEnter, { fontSize }));
+    // Transition nodes to their new position.
+    //horizontal tree
+    var nodeUpdate = node
+      .transition()
+      .duration(duration)
+      .attr("transform", function (d) {
+        return "translate(" + d.y + "," + d.x + ")";
+      });
+    node.select(".mindmap-node").html((node) => nodeToHTML(node, nodeEnter));
+    node
+      .select(".nodetext-container")
+      .html((node) => nodeText(node, nodeEnter, { fontSize }))
+      .attr("y", (d) => (d.y == 0 ? 5 : fontSize * -0.9))
+      .attr("width", nodeWidth - 55)
+      .attr("height", nodeHeight);
 
-    /* Drag and drop feature */
-    // Initiate drag
-    function initiateDrag(d, domNode) {
-        draggingNode = d;
-        d3.select(domNode).select('.ghostCircle').attr('pointer-events', 'none');
-        d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show');
-        d3.select(domNode).attr('class', 'node activeDrag');
-
-        d3.selectAll("g.node").sort(function (a, b) { // select the parent and sort the path's
-            if (a.id != draggingNode.id) return 1; // a is not the hovered element, send "a" to the back
-            else return -1; // a is the hovered element, bring "a" to the front
-        });
-        // if nodes has children, remove the links and nodes
-        if (nodes.length > 1) {
-            // remove link paths
-            links = tree.links(nodes);
-            nodePaths = d3.selectAll("path.link")
-                .data(links, function (d) {
-                    return d.target.id;
-                }).remove();
-            // remove child nodes
-            nodesExit = d3.selectAll("g.node")
-                .data(nodes, function (d) {
-                    return d.id;
-                }).filter(function (d, i) {
-                    if (d.id == draggingNode.id) {
-                        return false;
-                    }
-                    return true;
-                }).remove();
+    console.log(node)
+    // Transition exiting nodes to the parent's new position.
+    var nodeExit = node
+      .exit()
+      .transition()
+      .duration(duration)
+      .attr("transform", function (d) {
+        return "translate(" + source.y + "," + source.x + ")";
+      })
+      .remove();
+    // Update the links…
+    // Declare the links…
+    var link = svg
+      .selectAll("path.link")
+      .data(links, function (d) {
+        if (
+          !d.source.yupdated ||
+          (d.source.oldy && d.source.oldy == d.source.y)
+        ) {
+          d.source.oldy = d.source.y;
+          // d.source.y += 25;
+          d.source.yupdated = true;
         }
+        return d.target.id;
+      })
+      .attr("stroke", options.events.linkColor)
+      .attr("stroke-width", options.events.linkWidth);
+    // Enter the links.
+    link
+      .enter()
+      .insert("path", "g")
+      .attr("class", "link")
+      .attr("stroke", options.events.linkColor)
+      .attr("stroke-width", options.events.linkWidth)
+      .attr("d", function (d) {
+        var o = { x: source.y, y: source.x };
+        return diagonal({ source: o, target: o });
+      });
+    // Transition links to their new position.
+    link
+      .transition()
+      .duration(duration)
+      .attr("d", (d) => {
+        return diagonal(d);
+      });
 
-        // remove parent link
-        parentLink = tree.links(tree.nodes(draggingNode.parent));
-        d3.selectAll('path.link').filter(function (d, i) {
-            if (d.target.id == draggingNode.id) {
-                return true;
-            }
-            return false;
-        }).remove();
+    // Transition exiting nodes to the parent's new position.
+    link
+      .exit()
+      .transition()
+      .duration(duration)
+      .attr("d", function (d) {
+        var o = { x: source.y, y: source.x };
+        return diagonal({ source: o, target: o });
+      })
+      .remove();
 
-        dragStarted = false;
+    // Stash the old positions for transition.
+    nodes.forEach(function (d) {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  }
+
+  // Toggle children on click.
+  function nodeclick(d) {
+    d3.event.stopPropagation();
+    if (events[d3.event.target.id]) {
+      events[d3.event.target.id](d);
     }
-    // Drag end
-    function endDrag(success = false) {
-        if (selectedNode != null) $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
-        selectedNode = null;
-        d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
-        d3.select(domNode).attr('class', 'node');
-        // now restore the mouseover event or we won't be able to drag a 2nd time
-        d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
-        if (draggingNode !== null) {
-            update(root);
-            if (success) options.events.updateDraggedNode(draggingNode);
-            draggingNode = draggingNodeType = null;
-        }
+    if (options.events && options.events[d3.event.target.id]) {
+      options.events[d3.event.target.id](d);
     }
-    // Drag start
-    var dragListener = d3.behavior.drag()
-      .on("dragstart", function (d) {
-            dragStartPos = d3.mouse(this);
-            if (d == root) {
-                return;
-            }
-            dragStarted = false;
-            nodes = tree.nodes(d);
-            d3.event.sourceEvent.stopPropagation();
-            options.events.onDragStart(d);
-            // it's important that we suppress the mouseover event on the node being dragged. Otherwise it will absorb the mouseover event and the underlying node will not detect it d3.select(this).attr('pointer-events', 'none');
-        }).on("drag", function (d) {
-            dragStarted = true;
-            var [x, y] = d3.mouse(this);
-            var dx = x - dragStartPos[0];
-            var dy = y - dragStartPos[1];
-            var dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist <= dragThreshold) {
-              return;
-            }
-            if (d == root) {
-                return;
-            }
-            if (dragStarted) {
-                domNode = this;
-                initiateDrag(d, domNode);
-            }
+  }
 
-            var dX = d3.event.x - 30;
-            var dY = d3.event.y - 30;
-            d3.select(this).attr("transform", "translate(" + dX + ", " + dY + ")");
-        }).on("dragend", function (d) {
-            dragStarted = false;
-            if (d == root) {
-                return;
-            } else if (draggingNode !== null && selectedNode !== null && draggingNode.parentId === selectedNode.id) {
-                return endDrag(false);
-            }
-            domNode = this;
-
-            if (selectedNode && draggingNode) {
-                // Check whether the node is droppable or not
-                if (!isDroppable(selectedNode, draggingNode)) {
-                    options.events.nodeWarning(dragErrorMsg);
-                    endDrag(false);
-                } else {
-                    // now remove the element from the parent, and insert it into the new elements children
-                    const index = draggingNode.parent.children.indexOf(draggingNode);
-                    const newPhaseId = getPhase(selectedNode.phaseId, 1).id;
-                    if (index > -1) {
-                        draggingNode.parent.children.splice(index, 1);
-                    }
-                    if (typeof selectedNode.children !== 'undefined' || typeof selectedNode._children !== 'undefined') {
-                        if (typeof selectedNode.children !== 'undefined') {
-                            draggingNode.parentId = selectedNode.id;
-                            selectedNode.children.push(draggingNode);
-                            draggingNode.parent = selectedNode;
-                            draggingNode.phaseId = newPhaseId
-                        } else {
-                            draggingNode.parentId = selectedNode.id;
-                            selectedNode._children.push(draggingNode);
-                            draggingNode.parent = selectedNode;
-                            draggingNode.phaseId = newPhaseId
-                        }
-                    } else {
-                        selectedNode.children = [];
-                        draggingNode.parentId = selectedNode.id;
-                        selectedNode.children.push(draggingNode);
-                        draggingNode.parent = selectedNode;
-                        draggingNode.phaseId = newPhaseId
-                    }
-                    endDrag(true);
-                }
-            } else {
-                endDrag(false);
-            }
-        });
-
-    var overCircle = function (d, isDraggingInventory = false) {
-        selectedNode = d;
-        if (selectedNode != draggingNode && selectedNode !== null && draggingNode !== null) {
-            let colorCode = "#76ff03";  // Green color
-
-            // Check whether the node is droppable or not
-            if (!isDroppable(selectedNode, draggingNode, isDraggingInventory)) colorCode = "#ff1744"; // Red color
-
-            $(`.node-text[nodeid=${selectedNode.id}]`).css('background', colorCode);
-        }
-    };
-    var outCircle = function (d) {
-        if (selectedNode != draggingNode && selectedNode !== null)
-            $(`.node-text[nodeid=${selectedNode.id}]`).css('background', 'white');
-        selectedNode = null;
-    };
-
-    // Find max depth of phases
-    function getPhaseDepth(node){
-        return options.phases().map(item => item.id).indexOf(node.phaseId);
-    }
-    var initialDepth = getPhaseDepth(root);
-    update(root);
-
-    function update(source, isRoot = false, fontSize = options.styleOptions.fontSize) {
-        totalPhases = options.phases().length;
-        if (isRoot) root = source;
-        // Compute the new tree layout.
-        getSVGSize(root);
-        // var svgSize = getSVGSize(root);
-        // width = svgSize.width;
-        // height = svgSize.height;
-
-        maxDepth = totalPhases || getMaxDepth(root); // Get tree depth
-        maxDepth = maxDepth > 7 ? maxDepth : 7;
-        width = maxDepth * nodeWidth; // Dynamic width
-
-        var svg = d3.select('#karta-svg svg')
-            .attr("width", width)
-            .attr("height", height)
-            .attr({ viewBox: "" + 0 + " " + 0 + " " + width + " " + height })
-            .select('g');
-        
-        var nodes = tree.nodes(root).reverse(),
-            links = tree.links(nodes);
-        var xExtent = d3.extent(nodes, function(d) { return d.x; });
-        var xScale = d3.scale.linear().domain(xExtent).range([20, height - 20]); // compress or expand to fit
-        // Normalize for fixed-depth
-        nodes.forEach(function (d) {
-          d.x = xScale(d.x);
-          d.y = d.depth * nodeWidth;
-        });
-        // Change phase ids of every nodes when someone dragging nodes
-        // nodes.forEach(function (d) {
-        //     // if (d.depth >= options.phases().length) d.depth -= d.depth;
-        //     // console.log("my depth ", d.depth)
-        //     d.phaseId = options.phases()[d.depth].id;
-        //     d.phase = options.phases()[options.phases().map(item => item.id).indexOf(d.phaseId)];
-        // });
-        nodes.forEach(function (d) {
-            let children = (d.parent || { children: [] }).children;
-            let hasSubPhases = children.find(item => options.phases().map(item => item.id).indexOf(item));
-            if (hasSubPhases) {
-                let subPhaseDepth = getPhaseDepth(d, 0);
-                d.y = (subPhaseDepth)* nodeWidth;
-            }
-            else d.y = (d.depth + initialDepth) * nodeWidth;
-        });
-        // Declare the nodes…
-        var node = svg.selectAll("g.node")
-            .data(nodes, function (d) { return d.id || (d.id = ++i); });
-        // Enter the nodes.
-        var nodeEnter = node.enter().append("g")
-            .call(dragListener)
-            .attr("class", "node")        
-            .attr("width", nodeWidth)
-            .attr("height", 15)
-            .attr("transform", function (d) {
-                return "translate(" + source.x + "," + source.y + ")";
-            })
-            .on("click", nodeclick)
-            .on("contextmenu", d3.contextMenu(contextMenuItems))
-            // Drag and drop from inventory
-            .on("dragover", function(node) {
-                d3.event.preventDefault();
-                overCircle(node, true);
-            })
-            .on("dragleave", function(node) {
-                d3.event.preventDefault();
-                outCircle(node);
-            })
-            .on("drop", function(dropped_node) {
-                if (!isDroppable(dropped_node, draggingNode, true)) options.events.nodeWarning(dragErrorMsg);
-                else options.events.onInventoryDrop(draggingNode, dropped_node);
-
-                outCircle(dropped_node);
-                draggingNodeType = null;
-            });
-            buildKartaDivider();
-        nodeEnter
-            .append("foreignObject")
-            .attr("class", (d) => (d.y == 0 ? "mindmap-node right" : "mindmap-node left"))
-            .attr("x", -((nodeWidth / 2) - 10))
-            .attr("width", nodeWidth)
-            .attr("height", 15)
-            .attr("y", -7)
-            .html(node => nodeToHTML(node, nodeEnter));
-        // phantom node to give us mouseover around it
-        nodeEnter.append("foreignObject")
-            .attr('class', 'ghostCircle')
-            .attr("width", nodeWidth)
-            .attr("height", 15)
-            .attr('pointer-events', 'mouseover')
-            .on("mouseover", function (node) {
-                overCircle(node);
-            })
-            .on("mouseout", function (node) {
-                outCircle(node);
-            });
-        const nodeHeight = fontSize * 1.5;
-        nodeEnter
-            .append("foreignObject")
-            .attr('class', 'nodetext-container')
-            .style('text-align', "left")
-            .attr("x", (d) => (d.y == 0 ? 5 : 18))
-            .attr("y", (d) => (d.y == 0 ? 5 : -9))
-            .attr("width", nodeWidth)
-            .attr("height", nodeHeight)
-            .html(node => nodeText(node, nodeEnter, {fontSize}));
-        // Transition nodes to their new position.
-        //horizontal tree
-        var nodeUpdate = node.transition()
-            .duration(duration)
-            .attr("transform", function (d) { return "translate(" + d.y + "," + d.x + ")"; })
-            node.select(".mindmap-node").html(node => nodeToHTML(node, nodeEnter));
-            node.select(".nodetext-container").html(node => nodeText(node, nodeEnter, {fontSize})).attr("width", nodeWidth - 55);
-
-
-        // Transition exiting nodes to the parent's new position.
-        var nodeExit = node.exit().transition()
-            .duration(duration)
-            .attr("transform", function (d) { return "translate(" + source.y + "," + source.x + ")"; })
-            .remove();
-        // Update the links…
-        // Declare the links…
-        var link = svg.selectAll("path.link")
-            .data(links, function (d) {
-                if (!d.source.yupdated || (d.source.oldy && (d.source.oldy == d.source.y))) {
-                    d.source.oldy = d.source.y;
-                    // d.source.y += 25;
-                    d.source.yupdated = true;
-                }
-                return d.target.id;
-            })
-            .attr("stroke", options.events.linkColor)
-            .attr("stroke-width", options.events.linkWidth)
-        // Enter the links.
-        link.enter().insert("path", "g")
-            .attr("class", "link")
-            .attr("stroke", options.events.linkColor)
-            .attr("stroke-width", options.events.linkWidth)
-            .attr("d", function (d) {
-                var o = { x: source.y, y: source.x };
-                return diagonal({ source: o, target: o });
-            });
-        // Transition links to their new position.
-        link.transition()
-            .duration(duration)
-            .attr("d", (d) => { return diagonal(d) });
-
-        // Transition exiting nodes to the parent's new position.
-        link.exit().transition()
-            .duration(duration)
-            .attr("d", function (d) {
-                var o = { x: source.y, y: source.x };
-                return diagonal({ source: o, target: o });
-            })
-            .remove();
-
-        // Stash the old positions for transition.
-        nodes.forEach(function (d) {
-            d.x0 = d.x;
-            d.y0 = d.y;
-        });
-    }
-
-    // Toggle children on click.
-    function nodeclick(d) {
-        d3.event.stopPropagation();
-        if (events[d3.event.target.id]) {
-            events[d3.event.target.id](d);
-        }
-        if (options.events && options.events[d3.event.target.id]) {
-            options.events[d3.event.target.id](d);
-        }
-    }
-
-    // Draw horizontal lines for phases
+  // Draw horizontal lines for phases
   function buildKartaDivider() {
-        svg.selectAll(".karta_divider").remove();
-        // 🎯 **Step 1: Define Phase Positions**
-        var phasePositions = Array.from(
-          { length: maxDepth > 7 ? maxDepth : 7 },
-          (_, i) => (i + 1) * nodeWidth
-        ); // x-coordinates where phases occur
-        // var nodes = svg.selectAll(".node")
-        // nodes=nodes.filter((node)=>node?.)
-        // svg.selectAll(".node"); // or whatever your selector is
-        // let levelAdded = [];
-        // nodes.each(function (d) {
-        //   if (!levelAdded?.includes(d?.depth)) {
-        //     d3.select(this)
-        //       .append("line")
-        //       .attr("class", "karta_divider")
-        //       .attr("x1", (d) => d)
-        //       .attr("y1", -(window.innerHeight * d?.depth)) // Extend to the top
-        //       .attr("x2", (d) => d)
-        //       .attr("y2", window.innerHeight) // Extend to the bottom
-        //       .style("stroke", "lightgrey")
-        //       .style("stroke-width", "1px");
-        //   }
-        //   levelAdded.push(d.depth);
-        // });
-        // 🎯 **Step 2: Draw Vertical Phase Lines**
-        g.selectAll(".karta_divider")
-          .data(phasePositions)
-          .enter()
-          .append("line")
-          .attr("class", "karta_divider")
-          .attr("x1", (d) => d)
-          .attr("y1", -height) // Extend to the top
-          .attr("x2", (d) => d)
-          .attr("y2", height) // Extend to the bottom
-          .attr("class", "karta_divider")
-          .attr("stroke", "lightgrey")
-          .attr("stroke-width", "1px");
+    svg.selectAll(".karta_divider").remove();
+    // 🎯 **Step 1: Define Phase Positions**
+    var phasePositions = Array.from(
+      { length: maxDepth > 7 ? maxDepth : 7 },
+      (_, i) => (i + 1) * nodeWidth
+    ); // x-coordinates where phases occur
+    // var nodes = svg.selectAll(".node")
+    // nodes=nodes.filter((node)=>node?.)
+    // svg.selectAll(".node"); // or whatever your selector is
+    // let levelAdded = [];
+    // nodes.each(function (d) {
+    //   if (!levelAdded?.includes(d?.depth)) {
+    //     d3.select(this)
+    //       .append("line")
+    //       .attr("class", "karta_divider")
+    //       .attr("x1", (d) => d)
+    //       .attr("y1", -(window.innerHeight * d?.depth)) // Extend to the top
+    //       .attr("x2", (d) => d)
+    //       .attr("y2", window.innerHeight) // Extend to the bottom
+    //       .style("stroke", "lightgrey")
+    //       .style("stroke-width", "1px");
+    //   }
+    //   levelAdded.push(d.depth);
+    // });
+    // 🎯 **Step 2: Draw Vertical Phase Lines**
+    g.selectAll(".karta_divider")
+      .data(phasePositions)
+      .enter()
+      .append("line")
+      .attr("class", "karta_divider")
+      .attr("x1", (d) => d)
+      .attr("y1", -height) // Extend to the top
+      .attr("x2", (d) => d)
+      .attr("y2", height) // Extend to the bottom
+      .attr("class", "karta_divider")
+      .attr("stroke", "lightgrey")
+      .attr("stroke-width", "1px");
 
-        return;
-        svg.selectAll('.karta_divider').remove();
-        (new Array(parseInt($(".karta_column").height() / nodeWidth))).fill(0).forEach((val, index) => {
-            var pathGenerator = d3.svg.line();
-            // width2 = $(".karta_column").width();
-            svg.append('path')
-                .attr("class", "karta_divider")
-                .attr('stroke', 'lightgrey')
-                .attr('stroke-width', '1px')
-                .attr('d', pathGenerator([[-100000, (index + 1) * nodeWidth], [100000, (1 + index) * nodeWidth]]));
-        });
-    }
-    // Draw one horizontal line, when new child phase added
-    function buildOneKartaDivider() {
+    return;
+    svg.selectAll(".karta_divider").remove();
+    new Array(parseInt($(".karta_column").height() / nodeWidth))
+      .fill(0)
+      .forEach((val, index) => {
         var pathGenerator = d3.svg.line();
         // width2 = $(".karta_column").width();
-        svg.append('path')
-            .attr("class", "karta_divider")
-            .attr('stroke', 'lightgrey')
-            .attr('stroke-width', '1px')
-            .attr('d', pathGenerator([[-width, nodeWidth], [width, nodeWidth]]));
-    }
-    // Remove horizontal lines for phases, when child phase deleted
-    function removeOneKartaDivider() {
-        let dividers = svg.selectAll('.karta_divider')[0];
-        (dividers.length - 1).remove();
-    }
+        svg
+          .append("path")
+          .attr("class", "karta_divider")
+          .attr("stroke", "lightgrey")
+          .attr("stroke-width", "1px")
+          .attr(
+            "d",
+            pathGenerator([
+              [-100000, (index + 1) * nodeWidth],
+              [100000, (1 + index) * nodeWidth],
+            ])
+          );
+      });
+  }
+  // Draw one horizontal line, when new child phase added
+  function buildOneKartaDivider() {
+    var pathGenerator = d3.svg.line();
+    // width2 = $(".karta_column").width();
+    svg
+      .append("path")
+      .attr("class", "karta_divider")
+      .attr("stroke", "lightgrey")
+      .attr("stroke-width", "1px")
+      .attr(
+        "d",
+        pathGenerator([
+          [-width, nodeWidth],
+          [width, nodeWidth],
+        ])
+      );
+  }
+  // Remove horizontal lines for phases, when child phase deleted
+  function removeOneKartaDivider() {
+    let dividers = svg.selectAll(".karta_divider")[0];
+    (dividers.length - 1).remove();
+  }
 
-    // Update node properties
-    function updateNode(d, isRoot = false) {
-        if (isRoot === true) root = d;
-        var nodeHtml = `
+  // Update node properties
+  function updateNode(d, isRoot = false) {
+    if (isRoot === true) root = d;
+    var nodeHtml = `
             <p class="py-1" id="nodeItem">
-                <span id="nodeItem" class="d-block short_text" title="${d.name}">${d.name || ''}</span>
-                <span class="font-weight-bold nodePercentage">${d.percentage || 0}%</span>
+                <span id="nodeItem" class="d-block short_text" title="${
+                  d.name
+                }">${d.name || ""}</span>
+                <span class="font-weight-bold nodePercentage">${
+                  d.percentage || 0
+                }%</span>
             </p>`;
-        $(`.node-text[nodeid=${d.id}]`).html(nodeHtml);
-        $(`.node-text[nodeid=${d.id}] p`).css('color', d.text_color);
-        $(`.node-text[nodeid=${d.id}] p`).css('font-family', d.font_style);
-        $(`.node-text[nodeid=${d.id}] p`).css('text-align', d.alignment);
-        if (d.parent) update(d.parent);
-        if (d.hasOwnProperty("children") && d.children.length > 0) {
-            d.children.forEach(item => updateNode(item));
-        }
+    $(`.node-text[nodeid=${d.id}]`).html(nodeHtml);
+    $(`.node-text[nodeid=${d.id}] p`).css("color", d.text_color);
+    $(`.node-text[nodeid=${d.id}] p`).css("font-family", d.font_style);
+    $(`.node-text[nodeid=${d.id}] p`).css("text-align", d.alignment);
+    if (d.parent) update(d.parent);
+    if (d.hasOwnProperty("children") && d.children.length > 0) {
+      d.children.forEach((item) => updateNode(item));
+    }
+  }
+
+  // Update newly added node
+  function updateNewNode(parent, d) {
+    parent.children = parent.children || [];
+    d.children = [];
+    parent.children.push(d);
+    update(parent);
+    update(root);
+    document.getElementById("karta-svg").scrollLeft += 50;
+  }
+
+  // Update Removed Node
+  function updateRemovedNode(d) {
+    d.parent.children = d.parent.children.filter((c) => {
+      return c.id != d.id;
+    });
+    update(d.parent);
+  }
+
+  // Dragging node from inventory
+  function inventoryDraggingNode(node, node_type) {
+    draggingNode = node;
+    draggingNodeType = node_type;
+  }
+
+  // Hightlight nodes, while saving in catalog
+  function hightlightNode(d) {
+    $(`.node-text[nodeid=${d.id}]`).css("background-color", "#c1d2ef");
+    if (d.hasOwnProperty("children") && d.children.length > 0) {
+      d.children.forEach((item) => hightlightNode(item));
+    }
+  }
+  // Remove color from highlighted nodes
+  function unHightlightNode(d) {
+    $(`.node-text[nodeid=${d.id}]`).css("background-color", "#FFFFFF");
+    if (d.hasOwnProperty("children") && d.children.length > 0) {
+      d.children.forEach((item) => unHightlightNode(item));
+    }
+  }
+  // Get bas64Image of chart
+  function getBase64Image(node, callback) {
+    svgAsPngUri($("#karta-svg svg")[0], {
+      scale: 2,
+      backgroundColor: "#FFFFFF",
+    }).then((uri) => {
+      unHightlightNode(node);
+      callback(uri);
+    });
+  }
+
+  // Export as image
+  function exportAsImage(name) {
+    // svg.selectAll('.karta_divider').remove();
+    saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, {
+      scale: 2,
+      backgroundColor: "#FFFFFF",
+    });
+    // Draw phase lines
+    // buildKartaDivider();
+  }
+  // Export as pdf
+  function exportAsPDF(name) {
+    window.jsPDF = window.jspdf.jsPDF;
+    svgAsPngUri($("#karta-svg svg")[0], {
+      scale: 2,
+      backgroundColor: "#FFFFFF",
+    }).then((uri) => {
+      let imageBase64 = uri.split(",")[1];
+      let svgWidth = $("#karta-svg svg").width();
+      let doc = new jsPDF("1", "px", [width, height]);
+      doc.addImage(imageBase64, "PNG", 0, 0, svgWidth, height);
+      doc.save(`${name}.pdf`);
+    });
+  }
+
+  function collapseByDepth(node, targetDepth, allCollapsed) {
+    if (!node) return;
+
+    // If we're at the target phase depth, collapse this node
+    if (node.depth === targetDepth && node.children && !allCollapsed) {
+      node._children = node.children;
+      node.children = null;
+    }
+    if (node.depth === targetDepth && node._children && allCollapsed) {
+      node.children = node._children;
+      node._children = null;
     }
 
-    // Update newly added node
-    function updateNewNode(parent, d) {
-        parent.children = parent.children || []
-        d.children = [];
-        parent.children.push(d);
-        update(parent);
-        update(root);
-        document.getElementById('karta-svg').scrollLeft += 50;
+    // Recurse into children
+    if (node.children) {
+      node.children.forEach((child) =>
+        collapseByDepth(child, targetDepth, allCollapsed)
+      );
+    } else if (node._children) {
+      node._children.forEach((child) =>
+        collapseByDepth(child, targetDepth, allCollapsed)
+      );
     }
+  }
 
-    // Update Removed Node
-    function updateRemovedNode(d) {
-        d.parent.children = d.parent.children.filter(c => {
-            return c.id != d.id;
-        })
-        update(d.parent);
-    }
-
-    // Dragging node from inventory
-    function inventoryDraggingNode(node, node_type) {
-        draggingNode = node;
-        draggingNodeType = node_type;
-    }
-
-    // Hightlight nodes, while saving in catalog
-    function hightlightNode(d) {
-        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#c1d2ef");
-        if (d.hasOwnProperty("children") && d.children.length > 0) {
-            d.children.forEach(item => hightlightNode(item));
-        }
-
-    }
-    // Remove color from highlighted nodes
-    function unHightlightNode(d) {
-        $(`.node-text[nodeid=${d.id}]`).css('background-color', "#FFFFFF");
-        if (d.hasOwnProperty("children") && d.children.length > 0) {
-            d.children.forEach(item => unHightlightNode(item));
-        }
-    }
-    // Get bas64Image of chart
-    function getBase64Image(node, callback) {
-        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", }).then(uri => {
-            unHightlightNode(node);
-            callback(uri);
-        });
-    }
-
-    // Export as image
-    function exportAsImage(name) {
-        // svg.selectAll('.karta_divider').remove();
-        saveSvgAsPng($("#karta-svg svg")[0], `${name}.png`, { scale: 2, backgroundColor: "#FFFFFF", });
-        // Draw phase lines
-        // buildKartaDivider();
-    }
-    // Export as pdf
-    function exportAsPDF(name) {
-        window.jsPDF = window.jspdf.jsPDF;
-        svgAsPngUri($("#karta-svg svg")[0], { scale: 2, backgroundColor: "#FFFFFF", }).then(uri => {
-            let imageBase64 = uri.split(',')[1];
-            let svgWidth = $("#karta-svg svg").width();
-            let doc = new jsPDF('1', 'px', [width, height]);
-            doc.addImage(imageBase64, 'PNG', 0, 0, svgWidth, height);
-            doc.save(`${name}.pdf`);
-        });
-    }
-
-    function  collapseByDepth(node, targetDepth, allCollapsed) {
-      if (!node) return;
-
-      // If we're at the target phase depth, collapse this node
-      if (node.depth === targetDepth && node.children && !allCollapsed) {
-        node._children = node.children;
-        node.children = null;
+  function getNode(root, targetDepth, targetID) {
+    // Traverse all nodes
+    var nodes = d3.layout.tree().nodes(root),
+      node = null;
+    nodes.forEach(function (d) {
+      if (d.depth === targetDepth && d.id === targetID) {
+        node = d;
       }
-      if (node.depth === targetDepth && node._children && allCollapsed) {
-        node.children = node._children;
-        node._children = null;
-      }
+    });
+    return node;
+  }
 
-      // Recurse into children
-      if (node.children) {
-        node.children.forEach(child => collapseByDepth(child, targetDepth, allCollapsed));
-      } else if (node._children) {
-        node._children.forEach(child => collapseByDepth(child, targetDepth, allCollapsed));
-      }
-    }
+  function areAllNodesAtDepthCollapsed(root, targetDepth) {
+    var allCollapsed = true;
 
-    function getNode(root, targetDepth,targetID) {
-      // Traverse all nodes
-      var nodes = d3.layout.tree().nodes(root),node=null;
-      nodes.forEach(function(d) {
-          if (d.depth === targetDepth && d.id === targetID) {
-            node = d;
-          }
+    // Traverse all nodes
+    var nodes = d3.layout.tree().nodes(root);
+
+    nodes.forEach(function (d) {
+      if (d.depth === targetDepth) {
+        if (d.children) {
+          allCollapsed = false; // Found an expanded node at this depth
+        }
+      }
+    });
+
+    return allCollapsed;
+  }
+
+  // Chart events
+  var events = {
+    addNode: (d) => {},
+    removeNode: (d) => {
+      d.parent.children = d.parent.children.filter((c) => {
+        return c.id != d.id;
       });
-      return node;
-    }
-
-    function areAllNodesAtDepthCollapsed(root, targetDepth) {
-      var allCollapsed = true;
-
-      // Traverse all nodes
-      var nodes = d3.layout.tree().nodes(root);
-
-      nodes.forEach(function(d) {
-          if (d.depth === targetDepth) {
-              if (d.children) {
-                  allCollapsed = false; // Found an expanded node at this depth
-              }
-          }
-      });
-
-      return allCollapsed;
-    }
-
-    // Chart events
-    var events = {
-        addNode: (d) => { },
-        removeNode: (d) => {
-            d.parent.children = d.parent.children.filter(c => {
-                return c.id != d.id;
-            })
-            update(d.parent);
-        },
-        toggleNode: (d) => {
-            if (d.children) {
-                if (d.children.length) {
-                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up');
-                }
-                d._children = d.children;
-                d.children = null;
-                options.events.collapseNode(d);
-            } else {
-                if (d._children.length) {
-                    $(d3.event.target).toggleClass('fa-chevron-circle-down fa-chevron-circle-up');
-                }
-                d.children = d._children;
-                d._children = null;
-                options.events.expandNode(d);
-            }
-            update(d);
+      update(d.parent);
+    },
+    toggleNode: (d) => {
+      if (d.children) {
+        if (d.children.length) {
+          $(d3.event.target).toggleClass(
+            "fa-chevron-circle-down fa-chevron-circle-up"
+          );
         }
-    }
-}
+        d._children = d.children;
+        d.children = null;
+        options.events.collapseNode(d);
+      } else {
+        if (d._children.length) {
+          $(d3.event.target).toggleClass(
+            "fa-chevron-circle-down fa-chevron-circle-up"
+          );
+        }
+        d.children = d._children;
+        d._children = null;
+        options.events.expandNode(d);
+      }
+      update(d);
+    },
+  };
+};
