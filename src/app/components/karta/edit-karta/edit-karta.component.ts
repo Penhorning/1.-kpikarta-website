@@ -1070,8 +1070,10 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     this.currentPhaseNodeChildren = null;
     this.subSegmentMenu = false;
     this.isPhaseListVisible = true;
-    this.highlightNode({ id: "123" }, this.karta.node);
-    BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+    if (this.karta.node) {
+      this.highlightNode({ id: "123" }, this.karta.node);
+      BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
+    }
     jqueryFunctions.removeKarta();
   }
 
@@ -2280,39 +2282,39 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       jqueryFunctions.disableChart();
       this._kartaService.addNode(data).subscribe(
         (response: any) => {
-          try{
-          if (this.isNodeAddingFromCalista) {
-            this.currentPhaseNodeChildrens.push(response);
-            this.currentSegmentChildNode = response;
-          }
-          response.phase = phase;
-          this.D3SVG.updateNewNode(param, response);
-          this.updateNewPercentage();
-          if (this.currentPhase) {
-            const index = this.phaseIndex(this.currentPhase.id);
-            this.hasNodeInNextPhase =
-              (this.phases[index + 1] && this.phases[index + 1].hasNode) ||
-              false;
-          }
+          try {
+            if (this.isNodeAddingFromCalista) {
+              this.currentPhaseNodeChildrens.push(response);
+              this.currentSegmentChildNode = response;
+            }
+            response.phase = phase;
+            this.D3SVG.updateNewNode(param, response);
+            this.updateNewPercentage();
+            if (this.currentPhase) {
+              const index = this.phaseIndex(this.currentPhase.id);
+              this.hasNodeInNextPhase =
+                (this.phases[index + 1] && this.phases[index + 1].hasNode) ||
+                false;
+            }
 
 
-          if (this.currentSuggestionIndex > -1) {
-            this.nodeSuggestions[this.currentSuggestionIndex].disabled = true;
-          }
-          setTimeout(() => {
-            const node_ele = this.D3SVG.getNode(
-              this.karta.node,
-              this.currentPhaseNodeChildren.depth,
-              this.currentPhaseNodeChildren.id
-            );
-            this.currentPhaseNodeChildren = node_ele;
-            this.currentPhaseNodeChildrens = node_ele?.children
-              ? node_ele.children
-              : [];
-            jqueryFunctions.enableCommonPhase();
-          }, 1000);
+            if (this.currentSuggestionIndex > -1) {
+              this.nodeSuggestions[this.currentSuggestionIndex].disabled = true;
+            }
+            setTimeout(() => {
+              const node_ele = this.D3SVG.getNode(
+                this.karta.node,
+                this.currentPhaseNodeChildren.depth,
+                this.currentPhaseNodeChildren.id
+              );
+              this.currentPhaseNodeChildren = node_ele;
+              this.currentPhaseNodeChildrens = node_ele?.children
+                ? node_ele.children
+                : [];
+              jqueryFunctions.enableCommonPhase();
+            }, 1000);
 
-          }catch(e) {
+          } catch (e) {
             jqueryFunctions.enableCommonPhase();
             console.log(e);
           }
@@ -3075,7 +3077,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       if (this.sumOfRange() == 100) {
         this.colorSubmitFlag = true;
         if (this.colorSettings.hasOwnProperty("userId") && (this.colorSettings.hasOwnProperty("kartaId") && this.colorSettings.kartaId === this.kartaId)) {
-          this._kartaService.updateColorSetting({...this.colorSettings, fontSize:this.fontSize}, this.colorSettings.id, ).subscribe(
+          this._kartaService.updateColorSetting({ ...this.colorSettings, fontSize: this.fontSize }, this.colorSettings.id,).subscribe(
             (response: any) => {
               this.colorSettings = response;
               console.log(response.fontSize, 'response font size');
@@ -3084,7 +3086,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               this._commonService.successToaster("Settings saved successfully");
               // this.reRenderKarta();
               this.updateNewPercentage();
-              if (this.D3SVG && typeof this.D3SVG.setFontSize === 'function'){
+              if (this.D3SVG && typeof this.D3SVG.setFontSize === 'function') {
                 this.D3SVG.setFontSize(this.fontSize);
               }
             }).add(() => this.colorSubmitFlag = false);
@@ -3104,7 +3106,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               // this.reRenderKarta();
               this.updateNewPercentage();
               console.log(typeof this.D3SVG.setFontSize, 'create check');
-              if (this.D3SVG && typeof this.D3SVG.setFontSize === 'function'){
+              if (this.D3SVG && typeof this.D3SVG.setFontSize === 'function') {
                 this.D3SVG.setFontSize(this.fontSize);
               }
             }
@@ -3613,6 +3615,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
   }
 
   async feelingLucky() {
+    console.log("Feeling Lucky clicked");
     try {
       this.showPhaseList()
       this.isLoading = true;
