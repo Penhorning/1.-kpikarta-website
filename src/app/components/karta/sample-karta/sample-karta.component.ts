@@ -1,7 +1,6 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { ExportToCsv } from 'export-to-csv';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
 import * as BuildKPIKarta from '../utils/d3.js';
@@ -26,6 +25,7 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
   phaseId: string = '';
   phaseName: string = '';
   phases: any = [];
+  fontSize: any = 10;
   colorSettings: any = [];
   suggestion: any;
   loadingKarta: boolean = true;
@@ -54,7 +54,10 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
         let weightage = parseInt(d.target.weightage);
         weightage = weightage <= 0 ? 10 : weightage;
         return (weightage / 10) / 2;
-      }
+      }, 
+    }, 
+    styleOptions: {
+      fontSize: this.fontSize,
     }
   }
 
@@ -300,6 +303,7 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
       if (this.karta.node) {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
+        this.kpiPercentage = this.karta.node.achieved_value;
         BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
         this.showSVG = true;
         jqueryFunctions.enableChart();
@@ -365,9 +369,9 @@ export class SampleKartaComponent implements OnInit, OnDestroy {
       if (childPhase) {
         delete childPhase.lastChildren;
         phaseResult.push(childPhase);
-        array.splice(array.findIndex((a: any) => a.id === childPhase.id) , 1);
+        array.splice(array.findIndex((a: any) => a.id === childPhase.id), 1);
         findSubPhase(array, childPhase.id);
-      } else phaseResult[phaseResult.length-1].lastChildren = true;
+      } else phaseResult[phaseResult.length - 1].lastChildren = true;
     }
     // Iterate phases
     for (let phase of phases) {
