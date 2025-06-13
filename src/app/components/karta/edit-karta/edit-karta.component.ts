@@ -22,7 +22,7 @@ declare const $: any;
 })
 export class EditKartaComponent implements OnInit, OnDestroy {
 
-  @Input() fontSize: number = 14;
+  @Input() fontSize: number = 10;
   @Input() minFontSize: number = 10;
   @Input() maxFontSize: number = 50;
 
@@ -629,7 +629,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   async onResize() {
     this.nodeWidth = (window.innerWidth - 100) / 7;
-    this.D3SVG.update(this.karta.node, true);
+      this.D3SVG.update(this.karta.node, true);
     // BuildKPIKarta(this.karta.node, '#karta-svg', this.D3SVG);
   }
 
