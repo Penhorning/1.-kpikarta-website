@@ -15,6 +15,8 @@ export class CreateKartaComponent implements OnInit {
   industries: any = data.industries;
   departments: any = [];
 
+  description: string = '';
+
   submitted: boolean = false;
   submitFlag: boolean = false;
 
@@ -23,6 +25,7 @@ export class CreateKartaComponent implements OnInit {
     department: ['', Validators.required],
     industry: ['', Validators.required],
     otherDepartment: ['', [Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]],
+    description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
   });
   get form() { return this.kartaForm.controls; }
 
