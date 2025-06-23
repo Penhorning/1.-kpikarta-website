@@ -63,7 +63,17 @@
                   <!-- discription box -->
                   <div class="form-group name-input-karta">
                     <label for="description">Description</label>
-                    <textarea id="description" class="form-control" formControlName="description" rows="6"></textarea>
+                    <img src="assets/img/icons8-ai.svg" width="22" alt="AI Icon" class="ai-icon" style="margin-left: 6px;">
+                    <textarea id="description" class="form-control" formControlName="description" rows="6" placeholder="Enter prompt to create Karta with AI (optional, minimum 300 characters if provided)"></textarea>
+                    <div *ngIf="(submitted || form.description.touched) && form.description.errors" class="invalid-feedback d-block">
+                      <div *ngIf="form.description.errors.minLengthIfPresent">
+                        Description must be at least 300 characters if provided!
+                      </div>
+                      <div *ngIf="form.description.errors.maxLengthIfPresent">
+                        Description must be less than 3000 characters!
+                      </div>
+                    </div>
+                    
                   </div>
                 </div>
                 <div class="col-lg-6">

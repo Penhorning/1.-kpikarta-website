@@ -39,7 +39,6 @@ const getSVGSize = (tree, fontSize=10) => {
     // 4️⃣ Find the maximum count
     let maxNodes = d3.max(d3.values(levelCounts));
     const dynamicHeight = (Number(fontSize) * 15) / 10
-    console.log("Max Nodes", dynamicHeight);
     // console.log("Dynamic Height", dynamicHeight);
     height = Math.max(maxNodes * dynamicHeight -10, window.innerHeight - 130);
     nodeWidth = (window.innerWidth - 100) / 7;

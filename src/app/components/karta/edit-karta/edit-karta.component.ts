@@ -2121,6 +2121,9 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       this.versionId = response.versionId;
       if (response.versionId == this.version[this.version.length - 1].id) this.disableKartaAsOf = false;
       else this.disableKartaAsOf = true;
+      if (this.karta.description && !this.karta.node){
+        await this.feelingLucky(this.karta.description);
+      }
       if (this.karta.node) {
         this.karta.node.percentage = Math.round(this.percentageObj.calculatePercentage(this.karta.node));
         this.karta.node.border_color = this.setColors(this.karta.node.percentage);
@@ -3493,11 +3496,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
   }
 
-  async createKartaFromStart(prompt: any, randomKey: any) {
+  async createKartaFromStart(prompt: any, randomKey: any, description:any = null) {
     try {
-      let finalPrompt = `${prompt} I'm feeling lucky.`;
+      let finalPrompt = `${prompt} ${description ? description : "I'm feeling lucky."}`;
       const remainingKarta = await this._kartaService.feelingLuckyKarta(finalPrompt, this.karta.id).toPromise();
-      this.feelingLoader = true;
+      this.feelingLoader = description ? false : true;
       jqueryFunctions.disableChart();
 
       const recursion = async (parent: any, data: any) => {
@@ -3508,6 +3511,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               phaseId: this.phases[0].id,
               kartaId: this.kartaId
             };
+
             let response = await this._kartaService.addNode(nodeData).toPromise();
             response.phase = this.phases[0];
 
@@ -3525,20 +3529,20 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               kartaId: this.kartaId,
               historyType: 'main'
             };
-            let element = document.getElementById("header_operation_row");
+            let element = document.getElementById("header_operation_row"); 
             if (element) element.classList.add('disableDiv');
             this._kartaService.createKartaHistory(history_data).subscribe(
               (result: any) => { },
               (error: any) => { }
             ).add(() => {
               // Resetting Manual Input box if user creates using manual
-              let element = document.getElementById("header_operation_row");
+            let element = document.getElementById("header_operation_row");
               if (element) element.classList.remove('disableDiv');
             });
 
             await this.getKartaInfo();
             this.showSVG = true;
-            this.feelingLoader = true;
+            this.feelingLoader = description ? false : true;
             jqueryFunctions.disableChart();
 
             if (data.children && data.children.length > 0) {
@@ -3614,12 +3618,11 @@ export class EditKartaComponent implements OnInit, OnDestroy {
     }
   }
 
-  async feelingLucky() {
-    console.log("Feeling Lucky clicked");
+  async feelingLucky(description=null) {
     try {
       this.showPhaseList()
       this.isLoading = true;
-      this.feelingLoader = true;
+      this.feelingLoader = description ? false : true;
       jqueryFunctions.disableChart();
       for (let elem of this.controlElements) {
         let element = document.getElementById(elem);
@@ -3629,7 +3632,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       // common Random Key for Undo Redo process
       const randomKey = new Date().getTime().toString();
       let promptMapper = {
-        "default": `I'm working in ${this.karta.industry.toLowerCase()} industry in ${this.karta.department.toLowerCase()} department.`
+        "default": `I'm working in ${this.karta.industry.toLowerCase()} industry in ${this.karta.department.toLowerCase()} department.`,
       };
 
       // If the canvas is not blank and filled with few nodes
@@ -3731,7 +3734,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
         }
       } else {
         // If the canvas is completely blank from Goal node
-        let resp = await this.createKartaFromStart(promptMapper["default"], randomKey);
+
+        let resp = await this.createKartaFromStart(promptMapper["default"], randomKey, description);
         // this.isLoading = false;
         if (resp) {
           await this.resetWeightage(randomKey);

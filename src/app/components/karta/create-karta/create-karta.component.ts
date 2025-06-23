@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonService } from '@app/shared/_services/common.service';
 import { KartaService } from '../service/karta.service';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import data from './industries.json';
 
 @Component({
@@ -25,7 +26,7 @@ export class CreateKartaComponent implements OnInit {
     department: ['', Validators.required],
     industry: ['', Validators.required],
     otherDepartment: ['', [Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/)]],
-    description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
+    description: ['', [this.descriptionLengthValidator()]],
   });
   get form() { return this.kartaForm.controls; }
 
@@ -44,15 +45,17 @@ export class CreateKartaComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
+    console.log(this.kartaForm.valid);
     if (this.kartaForm.valid) {
       if ((this.form.department.value == 'Other' && this.form.otherDepartment.value) || this.form.department.value !== 'Other') {
         this.submitFlag = true;
         this.kartaForm.value.userId = this._commonService.getUserId();
-        
+
         this._kartaService.findKartaByUser(this.kartaForm.value.userId).subscribe(
           (response: any) => {
             if (response.length > 0) {
               this._kartaService.createKarta(this.kartaForm.value).subscribe(
+                //
                 (response: any) => {
                   location.replace(`/karta/edit/${response.id}`);
                 },
@@ -61,6 +64,7 @@ export class CreateKartaComponent implements OnInit {
                 }
               );
             } else {
+              console.log('there')
               this._kartaService.createKarta(this.kartaForm.value).subscribe(
                 (response: any) => {
                   this._commonService.updateSession('newkartaId', response.id);
@@ -85,10 +89,25 @@ export class CreateKartaComponent implements OnInit {
         );
       }
 
-      if(this.form.department.value == 'Other' && !this.form.otherDepartment.value) {
+      if (this.form.department.value == 'Other' && !this.form.otherDepartment.value) {
         this.kartaForm.markAllAsTouched();
       }
     }
+  }
+
+
+
+  descriptionLengthValidator(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const value = control.value || '';
+      if (value.length > 0 && value.length < 300) {
+        return { minLengthIfPresent: true };
+      }
+      if (value.length > 3000) {
+        return { maxLengthIfPresent: true };
+      }
+      return null;
+    };
   }
 
 }
