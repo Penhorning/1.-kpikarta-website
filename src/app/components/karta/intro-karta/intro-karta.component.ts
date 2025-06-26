@@ -114,6 +114,7 @@ export class IntroKartaComponent implements OnInit, OnDestroy {
     this.newkartaId = this._commonService.getSession().newkartaId;
     // Get versions
     this.getAllVersion();
+    console.log('hello from intro');
   }
   
   flowFunction() {

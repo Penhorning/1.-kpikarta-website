@@ -22,6 +22,7 @@
 
 .karta_column {
     width: 100%;
+    height: 85vh;
     flex: 1 1 auto;
 }
 
@@ -95,6 +96,64 @@
   display: flex;
   flex: 1;
 }
+
+.phase_column {
+  width: fit-content;
+  flex: 1 1 auto;
+  border: 1px solid #0171d4;
+}
+
+.phase_list{
+  display: flex;
+}
+.single_phase {
+  flex: 1;
+  position: relative;
+  border-radius: 45px;
+  border: 1px solid #fff;
+  padding: 5px 0px 5px 15px;
+  text-align: left;
+  margin: 3px;
+}
+.single_phase .single_phase_collapse {
+  position: absolute;
+  top: 7px;
+  right: 45px;
+  i {
+    cursor: pointer;
+    color: #fff;
+  }
+}
+
+.single_phase .phase_name {
+  position: relative;
+  color: #b3b3b3;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 auto;
+}
+
+.single_phase .suggestion_menu {
+  position: absolute;
+  height: 24px;
+  width: 24px;
+}
+
+.karta-current,
+.karta-cmpltd {
+  border: 1px solid #fff;
+  background-color: #3571aa;
+  transition: 0.5s;
+  // cursor: pointer;
+}
+
+.karta-current .phase_name,
+.karta-cmpltd .phase_name {
+  color: #fff;
+  margin-top: 4px;
+}
+
+
 
 ::ng-deep #karta-svg .mindmap-node .center-options .add-item i,
 ::ng-deep #karta-svg .mindmap-node .center-options .remove-item i,

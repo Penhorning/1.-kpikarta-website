@@ -199,15 +199,7 @@
         <div class="main-center-content d-flex mb-3" [ngStyle]="{'margin-left': (_commonService.getSession() && _commonService.getSession().token) ? '100px': '0' }">
            <div class="center-content mt-4 w-100">
               <div class="row tab-content-center">
-                 <div class="phase_column">
-                    <div class="vertical-tabs">
-                       <ul class="nav nav-tabs" role="tablist">
-                          <li class="nav-item" *ngFor="let phase of phases">
-                             <a class="nav-link text-nowrap">{{phase?.name}}</a>
-                          </li>
-                       </ul>
-                    </div>
-                 </div>
+                 
                  <div class="karta_column">
                    <div class="tab-pane active">
                        <ng-container *ngIf="loadingKarta">
@@ -233,7 +225,23 @@
                        </div>
                    </div>
                </div>
+                <div class="phase_column"
+                    [ngStyle]="{ width: phases.length * 100 + 'px' }"
+                >
+                    <div class="phase_list">
+                        <div class="single_phase "
+                            [ngClass]="{
+                                'karta-cmpltd': phase?.hasNode,
+                                'karta-current': i == 0
+                            }"
+                            *ngFor="let phase of phases; let i = index"
+                        >
+                            <span class="phase_name short_text">{{ phase?.name | uppercase }}</span>
+                        </div>
+                    </div>
+                </div>
               </div>
+
            </div>
  
            <!-- Sidebar -->

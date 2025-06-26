@@ -1712,7 +1712,6 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   // Add node from suggestion
   async addNodeFromSuggestion(event: any, node?: any) {
-    console.log("in suggestion");
     if (event.target.value) {
       jqueryFunctions.disablePhase();
       this.currentSuggestionIndex = +event.target.id;
@@ -1735,6 +1734,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
       // For Goal phase
       else if (event.target.checked && this.currentPhase.global_name === "Goal") {
         // Removing whole karta for history
+        jqueryFunctions.disableCommonPhase();
         if (this.karta?.node?.name) {
           await this.removeWholeKarta(this.karta.node, randomKey);
           delete this.karta.node;
@@ -1785,6 +1785,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             let element = document.getElementById("header_operation_row");
             if (element) element.classList.remove('disableDiv');
             jqueryFunctions.enablePhase();
+            jqueryFunctions.enableCommonPhase();
           });
         });
       }
@@ -3509,7 +3510,8 @@ export class EditKartaComponent implements OnInit, OnDestroy {
             let nodeData = {
               name: data.name,
               phaseId: this.phases[0].id,
-              kartaId: this.kartaId
+              kartaId: this.kartaId,
+              node_description: description
             };
 
             let response = await this._kartaService.addNode(nodeData).toPromise();
