@@ -64,7 +64,6 @@ export class CreateKartaComponent implements OnInit {
                 }
               );
             } else {
-              console.log('there')
               this._kartaService.createKarta(this.kartaForm.value).subscribe(
                 (response: any) => {
                   this._commonService.updateSession('newkartaId', response.id);
@@ -100,7 +99,7 @@ export class CreateKartaComponent implements OnInit {
   descriptionLengthValidator(): ValidatorFn {
     return (control: AbstractControl) => {
       const value = control.value || '';
-      if (value.length > 0 && value.length < 300) {
+      if (value.length > 0 && value.length < 100) {
         return { minLengthIfPresent: true };
       }
       if (value.length > 3000) {

@@ -2373,14 +2373,14 @@
       <div class="right-side-bar" id="rightSidebar">
         <div class="row">
           <div class="col-lg-12">
-            <div class="goal-name mt-3">
+            <div class="goal-name mt-4">
               <h6>{{ phaseName }}</h6>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-lg-12">
-            <div class="search-sugg mt-3">
+            <div class="search-sugg">
               <input
                 type="text"
                 class="form-control"
@@ -2398,14 +2398,14 @@
         <ng-container *ngIf="currentNode?.phase?.global_name !== 'Goal'">
           <div class="row">
             <div class="col-lg-12">
-              <div class="goal-name mt-3">
+              <div class="goal-name mt-4">
                 <h6>Weighting</h6>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-lg-12">
-              <div class="search-sugg mt-3">
+              <div class="search-sugg">
                 <input
                   type="number"
                   class="form-control"
@@ -2434,20 +2434,67 @@
             </div>
           </div>
         </ng-container>
+        <ng-container *ngIf="currentNode?.phase?.global_name === 'Goal'">
+          <div class="row">
+            <div class="col-lg-6">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="goal-name mt-4">
+                      <h6>Department</h6>
+                    </div>
+                  </div>
+                </div>
+              <div class="row">
+              <div class="col-lg-12">
+                <div class="search-sugg">
+                  <input
+                    type="text"
+                    class="form-control"
+                    value="{{ karta?.department }}"
+                    disabled
+                  />
+                </div>
+              </div>
+            </div> 
+            </div>
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="goal-name mt-4">
+                    <h6>Industry</h6>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="search-sugg">
+                    <input
+                      type="text"
+                      class="form-control"
+                      value="{{ karta?.industry }}"
+                      disabled
+                    />
+                  </div>
+                </div>
+              </div> 
+            </div>
+          </div> 
+        </ng-container>
         <div class="row">
           <div class="col-lg-12">
-            <div class="goal-name mt-3">
+            <div class="goal-name mt-4">
               <h6>Description</h6>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-lg-12">
-            <div class="search-sugg mt-3">
+            <div class="search-sugg">
               <textarea
                 class="form-control description-area"
                 [(ngModel)]="currentNodeDescription"
                 (blur)="changeNodeDescription()"
+                disabled
               ></textarea>
             </div>
           </div>

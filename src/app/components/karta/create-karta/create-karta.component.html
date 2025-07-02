@@ -12,7 +12,7 @@
                 <div class="col-lg-12">
                   <div class="form-group name-input-karta">
                     <label for="name">Karta Name</label>
-                    <input type="text" id="name" class="form-control" formControlName="name" [maxlength]="20"
+                    <input type="text" id="name" class="form-control" formControlName="name" [maxlength]="40"
                     [ngClass]="{ 'is-invalid': (submitted || form.name.touched) && form.name.errors }">
                     <div *ngIf="(submitted || form.name.touched) && form.name.errors" class="invalid-feedback">
                         <div *ngIf="form.name.errors.required">Name is required!</div>
@@ -64,10 +64,10 @@
                   <div class="form-group name-input-karta">
                     <label for="description">Description</label>
                     <img src="assets/img/icons8-ai.svg" width="22" alt="AI Icon" class="ai-icon" style="margin-left: 6px;">
-                    <textarea id="description" class="form-control" formControlName="description" rows="6" placeholder="Enter prompt to create Karta with AI (optional, minimum 300 characters if provided)"></textarea>
+                    <textarea id="description" class="form-control" formControlName="description" rows="6" placeholder="Enter prompt to create a Karta with AI (optional; recommended to use a minimum of 300 characters)"></textarea>
                     <div *ngIf="(submitted || form.description.touched) && form.description.errors" class="invalid-feedback d-block">
                       <div *ngIf="form.description.errors.minLengthIfPresent">
-                        Description must be at least 300 characters if provided!
+                        Description must be at least 100 characters if provided!
                       </div>
                       <div *ngIf="form.description.errors.maxLengthIfPresent">
                         Description must be less than 3000 characters!
