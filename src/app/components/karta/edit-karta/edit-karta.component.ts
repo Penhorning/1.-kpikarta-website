@@ -868,44 +868,46 @@ export class EditKartaComponent implements OnInit, OnDestroy {
 
   setTarget(type: string, e: any, index: any) {
     let node = this.currentNode;
-    if (type === 'frequency') {
-      if (this.target.length > 0) {
-        this.target[index].frequency = e.target.value;
-      } else {
-        this.target.push(
-          { frequency: e.target.value, value: 0, percentage: 0 }
-        )
-      }
-      this.disableTargetOption(e.target.value);
-      this.enableTargetOption(this.previousTargetFrequency);
-      this.previousTargetFrequency = e.target.value;
-      if (index === 0 && node.hasOwnProperty("start_date")) this.setDueDate(node.start_date);
-      this.updateNode('target', this.target, 'node_updated', node);
-    }
-    else {
-      if (e.target.value > 999999999999999) this._commonService.errorToaster("Target value cannot be greater than 999999999999999!");
-      else {
-        let percentage = (node.achieved_value / e.target.value) * 100;
+    if(node.hasOwnProperty("start_date")){
+      if (type === 'frequency') {
         if (this.target.length > 0) {
-          this.target[index].percentage = Math.round(percentage);
-          this.target[index].value = Number(e.target.value);
+          this.target[index].frequency = e.target.value;
         } else {
           this.target.push(
-            { frequency: 'monthly', value: Number(e.target.value), percentage: Math.round(percentage) }
+            { frequency: e.target.value, value: 0, percentage: 0 }
           )
         }
-        // Update achieved_value, node_formula and target
-        let randomKey = new Date().getTime();
-        let updatingParameters = [
-          { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: this.kpiType },
-          { key: 'target', value: this.target, node_updated: 'node_updated', node }
-        ];
-        if (node.node_formula && node.node_type === "metrics") {
-          updatingParameters.push({ key: 'node_formula', value: node.node_formula, node_updated: 'node_updated', node });
-        }
-        for (let param of updatingParameters) {
-          let metrics = param.metrics || null
-          this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
+        this.disableTargetOption(e.target.value);
+        this.enableTargetOption(this.previousTargetFrequency);
+        this.previousTargetFrequency = e.target.value;
+        if (index === 0 && node.hasOwnProperty("start_date")) this.setDueDate(node.start_date);
+        this.updateNode('target', this.target, 'node_updated', node);
+      }
+      else {
+        if (e.target.value > 999999999999999) this._commonService.errorToaster("Target value cannot be greater than 999999999999999!");
+        else {
+          let percentage = (node.achieved_value / e.target.value) * 100;
+          if (this.target.length > 0) {
+            this.target[index].percentage = Math.round(percentage);
+            this.target[index].value = Number(e.target.value);
+          } else {
+            this.target.push(
+              { frequency: 'monthly', value: Number(e.target.value), percentage: Math.round(percentage) }
+            )
+          }
+          // Update achieved_value, node_formula and target
+          let randomKey = new Date().getTime();
+          let updatingParameters = [
+            { key: 'achieved_value', value: Number(this.currentNodeAchievedValue), node_updated: 'node_updated', node, metrics: this.kpiType },
+            { key: 'target', value: this.target, node_updated: 'node_updated', node }
+          ];
+          if (node.node_formula && node.node_type === "metrics") {
+            updatingParameters.push({ key: 'node_formula', value: node.node_formula, node_updated: 'node_updated', node });
+          }
+          for (let param of updatingParameters) {
+            let metrics = param.metrics || null
+            this.updateNode(param.key, param.value, param.node_updated, param.node, metrics, randomKey);
+          }
         }
       }
     }
@@ -3531,7 +3533,7 @@ export class EditKartaComponent implements OnInit, OnDestroy {
               kartaId: this.kartaId,
               historyType: 'main'
             };
-            let element = document.getElementById("header_operation_row"); 
+            let element = document.getElementById("header_operation_row");
             if (element) element.classList.add('disableDiv');
             this._kartaService.createKartaHistory(history_data).subscribe(
               (result: any) => { },
